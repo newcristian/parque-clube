@@ -1,19 +1,63 @@
 import { getStore } from "@netlify/blobs";
 
+const store = getStore("protocolos-parque-clube");
+
+function resposta(dados, status = 200) {
+    return new Response(
+        JSON.stringify(dados),
+        {
+            status,
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }
+    );
+}
+
+function dataBrasilia() {
+
+    const agora = new Date();
+
+    const partes =
+        new Intl.DateTimeFormat(
+            "en-CA",
+            {
+                timeZone: "America/Sao_Paulo",
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit"
+            }
+        ).formatToParts(agora);
+
+    return {
+        ano: partes.find(
+            p => p.type === "year"
+        ).value,
+
+        mes: partes.find(
+            p => p.type === "month"
+        ).value,
+
+        dia: partes.find(
+            p => p.type === "day"
+        ).value
+    };
+}
+
+
 export default async function handler(request) {
 
-    if (request.method !== "POST") {
+    if (
+        request.method !== "POST" &&
+        request.method !== "GET"
+    ) {
 
-        return new Response(
-            JSON.stringify({
-                erro: "Método não permitido."
-            }),
+        return resposta(
             {
-                status: 405,
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            }
+                erro:
+                    "Método não permitido."
+            },
+            405
         );
 
     }
@@ -21,69 +65,98 @@ export default async function handler(request) {
 
     try {
 
-        // =========================================
-        // DATA ATUAL - HORÁRIO DE BRASÍLIA
-        // =========================================
-
-        const agora = new Date();
-
-        const partes =
-            new Intl.DateTimeFormat(
-                "en-CA",
-                {
-                    timeZone: "America/Sao_Paulo",
-                    year: "numeric",
-                    month: "2-digit",
-                    day: "2-digit"
-                }
-            ).formatToParts(agora);
-
-
-        const ano =
-            partes.find(
-                p => p.type === "year"
-            ).value;
-
-
-        const mes =
-            partes.find(
-                p => p.type === "month"
-            ).value;
-
-
-        const dia =
-            partes.find(
-                p => p.type === "day"
-            ).value;
-
-
-        // =========================================
-        // ARMAZENAMENTO CENTRAL
-        // =========================================
-
         /*
-         * IMPORTANTE:
-         * O nome do armazenamento é passado
-         * diretamente para getStore().
+         * =====================================
+         * CONSULTAR PROTOCOLO
+         * =====================================
          */
 
-        const store =
-            getStore(
-                "protocolos-parque-clube"
+        if (
+            request.method === "GET"
+        ) {
+
+            const url =
+                new URL(
+                    request.url
+                );
+
+            const protocolo =
+                url.searchParams.get(
+                    "protocolo"
+                );
+
+
+            if (!protocolo) {
+
+                return resposta(
+                    {
+                        erro:
+                            "Informe o protocolo."
+                    },
+                    400
+                );
+
+            }
+
+
+            const chamado =
+                await store.get(
+                    `chamado-${protocolo}`,
+                    {
+                        type: "json"
+                    }
+                );
+
+
+            if (!chamado) {
+
+                return resposta(
+                    {
+                        encontrado:
+                            false,
+
+                        erro:
+                            "Protocolo não encontrado."
+                    },
+                    404
+                );
+
+            }
+
+
+            return resposta(
+                {
+                    encontrado:
+                        true,
+
+                    chamado:
+                        chamado
+                }
             );
 
-
-        // =========================================
-        // CONTADOR DO DIA
-        // =========================================
-
-        const chave =
-            `contador-${ano}-${mes}-${dia}`;
+        }
 
 
-        // =========================================
-        // TENTATIVAS
-        // =========================================
+        /*
+         * =====================================
+         * GERAR PROTOCOLO
+         * =====================================
+         */
+
+        const dados =
+            dataBrasilia();
+
+
+        const chaveContador =
+            `contador-${dados.ano}-${dados.mes}-${dados.dia}`;
+
+
+        /*
+         * =====================================
+         * TENTATIVAS PARA EVITAR
+         * PROTOCOLOS REPETIDOS
+         * =====================================
+         */
 
         for (
             let tentativa = 0;
@@ -92,11 +165,9 @@ export default async function handler(request) {
         ) {
 
 
-            // Busca o contador atual
-
             const atual =
                 await store.getWithMetadata(
-                    chave,
+                    chaveContador,
                     {
                         consistency:
                             "strong"
@@ -104,9 +175,9 @@ export default async function handler(request) {
                 );
 
 
-            // =====================================
-            // PRIMEIRO CHAMADO DO DIA
-            // =====================================
+            /*
+             * PRIMEIRO CHAMADO DO DIA
+             */
 
             if (
                 !atual ||
@@ -116,7 +187,7 @@ export default async function handler(request) {
 
                 const resultado =
                     await store.set(
-                        chave,
+                        chaveContador,
                         "1",
                         {
                             onlyIfNew:
@@ -131,47 +202,27 @@ export default async function handler(request) {
 
 
                     const protocolo =
-                        `PC-${dia}-${mes}-${String(ano).slice(-2)}-001`;
+                        `PC-${dados.dia}-${dados.mes}-${String(dados.ano).slice(-2)}-001`;
 
 
-                    console.log(
-                        "PROTOCOLO GERADO:",
-                        protocolo
-                    );
-
-
-                    return new Response(
-
-                        JSON.stringify({
+                    return resposta(
+                        {
                             protocolo:
                                 protocolo
-                        }),
-
-                        {
-                            status: 200,
-
-                            headers: {
-                                "Content-Type":
-                                    "application/json"
-                            }
                         }
-
                     );
 
                 }
 
-
-                // Outro usuário criou primeiro.
-                // Tenta novamente.
 
                 continue;
 
             }
 
 
-            // =====================================
-            // RECUPERA CONTADOR ATUAL
-            // =====================================
+            /*
+             * RECUPERA CONTADOR
+             */
 
             let numeroAtual =
                 parseInt(
@@ -189,19 +240,17 @@ export default async function handler(request) {
             }
 
 
-            // Próximo número
-
             const novoNumero =
                 numeroAtual + 1;
 
 
-            // =====================================
-            // ATUALIZA CONTADOR
-            // =====================================
+            /*
+             * ATUALIZA CONTADOR
+             */
 
             const resultado =
                 await store.set(
-                    chave,
+                    chaveContador,
                     String(novoNumero),
                     {
                         onlyIfMatch:
@@ -209,10 +258,6 @@ export default async function handler(request) {
                     }
                 );
 
-
-            // =====================================
-            // ATUALIZAÇÃO REALIZADA
-            // =====================================
 
             if (
                 resultado.modified
@@ -229,70 +274,31 @@ export default async function handler(request) {
 
 
                 const protocolo =
-                    `PC-${dia}-${mes}-${String(ano).slice(-2)}-${sequencial}`;
+                    `PC-${dados.dia}-${dados.mes}-${String(dados.ano).slice(-2)}-${sequencial}`;
 
 
-                console.log(
-                    "PROTOCOLO GERADO:",
-                    protocolo
-                );
-
-
-                return new Response(
-
-                    JSON.stringify({
+                return resposta(
+                    {
                         protocolo:
                             protocolo
-                    }),
-
-                    {
-                        status: 200,
-
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        }
                     }
-
                 );
 
             }
-
-
-            // Se houve conflito,
-            // tenta novamente.
 
         }
 
 
-        // =========================================
-        // FALHA APÓS AS TENTATIVAS
-        // =========================================
-
-        return new Response(
-
-            JSON.stringify({
+        return resposta(
+            {
                 erro:
                     "Não foi possível gerar o protocolo."
-            }),
-
-            {
-                status: 503,
-
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                }
-            }
-
+            },
+            503
         );
 
 
     } catch (erro) {
-
-        // =========================================
-        // ERRO REAL DA FUNCTION
-        // =========================================
 
         console.error(
             "ERRO PROTOCOLO:",
@@ -300,27 +306,15 @@ export default async function handler(request) {
         );
 
 
-        return new Response(
-
-            JSON.stringify({
-
+        return resposta(
+            {
                 erro:
-                    "Erro interno ao gerar protocolo.",
+                    "Erro interno.",
 
                 detalhe:
                     erro.message
-
-            }),
-
-            {
-                status: 500,
-
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                }
-            }
-
+            },
+            500
         );
 
     }
