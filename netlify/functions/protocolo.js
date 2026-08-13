@@ -4,7 +4,7 @@ const store = getStore("protocolos-parque-clube");
 
 
 /* =====================================================
-   RESPOSTA PADRÃO
+   RESPOSTA
 ===================================================== */
 
 function resposta(dados, status = 200) {
@@ -108,7 +108,7 @@ export default async function handler(request) {
 
 
     /* =================================================
-       ACEITA GET E POST
+       MÉTODOS PERMITIDOS
     ================================================= */
 
     if (
@@ -132,7 +132,7 @@ export default async function handler(request) {
 
 
         /* =================================================
-           CONSULTAR PROTOCOLO
+           CONSULTAR UM PROTOCOLO
         ================================================= */
 
         if (
@@ -219,12 +219,7 @@ export default async function handler(request) {
 
 
         /* =================================================
-           POST
-           
-           Pode ser:
-           
-           1. Criar chamado
-           2. Atualizar chamado
+           LER JSON DO POST
         ================================================= */
 
         let dados = {};
@@ -252,18 +247,15 @@ export default async function handler(request) {
 
 
         /* =================================================
-           ATUALIZAR CHAMADO - ADMIN
+           LISTAR TODOS OS PROTOCOLOS
+           SOMENTE ADMINISTRADOR
         ================================================= */
 
         if (
             dados.action ===
-            "update"
+            "list"
         ) {
 
-
-            /* =============================================
-               VERIFICAR SENHA
-            ============================================= */
 
             const senhaAdmin =
                 process.env.ADMIN_PASSWORD;
@@ -273,15 +265,10 @@ export default async function handler(request) {
                 !senhaAdmin
             ) {
 
-                console.error(
-                    "ADMIN_PASSWORD não configurada."
-                );
-
-
                 return resposta(
                     {
                         erro:
-                            "A senha administrativa ainda não foi configurada no Netlify."
+                            "A senha administrativa não está configurada."
                     },
 
                     500
@@ -308,9 +295,243 @@ export default async function handler(request) {
             }
 
 
+            const chamadosValidos =
+                [];
+
+
+            let cursor;
+
+
             /* =============================================
-               VALIDAR PROTOCOLO
+               PAGINAÇÃO
             ============================================= */
+
+            do {
+
+                const pagina =
+                    await store.list(
+                        {
+                            prefix:
+                                "chamado-",
+
+                            cursor:
+                                cursor
+                        }
+                    );
+
+
+                for (
+                    const blob
+                    of pagina.blobs || []
+                ) {
+
+
+                    try {
+
+                        const chamado =
+                            await store.get(
+
+                                blob.key,
+
+                                {
+                                    type:
+                                        "json",
+
+                                    consistency:
+                                        "strong"
+                                }
+
+                            );
+
+
+                        if (
+                            chamado &&
+                            chamado.protocolo
+                        ) {
+
+                            chamadosValidos.push(
+                                chamado
+                            );
+
+                        }
+
+                    }
+
+                    catch (erro) {
+
+                        console.error(
+                            "Erro ao ler:",
+                            blob.key,
+
+                            erro
+                        );
+
+                    }
+
+                }
+
+
+                cursor =
+                    pagina.cursor;
+
+
+            }
+
+            while (
+                cursor
+            );
+
+
+            /* =============================================
+               ORDENAR DO MAIS NOVO
+            ============================================= */
+
+            chamadosValidos.sort(
+
+                (a, b) =>
+
+                    String(
+                        b.protocolo
+                    ).localeCompare(
+
+                        String(
+                            a.protocolo
+                        ),
+
+                        undefined,
+
+                        {
+                            numeric:
+                                true
+                        }
+
+                    )
+
+            );
+
+
+            /* =============================================
+               ESTATÍSTICAS
+            ============================================= */
+
+            const estatisticas = {
+
+                total:
+                    chamadosValidos.length,
+
+
+                abertos:
+                    chamadosValidos.filter(
+
+                        chamado =>
+
+                            chamado.status ===
+                            "Aberto"
+
+                    ).length,
+
+
+                andamento:
+                    chamadosValidos.filter(
+
+                        chamado =>
+
+                            chamado.status ===
+                            "Em andamento"
+
+                    ).length,
+
+
+                resolvidos:
+                    chamadosValidos.filter(
+
+                        chamado =>
+
+                            chamado.status ===
+                            "Resolvido"
+
+                    ).length,
+
+
+                cancelados:
+                    chamadosValidos.filter(
+
+                        chamado =>
+
+                            chamado.status ===
+                            "Cancelado"
+
+                    ).length
+
+            };
+
+
+            return resposta(
+                {
+
+                    sucesso:
+                        true,
+
+                    chamados:
+                        chamadosValidos,
+
+                    estatisticas:
+                        estatisticas
+
+                }
+            );
+
+        }
+
+
+        /* =================================================
+           ATUALIZAR CHAMADO
+           SOMENTE ADMINISTRADOR
+        ================================================= */
+
+        if (
+            dados.action ===
+            "update"
+        ) {
+
+
+            const senhaAdmin =
+                process.env.ADMIN_PASSWORD;
+
+
+            if (
+                !senhaAdmin
+            ) {
+
+                return resposta(
+                    {
+                        erro:
+                            "A senha administrativa não está configurada."
+                    },
+
+                    500
+                );
+
+            }
+
+
+            if (
+                !dados.adminPassword ||
+                dados.adminPassword !==
+                senhaAdmin
+            ) {
+
+                return resposta(
+                    {
+                        erro:
+                            "Senha administrativa incorreta."
+                    },
+
+                    401
+                );
+
+            }
+
 
             if (
                 !dados.protocolo
@@ -336,10 +557,6 @@ export default async function handler(request) {
                 .toUpperCase();
 
 
-            /* =============================================
-               BUSCAR CHAMADO
-            ============================================= */
-
             const chamadoAtual =
                 await store.get(
 
@@ -356,7 +573,9 @@ export default async function handler(request) {
                 );
 
 
-            if (!chamadoAtual) {
+            if (
+                !chamadoAtual
+            ) {
 
                 return resposta(
                     {
@@ -369,10 +588,6 @@ export default async function handler(request) {
 
             }
 
-
-            /* =============================================
-               STATUS
-            ============================================= */
 
             const statusPermitidos = [
 
@@ -387,13 +602,9 @@ export default async function handler(request) {
             ];
 
 
-            const novoStatus =
-                dados.status;
-
-
             if (
                 !statusPermitidos.includes(
-                    novoStatus
+                    dados.status
                 )
             ) {
 
@@ -409,10 +620,6 @@ export default async function handler(request) {
             }
 
 
-            /* =============================================
-               ATUALIZA DADOS
-            ============================================= */
-
             const dataAtual =
                 obterDataBrasilia();
 
@@ -426,45 +633,52 @@ export default async function handler(request) {
                 ...chamadoAtual,
 
                 status:
-                    novoStatus,
+                    dados.status,
 
                 responsavel:
                     dados.responsavel ||
-                    chamadoAtual.responsavel ||
                     "",
 
                 observacaoSolucao:
                     dados.observacaoSolucao ||
-                    chamadoAtual.observacaoSolucao ||
                     "",
 
                 ultimaAtualizacao:
+
                     `${dataAtual.dia}/${dataAtual.mes}/${dataAtual.ano} ${horaAtual}`
 
             };
 
 
             /* =============================================
-               SE RESOLVIDO
+               RESOLVIDO
             ============================================= */
 
             if (
-                novoStatus ===
+                dados.status ===
                 "Resolvido"
             ) {
 
                 chamadoAtualizado.dataConclusao =
+
                     `${dataAtual.dia}/${dataAtual.mes}/${dataAtual.ano}`;
+
 
                 chamadoAtualizado.horaConclusao =
                     horaAtual;
 
             }
 
+            else {
 
-            /* =============================================
-               SALVAR
-            ============================================= */
+                delete
+                    chamadoAtualizado.dataConclusao;
+
+                delete
+                    chamadoAtualizado.horaConclusao;
+
+            }
+
 
             await store.setJSON(
 
@@ -477,6 +691,7 @@ export default async function handler(request) {
 
             return resposta(
                 {
+
                     sucesso:
                         true,
 
@@ -485,6 +700,7 @@ export default async function handler(request) {
 
                     chamado:
                         chamadoAtualizado
+
                 }
             );
 
@@ -500,16 +716,19 @@ export default async function handler(request) {
 
 
         const chaveContador =
+
             `contador-${data.ano}-${data.mes}-${data.dia}`;
 
 
         /* =================================================
-           GERAR PROTOCOLO
+           TENTATIVAS PARA EVITAR PROTOCOLOS REPETIDOS
         ================================================= */
 
         for (
             let tentativa = 0;
+
             tentativa < 20;
+
             tentativa++
         ) {
 
@@ -528,7 +747,7 @@ export default async function handler(request) {
 
 
             /* =============================================
-               PRIMEIRO CHAMADO DO DIA
+               PRIMEIRO PROTOCOLO DO DIA
             ============================================= */
 
             if (
@@ -558,6 +777,7 @@ export default async function handler(request) {
 
 
                     const protocolo =
+
                         `PC-${data.dia}-${data.mes}-${String(data.ano).slice(-2)}-001`;
 
 
@@ -566,53 +786,68 @@ export default async function handler(request) {
                         protocolo:
                             protocolo,
 
+
                         dataAbertura:
+
                             `${data.dia}/${data.mes}/${data.ano}`,
+
 
                         horaAbertura:
                             obterHoraBrasilia(),
 
+
                         status:
                             "Aberto",
+
 
                         solicitante:
                             dados.solicitante ||
                             "",
 
+
                         cargo:
                             dados.cargo ||
                             "",
+
 
                         bloco:
                             dados.bloco ||
                             "",
 
+
                         pavimentos:
                             dados.pavimentos ||
                             "",
+
 
                         ocorrencia:
                             dados.ocorrencia ||
                             "",
 
+
                         dataOcorrencia:
                             dados.dataOcorrencia ||
                             "",
+
 
                         horaInicial:
                             dados.horaInicial ||
                             "",
 
+
                         horaFinal:
                             dados.horaFinal ||
                             "",
+
 
                         detalhes:
                             dados.detalhes ||
                             "",
 
+
                         responsavel:
                             "",
+
 
                         observacaoSolucao:
                             ""
@@ -631,6 +866,7 @@ export default async function handler(request) {
 
                     return resposta(
                         {
+
                             sucesso:
                                 true,
 
@@ -639,6 +875,7 @@ export default async function handler(request) {
 
                             chamado:
                                 chamado
+
                         }
                     );
 
@@ -651,10 +888,11 @@ export default async function handler(request) {
 
 
             /* =============================================
-               CONTADOR EXISTENTE
+               CONTADOR JÁ EXISTENTE
             ============================================= */
 
             let numeroAtual =
+
                 parseInt(
                     atual.data,
                     10
@@ -676,7 +914,7 @@ export default async function handler(request) {
 
 
             /* =============================================
-               ATUALIZA CONTADOR
+               ATUALIZAR CONTADOR COM SEGURANÇA
             ============================================= */
 
             const resultado =
@@ -684,11 +922,15 @@ export default async function handler(request) {
 
                     chaveContador,
 
-                    String(novoNumero),
+                    String(
+                        novoNumero
+                    ),
 
                     {
+
                         onlyIfMatch:
                             atual.etag
+
                     }
 
                 );
@@ -700,6 +942,7 @@ export default async function handler(request) {
 
 
                 const sequencial =
+
                     String(
                         novoNumero
                     )
@@ -710,6 +953,7 @@ export default async function handler(request) {
 
 
                 const protocolo =
+
                     `PC-${data.dia}-${data.mes}-${String(data.ano).slice(-2)}-${sequencial}`;
 
 
@@ -718,53 +962,68 @@ export default async function handler(request) {
                     protocolo:
                         protocolo,
 
+
                     dataAbertura:
+
                         `${data.dia}/${data.mes}/${data.ano}`,
+
 
                     horaAbertura:
                         obterHoraBrasilia(),
 
+
                     status:
                         "Aberto",
+
 
                     solicitante:
                         dados.solicitante ||
                         "",
 
+
                     cargo:
                         dados.cargo ||
                         "",
+
 
                     bloco:
                         dados.bloco ||
                         "",
 
+
                     pavimentos:
                         dados.pavimentos ||
                         "",
+
 
                     ocorrencia:
                         dados.ocorrencia ||
                         "",
 
+
                     dataOcorrencia:
                         dados.dataOcorrencia ||
                         "",
+
 
                     horaInicial:
                         dados.horaInicial ||
                         "",
 
+
                     horaFinal:
                         dados.horaFinal ||
                         "",
+
 
                     detalhes:
                         dados.detalhes ||
                         "",
 
+
                     responsavel:
                         "",
+
 
                     observacaoSolucao:
                         ""
@@ -783,6 +1042,7 @@ export default async function handler(request) {
 
                 return resposta(
                     {
+
                         sucesso:
                             true,
 
@@ -791,6 +1051,7 @@ export default async function handler(request) {
 
                         chamado:
                             chamado
+
                     }
                 );
 
@@ -800,21 +1061,23 @@ export default async function handler(request) {
 
 
         /* =================================================
-           ERRO DE GERAÇÃO
+           NÃO FOI POSSÍVEL GERAR
         ================================================= */
 
         return resposta(
             {
+
                 sucesso:
                     false,
 
                 erro:
                     "Não foi possível gerar o protocolo. Tente novamente."
+
             },
 
             503
-        );
 
+        );
 
     }
 
@@ -822,13 +1085,17 @@ export default async function handler(request) {
 
 
         console.error(
+
             "ERRO NA FUNCTION PROTOCOLO:",
+
             erro
+
         );
 
 
         return resposta(
             {
+
                 sucesso:
                     false,
 
@@ -837,9 +1104,11 @@ export default async function handler(request) {
 
                 detalhe:
                     erro.message
+
             },
 
             500
+
         );
 
     }
