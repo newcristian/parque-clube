@@ -2,19 +2,33 @@ import { getStore } from "@netlify/blobs";
 
 const store = getStore("protocolos-parque-clube");
 
+
+/* =====================================================
+   RESPOSTA PADRÃO
+===================================================== */
+
 function resposta(dados, status = 200) {
+
     return new Response(
         JSON.stringify(dados),
         {
-            status,
+            status: status,
+
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*"
             }
         }
     );
+
 }
 
-function dataBrasilia() {
+
+/* =====================================================
+   DATA ATUAL - HORÁRIO DE BRASÍLIA
+===================================================== */
+
+function obterDataBrasilia() {
 
     const agora = new Date();
 
@@ -23,29 +37,48 @@ function dataBrasilia() {
             "en-CA",
             {
                 timeZone: "America/Sao_Paulo",
+
                 year: "numeric",
+
                 month: "2-digit",
+
                 day: "2-digit"
             }
         ).formatToParts(agora);
 
+
     return {
-        ano: partes.find(
-            p => p.type === "year"
-        ).value,
 
-        mes: partes.find(
-            p => p.type === "month"
-        ).value,
+        ano:
+            partes.find(
+                p => p.type === "year"
+            ).value,
 
-        dia: partes.find(
-            p => p.type === "day"
-        ).value
+        mes:
+            partes.find(
+                p => p.type === "month"
+            ).value,
+
+        dia:
+            partes.find(
+                p => p.type === "day"
+            ).value
+
     };
+
 }
 
 
+/* =====================================================
+   FUNÇÃO PRINCIPAL
+===================================================== */
+
 export default async function handler(request) {
+
+
+    /* =================================================
+       MÉTODO
+    ================================================= */
 
     if (
         request.method !== "POST" &&
@@ -57,6 +90,7 @@ export default async function handler(request) {
                 erro:
                     "Método não permitido."
             },
+
             405
         );
 
@@ -65,20 +99,24 @@ export default async function handler(request) {
 
     try {
 
-        /*
-         * =====================================
-         * CONSULTAR PROTOCOLO
-         * =====================================
-         */
+
+        /* =================================================
+           CONSULTAR PROTOCOLO
+           
+           Exemplo:
+           /api/protocolo?protocolo=PC-13-08-26-001
+        ================================================= */
 
         if (
             request.method === "GET"
         ) {
 
+
             const url =
                 new URL(
                     request.url
                 );
+
 
             const protocolo =
                 url.searchParams.get(
@@ -91,19 +129,29 @@ export default async function handler(request) {
                 return resposta(
                     {
                         erro:
-                            "Informe o protocolo."
+                            "Informe o número do protocolo."
                     },
+
                     400
                 );
 
             }
 
 
+            const chave =
+                `chamado-${protocolo}`;
+
+
             const chamado =
                 await store.get(
-                    `chamado-${protocolo}`,
+                    chave,
+
                     {
-                        type: "json"
+                        type:
+                            "json",
+
+                        consistency:
+                            "strong"
                     }
                 );
 
@@ -118,6 +166,7 @@ export default async function handler(request) {
                         erro:
                             "Protocolo não encontrado."
                     },
+
                     404
                 );
 
@@ -137,26 +186,67 @@ export default async function handler(request) {
         }
 
 
+        /* =================================================
+           ABRIR NOVO CHAMADO
+        ================================================= */
+
+
+        let dadosChamado = {};
+
+
         /*
-         * =====================================
-         * GERAR PROTOCOLO
-         * =====================================
+         * Tenta receber JSON.
+         *
+         * O index.html poderá enviar:
+         *
+         * {
+         *   solicitante: "...",
+         *   cargo: "...",
+         *   bloco: "...",
+         *   andar: "...",
+         *   ocorrencia: "...",
+         *   detalhes: "..."
+         * }
          */
 
-        const dados =
-            dataBrasilia();
+        try {
+
+            dadosChamado =
+                await request.json();
+
+        }
+
+        catch {
+
+            /*
+             * Caso o formulário ainda não esteja
+             * enviando JSON, não interrompe a geração
+             * do protocolo.
+             */
+
+            dadosChamado = {};
+
+        }
+
+
+        /* =================================================
+           DATA
+        ================================================= */
+
+        const data =
+            obterDataBrasilia();
 
 
         const chaveContador =
-            `contador-${dados.ano}-${dados.mes}-${dados.dia}`;
+            `contador-${data.ano}-${data.mes}-${data.dia}`;
 
 
-        /*
-         * =====================================
-         * TENTATIVAS PARA EVITAR
-         * PROTOCOLOS REPETIDOS
-         * =====================================
-         */
+        /* =================================================
+           GERAR PROTOCOLO
+           
+           Exemplo:
+           PC-13-08-26-001
+        ================================================= */
 
         for (
             let tentativa = 0;
@@ -165,9 +255,14 @@ export default async function handler(request) {
         ) {
 
 
+            /* =============================================
+               VERIFICA CONTADOR ATUAL
+            ============================================= */
+
             const atual =
                 await store.getWithMetadata(
                     chaveContador,
+
                     {
                         consistency:
                             "strong"
@@ -175,9 +270,9 @@ export default async function handler(request) {
                 );
 
 
-            /*
-             * PRIMEIRO CHAMADO DO DIA
-             */
+            /* =============================================
+               PRIMEIRO CHAMADO DO DIA
+            ============================================= */
 
             if (
                 !atual ||
@@ -188,7 +283,9 @@ export default async function handler(request) {
                 const resultado =
                     await store.set(
                         chaveContador,
+
                         "1",
+
                         {
                             onlyIfNew:
                                 true
@@ -196,33 +293,78 @@ export default async function handler(request) {
                     );
 
 
+                /*
+                 * Se conseguiu criar o contador,
+                 * este é o protocolo 001.
+                 */
+
                 if (
                     resultado.modified
                 ) {
 
 
                     const protocolo =
-                        `PC-${dados.dia}-${dados.mes}-${String(dados.ano).slice(-2)}-001`;
+                        `PC-${data.dia}-${data.mes}-${String(data.ano).slice(-2)}-001`;
+
+
+                    /* =====================================
+                       SALVA O CHAMADO
+                    ===================================== */
+
+                    const chamado = {
+
+                        protocolo:
+                            protocolo,
+
+                        dataAbertura:
+                            `${data.dia}/${data.mes}/${data.ano}`,
+
+                        status:
+                            "Aberto",
+
+                        ...dadosChamado
+
+                    };
+
+
+                    await store.setJSON(
+
+                        `chamado-${protocolo}`,
+
+                        chamado
+
+                    );
 
 
                     return resposta(
                         {
+                            sucesso:
+                                true,
+
                             protocolo:
-                                protocolo
+                                protocolo,
+
+                            chamado:
+                                chamado
                         }
                     );
 
                 }
 
 
+                /*
+                 * Outro usuário criou primeiro.
+                 * Tenta novamente.
+                 */
+
                 continue;
 
             }
 
 
-            /*
-             * RECUPERA CONTADOR
-             */
+            /* =============================================
+               CONTADOR EXISTENTE
+            ============================================= */
 
             let numeroAtual =
                 parseInt(
@@ -235,7 +377,8 @@ export default async function handler(request) {
                 isNaN(numeroAtual)
             ) {
 
-                numeroAtual = 0;
+                numeroAtual =
+                    0;
 
             }
 
@@ -244,18 +387,26 @@ export default async function handler(request) {
                 numeroAtual + 1;
 
 
-            /*
-             * ATUALIZA CONTADOR
-             */
+            /* =============================================
+               ATUALIZA CONTADOR
+               
+               O protocolo só será confirmado se o
+               contador não tiver sido alterado por
+               outro usuário.
+            ============================================= */
 
             const resultado =
                 await store.set(
+
                     chaveContador,
+
                     String(novoNumero),
+
                     {
                         onlyIfMatch:
                             atual.etag
                     }
+
                 );
 
 
@@ -274,47 +425,109 @@ export default async function handler(request) {
 
 
                 const protocolo =
-                    `PC-${dados.dia}-${dados.mes}-${String(dados.ano).slice(-2)}-${sequencial}`;
+                    `PC-${data.dia}-${data.mes}-${String(data.ano).slice(-2)}-${sequencial}`;
+
+
+                /* =====================================
+                   SALVA O CHAMADO
+                ===================================== */
+
+                const chamado = {
+
+                    protocolo:
+                        protocolo,
+
+                    dataAbertura:
+                        `${data.dia}/${data.mes}/${data.ano}`,
+
+                    status:
+                        "Aberto",
+
+                    ...dadosChamado
+
+                };
+
+
+                await store.setJSON(
+
+                    `chamado-${protocolo}`,
+
+                    chamado
+
+                );
 
 
                 return resposta(
                     {
+                        sucesso:
+                            true,
+
                         protocolo:
-                            protocolo
+                            protocolo,
+
+                        chamado:
+                            chamado
                     }
                 );
 
             }
 
+
+            /*
+             * Outro usuário alterou o contador.
+             * Tenta novamente.
+             */
+
         }
 
 
+        /* =================================================
+           NÃO CONSEGUIU GERAR
+        ================================================= */
+
         return resposta(
             {
+                sucesso:
+                    false,
+
                 erro:
-                    "Não foi possível gerar o protocolo."
+                    "Não foi possível gerar o protocolo. Tente novamente."
             },
+
             503
         );
 
 
-    } catch (erro) {
+    }
+
+    catch (erro) {
+
+
+        /* =================================================
+           ERRO
+        ================================================= */
 
         console.error(
-            "ERRO PROTOCOLO:",
+            "ERRO NA FUNCTION PROTOCOLO:",
             erro
         );
 
 
         return resposta(
+
             {
+                sucesso:
+                    false,
+
                 erro:
-                    "Erro interno.",
+                    "Erro interno ao gerar o protocolo.",
 
                 detalhe:
                     erro.message
             },
+
             500
+
         );
 
     }
