@@ -1,0 +1,1786 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Chamado - Parque Clube</title>
+
+    <meta name="apple-mobile-web-app-capable"
+          content="yes">
+
+    <meta name="apple-mobile-web-app-status-bar-style"
+          content="default">
+
+    <meta name="apple-mobile-web-app-title"
+          content="Parque Clube">
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+
+        body {
+            background-color: #f4f6f9;
+            padding: 15px;
+            color: #333;
+        }
+
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+
+            box-shadow:
+                0 4px 10px rgba(0,0,0,0.08);
+        }
+
+
+        /* LOGO */
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+
+        .logo-container img {
+            max-width: 180px;
+            width: 100%;
+            height: auto;
+        }
+
+
+        /* TÍTULO */
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #1d5c2d;
+            font-size: 20px;
+        }
+
+
+        /* CAMPOS */
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #444;
+            font-size: 14px;
+        }
+
+
+        select,
+        input[type="text"],
+        input[type="date"],
+        input[type="time"],
+        textarea {
+
+            width: 100%;
+            padding: 10px;
+
+            border: 1px solid #ccc;
+
+            border-radius: 6px;
+
+            font-size: 15px;
+
+            background-color: #fff;
+        }
+
+
+        select:focus,
+        input:focus,
+        textarea:focus {
+
+            outline: none;
+
+            border-color: #1d5c2d;
+
+            box-shadow:
+                0 0 0 2px
+                rgba(29,92,45,0.10);
+        }
+
+
+        input[readonly] {
+
+            background-color: #f1f3f2;
+
+            color: #1d5c2d;
+
+            font-weight: bold;
+        }
+
+
+        textarea {
+
+            resize: vertical;
+
+            height: 90px;
+        }
+
+
+        /* PAVIMENTOS */
+
+        .andares-container {
+
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap: 8px;
+
+            margin-top: 8px;
+        }
+
+
+        .andar-option {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            padding: 9px;
+
+            border: 1px solid #ddd;
+
+            border-radius: 6px;
+
+            background-color: #fafafa;
+
+            cursor: pointer;
+
+            font-weight: normal;
+
+            margin: 0;
+        }
+
+
+        .andar-option:hover {
+
+            background-color: #f0f5f1;
+
+            border-color: #1d5c2d;
+        }
+
+
+        .andar-option input {
+
+            width: 18px;
+
+            height: 18px;
+
+            cursor: pointer;
+
+            flex-shrink: 0;
+        }
+
+
+        /* IMAGEM / CÂMERA */
+
+        .data-hora-box {
+
+            background-color: #f8faf8;
+
+            border: 1px solid #dce8df;
+
+            padding: 12px;
+
+            border-radius: 8px;
+        }
+
+
+        .horarios-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap: 10px;
+
+            margin-top: 8px;
+        }
+
+
+        /* BOTÕES */
+
+        .botoes {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 10px;
+
+            margin-top: 10px;
+        }
+
+
+        button {
+
+            width: 100%;
+
+            color: white;
+
+            border: none;
+
+            padding: 13px;
+
+            font-size: 16px;
+
+            border-radius: 6px;
+
+            cursor: pointer;
+
+            font-weight: bold;
+        }
+
+
+        #btnEnviar {
+
+            background-color: #1d5c2d;
+        }
+
+
+        #btnEnviar:hover {
+
+            background-color: #143f1f;
+        }
+
+
+        #btnWhatsApp {
+
+            background-color: #25D366;
+        }
+
+
+        #btnWhatsApp:hover {
+
+            background-color: #1da851;
+        }
+
+
+        button:disabled {
+
+            background-color: #777 !important;
+
+            cursor: not-allowed;
+        }
+
+
+        /* MENSAGENS */
+
+        .success-msg {
+
+            display: none;
+
+            margin-top: 15px;
+
+            padding: 12px;
+
+            background-color: #d4edda;
+
+            color: #155724;
+
+            border: 1px solid #c3e6cb;
+
+            border-radius: 6px;
+
+            text-align: center;
+
+            font-weight: bold;
+
+            font-size: 14px;
+        }
+
+
+        .error-msg {
+
+            display: none;
+
+            margin-top: 15px;
+
+            padding: 12px;
+
+            background-color: #f8d7da;
+
+            color: #721c24;
+
+            border: 1px solid #f5c6cb;
+
+            border-radius: 6px;
+
+            text-align: center;
+
+            font-weight: bold;
+
+            font-size: 14px;
+        }
+
+
+        .info-whatsapp {
+
+            text-align: center;
+
+            font-size: 12px;
+
+            color: #777;
+
+            margin-top: 4px;
+        }
+
+
+        @media (max-width: 400px) {
+
+            .container {
+                padding: 15px;
+            }
+
+
+            .andares-container {
+
+                grid-template-columns:
+                    1fr;
+            }
+
+
+            .horarios-grid {
+
+                grid-template-columns:
+                    1fr;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <!-- LOGO -->
+
+    <div class="logo-container">
+
+        <img
+            src="logo parqueclube.png"
+            alt="Logo Parque Clube"
+        >
+
+    </div>
+
+
+    <!-- TÍTULO -->
+
+    <h2>
+        Abertura de Chamado Parque Clube
+    </h2>
+
+
+    <form
+        id="chamadoForm"
+        action="https://formspree.io/f/mljrnqgv"
+        method="POST"
+    >
+
+
+        <!-- PROTOCOLO -->
+
+        <div class="form-group">
+
+            <label for="protocolo">
+
+                Protocolo / OS:
+
+            </label>
+
+            <input
+                type="text"
+                name="Protocolo_OS"
+                id="protocolo"
+                readonly
+                placeholder="Será gerado ao enviar"
+            >
+
+        </div>
+
+
+        <!-- SOLICITANTE -->
+
+        <div class="form-group">
+
+            <label for="solicitante">
+
+                Seu Nome / Identificação:
+
+            </label>
+
+            <input
+                type="text"
+                name="Solicitante"
+                id="solicitante"
+                required
+                placeholder="Digite seu nome"
+            >
+
+        </div>
+
+
+        <!-- CARGO -->
+
+        <div class="form-group">
+
+            <label for="cargo">
+
+                Cargo/Função:
+
+            </label>
+
+            <select
+                name="Cargo_Funcao"
+                id="cargo"
+                required
+            >
+
+                <option value="">
+                    Selecione o cargo/função
+                </option>
+
+                <option
+                    value="ASG (Auxiliar de Serviços Gerais)"
+                >
+                    ASG (Auxiliar de Serviços Gerais)
+                </option>
+
+                <option value="Conselheiro(a)">
+                    Conselheiro(a)
+                </option>
+
+                <option value="Porteiro(a)">
+                    Porteiro(a)
+                </option>
+
+                <option value="Síndica">
+                    Síndica
+                </option>
+
+                <option value="Subsíndico(a)">
+                    Subsíndico(a)
+                </option>
+
+                <option value="Zelador(a)">
+                    Zelador(a)
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- BLOCO / ÁREA -->
+
+        <div class="form-group">
+
+            <label for="bloco">
+
+                Bloco / Área:
+
+            </label>
+
+            <select
+                name="Bloco_Area"
+                id="bloco"
+                required
+            >
+
+                <option value="">
+                    Selecione o local
+                </option>
+
+                <option value="Bloco 1A">
+                    Bloco 1A
+                </option>
+
+                <option value="Bloco 1B">
+                    Bloco 1B
+                </option>
+
+                <option value="Bloco 1C">
+                    Bloco 1C
+                </option>
+
+                <option value="Bloco 1D">
+                    Bloco 1D
+                </option>
+
+                <option value="Bloco 1E">
+                    Bloco 1E
+                </option>
+
+                <option value="Bloco 2A">
+                    Bloco 2A
+                </option>
+
+                <option value="Bloco 2B">
+                    Bloco 2B
+                </option>
+
+                <option value="Bloco 2C">
+                    Bloco 2C
+                </option>
+
+                <option value="Bloco 2D">
+                    Bloco 2D
+                </option>
+
+                <option value="Bloco 2E">
+                    Bloco 2E
+                </option>
+
+                <option value="Salão sub1">
+                    Salão sub1
+                </option>
+
+                <option value="Salão sub2">
+                    Salão sub2
+                </option>
+
+                <option value="Piscina Sub1">
+                    Piscina Sub1
+                </option>
+
+                <option value="Piscina Sub2">
+                    Piscina Sub2
+                </option>
+
+                <option value="Parquinho Sub1">
+                    Parquinho Sub1
+                </option>
+
+                <option value="Parquinho Sub2">
+                    Parquinho Sub2
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- PAVIMENTOS -->
+
+        <div
+            class="form-group"
+            id="grupoAndar"
+            style="display:none;"
+        >
+
+            <label>
+
+                Andar / Pavimento:
+
+                <span
+                    style="
+                        font-weight:normal;
+                        color:#666;
+                    "
+                >
+                    (selecione um ou mais)
+                </span>
+
+            </label>
+
+
+            <div class="andares-container">
+
+
+                <label class="andar-option">
+
+                    <input
+                        type="checkbox"
+                        name="Andar[]"
+                        value="Todos os pavimentos"
+                        id="todosPavimentos"
+                    >
+
+                    Todos os pavimentos
+
+                </label>
+
+
+                <label class="andar-option">
+
+                    <input
+                        type="checkbox"
+                        name="Andar[]"
+                        value="Térreo"
+                    >
+
+                    Térreo
+
+                </label>
+
+
+                <label class="andar-option">
+
+                    <input
+                        type="checkbox"
+                        name="Andar[]"
+                        value="1º Andar"
+                    >
+
+                    1º Andar
+
+                </label>
+
+
+                <label class="andar-option">
+
+                    <input
+                        type="checkbox"
+                        name="Andar[]"
+                        value="2º Andar"
+                    >
+
+                    2º Andar
+
+                </label>
+
+
+                <label class="andar-option">
+
+                    <input
+                        type="checkbox"
+                        name="Andar[]"
+                        value="3º Andar"
+                    >
+
+                    3º Andar
+
+                </label>
+
+
+                <label class="andar-option">
+
+                    <input
+                        type="checkbox"
+                        name="Andar[]"
+                        value="4º Andar"
+                    >
+
+                    4º Andar
+
+                </label>
+
+
+                <label class="andar-option">
+
+                    <input
+                        type="checkbox"
+                        name="Andar[]"
+                        value="5º Andar"
+                    >
+
+                    5º Andar
+
+                </label>
+
+
+                <label class="andar-option">
+
+                    <input
+                        type="checkbox"
+                        name="Andar[]"
+                        value="6º Andar"
+                    >
+
+                    6º Andar
+
+                </label>
+
+
+                <label class="andar-option">
+
+                    <input
+                        type="checkbox"
+                        name="Andar[]"
+                        value="7º Andar"
+                    >
+
+                    7º Andar
+
+                </label>
+
+
+                <label class="andar-option">
+
+                    <input
+                        type="checkbox"
+                        name="Andar[]"
+                        value="8º Andar"
+                    >
+
+                    8º Andar
+
+                </label>
+
+
+                <label class="andar-option">
+
+                    <input
+                        type="checkbox"
+                        name="Andar[]"
+                        value="9º Andar"
+                    >
+
+                    9º Andar
+
+                </label>
+
+
+                <label class="andar-option">
+
+                    <input
+                        type="checkbox"
+                        name="Andar[]"
+                        value="10º Andar"
+                    >
+
+                    10º Andar
+
+                </label>
+
+
+                <label class="andar-option">
+
+                    <input
+                        type="checkbox"
+                        name="Andar[]"
+                        value="11º Andar"
+                    >
+
+                    11º Andar
+
+                </label>
+
+
+            </div>
+
+        </div>
+
+
+        <!-- TIPO DE OCORRÊNCIA -->
+
+        <div class="form-group">
+
+            <label for="equipamento">
+
+                Tipo de Ocorrência:
+
+            </label>
+
+            <select
+                name="Tipo_Ocorrencia"
+                id="equipamento"
+                required
+            >
+
+                <option value="">
+                    Selecione o serviço
+                </option>
+
+                <option value="Lâmpada/Sensor">
+                    Lâmpada/Sensor
+                </option>
+
+                <option value="Limpeza">
+                    Limpeza
+                </option>
+
+                <option value="Extintor">
+                    Extintor
+                </option>
+
+                <option value="Imagem/câmera">
+                    Imagem/câmera
+                </option>
+
+                <option value="Outros">
+                    Outros
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- IMAGEM / CÂMERA -->
+
+        <div
+            class="form-group"
+            id="grupoDataHora"
+            style="display:none;"
+        >
+
+            <div class="data-hora-box">
+
+
+                <label for="dataOcorrencia">
+
+                    Data da ocorrência:
+
+                </label>
+
+                <input
+                    type="date"
+                    name="Data_Ocorrencia"
+                    id="dataOcorrencia"
+                >
+
+
+                <div class="horarios-grid">
+
+
+                    <div>
+
+                        <label for="horaInicial">
+
+                            Hora inicial:
+
+                        </label>
+
+                        <input
+                            type="time"
+                            name="Hora_Inicial"
+                            id="horaInicial"
+                        >
+
+                    </div>
+
+
+                    <div>
+
+                        <label for="horaFinal">
+
+                            Hora final:
+
+                        </label>
+
+                        <input
+                            type="time"
+                            name="Hora_Final"
+                            id="horaFinal"
+                        >
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- DETALHES -->
+
+        <div class="form-group">
+
+            <label for="descricao">
+
+                Detalhes do Ocorrido:
+
+            </label>
+
+            <textarea
+                name="Detalhes"
+                id="descricao"
+                required
+                placeholder="Descreva brevemente o problema encontrado..."
+            ></textarea>
+
+        </div>
+
+
+        <!-- BOTÕES -->
+
+        <div class="botoes">
+
+            <button
+                type="submit"
+                id="btnEnviar"
+            >
+
+                📋 Enviar Chamado
+
+            </button>
+
+
+            <button
+                type="button"
+                id="btnWhatsApp"
+            >
+
+                💬 Enviar pelo WhatsApp
+
+            </button>
+
+        </div>
+
+
+        <div class="info-whatsapp">
+
+            O WhatsApp será aberto com os dados preenchidos.
+
+        </div>
+
+
+    </form>
+
+
+    <!-- SUCESSO -->
+
+    <div
+        id="msgSucesso"
+        class="success-msg"
+    >
+
+        Chamado enviado com sucesso!
+
+        <br>
+
+        Protocolo:
+
+        <span id="protocoloSucesso"></span>
+
+        <br><br>
+
+        Sua solicitação foi encaminhada
+        para a administração.
+
+    </div>
+
+
+    <!-- ERRO -->
+
+    <div
+        id="msgErro"
+        class="error-msg"
+    >
+
+        Ops! Ocorreu um erro ao enviar.
+
+        <br>
+
+        Tente novamente.
+
+    </div>
+
+
+</div>
+
+
+<script>
+
+
+    /* =========================================
+       ELEMENTOS
+    ========================================== */
+
+    const form =
+        document.getElementById(
+            "chamadoForm"
+        );
+
+
+    const protocolo =
+        document.getElementById(
+            "protocolo"
+        );
+
+
+    const protocoloSucesso =
+        document.getElementById(
+            "protocoloSucesso"
+        );
+
+
+    const blocoSelect =
+        document.getElementById(
+            "bloco"
+        );
+
+
+    const grupoAndar =
+        document.getElementById(
+            "grupoAndar"
+        );
+
+
+    const grupoDataHora =
+        document.getElementById(
+            "grupoDataHora"
+        );
+
+
+    const tipoOcorrencia =
+        document.getElementById(
+            "equipamento"
+        );
+
+
+    const dataOcorrencia =
+        document.getElementById(
+            "dataOcorrencia"
+        );
+
+
+    const horaInicial =
+        document.getElementById(
+            "horaInicial"
+        );
+
+
+    const horaFinal =
+        document.getElementById(
+            "horaFinal"
+        );
+
+
+    const todosPavimentos =
+        document.getElementById(
+            "todosPavimentos"
+        );
+
+
+    const andaresIndividuais =
+        document.querySelectorAll(
+            'input[name="Andar[]"]:not(#todosPavimentos)'
+        );
+
+
+    const msgSucesso =
+        document.getElementById(
+            "msgSucesso"
+        );
+
+
+    const msgErro =
+        document.getElementById(
+            "msgErro"
+        );
+
+
+    const btnEnviar =
+        document.getElementById(
+            "btnEnviar"
+        );
+
+
+    const btnWhatsApp =
+        document.getElementById(
+            "btnWhatsApp"
+        );
+
+
+    let protocoloGerado = null;
+
+
+    /* =========================================
+       GERAR PROTOCOLO CENTRAL
+    ========================================== */
+
+    async function obterProtocolo() {
+
+        const response =
+            await fetch(
+                "/api/protocolo",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    }
+                }
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Não foi possível gerar o protocolo."
+            );
+
+        }
+
+
+        const dados =
+            await response.json();
+
+
+        if (!dados.protocolo) {
+
+            throw new Error(
+                "Protocolo não recebido."
+            );
+
+        }
+
+
+        protocoloGerado =
+            dados.protocolo;
+
+
+        protocolo.value =
+            protocoloGerado;
+
+
+        return protocoloGerado;
+
+    }
+
+
+    /* =========================================
+       PAVIMENTOS
+    ========================================== */
+
+    blocoSelect.addEventListener(
+        "change",
+        function () {
+
+            if (
+                this.value.startsWith("Bloco")
+            ) {
+
+                grupoAndar.style.display =
+                    "block";
+
+            } else {
+
+                grupoAndar.style.display =
+                    "none";
+
+                todosPavimentos.checked =
+                    false;
+
+                andaresIndividuais.forEach(
+                    function (andar) {
+
+                        andar.checked =
+                            false;
+
+                    }
+                );
+
+            }
+
+        }
+    );
+
+
+    /* TODOS OS PAVIMENTOS */
+
+    todosPavimentos.addEventListener(
+        "change",
+        function () {
+
+            if (this.checked) {
+
+                andaresIndividuais.forEach(
+                    function (andar) {
+
+                        andar.checked =
+                            false;
+
+                    }
+                );
+
+            }
+
+        }
+    );
+
+
+    /* PAVIMENTOS INDIVIDUAIS */
+
+    andaresIndividuais.forEach(
+        function (andar) {
+
+            andar.addEventListener(
+                "change",
+                function () {
+
+                    if (this.checked) {
+
+                        todosPavimentos.checked =
+                            false;
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+
+    /* =========================================
+       IMAGEM / CÂMERA
+    ========================================== */
+
+    tipoOcorrencia.addEventListener(
+        "change",
+        function () {
+
+            if (
+                this.value ===
+                "Imagem/câmera"
+            ) {
+
+                grupoDataHora.style.display =
+                    "block";
+
+                dataOcorrencia.required =
+                    true;
+
+                horaInicial.required =
+                    true;
+
+                horaFinal.required =
+                    true;
+
+            } else {
+
+                grupoDataHora.style.display =
+                    "none";
+
+                dataOcorrencia.required =
+                    false;
+
+                horaInicial.required =
+                    false;
+
+                horaFinal.required =
+                    false;
+
+                dataOcorrencia.value =
+                    "";
+
+                horaInicial.value =
+                    "";
+
+                horaFinal.value =
+                    "";
+
+            }
+
+        }
+    );
+
+
+    /* =========================================
+       VALIDAÇÃO
+    ========================================== */
+
+    function validarFormulario() {
+
+        if (
+            !form.checkValidity()
+        ) {
+
+            form.reportValidity();
+
+            return false;
+
+        }
+
+
+        if (
+            blocoSelect.value.startsWith(
+                "Bloco"
+            )
+        ) {
+
+            const algumPavimento =
+                Array.from(
+                    document.querySelectorAll(
+                        'input[name="Andar[]"]'
+                    )
+                ).some(
+                    function (checkbox) {
+
+                        return checkbox.checked;
+
+                    }
+                );
+
+
+            if (!algumPavimento) {
+
+                alert(
+                    "Selecione pelo menos um pavimento."
+                );
+
+                return false;
+
+            }
+
+        }
+
+
+        if (
+            tipoOcorrencia.value ===
+            "Imagem/câmera"
+        ) {
+
+            if (
+                !dataOcorrencia.value ||
+                !horaInicial.value ||
+                !horaFinal.value
+            ) {
+
+                alert(
+                    "Informe a data, a hora inicial e a hora final."
+                );
+
+                return false;
+
+            }
+
+
+            if (
+                horaFinal.value <=
+                horaInicial.value
+            ) {
+
+                alert(
+                    "A hora final deve ser posterior à hora inicial."
+                );
+
+                return false;
+
+            }
+
+        }
+
+
+        return true;
+
+    }
+
+
+    /* =========================================
+       FORMSPREE
+    ========================================== */
+
+    form.addEventListener(
+        "submit",
+        async function (e) {
+
+            e.preventDefault();
+
+
+            if (
+                !validarFormulario()
+            ) {
+
+                return;
+
+            }
+
+
+            msgSucesso.style.display =
+                "none";
+
+            msgErro.style.display =
+                "none";
+
+
+            btnEnviar.disabled =
+                true;
+
+            btnEnviar.textContent =
+                "Gerando protocolo...";
+
+
+            try {
+
+
+                /*
+                 * O protocolo só é criado
+                 * neste momento.
+                 */
+
+                await obterProtocolo();
+
+
+                btnEnviar.textContent =
+                    "Enviando...";
+
+
+                const response =
+                    await fetch(
+                        form.action,
+                        {
+                            method: "POST",
+
+                            body:
+                                new FormData(
+                                    form
+                                ),
+
+                            headers: {
+                                "Accept":
+                                    "application/json"
+                            }
+                        }
+                    );
+
+
+                if (
+                    !response.ok
+                ) {
+
+                    throw new Error(
+                        "Erro no Formspree."
+                    );
+
+                }
+
+
+                protocoloSucesso.textContent =
+                    protocoloGerado;
+
+
+                msgSucesso.style.display =
+                    "block";
+
+
+                /*
+                 * Limpa tudo
+                 */
+
+                form.reset();
+
+
+                protocolo.value =
+                    "";
+
+
+                protocoloGerado =
+                    null;
+
+
+                grupoAndar.style.display =
+                    "none";
+
+
+                grupoDataHora.style.display =
+                    "none";
+
+
+                dataOcorrencia.required =
+                    false;
+
+                horaInicial.required =
+                    false;
+
+                horaFinal.required =
+                    false;
+
+
+            } catch (error) {
+
+                console.error(error);
+
+                msgErro.innerHTML =
+                    "Não foi possível gerar/enviar o chamado."
+                    + "<br>"
+                    + "Tente novamente.";
+
+                msgErro.style.display =
+                    "block";
+
+            }
+
+
+            btnEnviar.disabled =
+                false;
+
+
+            btnEnviar.textContent =
+                "📋 Enviar Chamado";
+
+
+            setTimeout(
+                function () {
+
+                    msgSucesso.style.display =
+                        "none";
+
+                    msgErro.style.display =
+                        "none";
+
+                },
+                7000
+            );
+
+        }
+    );
+
+
+    /* =========================================
+       WHATSAPP
+    ========================================== */
+
+    btnWhatsApp.addEventListener(
+        "click",
+        async function () {
+
+            if (
+                !validarFormulario()
+            ) {
+
+                return;
+
+            }
+
+
+            btnWhatsApp.disabled =
+                true;
+
+            btnWhatsApp.textContent =
+                "Gerando protocolo...";
+
+
+            try {
+
+
+                if (
+                    !protocoloGerado
+                ) {
+
+                    await obterProtocolo();
+
+                }
+
+
+                const solicitante =
+                    document
+                        .getElementById(
+                            "solicitante"
+                        )
+                        .value
+                        .trim();
+
+
+                const cargo =
+                    document
+                        .getElementById(
+                            "cargo"
+                        )
+                        .value;
+
+
+                const bloco =
+                    blocoSelect.value;
+
+
+                const tipo =
+                    tipoOcorrencia.value;
+
+
+                const detalhes =
+                    document
+                        .getElementById(
+                            "descricao"
+                        )
+                        .value
+                        .trim();
+
+
+                const pavimentos =
+                    Array.from(
+                        document.querySelectorAll(
+                            'input[name="Andar[]"]:checked'
+                        )
+                    )
+                    .map(
+                        function (checkbox) {
+                            return checkbox.value;
+                        }
+                    )
+                    .join(", ");
+
+
+                let mensagem =
+                    "*ABERTURA DE CHAMADO - PARQUE CLUBE*"
+                    + "\n\n";
+
+
+                mensagem +=
+                    "*Protocolo / OS:* "
+                    + protocoloGerado
+                    + "\n";
+
+
+                mensagem +=
+                    "*Solicitante:* "
+                    + solicitante
+                    + "\n";
+
+
+                mensagem +=
+                    "*Cargo/Função:* "
+                    + cargo
+                    + "\n";
+
+
+                mensagem +=
+                    "*Bloco/Área:* "
+                    + bloco
+                    + "\n";
+
+
+                mensagem +=
+                    "*Pavimento(s):* "
+                    + (
+                        pavimentos ||
+                        "Não se aplica"
+                    )
+                    + "\n";
+
+
+                mensagem +=
+                    "*Tipo de ocorrência:* "
+                    + tipo
+                    + "\n";
+
+
+                if (
+                    tipo ===
+                    "Imagem/câmera"
+                ) {
+
+                    let data =
+                        dataOcorrencia.value;
+
+
+                    if (data) {
+
+                        const partes =
+                            data.split("-");
+
+                        data =
+                            partes[2]
+                            + "/"
+                            + partes[1]
+                            + "/"
+                            + partes[0];
+
+                    }
+
+
+                    mensagem +=
+                        "*Data da ocorrência:* "
+                        + data
+                        + "\n";
+
+
+                    mensagem +=
+                        "*Hora inicial:* "
+                        + horaInicial.value
+                        + "\n";
+
+
+                    mensagem +=
+                        "*Hora final:* "
+                        + horaFinal.value
+                        + "\n";
+
+                }
+
+
+                mensagem +=
+                    "*Detalhes:*\n"
+                    + detalhes
+                    + "\n\n";
+
+
+                mensagem +=
+                    "Enviado pelo sistema de abertura de chamados do Parque Clube.";
+
+
+                const numeroWhatsApp =
+                    "5561986038106";
+
+
+                const urlWhatsApp =
+                    "https://wa.me/"
+                    + numeroWhatsApp
+                    + "?text="
+                    + encodeURIComponent(
+                        mensagem
+                    );
+
+
+                window.open(
+                    urlWhatsApp,
+                    "_blank"
+                );
+
+
+            } catch (error) {
+
+                console.error(error);
+
+                alert(
+                    "Não foi possível gerar o protocolo. Tente novamente."
+                );
+
+            }
+
+
+            btnWhatsApp.disabled =
+                false;
+
+            btnWhatsApp.textContent =
+                "💬 Enviar pelo WhatsApp";
+
+        }
+    );
+
+</script>
+
+</body>
+
+</html>

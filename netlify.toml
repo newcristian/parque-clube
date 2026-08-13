@@ -1,0 +1,7 @@
+[functions]
+  directory = "netlify/functions"
+
+[[redirects]]
+  from = "/api/protocolo"
+  to = "/.netlify/functions/protocolo"
+  status = 200
