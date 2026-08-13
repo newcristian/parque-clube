@@ -3,612 +3,866 @@
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<meta
-    name="theme-color"
-    content="#17632d"
->
+    <meta
+        name="theme-color"
+        content="#17632d"
+    >
 
-<title>Chamados - Parque Clube</title>
+    <meta
+        name="apple-mobile-web-app-capable"
+        content="yes"
+    >
 
+    <meta
+        name="apple-mobile-web-app-title"
+        content="Parque Clube"
+    >
 
-<style>
+    <title>
+        Chamados - Parque Clube
+    </title>
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: Arial, Helvetica, sans-serif;
-}
 
-body {
+    <style>
 
-    background:
-        linear-gradient(
-            135deg,
-            #eef5ef,
-            #ffffff
-        );
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+        }
 
-    min-height: 100vh;
 
-    padding: 15px;
+        body {
 
-    color: #222;
-}
+            background:
+                linear-gradient(
+                    135deg,
+                    #eef5ef,
+                    #ffffff
+                );
 
-.container {
+            min-height: 100vh;
 
-    width: 100%;
+            padding: 15px;
 
-    max-width: 570px;
+            color: #222;
 
-    margin: auto;
+        }
 
-    background: #fff;
 
-    border-radius: 18px;
+        .container {
 
-    padding: 20px;
+            width: 100%;
 
-    box-shadow:
-        0 5px 25px
-        rgba(0,0,0,.12);
-}
+            max-width: 600px;
 
-.logo {
+            margin: auto;
 
-    text-align: center;
+            background: #ffffff;
 
-    margin-bottom: 10px;
-}
+            border-radius: 18px;
 
-.logo img {
+            padding: 20px;
 
-    width: 230px;
+            box-shadow:
+                0 5px 25px
+                rgba(0,0,0,.12);
 
-    max-width: 80%;
+        }
 
-    height: auto;
-}
 
-h1 {
+        .logo {
 
-    text-align: center;
+            text-align: center;
 
-    color: #17632d;
+            margin-bottom: 10px;
 
-    font-size: 23px;
+        }
 
-    margin-bottom: 5px;
-}
 
-.subtitle {
+        .logo img {
 
-    text-align: center;
+            width: 230px;
 
-    color: #777;
+            max-width: 80%;
 
-    font-size: 13px;
+            height: auto;
 
-    margin-bottom: 20px;
-}
+        }
 
 
-/* MENU */
+        h1 {
 
-.menu {
+            text-align: center;
 
-    display: grid;
+            color: #17632d;
 
-    grid-template-columns:
-        1fr 1fr;
+            font-size: 23px;
 
-    gap: 8px;
+            margin-bottom: 5px;
 
-    margin-bottom: 20px;
-}
+        }
 
-.menu button {
 
-    margin: 0;
+        .subtitle {
 
-    font-size: 14px;
+            text-align: center;
 
-    padding: 12px 7px;
-}
+            color: #777;
 
+            font-size: 13px;
 
-/* SEÇÕES */
+            margin-bottom: 20px;
 
-.section {
+        }
 
-    display: none;
-}
 
-.section.active {
+        /* =========================
+           MENU
+        ========================= */
 
-    display: block;
-}
+        .menu {
 
-.section-title {
+            display: grid;
 
-    color: #17632d;
+            grid-template-columns:
+                1fr 1fr;
 
-    font-weight: bold;
+            gap: 8px;
 
-    font-size: 19px;
+            margin-bottom: 20px;
 
-    border-bottom:
-        2px solid #e5e5e5;
+        }
 
-    padding-bottom: 8px;
 
-    margin-bottom: 17px;
-}
+        .menu button {
 
+            margin: 0;
 
-/* CAMPOS */
+            font-size: 14px;
 
-.form-group {
+            padding: 13px 8px;
 
-    margin-bottom: 14px;
-}
+        }
 
-label {
 
-    display: block;
+        .menu button:last-child {
 
-    font-size: 14px;
+            grid-column:
+                1 / -1;
 
-    font-weight: bold;
+        }
 
-    margin-bottom: 5px;
 
-    color: #333;
-}
+        /* =========================
+           SEÇÕES
+        ========================= */
 
-input,
-select,
-textarea {
+        .section {
 
-    width: 100%;
+            display: none;
 
-    border:
-        1px solid #cfcfcf;
+        }
 
-    border-radius: 8px;
 
-    padding: 11px;
+        .section.active {
 
-    font-size: 15px;
+            display: block;
 
-    background: #fff;
-}
+        }
 
-input:focus,
-select:focus,
-textarea:focus {
 
-    outline: none;
+        .section-title {
 
-    border-color:
-        #17632d;
+            color: #17632d;
 
-    box-shadow:
-        0 0 0 2px
-        rgba(23,99,45,.12);
-}
+            font-weight: bold;
 
-textarea {
+            font-size: 20px;
 
-    min-height: 100px;
+            border-bottom:
+                2px solid #e5e5e5;
 
-    resize: vertical;
-}
+            padding-bottom: 8px;
 
-input[readonly] {
+            margin-bottom: 17px;
 
-    background: #f2f2f2;
+        }
 
-    font-weight: bold;
-}
 
+        /* =========================
+           FORMULÁRIOS
+        ========================= */
 
-/* BOTÕES */
+        .form-group {
 
-button {
+            margin-bottom: 14px;
 
-    width: 100%;
+        }
 
-    border: none;
 
-    border-radius: 8px;
+        label {
 
-    padding: 13px;
+            display: block;
 
-    color: white;
+            font-size: 14px;
 
-    font-size: 16px;
+            font-weight: bold;
 
-    font-weight: bold;
+            margin-bottom: 5px;
 
-    cursor: pointer;
+            color: #333;
 
-    margin-top: 7px;
-}
+        }
 
-button:disabled {
 
-    opacity: .6;
+        input,
+        select,
+        textarea {
 
-    cursor: not-allowed;
-}
+            width: 100%;
 
-.btn-verde {
+            border:
+                1px solid #cfcfcf;
 
-    background: #17632d;
-}
+            border-radius: 8px;
 
-.btn-cinza {
+            padding: 11px;
 
-    background: #666;
-}
+            font-size: 15px;
 
-.btn-whatsapp {
+            background: #fff;
 
-    background: #20c863;
-}
+        }
 
-.btn-azul {
 
-    background: #1769aa;
-}
+        input:focus,
+        select:focus,
+        textarea:focus {
 
-.btn-vermelho {
+            outline: none;
 
-    background: #b42318;
-}
+            border-color:
+                #17632d;
 
+            box-shadow:
+                0 0 0 2px
+                rgba(23,99,45,.10);
 
-/* PAVIMENTOS */
+        }
 
-#areaPavimentos {
 
-    display: none;
-}
+        textarea {
 
-.pavimentos {
+            min-height: 110px;
 
-    display: grid;
+            resize: vertical;
 
-    grid-template-columns:
-        repeat(3, 1fr);
+        }
 
-    gap: 7px;
-}
 
-.pavimento {
+        input[readonly] {
 
-    display: flex;
+            background: #f2f2f2;
 
-    align-items: center;
+            font-weight: bold;
 
-    gap: 5px;
+            color: #555;
 
-    background: #f8f8f8;
+        }
 
-    border:
-        1px solid #ddd;
 
-    border-radius: 7px;
+        button {
 
-    padding: 8px;
+            width: 100%;
 
-    font-size: 12px;
+            border: 0;
 
-    font-weight: normal;
-}
+            border-radius: 8px;
 
-.pavimento input {
+            padding: 13px;
 
-    width: auto;
-}
+            color: #fff;
 
+            font-size: 16px;
 
-/* CAMERA */
+            font-weight: bold;
 
-#areaCamera,
-#areaFoto {
+            cursor: pointer;
 
-    display: none;
-}
+            margin-top: 7px;
 
-.foto-box {
+        }
 
-    border:
-        2px dashed #aaa;
 
-    border-radius: 10px;
+        button:disabled {
 
-    padding: 15px;
+            opacity: .6;
 
-    text-align: center;
+            cursor: not-allowed;
 
-    background: #fafafa;
-}
+        }
 
-.foto-box small {
 
-    display: block;
+        .btn-verde {
 
-    color: #777;
+            background: #17632d;
 
-    margin-top: 5px;
-}
+        }
 
-#previewFoto {
 
-    display: none;
+        .btn-cinza {
 
-    width: 100%;
+            background: #666;
 
-    max-height: 280px;
+        }
 
-    object-fit: contain;
 
-    margin-top: 12px;
+        .btn-azul {
 
-    border-radius: 10px;
-}
+            background: #1769aa;
 
+        }
 
-/* MENSAGENS */
 
-.mensagem {
+        .btn-vermelho {
 
-    display: none;
+            background: #b42318;
 
-    margin-top: 15px;
+        }
 
-    padding: 12px;
 
-    border-radius: 8px;
+        .btn-whatsapp {
 
-    text-align: center;
+            background: #20c863;
 
-    font-size: 14px;
+        }
 
-    font-weight: bold;
-}
 
-.sucesso {
+        /* =========================
+           PAVIMENTOS
+        ========================= */
 
-    background: #d9f3df;
+        #areaPavimentos {
 
-    color: #17632d;
+            display: none;
 
-    border:
-        1px solid #a8d8b2;
-}
+        }
 
-.erro {
 
-    background: #f8d7da;
+        .pavimentos {
 
-    color: #721c24;
+            display: grid;
 
-    border:
-        1px solid #f5c6cb;
-}
+            grid-template-columns:
+                repeat(2, 1fr);
 
+            gap: 7px;
 
-/* PROTOCOLO */
+        }
 
-.protocolo-box {
 
-    display: none;
+        .pavimento {
 
-    margin-top: 18px;
+            display: flex;
 
-    background: #f0f8f2;
+            align-items: center;
 
-    border:
-        2px solid #17632d;
+            gap: 6px;
 
-    border-radius: 12px;
+            background: #f8f8f8;
 
-    padding: 17px;
+            border:
+                1px solid #ddd;
 
-    text-align: center;
-}
+            border-radius: 7px;
 
-.protocolo-titulo {
+            padding: 8px;
 
-    font-size: 13px;
+            font-size: 12px;
 
-    color: #555;
+            font-weight: normal;
 
-    margin-bottom: 5px;
-}
+        }
 
-.protocolo-numero {
 
-    font-size: 25px;
+        .pavimento input {
 
-    color: #17632d;
+            width: auto;
 
-    font-weight: bold;
+        }
 
-    margin-bottom: 10px;
-}
 
+        /* =========================
+           CÂMERA / FOTO
+        ========================= */
 
-/* CONSULTA */
+        #areaCamera,
+        #areaFoto {
 
-.resultado {
+            display: none;
 
-    display: none;
+        }
 
-    margin-top: 18px;
 
-    border:
-        1px solid #ddd;
+        .foto-box {
 
-    border-radius: 10px;
+            border:
+                2px dashed #aaa;
 
-    overflow: hidden;
-}
+            border-radius: 10px;
 
-.resultado-header {
+            padding: 15px;
 
-    background: #17632d;
+            text-align: center;
 
-    color: white;
+            background: #fafafa;
 
-    padding: 14px;
+        }
 
-    text-align: center;
 
-    font-weight: bold;
-}
+        .foto-box small {
 
-.resultado-body {
+            display: block;
 
-    padding: 15px;
-}
+            color: #777;
 
-.resultado-item {
+            margin-top: 7px;
 
-    padding: 9px 0;
+        }
 
-    border-bottom:
-        1px solid #eee;
 
-    font-size: 14px;
+        #previewFoto {
 
-    line-height: 1.4;
-}
+            display: none;
 
-.resultado-item:last-child {
+            width: 100%;
 
-    border-bottom: none;
-}
+            max-height: 280px;
 
-.resultado-item strong {
+            object-fit: contain;
 
-    display: block;
+            margin-top: 12px;
 
-    color: #555;
+            border-radius: 10px;
 
-    margin-bottom: 3px;
-}
+        }
 
 
-/* STATUS */
+        /* =========================
+           MENSAGENS
+        ========================= */
 
-.status {
+        .mensagem {
 
-    display: inline-block;
+            display: none;
 
-    padding: 6px 12px;
+            margin-top: 15px;
 
-    border-radius: 20px;
+            padding: 12px;
 
-    font-weight: bold;
-}
+            border-radius: 8px;
 
-.status-aberto {
+            text-align: center;
 
-    background: #fff3cd;
+            font-size: 14px;
 
-    color: #856404;
-}
+            font-weight: bold;
 
-.status-andamento {
+        }
 
-    background: #cfe8ff;
 
-    color: #075985;
-}
+        .sucesso {
 
-.status-resolvido {
+            background: #d9f3df;
 
-    background: #d9f3df;
+            color: #17632d;
 
-    color: #17632d;
-}
+            border:
+                1px solid #a8d8b2;
 
-.status-cancelado {
+        }
 
-    background: #f8d7da;
 
-    color: #721c24;
-}
+        .erro {
 
+            background: #f8d7da;
 
-/* ADMIN */
+            color: #721c24;
 
-.admin-box {
+            border:
+                1px solid #f5c6cb;
 
-    background: #f7f7f7;
+        }
 
-    border:
-        1px solid #ddd;
 
-    border-radius: 12px;
+        /* =========================
+           PROTOCOLO
+        ========================= */
 
-    padding: 15px;
+        .protocolo-box {
 
-    margin-top: 15px;
-}
+            display: none;
 
-.admin-titulo {
+            margin-top: 18px;
 
-    font-size: 16px;
+            background: #f0f8f2;
 
-    color: #17632d;
+            border:
+                2px solid #17632d;
 
-    font-weight: bold;
+            border-radius: 12px;
 
-    margin-bottom: 12px;
-}
+            padding: 17px;
 
-.admin-conteudo {
+            text-align: center;
 
-    display: none;
-}
+        }
 
 
-/* RESPONSIVO */
+        .protocolo-titulo {
 
-@media (max-width: 430px) {
+            font-size: 13px;
 
-    .container {
+            color: #555;
 
-        padding: 16px;
-    }
+            margin-bottom: 5px;
 
-    .menu {
+        }
 
-        grid-template-columns:
-            1fr;
-    }
 
-    .pavimentos {
+        .protocolo-numero {
 
-        grid-template-columns:
-            repeat(2, 1fr);
-    }
-}
+            font-size: 25px;
 
-</style>
+            color: #17632d;
+
+            font-weight: bold;
+
+            margin-bottom: 10px;
+
+        }
+
+
+        /* =========================
+           CONSULTA
+        ========================= */
+
+        .resultado {
+
+            display: none;
+
+            margin-top: 18px;
+
+            border:
+                1px solid #ddd;
+
+            border-radius: 10px;
+
+            overflow: hidden;
+
+        }
+
+
+        .resultado-header {
+
+            background: #17632d;
+
+            color: #fff;
+
+            padding: 14px;
+
+            text-align: center;
+
+            font-weight: bold;
+
+        }
+
+
+        .resultado-body {
+
+            padding: 15px;
+
+        }
+
+
+        .resultado-item {
+
+            padding: 9px 0;
+
+            border-bottom:
+                1px solid #eee;
+
+            font-size: 14px;
+
+            line-height: 1.4;
+
+        }
+
+
+        .resultado-item:last-child {
+
+            border-bottom: none;
+
+        }
+
+
+        .resultado-item strong {
+
+            display: block;
+
+            color: #555;
+
+            margin-bottom: 3px;
+
+        }
+
+
+        /* =========================
+           STATUS
+        ========================= */
+
+        .status {
+
+            display: inline-block;
+
+            padding: 6px 12px;
+
+            border-radius: 20px;
+
+            font-weight: bold;
+
+        }
+
+
+        .status-aberto {
+
+            background: #fff3cd;
+
+            color: #856404;
+
+        }
+
+
+        .status-andamento {
+
+            background: #cfe8ff;
+
+            color: #075985;
+
+        }
+
+
+        .status-resolvido {
+
+            background: #d9f3df;
+
+            color: #17632d;
+
+        }
+
+
+        .status-cancelado {
+
+            background: #f8d7da;
+
+            color: #721c24;
+
+        }
+
+
+        /* =========================
+           ADMIN
+        ========================= */
+
+        .admin-box {
+
+            background: #f7f7f7;
+
+            border:
+                1px solid #ddd;
+
+            border-radius: 12px;
+
+            padding: 15px;
+
+            margin-top: 15px;
+
+        }
+
+
+        .admin-titulo {
+
+            font-size: 17px;
+
+            color: #17632d;
+
+            font-weight: bold;
+
+            margin-bottom: 12px;
+
+        }
+
+
+        #adminConteudo {
+
+            display: none;
+
+        }
+
+
+        /* =========================
+           ESTATÍSTICAS
+        ========================= */
+
+        .stats {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, 1fr);
+
+            gap: 8px;
+
+            margin-top: 12px;
+
+        }
+
+
+        .stat {
+
+            padding: 12px;
+
+            border-radius: 8px;
+
+            text-align: center;
+
+        }
+
+
+        .stat strong {
+
+            font-size: 13px;
+
+        }
+
+
+        .stat span {
+
+            font-size: 22px;
+
+            font-weight: bold;
+
+            display: block;
+
+            margin-top: 3px;
+
+        }
+
+
+        /* =========================
+           CARDS
+        ========================= */
+
+        .card-protocolo {
+
+            border:
+                1px solid #ddd;
+
+            border-radius: 10px;
+
+            padding: 13px;
+
+            margin-bottom: 10px;
+
+            background: #fff;
+
+            box-shadow:
+                0 2px 7px
+                rgba(0,0,0,.06);
+
+        }
+
+
+        .card-protocolo .numero {
+
+            font-size: 17px;
+
+            font-weight: bold;
+
+            color: #17632d;
+
+            margin-bottom: 7px;
+
+        }
+
+
+        .card-info {
+
+            font-size: 14px;
+
+            line-height: 1.55;
+
+        }
+
+
+        /* =========================
+           RESPONSIVO
+        ========================= */
+
+        @media (max-width: 600px) {
+
+            .container {
+
+                padding: 16px;
+
+            }
+
+
+            .menu {
+
+                grid-template-columns:
+                    1fr;
+
+            }
+
+
+            .menu button:last-child {
+
+                grid-column:
+                    auto;
+
+            }
+
+
+            .pavimentos {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+
+            }
+
+
+            h1 {
+
+                font-size: 21px;
+
+            }
+
+        }
+
+    </style>
 
 </head>
 
@@ -619,941 +873,1211 @@ button:disabled {
 <div class="container">
 
 
-<!-- LOGO -->
+    <!-- =================================================
+         CABEÇALHO
+    ================================================= -->
 
-<div class="logo">
+    <div class="logo">
 
-<img
-    src="logo parqueclube.png"
-    alt="Parque Clube"
->
+        <img
+            src="logo parqueclube.png"
+            alt="Parque Clube"
+        >
 
-</div>
+    </div>
 
 
-<h1>
+    <h1>
+        Abertura de Chamado Parque Clube
+    </h1>
 
-Abertura de Chamado Parque Clube
 
-</h1>
+    <div class="subtitle">
 
+        Sistema de Chamados / Ordem de Serviço
 
-<div class="subtitle">
+    </div>
 
-Sistema de Chamados / Ordem de Serviço
 
-</div>
+    <!-- =================================================
+         MENU
+    ================================================= -->
 
+    <div class="menu">
 
-<!-- MENU -->
+        <button
+            type="button"
+            class="btn-verde"
+            onclick="abrirSecao('abrir')"
+        >
 
-<div class="menu">
+            📋 Abrir Chamado
 
-<button
-    type="button"
-    class="btn-verde"
-    onclick="abrirSecao('abrir')"
->
+        </button>
 
-📋 Abrir Chamado
 
-</button>
+        <button
+            type="button"
+            class="btn-cinza"
+            onclick="abrirSecao('consultar')"
+        >
 
+            🔎 Consultar Protocolo
 
-<button
-    type="button"
-    class="btn-cinza"
-    onclick="abrirSecao('consultar')"
->
+        </button>
 
-🔎 Consultar Protocolo
 
-</button>
+        <button
+            type="button"
+            class="btn-azul"
+            onclick="abrirSecao('admin')"
+        >
 
+            🔐 Área Administrativa
 
-<button
-    type="button"
-    class="btn-azul"
-    onclick="abrirSecao('admin')"
->
+        </button>
 
-🔐 Área Administrativa
+    </div>
 
-</button>
 
-</div>
+    <!-- =================================================
+         ABRIR CHAMADO
+    ================================================= -->
 
+    <section
+        id="secaoAbrir"
+        class="section active"
+    >
 
-<!-- =================================================
-     ABRIR CHAMADO
-================================================= -->
+        <div class="section-title">
 
-<section
-    id="secaoAbrir"
-    class="section active"
->
+            📋 Abertura de Chamado / OS
 
-<div class="section-title">
+        </div>
 
-📋 Abertura de Chamado / OS
 
-</div>
+        <form id="formChamado">
 
 
-<form
-    id="formChamado"
->
+            <!-- PROTOCOLO -->
 
+            <div class="form-group">
 
-<div class="form-group">
+                <label>
+                    Protocolo / OS:
+                </label>
 
-<label>
+                <input
+                    id="protocolo"
+                    value="Será gerado ao enviar"
+                    readonly
+                >
 
-Protocolo / OS:
+            </div>
 
-</label>
 
-<input
-    type="text"
-    id="protocolo"
-    value="Será gerado ao enviar"
-    readonly
->
+            <!-- NOME -->
 
-</div>
+            <div class="form-group">
 
+                <label for="solicitante">
 
-<div class="form-group">
+                    Seu Nome / Identificação:
 
-<label for="solicitante">
+                </label>
 
-Seu Nome / Identificação:
+                <input
+                    id="solicitante"
+                    required
+                    placeholder="Digite seu nome"
+                >
 
-</label>
+            </div>
 
-<input
-    type="text"
-    id="solicitante"
-    required
-    placeholder="Digite seu nome"
->
 
-</div>
+            <!-- CARGO -->
 
+            <div class="form-group">
 
-<div class="form-group">
+                <label for="cargo">
 
-<label for="cargo">
+                    Cargo/Função:
 
-Cargo/Função:
+                </label>
 
-</label>
+                <select
+                    id="cargo"
+                    required
+                >
 
-<select
-    id="cargo"
-    required
->
+                    <option value="">
 
-<option value="">
+                        Selecione o cargo/função
 
-Selecione o cargo/função
+                    </option>
 
-</option>
+                    <option>
+                        ASG (Auxiliar de Serviços Gerais)
+                    </option>
 
-<option>
-ASG (Auxiliar de Serviços Gerais)
-</option>
+                    <option>
+                        Conselheiro(a)
+                    </option>
 
-<option>
-Conselheiro(a)
-</option>
+                    <option>
+                        Porteiro(a)
+                    </option>
 
-<option>
-Porteiro(a)
-</option>
+                    <option>
+                        Síndica
+                    </option>
 
-<option>
-Síndica
-</option>
+                    <option>
+                        Subsíndico(a)
+                    </option>
 
-<option>
-Subsíndico(a)
-</option>
+                    <option>
+                        Zelador(a)
+                    </option>
 
-<option>
-Zelador(a)
-</option>
+                </select>
 
-</select>
+            </div>
 
-</div>
 
+            <!-- LOCAL -->
 
-<div class="form-group">
+            <div class="form-group">
 
-<label for="bloco">
+                <label for="bloco">
 
-Bloco / Área:
+                    Bloco / Área:
 
-</label>
+                </label>
 
-<select
-    id="bloco"
-    required
->
+                <select
+                    id="bloco"
+                    required
+                >
 
-<option value="">
+                    <option value="">
 
-Selecione o local
+                        Selecione o local
 
-</option>
+                    </option>
 
-<optgroup label="Blocos">
 
-<option>Bloco 1A</option>
-<option>Bloco 1B</option>
-<option>Bloco 1C</option>
-<option>Bloco 1D</option>
-<option>Bloco 1E</option>
+                    <optgroup label="Blocos">
 
-<option>Bloco 2A</option>
-<option>Bloco 2B</option>
-<option>Bloco 2C</option>
-<option>Bloco 2D</option>
-<option>Bloco 2E</option>
+                        <option>Bloco 1A</option>
+                        <option>Bloco 1B</option>
+                        <option>Bloco 1C</option>
+                        <option>Bloco 1D</option>
+                        <option>Bloco 1E</option>
 
-</optgroup>
+                        <option>Bloco 2A</option>
+                        <option>Bloco 2B</option>
+                        <option>Bloco 2C</option>
+                        <option>Bloco 2D</option>
+                        <option>Bloco 2E</option>
 
+                    </optgroup>
 
-<optgroup label="Áreas">
 
-<option>Salão Sub1</option>
-<option>Salão Sub2</option>
+                    <optgroup label="Áreas">
 
-<option>Piscina Sub1</option>
-<option>Piscina Sub2</option>
+                        <option>
+                            Salão Sub1
+                        </option>
 
-<option>Parquinho Sub1</option>
-<option>Parquinho Sub2</option>
+                        <option>
+                            Salão Sub2
+                        </option>
 
-</optgroup>
+                        <option>
+                            Piscina Sub1
+                        </option>
 
-</select>
+                        <option>
+                            Piscina Sub2
+                        </option>
 
-</div>
+                        <option>
+                            Parquinho Sub1
+                        </option>
 
+                        <option>
+                            Parquinho Sub2
+                        </option>
 
-<!-- PAVIMENTOS -->
+                    </optgroup>
 
-<div
-    id="areaPavimentos"
-    class="form-group"
->
+                </select>
 
-<label>
+            </div>
 
-Pavimento(s):
 
-</label>
+            <!-- PAVIMENTOS -->
 
+            <div
+                id="areaPavimentos"
+                class="form-group"
+            >
 
-<div class="pavimentos">
+                <label>
 
+                    Pavimento(s):
 
-<label class="pavimento">
-<input
-    type="checkbox"
-    name="pavimento"
-    value="Térreo"
->
-Térreo
-</label>
+                </label>
 
 
-<label class="pavimento">
-<input
-    type="checkbox"
-    name="pavimento"
-    value="1º andar"
->
-1º andar
-</label>
+                <div class="pavimentos">
 
 
-<label class="pavimento">
-<input
-    type="checkbox"
-    name="pavimento"
-    value="2º andar"
->
-2º andar
-</label>
+                    <label class="pavimento">
 
+                        <input
+                            type="checkbox"
+                            name="pavimento"
+                            value="Térreo"
+                        >
 
-<label class="pavimento">
-<input
-    type="checkbox"
-    name="pavimento"
-    value="3º andar"
->
-3º andar
-</label>
+                        Térreo
 
+                    </label>
 
-<label class="pavimento">
-<input
-    type="checkbox"
-    name="pavimento"
-    value="4º andar"
->
-4º andar
-</label>
 
+                    <label class="pavimento">
 
-<label class="pavimento">
-<input
-    type="checkbox"
-    name="pavimento"
-    value="5º andar"
->
-5º andar
-</label>
+                        <input
+                            type="checkbox"
+                            name="pavimento"
+                            value="1º andar"
+                        >
 
+                        1º andar
 
-<label class="pavimento">
-<input
-    type="checkbox"
-    name="pavimento"
-    value="6º andar"
->
-6º andar
-</label>
+                    </label>
 
 
-<label class="pavimento">
-<input
-    type="checkbox"
-    name="pavimento"
-    value="7º andar"
->
-7º andar
-</label>
+                    <label class="pavimento">
 
+                        <input
+                            type="checkbox"
+                            name="pavimento"
+                            value="2º andar"
+                        >
 
-<label class="pavimento">
-<input
-    type="checkbox"
-    name="pavimento"
-    value="8º andar"
->
-8º andar
-</label>
+                        2º andar
 
+                    </label>
 
-<label class="pavimento">
-<input
-    type="checkbox"
-    name="pavimento"
-    value="9º andar"
->
-9º andar
-</label>
 
+                    <label class="pavimento">
 
-<label class="pavimento">
-<input
-    type="checkbox"
-    name="pavimento"
-    value="10º andar"
->
-10º andar
-</label>
+                        <input
+                            type="checkbox"
+                            name="pavimento"
+                            value="3º andar"
+                        >
 
+                        3º andar
 
-<label class="pavimento">
-<input
-    type="checkbox"
-    name="pavimento"
-    value="11º andar"
->
-11º andar
-</label>
+                    </label>
 
 
-<label class="pavimento">
+                    <label class="pavimento">
 
-<input
-    type="checkbox"
-    id="todosPavimentos"
-    name="pavimento"
-    value="TODOS OS PAVIMENTOS"
->
+                        <input
+                            type="checkbox"
+                            name="pavimento"
+                            value="4º andar"
+                        >
 
-<strong>
+                        4º andar
 
-TODOS
+                    </label>
 
-</strong>
 
-</label>
+                    <label class="pavimento">
 
+                        <input
+                            type="checkbox"
+                            name="pavimento"
+                            value="5º andar"
+                        >
 
-</div>
+                        5º andar
 
-</div>
+                    </label>
 
 
-<!-- OCORRÊNCIA -->
+                    <label class="pavimento">
 
-<div class="form-group">
+                        <input
+                            type="checkbox"
+                            name="pavimento"
+                            value="6º andar"
+                        >
 
-<label for="ocorrencia">
+                        6º andar
 
-Tipo de Ocorrência:
+                    </label>
 
-</label>
 
-<select
-    id="ocorrencia"
-    required
->
+                    <label class="pavimento">
 
-<option value="">
+                        <input
+                            type="checkbox"
+                            name="pavimento"
+                            value="7º andar"
+                        >
 
-Selecione o serviço
+                        7º andar
 
-</option>
+                    </label>
 
-<option>
-Lâmpada/Sensor
-</option>
 
-<option>
-Limpeza
-</option>
+                    <label class="pavimento">
 
-<option>
-Extintor
-</option>
+                        <input
+                            type="checkbox"
+                            name="pavimento"
+                            value="8º andar"
+                        >
 
-<option>
-Imagem/câmera
-</option>
+                        8º andar
 
-<option>
-Outros
-</option>
+                    </label>
 
-</select>
 
-</div>
+                    <label class="pavimento">
 
+                        <input
+                            type="checkbox"
+                            name="pavimento"
+                            value="9º andar"
+                        >
 
-<!-- CAMERA -->
+                        9º andar
 
-<div
-    id="areaCamera"
->
+                    </label>
 
 
-<div class="form-group">
+                    <label class="pavimento">
 
-<label>
+                        <input
+                            type="checkbox"
+                            name="pavimento"
+                            value="10º andar"
+                        >
 
-Data da ocorrência:
+                        10º andar
 
-</label>
+                    </label>
 
-<input
-    type="date"
-    id="dataOcorrencia"
->
 
-</div>
+                    <label class="pavimento">
 
+                        <input
+                            type="checkbox"
+                            name="pavimento"
+                            value="11º andar"
+                        >
 
-<div class="form-group">
+                        11º andar
 
-<label>
+                    </label>
 
-Hora inicial:
 
-</label>
+                    <label class="pavimento">
 
-<input
-    type="time"
-    id="horaInicial"
->
+                        <input
+                            type="checkbox"
+                            id="todosPavimentos"
+                            value="TODOS OS PAVIMENTOS"
+                        >
 
-</div>
+                        <strong>
+                            TODOS
+                        </strong>
 
+                    </label>
 
-<div class="form-group">
 
-<label>
+                </div>
 
-Hora final:
+            </div>
 
-</label>
 
-<input
-    type="time"
-    id="horaFinal"
->
+            <!-- OCORRÊNCIA -->
 
-</div>
+            <div class="form-group">
 
-</div>
+                <label for="ocorrencia">
 
+                    Tipo de Ocorrência:
 
-<!-- FOTO -->
+                </label>
 
-<div
-    id="areaFoto"
-    class="form-group"
->
 
-<label>
+                <select
+                    id="ocorrencia"
+                    required
+                >
 
-📷 Foto da ocorrência:
+                    <option value="">
 
-</label>
+                        Selecione o serviço
 
+                    </option>
 
-<div class="foto-box">
 
-<input
-    type="file"
-    id="foto"
-    accept="image/*"
-    capture="environment"
->
+                    <option>
+                        Lâmpada/Sensor
+                    </option>
 
-<small>
 
-No celular, escolha uma imagem
-ou abra a câmera.
+                    <option>
+                        Limpeza
+                    </option>
 
-</small>
 
+                    <option>
+                        Extintor
+                    </option>
 
-<img
-    id="previewFoto"
-    alt="Foto"
->
 
-</div>
+                    <option>
+                        Imagem/câmera
+                    </option>
 
-</div>
 
+                    <option>
+                        Outros
+                    </option>
 
-<div class="form-group">
+                </select>
 
-<label for="detalhes">
+            </div>
 
-Detalhes do Ocorrido:
 
-</label>
+            <!-- CÂMERA -->
 
-<textarea
-    id="detalhes"
-    required
-    placeholder="Descreva brevemente o problema encontrado..."
-></textarea>
+            <div
+                id="areaCamera"
+            >
 
-</div>
 
+                <div class="form-group">
 
-<button
-    type="submit"
-    id="btnEnviar"
-    class="btn-verde"
->
+                    <label for="dataOcorrencia">
 
-📋 Enviar Chamado
+                        Data da ocorrência:
 
-</button>
+                    </label>
 
+                    <input
+                        type="date"
+                        id="dataOcorrencia"
+                    >
 
-</form>
+                </div>
 
 
-<div
-    id="mensagemSucesso"
-    class="mensagem sucesso"
-></div>
+                <div class="form-group">
 
+                    <label for="horaInicial">
 
-<div
-    id="mensagemErro"
-    class="mensagem erro"
-></div>
+                        Hora inicial:
 
+                    </label>
 
-<div
-    id="protocoloBox"
-    class="protocolo-box"
->
+                    <input
+                        type="time"
+                        id="horaInicial"
+                    >
 
-<div class="protocolo-titulo">
+                </div>
 
-PROTOCOLO / OS
 
-</div>
+                <div class="form-group">
 
+                    <label for="horaFinal">
 
-<div
-    id="numeroProtocolo"
-    class="protocolo-numero"
-></div>
+                        Hora final:
 
+                    </label>
 
-<button
-    type="button"
-    id="btnWhatsApp"
-    class="btn-whatsapp"
->
+                    <input
+                        type="time"
+                        id="horaFinal"
+                    >
 
-💬 Enviar pelo WhatsApp
+                </div>
 
-</button>
+            </div>
 
-</div>
 
-</section>
+            <!-- FOTO -->
 
+            <div
+                id="areaFoto"
+                class="form-group"
+            >
 
-<!-- =================================================
-     CONSULTAR
-================================================= -->
+                <label>
 
-<section
-    id="secaoConsultar"
-    class="section"
->
+                    📷 Foto da ocorrência:
 
-<div class="section-title">
+                </label>
 
-🔎 Consultar Protocolo / OS
 
-</div>
+                <div class="foto-box">
 
+                    <input
+                        type="file"
+                        id="foto"
+                        accept="image/*"
+                        capture="environment"
+                    >
 
-<div class="form-group">
 
-<label>
+                    <small>
 
-Número do Protocolo:
+                        No celular, escolha uma imagem
+                        ou abra diretamente a câmera.
 
-</label>
+                    </small>
 
-<input
-    type="text"
-    id="consultaProtocolo"
-    placeholder="PC-13-08-26-001"
->
 
-</div>
+                    <img
+                        id="previewFoto"
+                        alt="Foto da ocorrência"
+                    >
 
+                </div>
 
-<button
-    type="button"
-    id="btnConsultar"
-    class="btn-verde"
->
+            </div>
 
-🔎 Consultar Protocolo
 
-</button>
+            <!-- DETALHES -->
 
+            <div class="form-group">
 
-<button
-    type="button"
-    class="btn-cinza"
-    onclick="abrirSecao('abrir')"
->
+                <label for="detalhes">
 
-← Voltar
+                    Detalhes do Ocorrido:
 
-</button>
+                </label>
 
 
-<div
-    id="mensagemConsulta"
-    class="mensagem erro"
-></div>
+                <textarea
+                    id="detalhes"
+                    required
+                    placeholder="Descreva brevemente o problema encontrado..."
+                ></textarea>
 
+            </div>
 
-<div
-    id="resultadoConsulta"
-    class="resultado"
->
 
-<div class="resultado-header">
+            <!-- ENVIO -->
 
-📋 Dados do Chamado
+            <button
+                type="submit"
+                id="btnEnviar"
+                class="btn-verde"
+            >
 
-</div>
+                📋 Enviar Chamado
 
+            </button>
 
-<div
-    id="dadosConsulta"
-    class="resultado-body"
-></div>
 
-</div>
+        </form>
 
-</section>
 
+        <div
+            id="mensagemSucesso"
+            class="mensagem sucesso"
+        ></div>
 
-<!-- =================================================
-     ADMIN
-================================================= -->
 
-<section
-    id="secaoAdmin"
-    class="section"
->
+        <div
+            id="mensagemErro"
+            class="mensagem erro"
+        ></div>
 
-<div class="section-title">
 
-🔐 Área Administrativa
+        <!-- PROTOCOLO GERADO -->
 
-</div>
+        <div
+            id="protocoloBox"
+            class="protocolo-box"
+        >
 
+            <div class="protocolo-titulo">
 
-<div class="admin-box">
+                PROTOCOLO / OS
 
+            </div>
 
-<div class="admin-titulo">
 
-Acesso restrito
+            <div
+                id="numeroProtocolo"
+                class="protocolo-numero"
+            ></div>
 
-</div>
 
+            <button
+                type="button"
+                id="btnWhatsApp"
+                class="btn-whatsapp"
+            >
 
-<div class="form-group">
+                💬 Enviar pelo WhatsApp
 
-<label>
+            </button>
 
-Senha administrativa:
+        </div>
 
-</label>
 
-<input
-    type="password"
-    id="adminPassword"
-    placeholder="Digite a senha"
->
+    </section>
 
-</div>
 
+    <!-- =================================================
+         CONSULTAR PROTOCOLO
+    ================================================= -->
 
-<button
-    type="button"
-    id="btnAdminEntrar"
-    class="btn-azul"
->
+    <section
+        id="secaoConsultar"
+        class="section"
+    >
 
-🔐 Entrar
+        <div class="section-title">
 
-</button>
+            🔎 Consultar Protocolo / OS
 
+        </div>
 
-<div
-    id="mensagemAdmin"
-    class="mensagem erro"
-></div>
 
+        <div class="form-group">
 
-</div>
+            <label>
 
+                Número do Protocolo:
 
-<!-- CONTEÚDO ADMIN -->
+            </label>
 
-<div
-    id="adminConteudo"
-    class="admin-conteudo"
->
 
+            <input
+                id="consultaProtocolo"
+                placeholder="PC-13-08-26-001"
+            >
 
-<div class="admin-box">
+        </div>
 
-<div class="admin-titulo">
 
-🔎 Localizar Chamado
+        <button
+            type="button"
+            id="btnConsultar"
+            class="btn-verde"
+        >
 
-</div>
+            🔎 Consultar Protocolo
 
+        </button>
 
-<div class="form-group">
 
-<label>
+        <div
+            id="mensagemConsulta"
+            class="mensagem erro"
+        ></div>
 
-Protocolo / OS:
 
-</label>
+        <div
+            id="resultadoConsulta"
+            class="resultado"
+        >
 
-<input
-    type="text"
-    id="adminProtocolo"
-    placeholder="PC-13-08-26-001"
->
+            <div class="resultado-header">
 
-</div>
+                📋 Dados do Chamado
 
+            </div>
 
-<button
-    type="button"
-    id="btnAdminConsultar"
-    class="btn-verde"
->
 
-🔎 Buscar Chamado
+            <div
+                id="dadosConsulta"
+                class="resultado-body"
+            ></div>
 
-</button>
+        </div>
 
 
-<div
-    id="mensagemAdminConsulta"
-    class="mensagem erro"
-></div>
+    </section>
 
 
-</div>
+    <!-- =================================================
+         ADMIN
+    ================================================= -->
 
+    <section
+        id="secaoAdmin"
+        class="section"
+    >
 
-<!-- EDIÇÃO -->
+        <div class="section-title">
 
-<div
-    id="adminEdicao"
-    class="admin-box"
-    style="display:none;"
->
+            🔐 Área Administrativa
 
+        </div>
 
-<div class="admin-titulo">
 
-🛠️ Atualizar Chamado
+        <!-- LOGIN -->
 
-</div>
+        <div class="admin-box">
 
+            <div class="admin-titulo">
 
-<div
-    id="adminDados"
-></div>
+                🔐 Acesso restrito
 
+            </div>
 
-<div class="form-group">
 
-<label>
+            <div class="form-group">
 
-Novo Status:
+                <label>
 
-</label>
+                    Senha administrativa:
 
+                </label>
 
-<select
-    id="adminStatus"
->
 
-<option value="Aberto">
+                <input
+                    type="password"
+                    id="adminPassword"
+                    placeholder="Digite a senha"
+                >
 
-🟡 Aberto
+            </div>
 
-</option>
 
-<option value="Em andamento">
+            <button
+                type="button"
+                id="btnAdminEntrar"
+                class="btn-azul"
+            >
 
-🔵 Em andamento
+                🔐 Entrar
 
-</option>
+            </button>
 
-<option value="Resolvido">
 
-🟢 Resolvido
+            <div
+                id="mensagemAdmin"
+                class="mensagem erro"
+            ></div>
 
-</option>
+        </div>
 
-<option value="Cancelado">
 
-🔴 Cancelado
+        <!-- CONTEÚDO ADMIN -->
 
-</option>
+        <div
+            id="adminConteudo"
+        >
 
-</select>
 
-</div>
+            <!-- =================================================
+                 PAINEL
+            ================================================= -->
 
+            <div class="admin-box">
 
-<div class="form-group">
+                <div class="admin-titulo">
 
-<label>
+                    📊 Painel de Chamados
 
-Responsável:
+                </div>
 
-</label>
 
-<input
-    type="text"
-    id="adminResponsavel"
-    placeholder="Nome do responsável"
->
+                <button
+                    type="button"
+                    id="btnListarProtocolos"
+                    class="btn-azul"
+                >
 
-</div>
+                    📋 Ver Todos os Protocolos
 
+                </button>
 
-<div class="form-group">
 
-<label>
+                <!-- ESTATÍSTICAS -->
 
-Observação da solução:
+                <div
+                    id="adminEstatisticas"
+                    style="display:none;"
+                >
 
-</label>
+                    <div class="stats">
 
-<textarea
-    id="adminObservacao"
-    placeholder="Informe o que foi realizado..."
-></textarea>
 
-</div>
+                        <div
+                            class="stat"
+                            style="background:#eee;"
+                        >
 
+                            <strong>
+                                Total
+                            </strong>
 
-<button
-    type="button"
-    id="btnAtualizar"
-    class="btn-verde"
->
+                            <span id="statTotal">
+                                0
+                            </span>
 
-💾 Atualizar Chamado
+                        </div>
 
-</button>
 
+                        <div
+                            class="stat"
+                            style="background:#fff3cd;"
+                        >
 
-<div
-    id="mensagemAtualizacao"
-    class="mensagem"
-></div>
+                            <strong>
+                                🟡 Abertos
+                            </strong>
 
+                            <span id="statAbertos">
+                                0
+                            </span>
 
-</div>
+                        </div>
 
 
-<button
-    type="button"
-    class="btn-cinza"
-    onclick="adminSair()"
->
+                        <div
+                            class="stat"
+                            style="background:#cfe8ff;"
+                        >
 
-🔒 Sair da Administração
+                            <strong>
+                                🔵 Em andamento
+                            </strong>
 
-</button>
+                            <span id="statAndamento">
+                                0
+                            </span>
 
+                        </div>
 
-</div>
 
+                        <div
+                            class="stat"
+                            style="background:#d9f3df;"
+                        >
 
-</section>
+                            <strong>
+                                🟢 Resolvidos
+                            </strong>
+
+                            <span id="statResolvidos">
+                                0
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            class="stat"
+                            style="background:#f8d7da;"
+                        >
+
+                            <strong>
+                                🔴 Cancelados
+                            </strong>
+
+                            <span id="statCancelados">
+                                0
+                            </span>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+
+                <!-- FILTROS -->
+
+                <div
+                    id="filtrosProtocolos"
+                    style="
+                        display:none;
+                        margin-top:18px;
+                    "
+                >
+
+
+                    <div class="form-group">
+
+                        <label>
+
+                            🔎 Pesquisar
+
+                        </label>
+
+
+                        <input
+                            type="text"
+                            id="filtroPesquisa"
+                            placeholder="Protocolo, nome, bloco ou ocorrência..."
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+
+                            Status:
+
+                        </label>
+
+
+                        <select
+                            id="filtroStatus"
+                        >
+
+                            <option value="">
+
+                                Todos os status
+
+                            </option>
+
+
+                            <option value="Aberto">
+
+                                🟡 Aberto
+
+                            </option>
+
+
+                            <option value="Em andamento">
+
+                                🔵 Em andamento
+
+                            </option>
+
+
+                            <option value="Resolvido">
+
+                                🟢 Resolvido
+
+                            </option>
+
+
+                            <option value="Cancelado">
+
+                                🔴 Cancelado
+
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- LISTA -->
+
+                <div
+                    id="listaProtocolos"
+                    style="margin-top:15px;"
+                ></div>
+
+
+            </div>
+
+
+            <!-- =================================================
+                 BUSCAR PROTOCOLO ADMIN
+            ================================================= -->
+
+            <div class="admin-box">
+
+                <div class="admin-titulo">
+
+                    🔎 Localizar Chamado
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+
+                        Protocolo / OS:
+
+                    </label>
+
+
+                    <input
+                        id="adminProtocolo"
+                        placeholder="PC-13-08-26-001"
+                    >
+
+                </div>
+
+
+                <button
+                    type="button"
+                    id="btnAdminConsultar"
+                    class="btn-verde"
+                >
+
+                    🔎 Buscar Chamado
+
+                </button>
+
+
+                <div
+                    id="mensagemAdminConsulta"
+                    class="mensagem erro"
+                ></div>
+
+            </div>
+
+
+            <!-- =================================================
+                 EDITAR CHAMADO
+            ================================================= -->
+
+            <div
+                id="adminEdicao"
+                class="admin-box"
+                style="display:none;"
+            >
+
+                <div class="admin-titulo">
+
+                    🛠️ Atualizar Chamado
+
+                </div>
+
+
+                <div
+                    id="adminDados"
+                ></div>
+
+
+                <div class="form-group">
+
+                    <label>
+
+                        Novo Status:
+
+                    </label>
+
+
+                    <select
+                        id="adminStatus"
+                    >
+
+                        <option>
+                            Aberto
+                        </option>
+
+                        <option>
+                            Em andamento
+                        </option>
+
+                        <option>
+                            Resolvido
+                        </option>
+
+                        <option>
+                            Cancelado
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+
+                        Responsável:
+
+                    </label>
+
+
+                    <input
+                        id="adminResponsavel"
+                        placeholder="Nome do responsável"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+
+                        Observação da solução:
+
+                    </label>
+
+
+                    <textarea
+                        id="adminObservacao"
+                        placeholder="Informe o que foi realizado..."
+                    ></textarea>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    id="btnAtualizar"
+                    class="btn-verde"
+                >
+
+                    💾 Atualizar Chamado
+
+                </button>
+
+
+                <div
+                    id="mensagemAtualizacao"
+                    class="mensagem"
+                ></div>
+
+
+            </div>
+
+
+            <!-- SAIR -->
+
+            <button
+                type="button"
+                id="btnAdminSair"
+                class="btn-cinza"
+            >
+
+                🔒 Sair da Administração
+
+            </button>
+
+
+        </div>
+
+    </section>
 
 
 </div>
@@ -1570,74 +2094,151 @@ const API_ENDPOINT =
     "/.netlify/functions/protocolo";
 
 
+/*
+   Se você continuar usando o Formspree
+   para receber o e-mail, mantenha
+   o endereço abaixo.
+*/
 const FORM_ENDPOINT =
     "https://formspree.io/f/mljrnqgv";
 
 
+/*
+   Número do WhatsApp.
+
+   Formato:
+   55 + DDD + número
+
+   Exemplo:
+   5561986038106
+*/
 const WHATSAPP_NUMERO =
     "5561986038106";
 
 
-let adminSenhaTemporaria = "";
+let adminSenhaTemporaria =
+    "";
 
-let protocoloAdminAtual = "";
 
-let chamadoAdminAtual = null;
+let protocoloAdminAtual =
+    "";
+
+
+let listaTodosChamados =
+    [];
 
 
 /* =====================================================
-   SEÇÕES
+   ABRIR SEÇÃO
 ===================================================== */
 
 function abrirSecao(secao) {
 
-    document
-        .getElementById("secaoAbrir")
-        .classList.remove("active");
 
     document
-        .getElementById("secaoConsultar")
-        .classList.remove("active");
+        .querySelectorAll(".section")
+        .forEach(
+            elemento => {
+
+                elemento.classList.remove(
+                    "active"
+                );
+
+            }
+        );
+
+
+    const id =
+        "secao" +
+        secao
+            .charAt(0)
+            .toUpperCase() +
+        secao.slice(1);
+
 
     document
-        .getElementById("secaoAdmin")
-        .classList.remove("active");
+        .getElementById(id)
+        .classList.add("active");
 
 
-    if (secao === "abrir") {
+    window.scrollTo(
+        {
+            top: 0,
+            behavior: "smooth"
+        }
+    );
 
-        document
-            .getElementById("secaoAbrir")
-            .classList.add("active");
+}
+
+
+/* =====================================================
+   ESCAPAR HTML
+===================================================== */
+
+function escapeHTML(valor) {
+
+    return String(
+        valor ?? ""
+    )
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+    .replace(
+        /</g,
+        "&lt;"
+    )
+    .replace(
+        />/g,
+        "&gt;"
+    )
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
+
+
+/* =====================================================
+   DATA
+===================================================== */
+
+function formatarData(valor) {
+
+    if (!valor) {
+
+        return "";
 
     }
 
 
-    if (secao === "consultar") {
-
-        document
-            .getElementById("secaoConsultar")
-            .classList.add("active");
-
-    }
+    const partes =
+        valor.split("-");
 
 
-    if (secao === "admin") {
+    if (
+        partes.length !== 3
+    ) {
 
-        document
-            .getElementById("secaoAdmin")
-            .classList.add("active");
+        return valor;
 
     }
 
 
-    window.scrollTo({
+    return (
 
-        top: 0,
+        partes[2] +
+        "/" +
+        partes[1] +
+        "/" +
+        partes[0]
 
-        behavior: "smooth"
-
-    });
+    );
 
 }
 
@@ -1646,45 +2247,118 @@ function abrirSecao(secao) {
    PAVIMENTOS
 ===================================================== */
 
-const bloco =
-    document.getElementById("bloco");
+function obterPavimentos() {
+
+
+    const selecionados =
+
+        [
+            ...document.querySelectorAll(
+                'input[name="pavimento"]:checked'
+            )
+        ];
+
+
+    return selecionados
+
+        .map(
+            elemento =>
+                elemento.value
+        )
+
+        .join(", ");
+
+}
+
+
+/* =====================================================
+   STATUS
+===================================================== */
+
+function classeStatus(status) {
+
+
+    if (
+        status ===
+        "Em andamento"
+    ) {
+
+        return "status-andamento";
+
+    }
+
+
+    if (
+        status ===
+        "Resolvido"
+    ) {
+
+        return "status-resolvido";
+
+    }
+
+
+    if (
+        status ===
+        "Cancelado"
+    ) {
+
+        return "status-cancelado";
+
+    }
+
+
+    return "status-aberto";
+
+}
+
+
+/* =====================================================
+   BLOCO / PAVIMENTOS
+===================================================== */
+
+const campoBloco =
+    document.getElementById(
+        "bloco"
+    );
+
 
 const areaPavimentos =
-    document.getElementById("areaPavimentos");
+    document.getElementById(
+        "areaPavimentos"
+    );
 
-const todosPavimentos =
-    document.getElementById("todosPavimentos");
 
-
-bloco.addEventListener(
+campoBloco.addEventListener(
     "change",
-    function() {
+    function () {
 
-        if (
-            this.value.startsWith("Bloco ")
-        ) {
 
-            areaPavimentos.style.display =
-                "block";
+        const ehBloco =
+            this.value.startsWith(
+                "Bloco "
+            );
 
-        }
 
-        else {
+        areaPavimentos.style.display =
+            ehBloco
+                ? "block"
+                : "none";
 
-            areaPavimentos.style.display =
-                "none";
+
+        if (!ehBloco) {
 
             document
                 .querySelectorAll(
                     'input[name="pavimento"]'
                 )
                 .forEach(
-                    item => {
+                    checkbox => {
 
-                        item.checked =
+                        checkbox.checked =
                             false;
 
-                        item.disabled =
+                        checkbox.disabled =
                             false;
 
                     }
@@ -1696,33 +2370,38 @@ bloco.addEventListener(
 );
 
 
+/* =====================================================
+   TODOS OS PAVIMENTOS
+===================================================== */
+
+const todosPavimentos =
+    document.getElementById(
+        "todosPavimentos"
+    );
+
+
 todosPavimentos.addEventListener(
     "change",
-    function() {
+    function () {
+
 
         document
             .querySelectorAll(
                 'input[name="pavimento"]'
             )
             .forEach(
-                item => {
+                checkbox => {
 
                     if (
-                        item !==
+                        checkbox !==
                         todosPavimentos
                     ) {
 
-                        item.disabled =
+                        checkbox.checked =
+                            false;
+
+                        checkbox.disabled =
                             todosPavimentos.checked;
-
-                        if (
-                            todosPavimentos.checked
-                        ) {
-
-                            item.checked =
-                                false;
-
-                        }
 
                     }
 
@@ -1734,78 +2413,85 @@ todosPavimentos.addEventListener(
 
 
 /* =====================================================
-   OCORRÊNCIA
+   TIPO DE OCORRÊNCIA
 ===================================================== */
 
-const ocorrencia =
-    document.getElementById("ocorrencia");
-
-const areaCamera =
-    document.getElementById("areaCamera");
-
-const areaFoto =
-    document.getElementById("areaFoto");
+const campoOcorrencia =
+    document.getElementById(
+        "ocorrencia"
+    );
 
 
-ocorrencia.addEventListener(
+campoOcorrencia.addEventListener(
     "change",
-    function() {
+    function () {
 
-        const camera =
+
+        const ehCamera =
             this.value ===
             "Imagem/câmera";
 
 
-        areaCamera.style.display =
-            camera
-                ? "block"
-                : "none";
-
-
-        areaFoto.style.display =
-            camera
-                ? "block"
-                : "none";
+        document
+            .getElementById(
+                "areaCamera"
+            )
+            .style.display =
+                ehCamera
+                    ? "block"
+                    : "none";
 
 
         document
-            .getElementById("dataOcorrencia")
-            .required =
-            camera;
+            .getElementById(
+                "areaFoto"
+            )
+            .style.display =
+                ehCamera
+                    ? "block"
+                    : "none";
 
 
-        document
-            .getElementById("horaInicial")
-            .required =
-            camera;
+        [
+            "dataOcorrencia",
+            "horaInicial",
+            "horaFinal"
+        ]
+        .forEach(
+            id => {
 
+                document
+                    .getElementById(id)
+                    .required =
+                        ehCamera;
 
-        document
-            .getElementById("horaFinal")
-            .required =
-            camera;
+            }
+        );
 
     }
 );
 
 
 /* =====================================================
-   FOTO
+   PREVISUALIZAÇÃO DA FOTO
 ===================================================== */
 
 document
     .getElementById("foto")
     .addEventListener(
         "change",
-        function() {
+        function () {
+
 
             const arquivo =
                 this.files[0];
 
+
             const preview =
-                document.getElementById(
-                    "previewFoto"
-                );
+                document
+                    .getElementById(
+                        "previewFoto"
+                    );
 
 
             if (!arquivo) {
@@ -1823,7 +2509,7 @@ document
 
 
             leitor.onload =
-                function(evento) {
+                function (evento) {
 
                     preview.src =
                         evento.target.result;
@@ -1843,79 +2529,22 @@ document
 
 
 /* =====================================================
-   PAVIMENTOS SELECIONADOS
-===================================================== */
-
-function obterPavimentos() {
-
-    return Array
-        .from(
-            document.querySelectorAll(
-                'input[name="pavimento"]:checked'
-            )
-        )
-        .map(
-            item =>
-                item.value
-        )
-        .join(", ");
-
-}
-
-
-/* =====================================================
-   DATA
-===================================================== */
-
-function formatarData(data) {
-
-    if (!data)
-        return "";
-
-    const p =
-        data.split("-");
-
-    return (
-        p[2] +
-        "/" +
-        p[1] +
-        "/" +
-        p[0]
-    );
-
-}
-
-
-/* =====================================================
-   ESCAPAR HTML
-===================================================== */
-
-function escapeHTML(texto) {
-
-    return String(texto ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-
-}
-
-
-/* =====================================================
-   ENVIO DO CHAMADO
+   ENVIAR CHAMADO
 ===================================================== */
 
 document
-    .getElementById("formChamado")
+    .getElementById(
+        "formChamado"
+    )
     .addEventListener(
         "submit",
-        async function(event) {
-
-            event.preventDefault();
+        async function (evento) {
 
 
-            const btn =
+            evento.preventDefault();
+
+
+            const botao =
                 document.getElementById(
                     "btnEnviar"
                 );
@@ -1936,22 +2565,26 @@ document
             erro.style.display =
                 "none";
 
+
             sucesso.style.display =
                 "none";
 
 
-            btn.disabled =
+            botao.disabled =
                 true;
 
-            btn.textContent =
+
+            botao.textContent =
                 "⏳ Gerando protocolo...";
 
 
             try {
 
+
                 const dados = {
 
                     solicitante:
+
                         document
                             .getElementById(
                                 "solicitante"
@@ -1959,23 +2592,41 @@ document
                             .value
                             .trim(),
 
+
                     cargo:
+
                         document
                             .getElementById(
                                 "cargo"
                             )
                             .value,
 
+
                     bloco:
-                        bloco.value,
+
+                        document
+                            .getElementById(
+                                "bloco"
+                            )
+                            .value,
+
 
                     pavimentos:
+
                         obterPavimentos(),
 
+
                     ocorrencia:
-                        ocorrencia.value,
+
+                        document
+                            .getElementById(
+                                "ocorrencia"
+                            )
+                            .value,
+
 
                     dataOcorrencia:
+
                         formatarData(
                             document
                                 .getElementById(
@@ -1984,21 +2635,27 @@ document
                                 .value
                         ),
 
+
                     horaInicial:
+
                         document
                             .getElementById(
                                 "horaInicial"
                             )
                             .value,
 
+
                     horaFinal:
+
                         document
                             .getElementById(
                                 "horaFinal"
                             )
                             .value,
 
+
                     detalhes:
+
                         document
                             .getElementById(
                                 "detalhes"
@@ -2009,7 +2666,9 @@ document
                 };
 
 
-                /* GERAR PROTOCOLO */
+                /* =========================================
+                   GERAR PROTOCOLO
+                ========================================= */
 
                 const resposta =
                     await fetch(
@@ -2056,7 +2715,9 @@ document
                     resultado.protocolo;
 
 
-                /* MOSTRAR PROTOCOLO */
+                /* =========================================
+                   MOSTRAR PROTOCOLO
+                ========================================= */
 
                 document
                     .getElementById(
@@ -2082,83 +2743,96 @@ document
                     "block";
 
 
-                /* EMAIL */
+                /* =========================================
+                   E-MAIL
+                ========================================= */
 
-                const formData =
+                const formularioEmail =
                     new FormData();
 
 
-                formData.append(
+                formularioEmail.append(
                     "Protocolo / OS",
                     protocolo
                 );
 
-                formData.append(
+
+                formularioEmail.append(
                     "Solicitante",
                     dados.solicitante
                 );
 
-                formData.append(
+
+                formularioEmail.append(
                     "Cargo/Função",
                     dados.cargo
                 );
 
-                formData.append(
+
+                formularioEmail.append(
                     "Bloco / Área",
                     dados.bloco
                 );
 
-                formData.append(
+
+                formularioEmail.append(
                     "Pavimento(s)",
                     dados.pavimentos ||
                     "Não informado"
                 );
 
-                formData.append(
+
+                formularioEmail.append(
                     "Tipo de Ocorrência",
                     dados.ocorrencia
                 );
 
-                formData.append(
+
+                formularioEmail.append(
                     "Data da ocorrência",
                     dados.dataOcorrencia
                 );
 
-                formData.append(
+
+                formularioEmail.append(
                     "Hora inicial",
                     dados.horaInicial
                 );
 
-                formData.append(
+
+                formularioEmail.append(
                     "Hora final",
                     dados.horaFinal
                 );
 
-                formData.append(
+
+                formularioEmail.append(
                     "Detalhes",
                     dados.detalhes
                 );
 
-                formData.append(
+
+                formularioEmail.append(
                     "_subject",
                     "Novo Chamado Parque Clube - " +
                     protocolo
                 );
 
 
-                const foto =
-                    document.getElementById(
-                        "foto"
-                    );
+                const arquivoFoto =
+                    document
+                        .getElementById(
+                            "foto"
+                        );
 
 
                 if (
-                    foto.files.length
+                    arquivoFoto.files.length
                 ) {
 
-                    formData.append(
+                    formularioEmail.append(
                         "Foto",
-                        foto.files[0]
+                        arquivoFoto.files[0]
                     );
 
                 }
@@ -2174,11 +2848,11 @@ document
                                 "POST",
 
                             body:
-                                formData,
+                                formularioEmail,
 
                             headers: {
 
-                                "Accept":
+                                Accept:
                                     "application/json"
 
                             }
@@ -2188,20 +2862,30 @@ document
 
                 }
 
-                catch(emailErro) {
+                catch (erroEmail) {
 
                     console.warn(
-                        "Falha no envio do e-mail:",
-                        emailErro
+                        "E-mail não enviado:",
+                        erroEmail
                     );
 
                 }
 
 
-                /* SUCESSO */
+                /* =========================================
+                   WHATSAPP
+                ========================================= */
+
+                configurarWhatsApp(
+                    protocolo,
+                    dados
+                );
+
 
                 sucesso.innerHTML =
-                    "✅ Chamado registrado com sucesso!<br>" +
+
+                    "✅ Chamado registrado com sucesso!" +
+                    "<br><br>" +
                     "<strong>Protocolo: " +
                     escapeHTML(
                         protocolo
@@ -2213,11 +2897,9 @@ document
                     "block";
 
 
-                configurarWhatsApp(
-                    protocolo,
-                    dados
-                );
-
+                /* =========================================
+                   LIMPAR FORMULÁRIO
+                ========================================= */
 
                 this.reset();
 
@@ -2226,11 +2908,19 @@ document
                     "none";
 
 
-                areaCamera.style.display =
+                document
+                    .getElementById(
+                        "areaCamera"
+                    )
+                    .style.display =
                     "none";
 
 
-                areaFoto.style.display =
+                document
+                    .getElementById(
+                        "areaFoto"
+                    )
+                    .style.display =
                     "none";
 
 
@@ -2244,36 +2934,52 @@ document
 
             }
 
-            catch(error) {
+            catch (erro) {
 
-                console.error(
-                    error
+
+                erroMessage(
+                    erro.message ||
+                    "Não foi possível gerar o protocolo."
                 );
-
-
-                erro.textContent =
-                    error.message ||
-                    "Não foi possível gerar o protocolo. Tente novamente.";
-
-
-                erro.style.display =
-                    "block";
 
             }
 
-
             finally {
 
-                btn.disabled =
+
+                botao.disabled =
                     false;
 
-                btn.textContent =
+
+                botao.textContent =
                     "📋 Enviar Chamado";
 
             }
 
         }
     );
+
+
+/* =====================================================
+   MENSAGEM DE ERRO
+===================================================== */
+
+function erroMessage(mensagem) {
+
+    const elemento =
+        document.getElementById(
+            "mensagemErro"
+        );
+
+
+    elemento.textContent =
+        mensagem;
+
+
+    elemento.style.display =
+        "block";
+
+}
 
 
 /* =====================================================
@@ -2285,26 +2991,31 @@ function configurarWhatsApp(
     dados
 ) {
 
+
     let mensagem =
 
-        "🏢 *PARQUE CLUBE*\n" +
-        "*NOVO CHAMADO / OS*\n\n" +
+        "🏢 *PARQUE CLUBE*" +
+        "\n" +
+        "*NOVO CHAMADO / OS*" +
+        "\n\n" +
 
         "📋 *Protocolo:* " +
         protocolo +
+
         "\n\n" +
 
         "👤 *Solicitante:* " +
         dados.solicitante +
+
         "\n" +
 
         "💼 *Cargo/Função:* " +
         dados.cargo +
+
         "\n" +
 
         "📍 *Local:* " +
-        dados.bloco +
-        "\n";
+        dados.bloco;
 
 
     if (
@@ -2312,18 +3023,19 @@ function configurarWhatsApp(
     ) {
 
         mensagem +=
+
+            "\n" +
             "🏢 *Pavimento(s):* " +
-            dados.pavimentos +
-            "\n";
+            dados.pavimentos;
 
     }
 
 
     mensagem +=
 
+        "\n" +
         "🔧 *Ocorrência:* " +
-        dados.ocorrencia +
-        "\n";
+        dados.ocorrencia;
 
 
     if (
@@ -2331,9 +3043,10 @@ function configurarWhatsApp(
     ) {
 
         mensagem +=
+
+            "\n" +
             "📅 *Data:* " +
-            dados.dataOcorrencia +
-            "\n";
+            dados.dataOcorrencia;
 
     }
 
@@ -2343,9 +3056,10 @@ function configurarWhatsApp(
     ) {
 
         mensagem +=
+
+            "\n" +
             "🕐 *Hora inicial:* " +
-            dados.horaInicial +
-            "\n";
+            dados.horaInicial;
 
     }
 
@@ -2355,20 +3069,24 @@ function configurarWhatsApp(
     ) {
 
         mensagem +=
+
+            "\n" +
             "🕐 *Hora final:* " +
-            dados.horaFinal +
-            "\n";
+            dados.horaFinal;
 
     }
 
 
     mensagem +=
 
-        "\n📝 *Detalhes:*\n" +
+        "\n\n" +
+        "📝 *Detalhes:*" +
+        "\n" +
         dados.detalhes +
+
         "\n\n" +
 
-        "🟡 *Status: ABERTO*";
+        "🟡 *STATUS: ABERTO*";
 
 
     document
@@ -2376,9 +3094,11 @@ function configurarWhatsApp(
             "btnWhatsApp"
         )
         .onclick =
-        function() {
+        function () {
+
 
             const url =
+
                 "https://wa.me/" +
                 WHATSAPP_NUMERO +
                 "?text=" +
@@ -2407,9 +3127,11 @@ document
     )
     .addEventListener(
         "click",
-        async function() {
+        async function () {
+
 
             const protocolo =
+
                 document
                     .getElementById(
                         "consultaProtocolo"
@@ -2420,6 +3142,7 @@ document
 
 
             const mensagem =
+
                 document
                     .getElementById(
                         "mensagemConsulta"
@@ -2435,8 +3158,10 @@ document
                 mensagem.textContent =
                     "Digite o número do protocolo.";
 
+
                 mensagem.style.display =
                     "block";
+
 
                 return;
 
@@ -2446,11 +3171,13 @@ document
             this.disabled =
                 true;
 
+
             this.textContent =
                 "⏳ Consultando...";
 
 
             try {
+
 
                 const resposta =
                     await fetch(
@@ -2485,12 +3212,14 @@ document
                     dados.chamado
                 );
 
+
             }
 
-            catch(error) {
+            catch (erro) {
 
                 mensagem.textContent =
-                    error.message;
+                    erro.message;
+
 
                 mensagem.style.display =
                     "block";
@@ -2512,165 +3241,8 @@ document
 
 
 /* =====================================================
-   MOSTRAR CONSULTA
+   ITEM DE CONSULTA
 ===================================================== */
-
-function classeStatus(
-    status
-) {
-
-    if (
-        status === "Resolvido"
-    )
-        return "status-resolvido";
-
-    if (
-        status === "Em andamento"
-    )
-        return "status-andamento";
-
-    if (
-        status === "Cancelado"
-    )
-        return "status-cancelado";
-
-    return "status-aberto";
-
-}
-
-
-function mostrarConsulta(
-    chamado
-) {
-
-    const resultado =
-        document.getElementById(
-            "resultadoConsulta"
-        );
-
-
-    const dados =
-        document.getElementById(
-            "dadosConsulta"
-        );
-
-
-    dados.innerHTML = `
-
-        ${itemConsulta(
-            "Protocolo / OS",
-            chamado.protocolo
-        )}
-
-        ${itemConsulta(
-            "Data de abertura",
-            chamado.dataAbertura
-        )}
-
-        ${itemConsulta(
-            "Solicitante",
-            chamado.solicitante
-        )}
-
-        ${itemConsulta(
-            "Cargo/Função",
-            chamado.cargo
-        )}
-
-        ${itemConsulta(
-            "Bloco / Área",
-            chamado.bloco
-        )}
-
-        ${itemConsulta(
-            "Pavimento(s)",
-            chamado.pavimentos ||
-            "Não informado"
-        )}
-
-        ${itemConsulta(
-            "Tipo de Ocorrência",
-            chamado.ocorrencia
-        )}
-
-        ${itemConsulta(
-            "Detalhes",
-            chamado.detalhes
-        )}
-
-        <div class="resultado-item">
-
-            <strong>Status</strong>
-
-            <span
-                class="status ${
-                    classeStatus(
-                        chamado.status
-                    )
-                }"
-            >
-
-                ${escapeHTML(
-                    chamado.status ||
-                    "Aberto"
-                )}
-
-            </span>
-
-        </div>
-
-        ${
-            chamado.dataConclusao
-            ?
-            itemConsulta(
-                "Data da conclusão",
-                chamado.dataConclusao
-            )
-            :
-            ""
-        }
-
-        ${
-            chamado.horaConclusao
-            ?
-            itemConsulta(
-                "Hora da conclusão",
-                chamado.horaConclusao
-            )
-            :
-            ""
-        }
-
-        ${
-            chamado.responsavel
-            ?
-            itemConsulta(
-                "Responsável",
-                chamado.responsavel
-            )
-            :
-            ""
-        }
-
-        ${
-            chamado.observacaoSolucao
-            ?
-            itemConsulta(
-                "Observação da solução",
-                chamado.observacaoSolucao
-            )
-            :
-            ""
-        }
-
-    `;
-
-
-    resultado.style.display =
-        "block";
-
-}
-
 
 function itemConsulta(
     titulo,
@@ -2700,7 +3272,148 @@ function itemConsulta(
 
 
 /* =====================================================
-   ADMINISTRADOR
+   MOSTRAR CONSULTA
+===================================================== */
+
+function mostrarConsulta(
+    chamado
+) {
+
+
+    const resultado =
+        document.getElementById(
+            "resultadoConsulta"
+        );
+
+
+    const dados =
+        document.getElementById(
+            "dadosConsulta"
+        );
+
+
+    dados.innerHTML =
+
+        itemConsulta(
+            "Protocolo / OS",
+            chamado.protocolo
+        ) +
+
+        itemConsulta(
+            "Data de abertura",
+            chamado.dataAbertura
+        ) +
+
+        itemConsulta(
+            "Hora de abertura",
+            chamado.horaAbertura
+        ) +
+
+        itemConsulta(
+            "Solicitante",
+            chamado.solicitante
+        ) +
+
+        itemConsulta(
+            "Cargo/Função",
+            chamado.cargo
+        ) +
+
+        itemConsulta(
+            "Bloco / Área",
+            chamado.bloco
+        ) +
+
+        itemConsulta(
+            "Pavimento(s)",
+            chamado.pavimentos
+        ) +
+
+        itemConsulta(
+            "Tipo de Ocorrência",
+            chamado.ocorrencia
+        ) +
+
+        itemConsulta(
+            "Data da ocorrência",
+            chamado.dataOcorrencia
+        ) +
+
+        itemConsulta(
+            "Hora inicial",
+            chamado.horaInicial
+        ) +
+
+        itemConsulta(
+            "Hora final",
+            chamado.horaFinal
+        ) +
+
+        itemConsulta(
+            "Detalhes",
+            chamado.detalhes
+        ) +
+
+        `
+
+        <div class="resultado-item">
+
+            <strong>
+                Status
+            </strong>
+
+            <span
+                class="status
+                ${classeStatus(
+                    chamado.status
+                )}"
+            >
+
+                ${escapeHTML(
+                    chamado.status ||
+                    "Aberto"
+                )}
+
+            </span>
+
+        </div>
+
+        ` +
+
+        itemConsulta(
+            "Responsável",
+            chamado.responsavel
+        ) +
+
+        itemConsulta(
+            "Observação da solução",
+            chamado.observacaoSolucao
+        ) +
+
+        itemConsulta(
+            "Última atualização",
+            chamado.ultimaAtualizacao
+        ) +
+
+        itemConsulta(
+            "Data da conclusão",
+            chamado.dataConclusao
+        ) +
+
+        itemConsulta(
+            "Hora da conclusão",
+            chamado.horaConclusao
+        );
+
+
+    resultado.style.display =
+        "block";
+
+}
+
+
+/* =====================================================
+   LOGIN ADMINISTRATIVO
 ===================================================== */
 
 document
@@ -2709,7 +3422,8 @@ document
     )
     .addEventListener(
         "click",
-        function() {
+        function () {
+
 
             const senha =
                 document
@@ -2732,8 +3446,10 @@ document
                 mensagem.textContent =
                     "Digite a senha administrativa.";
 
+
                 mensagem.style.display =
                     "block";
+
 
                 return;
 
@@ -2741,8 +3457,9 @@ document
 
 
             /*
-             * A senha fica apenas na memória
-             * desta sessão do navegador.
+             * A senha não é validada no navegador.
+             * Ela será enviada somente quando
+             * a operação administrativa for executada.
              */
 
             adminSenhaTemporaria =
@@ -2773,7 +3490,521 @@ document
 
 
 /* =====================================================
-   CONSULTAR COMO ADMIN
+   LISTAR TODOS OS PROTOCOLOS
+===================================================== */
+
+document
+    .getElementById(
+        "btnListarProtocolos"
+    )
+    .addEventListener(
+        "click",
+        async function () {
+
+
+            if (
+                !adminSenhaTemporaria
+            ) {
+
+                alert(
+                    "Faça o login administrativo primeiro."
+                );
+
+
+                return;
+
+            }
+
+
+            const botao =
+                this;
+
+
+            botao.disabled =
+                true;
+
+
+            botao.textContent =
+                "⏳ Carregando protocolos...";
+
+
+            try {
+
+
+                const resposta =
+                    await fetch(
+                        API_ENDPOINT,
+                        {
+
+                            method:
+                                "POST",
+
+                            headers: {
+
+                                "Content-Type":
+                                    "application/json"
+
+                            },
+
+                            body:
+                                JSON.stringify({
+
+                                    action:
+                                        "list",
+
+                                    adminPassword:
+                                        adminSenhaTemporaria
+
+                                })
+
+                        }
+                    );
+
+
+                const dados =
+                    await resposta.json();
+
+
+                if (
+                    !resposta.ok ||
+                    !dados.sucesso
+                ) {
+
+                    throw new Error(
+                        dados.erro ||
+                        "Não foi possível carregar os protocolos."
+                    );
+
+                }
+
+
+                listaTodosChamados =
+                    dados.chamados ||
+                    [];
+
+
+                /* ESTATÍSTICAS */
+
+                document
+                    .getElementById(
+                        "statTotal"
+                    )
+                    .textContent =
+                    dados.estatisticas.total;
+
+
+                document
+                    .getElementById(
+                        "statAbertos"
+                    )
+                    .textContent =
+                    dados.estatisticas.abertos;
+
+
+                document
+                    .getElementById(
+                        "statAndamento"
+                    )
+                    .textContent =
+                    dados.estatisticas.andamento;
+
+
+                document
+                    .getElementById(
+                        "statResolvidos"
+                    )
+                    .textContent =
+                    dados.estatisticas.resolvidos;
+
+
+                document
+                    .getElementById(
+                        "statCancelados"
+                    )
+                    .textContent =
+                    dados.estatisticas.cancelados;
+
+
+                document
+                    .getElementById(
+                        "adminEstatisticas"
+                    )
+                    .style.display =
+                    "block";
+
+
+                document
+                    .getElementById(
+                        "filtrosProtocolos"
+                    )
+                    .style.display =
+                    "block";
+
+
+                renderizarListaProtocolos();
+
+
+            }
+
+            catch (erro) {
+
+
+                alert(
+                    erro.message
+                );
+
+            }
+
+            finally {
+
+
+                botao.disabled =
+                    false;
+
+
+                botao.textContent =
+                    "🔄 Atualizar Lista";
+
+            }
+
+        }
+    );
+
+
+/* =====================================================
+   RENDERIZAR LISTA
+===================================================== */
+
+function renderizarListaProtocolos() {
+
+
+    const container =
+        document.getElementById(
+            "listaProtocolos"
+        );
+
+
+    const pesquisa =
+        document
+            .getElementById(
+                "filtroPesquisa"
+            )
+            .value
+            .trim()
+            .toLowerCase();
+
+
+    const status =
+        document
+            .getElementById(
+                "filtroStatus"
+            )
+            .value;
+
+
+    const filtrados =
+        listaTodosChamados.filter(
+            chamado => {
+
+
+                const texto = [
+
+                    chamado.protocolo,
+
+                    chamado.solicitante,
+
+                    chamado.bloco,
+
+                    chamado.ocorrencia,
+
+                    chamado.cargo
+
+                ]
+
+                .join(" ")
+
+                .toLowerCase();
+
+
+                const correspondePesquisa =
+
+                    !pesquisa ||
+                    texto.includes(
+                        pesquisa
+                    );
+
+
+                const correspondeStatus =
+
+                    !status ||
+                    chamado.status ===
+                    status;
+
+
+                return (
+
+                    correspondePesquisa &&
+                    correspondeStatus
+
+                );
+
+            }
+        );
+
+
+    if (
+        filtrados.length === 0
+    ) {
+
+        container.innerHTML = `
+
+            <div
+                style="
+                    text-align:center;
+                    padding:25px;
+                    color:#777;
+                "
+            >
+
+                Nenhum protocolo encontrado.
+
+            </div>
+
+        `;
+
+
+        return;
+
+    }
+
+
+    container.innerHTML =
+
+        filtrados
+            .map(
+                criarCardProtocolo
+            )
+            .join("");
+
+}
+
+
+/* =====================================================
+   CARD
+===================================================== */
+
+function criarCardProtocolo(
+    chamado
+) {
+
+
+    let emoji =
+        "🟡";
+
+
+    if (
+        chamado.status ===
+        "Em andamento"
+    ) {
+
+        emoji =
+            "🔵";
+
+    }
+
+
+    if (
+        chamado.status ===
+        "Resolvido"
+    ) {
+
+        emoji =
+            "🟢";
+
+    }
+
+
+    if (
+        chamado.status ===
+        "Cancelado"
+    ) {
+
+        emoji =
+            "🔴";
+
+    }
+
+
+    return `
+
+        <div class="card-protocolo">
+
+            <div class="numero">
+
+                📋
+                ${escapeHTML(
+                    chamado.protocolo
+                )}
+
+            </div>
+
+
+            <div class="card-info">
+
+                👤
+                ${escapeHTML(
+                    chamado.solicitante ||
+                    "Não informado"
+                )}
+
+                <br>
+
+
+                💼
+                ${escapeHTML(
+                    chamado.cargo ||
+                    "Não informado"
+                )}
+
+                <br>
+
+
+                📍
+                ${escapeHTML(
+                    chamado.bloco ||
+                    "Não informado"
+                )}
+
+                <br>
+
+
+                🔧
+                ${escapeHTML(
+                    chamado.ocorrencia ||
+                    "Não informado"
+                )}
+
+                <br>
+
+
+                📅
+                ${escapeHTML(
+                    chamado.dataAbertura ||
+                    "Não informado"
+                )}
+
+            </div>
+
+
+            <div
+                style="
+                    margin-top:10px;
+                "
+            >
+
+                <span
+                    class="
+                        status
+                        ${classeStatus(
+                            chamado.status
+                        )}
+                    "
+                >
+
+                    ${emoji}
+
+                    ${escapeHTML(
+                        chamado.status ||
+                        "Aberto"
+                    )}
+
+                </span>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="btn-verde"
+                onclick="
+                    abrirProtocoloAdmin(
+                        '${encodeURIComponent(
+                            chamado.protocolo
+                        )}'
+                    )
+                "
+            >
+
+                👁️ Ver / Gerenciar Chamado
+
+            </button>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =====================================================
+   ABRIR PROTOCOLO NO ADMIN
+===================================================== */
+
+function abrirProtocoloAdmin(
+    protocoloCodificado
+) {
+
+
+    const protocolo =
+        decodeURIComponent(
+            protocoloCodificado
+        );
+
+
+    document
+        .getElementById(
+            "adminProtocolo"
+        )
+        .value =
+        protocolo;
+
+
+    document
+        .getElementById(
+            "btnAdminConsultar"
+        )
+        .click();
+
+
+}
+
+
+/* =====================================================
+   FILTROS
+===================================================== */
+
+document
+    .getElementById(
+        "filtroPesquisa"
+    )
+    .addEventListener(
+        "input",
+        renderizarListaProtocolos
+    );
+
+
+document
+    .getElementById(
+        "filtroStatus"
+    )
+    .addEventListener(
+        "change",
+        renderizarListaProtocolos
+    );
+
+
+/* =====================================================
+   CONSULTAR ADMIN
 ===================================================== */
 
 document
@@ -2782,9 +4013,11 @@ document
     )
     .addEventListener(
         "click",
-        async function() {
+        async function () {
+
 
             const protocolo =
+
                 document
                     .getElementById(
                         "adminProtocolo"
@@ -2795,6 +4028,7 @@ document
 
 
             const mensagem =
+
                 document
                     .getElementById(
                         "mensagemAdminConsulta"
@@ -2810,8 +4044,10 @@ document
                 mensagem.textContent =
                     "Informe o protocolo.";
 
+
                 mensagem.style.display =
                     "block";
+
 
                 return;
 
@@ -2821,11 +4057,13 @@ document
             this.disabled =
                 true;
 
+
             this.textContent =
                 "⏳ Buscando...";
 
 
             try {
+
 
                 const resposta =
                     await fetch(
@@ -2856,10 +4094,6 @@ document
                 }
 
 
-                chamadoAdminAtual =
-                    dados.chamado;
-
-
                 protocoloAdminAtual =
                     protocolo;
 
@@ -2871,10 +4105,12 @@ document
 
             }
 
-            catch(error) {
+            catch (erro) {
+
 
                 mensagem.textContent =
-                    error.message;
+                    erro.message;
+
 
                 mensagem.style.display =
                     "block";
@@ -2883,8 +4119,10 @@ document
 
             finally {
 
+
                 this.disabled =
                     false;
+
 
                 this.textContent =
                     "🔎 Buscar Chamado";
@@ -2903,6 +4141,7 @@ function preencherAdmin(
     chamado
 ) {
 
+
     document
         .getElementById(
             "adminEdicao"
@@ -2915,48 +4154,90 @@ function preencherAdmin(
         .getElementById(
             "adminDados"
         )
-        .innerHTML = `
+        .innerHTML =
 
-        ${itemConsulta(
+
+        itemConsulta(
             "Protocolo",
             chamado.protocolo
-        )}
+        ) +
 
-        ${itemConsulta(
+
+        itemConsulta(
+            "Data de abertura",
+            chamado.dataAbertura
+        ) +
+
+
+        itemConsulta(
             "Solicitante",
             chamado.solicitante
-        )}
+        ) +
 
-        ${itemConsulta(
+
+        itemConsulta(
             "Cargo/Função",
             chamado.cargo
-        )}
+        ) +
 
-        ${itemConsulta(
+
+        itemConsulta(
             "Local",
             chamado.bloco
-        )}
+        ) +
 
-        ${itemConsulta(
+
+        itemConsulta(
+            "Pavimento(s)",
+            chamado.pavimentos
+        ) +
+
+
+        itemConsulta(
             "Ocorrência",
             chamado.ocorrencia
-        )}
+        ) +
 
-        ${itemConsulta(
+
+        itemConsulta(
+            "Data da ocorrência",
+            chamado.dataOcorrencia
+        ) +
+
+
+        itemConsulta(
+            "Hora inicial",
+            chamado.horaInicial
+        ) +
+
+
+        itemConsulta(
+            "Hora final",
+            chamado.horaFinal
+        ) +
+
+
+        itemConsulta(
             "Detalhes",
             chamado.detalhes
-        )}
+        ) +
+
+
+        `
 
         <div class="resultado-item">
 
-            <strong>Status atual</strong>
+            <strong>
+                Status atual
+            </strong>
 
             <span
-                class="status ${
-                    classeStatus(
+                class="
+                    status
+                    ${classeStatus(
                         chamado.status
-                    )
-                }"
+                    )}
+                "
             >
 
                 ${escapeHTML(
@@ -2968,7 +4249,7 @@ function preencherAdmin(
 
         </div>
 
-    `;
+        `;
 
 
     document
@@ -3002,16 +4283,18 @@ function preencherAdmin(
         .getElementById(
             "adminEdicao"
         )
-        .scrollIntoView({
-            behavior:
-                "smooth"
-        });
+        .scrollIntoView(
+            {
+                behavior:
+                    "smooth"
+            }
+        );
 
 }
 
 
 /* =====================================================
-   ATUALIZAR CHAMADO
+   ATUALIZAR STATUS
 ===================================================== */
 
 document
@@ -3020,17 +4303,14 @@ document
     )
     .addEventListener(
         "click",
-        async function() {
+        async function () {
+
 
             const mensagem =
                 document
                     .getElementById(
                         "mensagemAtualizacao"
                     );
-
-
-            mensagem.style.display =
-                "none";
 
 
             if (
@@ -3040,51 +4320,30 @@ document
                 mensagem.textContent =
                     "Faça o login administrativo novamente.";
 
+
                 mensagem.className =
                     "mensagem erro";
 
+
                 mensagem.style.display =
                     "block";
+
 
                 return;
 
             }
 
 
-            const status =
-                document
-                    .getElementById(
-                        "adminStatus"
-                    )
-                    .value;
-
-
-            const responsavel =
-                document
-                    .getElementById(
-                        "adminResponsavel"
-                    )
-                    .value
-                    .trim();
-
-
-            const observacaoSolucao =
-                document
-                    .getElementById(
-                        "adminObservacao"
-                    )
-                    .value
-                    .trim();
-
-
             this.disabled =
                 true;
+
 
             this.textContent =
                 "⏳ Salvando...";
 
 
             try {
+
 
                 const resposta =
                     await fetch(
@@ -3114,13 +4373,30 @@ document
                                         adminSenhaTemporaria,
 
                                     status:
-                                        status,
+
+                                        document
+                                            .getElementById(
+                                                "adminStatus"
+                                            )
+                                            .value,
 
                                     responsavel:
-                                        responsavel,
+
+                                        document
+                                            .getElementById(
+                                                "adminResponsavel"
+                                            )
+                                            .value
+                                            .trim(),
 
                                     observacaoSolucao:
-                                        observacaoSolucao
+
+                                        document
+                                            .getElementById(
+                                                "adminObservacao"
+                                            )
+                                            .value
+                                            .trim()
 
                                 })
 
@@ -3145,10 +4421,6 @@ document
                 }
 
 
-                chamadoAdminAtual =
-                    dados.chamado;
-
-
                 mensagem.textContent =
                     "✅ Chamado atualizado com sucesso.";
 
@@ -3166,12 +4438,40 @@ document
                 );
 
 
+                /* Atualizar lista */
+
+                const indice =
+                    listaTodosChamados.findIndex(
+
+                        chamado =>
+
+                            chamado.protocolo ===
+                            dados.chamado.protocolo
+
+                    );
+
+
+                if (
+                    indice >= 0
+                ) {
+
+                    listaTodosChamados[
+                        indice
+                    ] =
+                        dados.chamado;
+
+
+                    renderizarListaProtocolos();
+
+                }
+
             }
 
-            catch(error) {
+            catch (erro) {
+
 
                 mensagem.textContent =
-                    error.message;
+                    erro.message;
 
 
                 mensagem.className =
@@ -3185,8 +4485,10 @@ document
 
             finally {
 
+
                 this.disabled =
                     false;
+
 
                 this.textContent =
                     "💾 Atualizar Chamado";
@@ -3198,69 +4500,100 @@ document
 
 
 /* =====================================================
-   SAIR
+   SAIR DA ADMINISTRAÇÃO
 ===================================================== */
 
-function adminSair() {
-
-    adminSenhaTemporaria =
-        "";
-
-
-    protocoloAdminAtual =
-        "";
-
-
-    chamadoAdminAtual =
-        null;
+document
+    .getElementById(
+        "btnAdminSair"
+    )
+    .addEventListener(
+        "click",
+        function () {
 
 
-    document
-        .getElementById(
-            "adminPassword"
-        )
-        .value =
-        "";
+            adminSenhaTemporaria =
+                "";
 
 
-    document
-        .getElementById(
-            "adminProtocolo"
-        )
-        .value =
-        "";
+            protocoloAdminAtual =
+                "";
 
 
-    document
-        .getElementById(
-            "adminConteudo"
-        )
-        .style.display =
-        "none";
+            listaTodosChamados =
+                [];
 
 
-    document
-        .getElementById(
-            "adminEdicao"
-        )
-        .style.display =
-        "none";
+            document
+                .getElementById(
+                    "adminPassword"
+                )
+                .value =
+                "";
 
 
-    const botao =
-        document.getElementById(
-            "btnAdminEntrar"
-        );
+            document
+                .getElementById(
+                    "adminConteudo"
+                )
+                .style.display =
+                "none";
 
 
-    botao.textContent =
-        "🔐 Entrar";
+            document
+                .getElementById(
+                    "adminEdicao"
+                )
+                .style.display =
+                "none";
 
 
-    botao.disabled =
-        false;
+            document
+                .getElementById(
+                    "adminEstatisticas"
+                )
+                .style.display =
+                "none";
 
-}
+
+            document
+                .getElementById(
+                    "filtrosProtocolos"
+                )
+                .style.display =
+                "none";
+
+
+            document
+                .getElementById(
+                    "listaProtocolos"
+                )
+                .innerHTML =
+                "";
+
+
+            document
+                .getElementById(
+                    "btnAdminEntrar"
+                )
+                .textContent =
+                "🔐 Entrar";
+
+
+            document
+                .getElementById(
+                    "btnAdminEntrar"
+                )
+                .disabled =
+                false;
+
+
+            abrirSecao(
+                "abrir"
+            );
+
+        }
+    );
 
 
 </script>
