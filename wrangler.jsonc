@@ -3,6 +3,12 @@
   "name": "parque-clube",
   "main": "worker.js",
   "compatibility_date": "2026-08-13",
+
+  "assets": {
+    "directory": ".",
+    "binding": "ASSETS"
+  },
+
   "d1_databases": [
     {
       "binding": "DB",
