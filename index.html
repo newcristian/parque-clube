@@ -1780,7 +1780,7 @@ input[readonly] {
 ===================================================== */
 
 const API =
-    "https://parque-clube.newcristian.workers.dev/";
+    "https://parque-clube.newcristian.workers.dev/api/protocolo";
 
 const FORM_ENDPOINT =
     "https://formspree.io/f/mljrnqgv";
@@ -2645,8 +2645,21 @@ document
                     );
 
 
-                const dados =
-                    await resposta.json();
+                const textoResposta =
+                    await resposta.text();
+
+                let dados = {};
+
+                try {
+                    dados =
+                        textoResposta
+                            ? JSON.parse(textoResposta)
+                            : {};
+                } catch {
+                    throw new Error(
+                        "O servidor respondeu sem JSON válido."
+                    );
+                }
 
 
                 if (
@@ -3074,15 +3087,26 @@ document
                     );
 
 
-                const dados =
-                    await resposta.json();
+                const textoResposta =
+                    await resposta.text();
 
+                let dados = {};
+
+                try {
+                    dados =
+                        textoResposta
+                            ? JSON.parse(textoResposta)
+                            : {};
+                } catch {
+                    throw new Error(
+                        "O servidor respondeu sem JSON válido."
+                    );
+                }
 
                 console.log(
                     "CHAMADOS:",
                     dados
                 );
-
 
                 if (
                     !resposta.ok
@@ -3644,8 +3668,21 @@ document
                     );
 
 
-                const dados =
-                    await resposta.json();
+                const textoResposta =
+                    await resposta.text();
+
+                let dados = {};
+
+                try {
+                    dados =
+                        textoResposta
+                            ? JSON.parse(textoResposta)
+                            : {};
+                } catch {
+                    throw new Error(
+                        "O servidor respondeu sem JSON válido."
+                    );
+                }
 
 
                 if (
@@ -3945,8 +3982,21 @@ document
                     );
 
 
-                const dados =
-                    await resposta.json();
+                const textoResposta =
+                    await resposta.text();
+
+                let dados = {};
+
+                try {
+                    dados =
+                        textoResposta
+                            ? JSON.parse(textoResposta)
+                            : {};
+                } catch {
+                    throw new Error(
+                        "O servidor respondeu sem JSON válido."
+                    );
+                }
 
 
                 if (
