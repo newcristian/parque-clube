@@ -2309,7 +2309,7 @@ function mostrarResultado(
 
 
 /* =====================================================
-   ENTRAR ADMIN
+   ENTRAR ADMIN - VALIDAÇÃO NO CLOUDFLARE WORKER
 ===================================================== */
 
 document
@@ -2318,8 +2318,9 @@ document
     )
     .addEventListener(
         "click",
-        function () {
+        async function () {
 
+            const botao = this;
 
             const senha =
                 document
@@ -2329,17 +2330,23 @@ document
                     .value
                     .trim();
 
-
             const erro =
                 document
                     .getElementById(
                         "erroAdmin"
                     );
 
+            const painel =
+                document
+                    .getElementById(
+                        "adminPainel"
+                    );
 
             erro.style.display =
                 "none";
 
+            painel.style.display =
+                "none";
 
             if (!senha) {
 
@@ -2350,38 +2357,96 @@ document
                     "block";
 
                 return;
-
             }
 
-
-            /*
-             * Guarda a senha temporariamente
-             * para enviar ao protocolo.js.
-             */
-
-            senhaAdministrativa =
-                senha;
-
-
-            /*
-             * LIBERA O PAINEL
-             */
-
-            document
-                .getElementById(
-                    "adminPainel"
-                )
-                .style.display =
-                "block";
-
-
-            this.textContent =
-                "✅ Acesso liberado";
-
-
-            this.disabled =
+            botao.disabled =
                 true;
 
+            botao.textContent =
+                "⏳ Verificando...";
+
+            try {
+
+                /*
+                 * A senha é enviada ao Worker.
+                 * O Worker compara com env.ADMIN_PASSWORD.
+                 */
+
+                const resposta =
+                    await fetch(
+                        API,
+                        {
+                            method:
+                                "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify({
+                                    action:
+                                        "login",
+
+                                    adminPassword:
+                                        senha
+                                })
+                        }
+                    );
+
+                const resultado =
+                    await resposta.json();
+
+                if (
+                    !resposta.ok ||
+                    !resultado.sucesso
+                ) {
+                    throw new Error(
+                        resultado.erro ||
+                        "Senha administrativa incorreta."
+                    );
+                }
+
+                /*
+                 * Somente depois da confirmação do Worker
+                 * guardamos a senha em memória para as
+                 * operações administrativas seguintes.
+                 */
+
+                senhaAdministrativa =
+                    senha;
+
+                painel.style.display =
+                    "block";
+
+                botao.textContent =
+                    "✅ Acesso liberado";
+
+                botao.disabled =
+                    true;
+
+            } catch (error) {
+
+                senhaAdministrativa =
+                    "";
+
+                painel.style.display =
+                    "none";
+
+                erro.textContent =
+                    error.message ||
+                    "Senha administrativa incorreta.";
+
+                erro.style.display =
+                    "block";
+
+                botao.disabled =
+                    false;
+
+                botao.textContent =
+                    "🔐 Entrar";
+            }
         }
     );
 
