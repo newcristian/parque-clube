@@ -1,493 +1,537 @@
-export default {
-  async fetch(request, env) {
+/*
+============================================================
+ PARQUE CLUBE - CLOUDFLARE WORKER
+ Sistema de Chamados / Ordem de Serviço
 
-    const url = new URL(request.url);
+ D1:
+ Binding: DB
+
+ Secret:
+ ADMIN_PASSWORD
+
+ API OFICIAL:
+ /api/protocolo
+
+ ROTA ANTIGA MANTIDA TEMPORARIAMENTE:
+ /.netlify/functions/protocolo
+============================================================
+*/
+
+
+/* =========================================================
+   RESPOSTA JSON
+========================================================= */
+
+function resposta(dados, status = 200) {
+
+    return new Response(
+        JSON.stringify(dados),
+        {
+            status,
+
+            headers: {
+                "Content-Type":
+                    "application/json; charset=UTF-8",
+
+                "Access-Control-Allow-Origin":
+                    "*",
+
+                "Access-Control-Allow-Methods":
+                    "GET, POST, OPTIONS",
+
+                "Access-Control-Allow-Headers":
+                    "Content-Type"
+            }
+        }
+    );
+}
+
+
+/* =========================================================
+   DATA DE BRASÍLIA
+========================================================= */
+
+function obterDataBrasilia() {
+
+    const partes =
+        new Intl.DateTimeFormat(
+            "en-CA",
+            {
+                timeZone:
+                    "America/Sao_Paulo",
+
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit"
+            }
+        ).formatToParts(
+            new Date()
+        );
+
+    return {
+
+        ano:
+            partes.find(
+                p =>
+                    p.type === "year"
+            ).value,
+
+        mes:
+            partes.find(
+                p =>
+                    p.type === "month"
+            ).value,
+
+        dia:
+            partes.find(
+                p =>
+                    p.type === "day"
+            ).value
+    };
+}
+
+
+/* =========================================================
+   HORA DE BRASÍLIA
+========================================================= */
+
+function obterHoraBrasilia() {
+
+    return new Intl.DateTimeFormat(
+        "pt-BR",
+        {
+            timeZone:
+                "America/Sao_Paulo",
+
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+
+            hour12: false
+        }
+    ).format(
+        new Date()
+    );
+}
+
+
+/* =========================================================
+   AUTENTICAÇÃO ADMINISTRATIVA
+========================================================= */
+
+function verificarSenha(
+    dados,
+    env
+) {
 
     /*
-     * =====================================================
-     * CORS
-     * =====================================================
+     * Remove espaços acidentais do Secret
+     * e da senha enviada pelo navegador.
      */
 
-    const corsHeaders = {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods":
-        "GET, POST, OPTIONS",
-      "Access-Control-Allow-Headers":
-        "Content-Type",
-      "Content-Type":
-        "application/json; charset=UTF-8"
-    };
+    const senhaAdmin =
+        String(
+            env.ADMIN_PASSWORD || ""
+        ).trim();
 
-    if (request.method === "OPTIONS") {
 
-      return new Response(
-        null,
-        {
-          status: 204,
-          headers: corsHeaders
-        }
-      );
+    const senhaInformada =
+        String(
+            dados.adminPassword || ""
+        ).trim();
 
+
+    if (!senhaAdmin) {
+
+        return {
+
+            ok: false,
+
+            resposta:
+                resposta(
+                    {
+                        sucesso:
+                            false,
+
+                        erro:
+                            "A senha administrativa não está configurada no Cloudflare."
+                    },
+
+                    500
+                )
+        };
     }
 
 
-    /*
-     * =====================================================
-     * API
-     * =====================================================
-     */
-
     if (
-      url.pathname ===
-      "/api/protocolo"
+        !senhaInformada ||
+        senhaInformada !==
+            senhaAdmin
     ) {
 
-      try {
+        return {
 
-        /*
-         * -------------------------------------------------
-         * GET
-         * Consulta de protocolo
-         * -------------------------------------------------
-         */
+            ok: false,
 
-        if (
-          request.method === "GET"
-        ) {
+            resposta:
+                resposta(
+                    {
+                        sucesso:
+                            false,
 
-          const protocolo =
-            url.searchParams.get(
-              "protocolo"
-            );
+                        erro:
+                            "Senha administrativa incorreta."
+                    },
 
-          if (!protocolo) {
+                    401
+                )
+        };
+    }
 
-            return new Response(
-              JSON.stringify({
-                erro:
-                  "Informe o protocolo."
-              }),
-              {
-                status: 400,
-                headers:
-                  corsHeaders
-              }
-            );
 
-          }
+    return {
+        ok: true
+    };
+}
 
-          const chamado =
-            await env.DB
-              .prepare(
+
+/* =========================================================
+   CONVERTER CHAMADO
+========================================================= */
+
+function converterChamado(row) {
+
+    if (!row) {
+        return null;
+    }
+
+
+    return {
+
+        id:
+            row.id,
+
+        protocolo:
+            row.protocolo,
+
+        dataAbertura:
+            row.data_abertura || "",
+
+        horaAbertura:
+            row.hora_abertura || "",
+
+        status:
+            row.status || "Aberto",
+
+        solicitante:
+            row.solicitante || "",
+
+        cargo:
+            row.cargo || "",
+
+        bloco:
+            row.bloco || "",
+
+        pavimentos:
+            row.pavimentos || "",
+
+        ocorrencia:
+            row.ocorrencia ||
+            row.tipo_ocorrencia ||
+            "",
+
+        dataOcorrencia:
+            row.data_ocorrencia || "",
+
+        horaInicial:
+            row.hora_inicial || "",
+
+        horaFinal:
+            row.hora_final || "",
+
+        detalhes:
+            row.detalhes || "",
+
+        responsavel:
+            row.responsavel || "",
+
+        observacaoSolucao:
+            row.observacao_solucao || "",
+
+        dataConclusao:
+            row.data_conclusao || "",
+
+        horaConclusao:
+            row.hora_conclusao || "",
+
+        ultimaAtualizacao:
+            row.ultima_atualizacao || "",
+
+        criadoEm:
+            row.criado_em || ""
+    };
+}
+
+
+/* =========================================================
+   BUSCAR CHAMADO
+========================================================= */
+
+async function buscarChamado(
+    env,
+    protocolo
+) {
+
+    const resultado =
+        await env.DB
+            .prepare(
                 `
                 SELECT *
                 FROM chamados
                 WHERE protocolo = ?
                 LIMIT 1
                 `
-              )
-              .bind(protocolo)
-              .first();
-
-          if (!chamado) {
-
-            return new Response(
-              JSON.stringify({
-                encontrado:
-                  false,
-
-                erro:
-                  "Protocolo não encontrado."
-              }),
-              {
-                status: 404,
-                headers:
-                  corsHeaders
-              }
-            );
-
-          }
-
-          return new Response(
-            JSON.stringify({
-              encontrado:
-                true,
-
-              chamado:
-                chamado
-            }),
-            {
-              status: 200,
-              headers:
-                corsHeaders
-            }
-          );
-
-        }
+            )
+            .bind(
+                protocolo
+            )
+            .first();
 
 
-        /*
-         * -------------------------------------------------
-         * POST
-         * -------------------------------------------------
-         */
-
-        if (
-          request.method === "POST"
-        ) {
-
-          const dados =
-            await request.json();
-
-          /*
-           * =================================================
-           * LOGIN ADMINISTRATIVO
-           * =================================================
-           */
-
-          if (
-            dados.action ===
-            "login"
-          ) {
-
-            const senha =
-              String(
-                dados.senha || ""
-              );
-
-            const senhaAdmin =
-              String(
-                env.ADMIN_PASSWORD || ""
-              );
-
-            if (
-              !senhaAdmin
-            ) {
-
-              return new Response(
-                JSON.stringify({
-                  sucesso:
-                    false,
-
-                  erro:
-                    "ADMIN_PASSWORD não configurada no Worker."
-                }),
-                {
-                  status: 500,
-                  headers:
-                    corsHeaders
-                }
-              );
-
-            }
-
-            if (
-              senha !==
-              senhaAdmin
-            ) {
-
-              return new Response(
-                JSON.stringify({
-                  sucesso:
-                    false,
-
-                  erro:
-                    "Senha administrativa incorreta."
-                }),
-                {
-                  status: 401,
-                  headers:
-                    corsHeaders
-                }
-              );
-
-            }
-
-            return new Response(
-              JSON.stringify({
-                sucesso:
-                  true
-              }),
-              {
-                status: 200,
-                headers:
-                  corsHeaders
-              }
-            );
-
-          }
+    return converterChamado(
+        resultado
+    );
+}
 
 
-          /*
-           * =================================================
-           * LISTAR CHAMADOS
-           * =================================================
-           */
+/* =========================================================
+   LISTAR TODOS
+========================================================= */
 
-          if (
-            dados.action ===
-            "listar"
-          ) {
+async function listarChamados(
+    env
+) {
 
-            const resultado =
-              await env.DB
-                .prepare(
-                  `
-                  SELECT *
-                  FROM chamados
-                  ORDER BY id DESC
-                  `
-                )
-                .all();
-
-            return new Response(
-              JSON.stringify({
-                sucesso:
-                  true,
-
-                chamados:
-                  resultado.results || []
-              }),
-              {
-                status: 200,
-                headers:
-                  corsHeaders
-              }
-            );
-
-          }
-
-
-          /*
-           * =================================================
-           * ATUALIZAR CHAMADO
-           * =================================================
-           */
-
-          if (
-            dados.action ===
-            "atualizar"
-          ) {
-
-            const id =
-              dados.id;
-
-            const status =
-              dados.status || "";
-
-            const responsavel =
-              dados.responsavel || "";
-
-            const observacao =
-              dados.observacao_solucao ||
-              "";
-
-            const agora =
-              new Date()
-                .toISOString();
-
-            await env.DB
-              .prepare(
+    const resultado =
+        await env.DB
+            .prepare(
                 `
-                UPDATE chamados
-
-                SET
-                  status = ?,
-                  responsavel = ?,
-                  observacao_solucao = ?,
-                  ultima_atualizacao = ?
-
-                WHERE id = ?
+                SELECT *
+                FROM chamados
+                ORDER BY id DESC
                 `
-              )
-              .bind(
-                status,
-                responsavel,
-                observacao,
-                agora,
-                id
-              )
-              .run();
-
-            return new Response(
-              JSON.stringify({
-                sucesso:
-                  true
-              }),
-              {
-                status: 200,
-                headers:
-                  corsHeaders
-              }
-            );
-
-          }
+            )
+            .all();
 
 
-          /*
-           * =================================================
-           * CRIAR CHAMADO
-           * =================================================
-           */
+    const chamados =
+        (
+            resultado.results ||
+            []
+        )
+        .map(
+            converterChamado
+        )
+        .filter(Boolean);
 
-          const hoje =
-            new Date();
 
-          const data =
-            hoje
-              .toISOString()
-              .slice(
-                0,
-                10
-              );
+    const estatisticas = {
 
-          const hora =
-            hoje
-              .toISOString()
-              .slice(
-                11,
-                19
-              );
+        total:
+            chamados.length,
 
-          /*
-           * Contador diário
-           */
+        abertos:
+            chamados.filter(
+                c =>
+                    c.status ===
+                    "Aberto"
+            ).length,
 
-          const contador =
-            await env.DB
-              .prepare(
-                `
-                SELECT numero
-                FROM contadores
-                WHERE data = ?
-                `
-              )
-              .bind(data)
-              .first();
+        andamento:
+            chamados.filter(
+                c =>
+                    c.status ===
+                    "Em andamento"
+            ).length,
 
-          let numero;
+        resolvidos:
+            chamados.filter(
+                c =>
+                    c.status ===
+                    "Resolvido"
+            ).length,
 
-          if (contador) {
+        cancelados:
+            chamados.filter(
+                c =>
+                    c.status ===
+                    "Cancelado"
+            ).length
+    };
 
-            numero =
-              Number(
-                contador.numero
-              ) + 1;
 
-            await env.DB
-              .prepare(
-                `
-                UPDATE contadores
-                SET numero = ?
-                WHERE data = ?
-                `
-              )
-              .bind(
-                numero,
-                data
-              )
-              .run();
+    return {
 
-          } else {
+        chamados,
 
-            numero = 1;
+        estatisticas
+    };
+}
 
-            await env.DB
-              .prepare(
+
+/* =========================================================
+   CRIAR CHAMADO
+========================================================= */
+
+async function criarChamado(
+    env,
+    dados
+) {
+
+    const data =
+        obterDataBrasilia();
+
+
+    const hora =
+        obterHoraBrasilia();
+
+
+    const dataContador =
+        `${data.ano}-${data.mes}-${data.dia}`;
+
+
+    /*
+     * CONTADOR DIÁRIO
+     */
+
+    const contador =
+        await env.DB
+            .prepare(
                 `
                 INSERT INTO contadores
-                (
-                  data,
-                  numero
-                )
-                VALUES (?, ?)
+                    (data, numero)
+
+                VALUES
+                    (?, 1)
+
+                ON CONFLICT(data)
+                DO UPDATE SET
+                    numero =
+                        numero + 1
+
+                RETURNING numero
                 `
-              )
-              .bind(
-                data,
-                numero
-              )
-              .run();
-
-          }
+            )
+            .bind(
+                dataContador
+            )
+            .first();
 
 
-          /*
-           * Protocolo
-           */
+    if (!contador) {
 
-          const protocolo =
-            "PC-" +
-            data
-              .split("-")
-              .reverse()
-              .join("")
-              .slice(0, 6) +
-            "-" +
-            String(
-              numero
-            ).padStart(
-              3,
-              "0"
+        return resposta(
+            {
+                sucesso:
+                    false,
+
+                erro:
+                    "Não foi possível gerar o número do protocolo."
+            },
+
+            503
+        );
+    }
+
+
+    const numero =
+        Number(
+            contador.numero
+        );
+
+
+    const sequencial =
+        String(numero)
+            .padStart(
+                3,
+                "0"
             );
 
 
-          /*
-           * Dados do chamado
-           */
+    const protocolo =
+        `PC-${data.dia}-${data.mes}-${String(data.ano).slice(-2)}-${sequencial}`;
 
-          const solicitante =
+
+    const chamado = {
+
+        protocolo,
+
+        dataAbertura:
+            `${data.dia}/${data.mes}/${data.ano}`,
+
+        horaAbertura:
+            hora,
+
+        status:
+            "Aberto",
+
+        solicitante:
             dados.solicitante ||
-            "";
+            "",
 
-          const cargo =
+        cargo:
             dados.cargo ||
-            "";
+            "",
 
-          const bloco =
+        bloco:
             dados.bloco ||
-            "";
+            "",
 
-          const pavimentos =
+        pavimentos:
             dados.pavimentos ||
-            "";
+            "",
 
-          const ocorrencia =
+        ocorrencia:
             dados.ocorrencia ||
             dados.tipo_ocorrencia ||
-            "";
+            "",
 
-          const detalhes =
-            dados.detalhes ||
-            "";
-
-          const dataOcorrencia =
+        dataOcorrencia:
             dados.dataOcorrencia ||
-            dados.data_ocorrencia ||
-            "";
+            "",
 
-          const horaInicial =
+        horaInicial:
             dados.horaInicial ||
-            dados.hora_inicial ||
-            "";
+            "",
 
-          const horaFinal =
+        horaFinal:
             dados.horaFinal ||
-            dados.hora_final ||
-            "";
+            "",
 
-          /*
-           * =================================================
-           * GRAVAÇÃO
-           * =================================================
-           */
+        detalhes:
+            dados.detalhes ||
+            "",
 
-          await env.DB
-            .prepare(
-              `
-              INSERT INTO chamados
-              (
+        responsavel:
+            "",
+
+        observacaoSolucao:
+            "",
+
+        criadoEm:
+            new Date().toISOString()
+    };
+
+
+    /*
+     * GRAVAÇÃO NO D1
+     */
+
+    await env.DB
+        .prepare(
+            `
+            INSERT INTO chamados (
+
                 protocolo,
                 data_abertura,
                 hora_abertura,
@@ -497,166 +541,747 @@ export default {
                 bloco,
                 pavimentos,
                 ocorrencia,
-                tipo_ocorrencia,
-                detalhes,
                 data_ocorrencia,
                 hora_inicial,
                 hora_final,
+                detalhes,
                 responsavel,
                 observacao_solucao,
-                ultima_atualizacao,
                 criado_em
-              )
 
-              VALUES
-              (
-                ?, ?, ?, ?,
-                ?, ?, ?, ?,
-                ?, ?, ?, ?,
-                ?, ?, ?, ?,
-                ?, ?
-              )
-              `
             )
-            .bind(
-              protocolo,
-              data,
-              hora,
-              "Aberto",
 
-              solicitante,
-              cargo,
-              bloco,
-              pavimentos,
+            VALUES (
 
-              ocorrencia,
-              ocorrencia,
-              detalhes,
+                ?, ?, ?, ?, ?,
+                ?, ?, ?, ?, ?,
+                ?, ?, ?, ?, ?, ?
 
-              dataOcorrencia,
-              horaInicial,
-              horaFinal,
-
-              "",
-              "",
-
-              hoje.toISOString(),
-              hoje.toISOString()
             )
-            .run();
+            `
+        )
+        .bind(
+
+            chamado.protocolo,
+
+            chamado.dataAbertura,
+
+            chamado.horaAbertura,
+
+            chamado.status,
+
+            chamado.solicitante,
+
+            chamado.cargo,
+
+            chamado.bloco,
+
+            chamado.pavimentos,
+
+            chamado.ocorrencia,
+
+            chamado.dataOcorrencia,
+
+            chamado.horaInicial,
+
+            chamado.horaFinal,
+
+            chamado.detalhes,
+
+            chamado.responsavel,
+
+            chamado.observacaoSolucao,
+
+            chamado.criadoEm
+        )
+        .run();
 
 
-          /*
-           * =================================================
-           * RESPOSTA
-           * =================================================
-           */
+    return resposta({
 
-          return new Response(
-            JSON.stringify({
-              sucesso:
-                true,
+        sucesso:
+            true,
 
-              protocolo:
-                protocolo,
+        protocolo:
+            protocolo,
 
-              mensagem:
-                "Chamado registrado com sucesso."
-            }),
+        chamado:
+            chamado
+    });
+}
+
+
+/* =========================================================
+   ATUALIZAR CHAMADO
+========================================================= */
+
+async function atualizarChamado(
+    env,
+    dados
+) {
+
+    if (!dados.protocolo) {
+
+        return resposta(
             {
-              status: 200,
-              headers:
-                corsHeaders
-            }
-          );
+                sucesso:
+                    false,
 
+                erro:
+                    "Informe o protocolo."
+            },
+
+            400
+        );
+    }
+
+
+    const protocolo =
+        String(
+            dados.protocolo
+        )
+        .trim()
+        .toUpperCase();
+
+
+    const chamadoAtual =
+        await buscarChamado(
+            env,
+            protocolo
+        );
+
+
+    if (!chamadoAtual) {
+
+        return resposta(
+            {
+                sucesso:
+                    false,
+
+                erro:
+                    "Protocolo não encontrado."
+            },
+
+            404
+        );
+    }
+
+
+    const statusPermitidos = [
+
+        "Aberto",
+
+        "Em andamento",
+
+        "Resolvido",
+
+        "Cancelado"
+    ];
+
+
+    if (
+        !statusPermitidos.includes(
+            dados.status
+        )
+    ) {
+
+        return resposta(
+            {
+                sucesso:
+                    false,
+
+                erro:
+                    "Status inválido."
+            },
+
+            400
+        );
+    }
+
+
+    const data =
+        obterDataBrasilia();
+
+
+    const hora =
+        obterHoraBrasilia();
+
+
+    let dataConclusao =
+        chamadoAtual.dataConclusao ||
+        "";
+
+
+    let horaConclusao =
+        chamadoAtual.horaConclusao ||
+        "";
+
+
+    if (
+        dados.status ===
+        "Resolvido"
+    ) {
+
+        dataConclusao =
+            `${data.dia}/${data.mes}/${data.ano}`;
+
+        horaConclusao =
+            hora;
+
+    } else {
+
+        dataConclusao =
+            "";
+
+        horaConclusao =
+            "";
+    }
+
+
+    const ultimaAtualizacao =
+        `${data.dia}/${data.mes}/${data.ano} ${hora}`;
+
+
+    await env.DB
+        .prepare(
+            `
+            UPDATE chamados
+
+            SET
+
+                status = ?,
+
+                responsavel = ?,
+
+                observacao_solucao = ?,
+
+                data_conclusao = ?,
+
+                hora_conclusao = ?,
+
+                ultima_atualizacao = ?
+
+            WHERE protocolo = ?
+            `
+        )
+        .bind(
+
+            dados.status,
+
+            dados.responsavel ||
+                "",
+
+            dados.observacaoSolucao ||
+                "",
+
+            dataConclusao,
+
+            horaConclusao,
+
+            ultimaAtualizacao,
+
+            protocolo
+        )
+        .run();
+
+
+    const atualizado =
+        await buscarChamado(
+            env,
+            protocolo
+        );
+
+
+    return resposta({
+
+        sucesso:
+            true,
+
+        mensagem:
+            "Chamado atualizado com sucesso.",
+
+        chamado:
+            atualizado
+    });
+}
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+async function login(
+    env,
+    dados
+) {
+
+    const autenticacao =
+        verificarSenha(
+            dados,
+            env
+        );
+
+
+    if (
+        !autenticacao.ok
+    ) {
+
+        return autenticacao.resposta;
+    }
+
+
+    return resposta({
+
+        sucesso:
+            true,
+
+        mensagem:
+            "Acesso administrativo autorizado."
+    });
+}
+
+
+/* =========================================================
+   CONSULTAR PROTOCOLO
+========================================================= */
+
+async function consultarProtocolo(
+    env,
+    protocolo
+) {
+
+    if (!protocolo) {
+
+        return resposta(
+            {
+                encontrado:
+                    false,
+
+                erro:
+                    "Informe o número do protocolo."
+            },
+
+            400
+        );
+    }
+
+
+    const protocoloNormalizado =
+        String(
+            protocolo
+        )
+        .trim()
+        .toUpperCase();
+
+
+    const chamado =
+        await buscarChamado(
+            env,
+            protocoloNormalizado
+        );
+
+
+    if (!chamado) {
+
+        return resposta(
+            {
+                encontrado:
+                    false,
+
+                erro:
+                    "Protocolo não encontrado."
+            },
+
+            404
+        );
+    }
+
+
+    return resposta({
+
+        encontrado:
+            true,
+
+        chamado:
+            chamado
+    });
+}
+
+
+/* =========================================================
+   SERVIR INDEX.HTML
+========================================================= */
+
+async function servirIndex(
+    request,
+    env
+) {
+
+    return env.ASSETS.fetch(
+
+        new Request(
+
+            new URL(
+                "/index.html",
+                request.url
+            ),
+
+            request
+        )
+    );
+}
+
+
+/* =========================================================
+   FUNÇÃO PRINCIPAL
+========================================================= */
+
+export default {
+
+    async fetch(
+        request,
+        env
+    ) {
+
+        /*
+         * CORS / OPTIONS
+         */
+
+        if (
+            request.method ===
+            "OPTIONS"
+        ) {
+
+            return resposta({
+
+                sucesso:
+                    true
+            });
         }
 
 
-        /*
-         * Método não permitido
-         */
+        try {
 
-        return new Response(
-          JSON.stringify({
-            erro:
-              "Método não permitido."
-          }),
-          {
-            status: 405,
-            headers:
-              corsHeaders
-          }
-        );
+            const url =
+                new URL(
+                    request.url
+                );
 
-      }
 
-      catch (erro) {
+            const pathname =
+                url.pathname;
 
-        console.error(
-          "ERRO NA API:",
-          erro
-        );
 
-        return new Response(
-          JSON.stringify({
-            sucesso:
-              false,
+            /*
+             * =================================================
+             * API
+             *
+             * NOVA ROTA:
+             * /api/protocolo
+             *
+             * ROTA ANTIGA:
+             * /.netlify/functions/protocolo
+             *
+             * A antiga fica temporariamente ativa.
+             * =================================================
+             */
 
-            erro:
-              "Erro interno no servidor.",
+            const ehAPI =
 
-            detalhe:
-              erro instanceof Error
-                ? erro.message
-                : String(erro)
-          }),
-          {
-            status: 500,
-            headers:
-              corsHeaders
-          }
-        );
+                pathname ===
+                    "/api/protocolo"
 
-      }
+                ||
 
+                pathname ===
+                    "/.netlify/functions/protocolo";
+
+
+            /*
+             * =================================================
+             * CONSULTA POR PROTOCOLO
+             * =================================================
+             */
+
+            if (
+                request.method ===
+                    "GET" &&
+                ehAPI
+            ) {
+
+                return consultarProtocolo(
+
+                    env,
+
+                    url.searchParams.get(
+                        "protocolo"
+                    )
+                );
+            }
+
+
+            /*
+             * =================================================
+             * CONSULTA DIRETA
+             *
+             * /?protocolo=...
+             * =================================================
+             */
+
+            if (
+                request.method ===
+                    "GET" &&
+
+                pathname === "/" &&
+
+                url.searchParams.has(
+                    "protocolo"
+                )
+            ) {
+
+                return consultarProtocolo(
+
+                    env,
+
+                    url.searchParams.get(
+                        "protocolo"
+                    )
+                );
+            }
+
+
+            /*
+             * =================================================
+             * PÁGINA PRINCIPAL
+             * =================================================
+             */
+
+            if (
+                request.method ===
+                    "GET" &&
+
+                pathname === "/"
+            ) {
+
+                return servirIndex(
+                    request,
+                    env
+                );
+            }
+
+
+            /*
+             * =================================================
+             * OUTROS ARQUIVOS
+             * =================================================
+             */
+
+            if (
+                request.method ===
+                "GET"
+            ) {
+
+                return env.ASSETS.fetch(
+                    request
+                );
+            }
+
+
+            /*
+             * =================================================
+             * POST
+             *
+             * A API aceita POST na rota nova e também
+             * na rota antiga durante a transição.
+             * =================================================
+             */
+
+            if (
+                request.method !==
+                "POST"
+            ) {
+
+                return resposta(
+                    {
+                        sucesso:
+                            false,
+
+                        erro:
+                            "Método não permitido."
+                    },
+
+                    405
+                );
+            }
+
+
+            /*
+             * =================================================
+             * LER JSON
+             * =================================================
+             */
+
+            let dados;
+
+
+            try {
+
+                dados =
+                    await request.json();
+
+            } catch {
+
+                return resposta(
+                    {
+                        sucesso:
+                            false,
+
+                        erro:
+                            "Dados inválidos."
+                    },
+
+                    400
+                );
+            }
+
+
+            /*
+             * =================================================
+             * LOGIN
+             * =================================================
+             */
+
+            if (
+                dados.action ===
+                "login"
+            ) {
+
+                return login(
+                    env,
+                    dados
+                );
+            }
+
+
+            /*
+             * =================================================
+             * LISTAR TODOS
+             * =================================================
+             */
+
+            if (
+                dados.action ===
+                "list"
+            ) {
+
+                const autenticacao =
+                    verificarSenha(
+                        dados,
+                        env
+                    );
+
+
+                if (
+                    !autenticacao.ok
+                ) {
+
+                    return autenticacao.resposta;
+                }
+
+
+                const resultado =
+                    await listarChamados(
+                        env
+                    );
+
+
+                return resposta({
+
+                    sucesso:
+                        true,
+
+                    chamados:
+                        resultado.chamados,
+
+                    estatisticas:
+                        resultado.estatisticas
+                });
+            }
+
+
+            /*
+             * =================================================
+             * ATUALIZAR
+             * =================================================
+             */
+
+            if (
+                dados.action ===
+                "update"
+            ) {
+
+                const autenticacao =
+                    verificarSenha(
+                        dados,
+                        env
+                    );
+
+
+                if (
+                    !autenticacao.ok
+                ) {
+
+                    return autenticacao.resposta;
+                }
+
+
+                return atualizarChamado(
+
+                    env,
+
+                    dados
+                );
+            }
+
+
+            /*
+             * =================================================
+             * CRIAR CHAMADO
+             * =================================================
+             */
+
+            return criarChamado(
+
+                env,
+
+                dados
+            );
+
+        }
+
+        catch (erro) {
+
+            console.error(
+                "ERRO NO WORKER:",
+                erro
+            );
+
+
+            return resposta(
+                {
+                    sucesso:
+                        false,
+
+                    erro:
+                        "Erro interno no sistema.",
+
+                    detalhe:
+                        erro?.message ||
+                        ""
+                },
+
+                500
+            );
+        }
     }
-
-
-    /*
-     * =====================================================
-     * ARQUIVOS DO SITE
-     * =====================================================
-     */
-
-    if (
-      request.method === "GET"
-    ) {
-
-      return env.ASSETS.fetch(
-        request
-      );
-
-    }
-
-
-    /*
-     * =====================================================
-     * ROTA NÃO ENCONTRADA
-     * =====================================================
-     */
-
-    return new Response(
-      JSON.stringify({
-        erro:
-          "Rota não encontrada."
-      }),
-      {
-        status: 404,
-        headers:
-          corsHeaders
-      }
-    );
-
-  }
 };
