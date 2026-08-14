@@ -1083,10 +1083,6 @@ input[readonly] {
 </option>
 
 <option>
-    Imagem/câmera
-</option>
-
-<option>
     Elevador
 </option>
 
@@ -1099,6 +1095,22 @@ input[readonly] {
 </option>
 
 <option>
+    Shaft Aberto
+</option>
+
+<option>
+    Gás
+</option>
+
+<option>
+    Falta de Água no Bloco
+</option>
+
+<option>
+    Falta de Energia no Bloco
+</option>
+
+<option>
     Outros
 </option>
 
@@ -1107,93 +1119,6 @@ input[readonly] {
 </div>
 
 
-<!-- =====================================================
-     CÂMERA
-===================================================== -->
-
-<div
-    id="cameraBox"
-    style="display:none;"
->
-
-
-<div class="form-group">
-
-<label>
-
-    📅 Data da ocorrência:
-
-</label>
-
-<input
-    type="date"
-    id="dataOcorrencia"
->
-
-</div>
-
-
-<div class="form-group">
-
-<label>
-
-    🕐 Hora inicial:
-
-</label>
-
-<input
-    type="time"
-    id="horaInicial"
->
-
-</div>
-
-
-<div class="form-group">
-
-<label>
-
-    🕐 Hora final:
-
-</label>
-
-<input
-    type="time"
-    id="horaFinal"
->
-
-</div>
-
-
-</div>
-
-
-<!-- =====================================================
-     FOTO
-===================================================== -->
-
-<div class="form-group">
-
-<label>
-
-    📷 Foto da ocorrência:
-
-</label>
-
-<input
-    type="file"
-    id="foto"
-    accept="image/*"
-    capture="environment"
->
-
-<small>
-
-    No celular, você poderá abrir a câmera.
-
-</small>
-
-</div>
 
 
 <div class="form-group">
@@ -1206,7 +1131,6 @@ input[readonly] {
 
 <textarea
     id="detalhes"
-    required
     placeholder="Descreva brevemente o problema encontrado..."
 ></textarea>
 
@@ -1844,7 +1768,7 @@ input[readonly] {
 ===================================================== */
 
 const API =
-    "/.netlify/functions/protocolo";
+    "https://parque-clube.newcristian.workers.dev/";
 
 const FORM_ENDPOINT =
     "https://formspree.io/f/mljrnqgv";
@@ -2059,34 +1983,7 @@ document
     );
 
 
-/* =====================================================
-   CÂMERA
-===================================================== */
 
-document
-    .getElementById(
-        "ocorrencia"
-    )
-    .addEventListener(
-        "change",
-        function () {
-
-            const camera =
-                this.value ===
-                "Imagem/câmera";
-
-
-            document
-                .getElementById(
-                    "cameraBox"
-                )
-                .style.display =
-                camera
-                    ? "block"
-                    : "none";
-
-        }
-    );
 
 
 /* =====================================================
@@ -2183,25 +2080,13 @@ document
                             .value,
 
                     dataOcorrencia:
-                        document
-                            .getElementById(
-                                "dataOcorrencia"
-                            )
-                            .value,
+                        "",
 
                     horaInicial:
-                        document
-                            .getElementById(
-                                "horaInicial"
-                            )
-                            .value,
+                        "",
 
                     horaFinal:
-                        document
-                            .getElementById(
-                                "horaFinal"
-                            )
-                            .value,
+                        "",
 
                     detalhes:
                         document
@@ -2617,28 +2502,6 @@ function prepararBotoesEnvio(
                         assunto
                     );
 
-                    /*
-                     * O Formspree recebe a foto como anexo,
-                     * quando uma foto foi selecionada.
-                     */
-
-                    const foto =
-                        document.getElementById(
-                            "foto"
-                        );
-
-                    if (
-                        foto &&
-                        foto.files &&
-                        foto.files.length
-                    ) {
-
-                        formData.append(
-                            "Foto",
-                            foto.files[0]
-                        );
-                    }
-
                     const resposta =
                         await fetch(
                             FORM_ENDPOINT,
@@ -3049,8 +2912,21 @@ document
                         }
                     );
 
-                const resultado =
-                    await resposta.json();
+                const textoResposta =
+                    await resposta.text();
+
+                let resultado = {};
+
+                try {
+                    resultado =
+                        textoResposta
+                            ? JSON.parse(textoResposta)
+                            : {};
+                } catch {
+                    throw new Error(
+                        "O servidor respondeu sem JSON. Verifique o deploy do Worker."
+                    );
+                }
 
                 if (
                     !resposta.ok ||
