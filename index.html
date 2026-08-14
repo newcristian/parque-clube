@@ -1123,6 +1123,10 @@ input[readonly] {
 </option>
 
 <option>
+    Câmera/Imagens
+</option>
+
+<option>
     Outros
 </option>
 
@@ -1131,6 +1135,84 @@ input[readonly] {
 </div>
 
 
+<!-- =====================================================
+     INTERVALO DE HORÁRIO - CÂMERA/IMAGENS
+===================================================== -->
+
+<div
+    class="form-group"
+    id="dataOcorrenciaContainer"
+    style="display:none;"
+>
+
+<label for="dataOcorrencia">
+    Data do ocorrido:
+</label>
+
+<input
+    type="text"
+    id="dataOcorrencia"
+    name="dataOcorrencia"
+    placeholder="DD/MM/AAAA"
+    inputmode="numeric"
+    maxlength="10"
+    autocomplete="off"
+>
+
+</div>
+
+
+<div
+    class="form-group"
+    id="intervaloCamera"
+    style="display:none;"
+>
+
+<label>
+    Intervalo do ocorrido:
+</label>
+
+<div
+    style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"
+>
+
+    <div>
+        <label
+            for="horaInicial"
+            style="font-size:13px;font-weight:normal;"
+        >
+            Hora inicial:
+        </label>
+
+        <input
+            type="time"
+            id="horaInicial"
+        >
+    </div>
+
+    <div>
+        <label
+            for="horaFinal"
+            style="font-size:13px;font-weight:normal;"
+        >
+            Hora final:
+        </label>
+
+        <input
+            type="time"
+            id="horaFinal"
+        >
+    </div>
+
+</div>
+
+<small
+    style="display:block;margin-top:6px;color:#666;"
+>
+    Informe o período em que ocorreu o problema nas câmeras/imagens.
+</small>
+
+</div>
 
 
 <div class="form-group">
@@ -1874,6 +1956,69 @@ function escapar(valor) {
 
 
 /* =====================================================
+   CÂMERA/IMAGENS → INTERVALO DE HORÁRIO
+===================================================== */
+
+const ocorrenciaSelect =
+    document.getElementById(
+        "ocorrencia"
+    );
+
+const intervaloCamera =
+    document.getElementById(
+        "intervaloCamera"
+    );
+
+const dataOcorrenciaContainer =
+    document.getElementById(
+        "dataOcorrenciaContainer"
+    );
+
+const dataOcorrencia =
+    document.getElementById(
+        "dataOcorrencia"
+    );
+
+const horaInicialInput =
+    document.getElementById(
+        "horaInicial"
+    );
+
+const horaFinalInput =
+    document.getElementById(
+        "horaFinal"
+    );
+
+function atualizarIntervaloCamera() {
+
+    const ehCamera =
+        ocorrenciaSelect.value ===
+        "Câmera/Imagens";
+
+    intervaloCamera.style.display =
+        ehCamera ? "block" : "none";
+
+    dataOcorrenciaContainer.style.display =
+        ehCamera ? "block" : "none";
+
+    if (!ehCamera) {
+
+        dataOcorrencia.value = "";
+        horaInicialInput.value = "";
+        horaFinalInput.value = "";
+
+    }
+}
+
+ocorrenciaSelect.addEventListener(
+    "change",
+    atualizarIntervaloCamera
+);
+
+atualizarIntervaloCamera();
+
+
+/* =====================================================
    BLOCO → MÚLTIPLOS ANDARES / PAVIMENTOS
 ===================================================== */
 
@@ -2092,13 +2237,25 @@ document
                             .value,
 
                     dataOcorrencia:
-                        "",
+                        document
+                            .getElementById(
+                                "dataOcorrencia"
+                            )
+                            .value,
 
                     horaInicial:
-                        "",
+                        document
+                            .getElementById(
+                                "horaInicial"
+                            )
+                            .value,
 
                     horaFinal:
-                        "",
+                        document
+                            .getElementById(
+                                "horaFinal"
+                            )
+                            .value,
 
                     detalhes:
                         document
@@ -4160,6 +4317,22 @@ document
 
 </script>
 
+
+<script>
+document.addEventListener("input", function (event) {
+    if (event.target && event.target.id === "dataOcorrencia") {
+        let valor = event.target.value.replace(/\D/g, "").slice(0, 8);
+
+        if (valor.length > 4) {
+            valor = valor.slice(0, 2) + "/" + valor.slice(2, 4) + "/" + valor.slice(4);
+        } else if (valor.length > 2) {
+            valor = valor.slice(0, 2) + "/" + valor.slice(2);
+        }
+
+        event.target.value = valor;
+    }
+});
+</script>
 </body>
 
 </html>
