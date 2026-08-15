@@ -2694,6 +2694,18 @@ document
                     "block";
 
 
+                dataHoraRegistroWhatsApp =
+                    new Date().toLocaleString(
+                        "pt-BR",
+                        {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit"
+                        }
+                    );
+
                 prepararBotoesEnvio(
                     resultado.protocolo,
                     dados
@@ -2802,63 +2814,81 @@ function prepararWhatsApp(
 
 let ultimoChamadoParaEnvio = null;
 
+let dataHoraRegistroWhatsApp = "";
+
 function montarMensagemChamado(
     protocolo,
     dados
 ) {
 
-    const dataOcorrencia =
-        dados.dataOcorrencia ||
-        "-";
-
-    const horaInicial =
-        dados.horaInicial ||
-        "-";
-
-    const horaFinal =
-        dados.horaFinal ||
-        "-";
+    const dataRegistro =
+        dataHoraRegistroWhatsApp ||
+        new Date().toLocaleString(
+            "pt-BR",
+            {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit"
+            }
+        );
 
     return (
         "PARQUE CLUBE\n\n" +
 
-        "📋 CHAMADO REGISTRADO\n\n" +
+        "📋 *CHAMADO REGISTRADO*\n\n" +
 
-        "Protocolo: " +
+        "*Protocolo:* " +
         protocolo +
 
-        "\n\nSolicitante: " +
+        "\n\n*Solicitante:* " +
         (dados.solicitante || "") +
 
-        "\nCargo/Função: " +
+        "\n*Cargo/Função:* " +
         (dados.cargo || "") +
 
-        "\nBloco/Área: " +
+        "\n*Bloco/Área:* " +
         (dados.bloco || "") +
 
         (
             dados.pavimentos
-                ? "\nAndar(es): " +
+                ? "\n*Andar(es):* " +
                   dados.pavimentos
                 : ""
         ) +
 
-        "\nOcorrência: " +
+        "\n*Ocorrência:* " +
         (dados.ocorrencia || "") +
 
-        "\n📅 Data da ocorrência: " +
-        dataOcorrencia +
+        "\n\n📅 *Recebido em:* " +
+        dataRegistro +
 
-        "\n⏰ Hora inicial: " +
-        horaInicial +
+        (
+            dados.dataOcorrencia
+                ? "\n📅 *Data da ocorrência:* " +
+                  dados.dataOcorrencia
+                : ""
+        ) +
 
-        "\n⏰ Hora final: " +
-        horaFinal +
+        (
+            dados.horaInicial
+                ? "\n⏰ *Hora inicial:* " +
+                  dados.horaInicial
+                : ""
+        ) +
 
-        "\n\nDetalhes:\n" +
+        (
+            dados.horaFinal
+                ? "\n⏰ *Hora final:* " +
+                  dados.horaFinal
+                : ""
+        ) +
+
+        "\n\n*Detalhes:*\n" +
         (dados.detalhes || "") +
 
-        "\n\nProtocolo: " +
+        "\n\n*Protocolo:* " +
         protocolo
     );
 }
