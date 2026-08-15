@@ -1737,23 +1737,42 @@ input[readonly] {
 
 </select>
 
-
+</div>
 
 <div class="form-group">
 
-<label>⭐ Prioridade:</label>
+<label>
+
+    ⭐ Prioridade:
+
+</label>
 
 <select id="filtroPrioridade">
-<option value="">Todas as prioridades</option>
-<option value="Urgente">🔴 Urgente</option>
-<option value="Alta">🟠 Alta</option>
-<option value="Moderada">🟡 Moderada</option>
-<option value="Baixa">🟢 Baixa</option>
+
+<option value="">
+    Todas
+</option>
+
+<option value="Urgente">
+    🔴 Urgente
+</option>
+
+<option value="Alta">
+    🟠 Alta
+</option>
+
+<option value="Moderada">
+    🟡 Moderada
+</option>
+
+<option value="Baixa">
+    🟢 Baixa
+</option>
+
 </select>
 
 </div>
 
-</div>
 
 
 </div>
@@ -1939,6 +1958,14 @@ input[readonly] {
 
 </button>
 
+
+<div
+    id="resultadoAtualizacao"
+    class="mensagem"
+></div>
+
+
+
 <button
     type="button"
     id="btnFecharEdicao"
@@ -1947,12 +1974,6 @@ input[readonly] {
 >
     ✖️ Fechar / Minimizar Chamado
 </button>
-
-
-<div
-    id="resultadoAtualizacao"
-    class="mensagem"
-></div>
 
 
 <button
@@ -2186,8 +2207,6 @@ const prioridadeSelect =
     );
 
 
-prioridadeSelect.value = "Moderada";
-
 function definirPrioridadePadrao() {
 
     prioridadeSelect.value = "Moderada";
@@ -2205,7 +2224,6 @@ ocorrenciaSelect.addEventListener(
 );
 
 atualizarIntervaloCamera();
-definirPrioridadePadrao();
 
 
 /* =====================================================
@@ -3669,6 +3687,13 @@ function mostrarChamados() {
             )
             .value;
 
+    const filtroPrioridade =
+        document
+            .getElementById(
+                "filtroPrioridade"
+            )
+            .value;
+
 
     const filtrados =
         chamados.filter(
@@ -3696,11 +3721,6 @@ function mostrarChamados() {
                     );
 
 
-                const filtroPrioridade =
-                    document.getElementById(
-                        "filtroPrioridade"
-                    ).value;
-
                 const passouStatus =
                     !filtro ||
                     (
@@ -3709,13 +3729,15 @@ function mostrarChamados() {
                     ) ===
                     filtro;
 
+                const prioridadeChamado =
+                    chamado.prioridade ||
+                    "Moderada";
+
                 const passouPrioridade =
                     !filtroPrioridade ||
-                    (
-                        chamado.prioridade ||
-                        "Moderada"
-                    ) ===
+                    prioridadeChamado ===
                     filtroPrioridade;
+
 
                 return (
                     passouPesquisa &&
@@ -3889,10 +3911,12 @@ function criarCard(
                     Prioridade:
                 </strong>
 
-                ${escapar(
-                    chamado.prioridade ||
-                    "Moderada"
-                )}
+                <span class="prioridade-badge prioridade-${String(chamado.prioridade || "Moderada").toLowerCase().replace(/[^a-z]/g, "")}">
+                    ${escapar(
+                        chamado.prioridade ||
+                        "Moderada"
+                    )}
+                </span>
 
                 <br>
 
@@ -4301,50 +4325,6 @@ function mostrarEdicao(
         });
 
 }
-
-
-/* =====================================================
-   FECHAR / MINIMIZAR EDIÇÃO
-===================================================== */
-
-document
-    .getElementById(
-        "btnFecharEdicao"
-    )
-    .addEventListener(
-        "click",
-        function () {
-
-            document
-                .getElementById(
-                    "editarChamado"
-                )
-                .style.display =
-                "none";
-
-            document
-                .getElementById(
-                    "resultadoAtualizacao"
-                )
-                .style.display =
-                "none";
-
-            protocoloSelecionado = "";
-
-            document
-                .getElementById(
-                    "protocoloAdmin"
-                )
-                .value =
-                "";
-
-            window.scrollTo({
-                top: 0,
-                behavior: "smooth"
-            });
-
-        }
-    );
 
 
 /* =====================================================
@@ -4778,13 +4758,6 @@ document
                     "listaChamados"
                 )
                 .innerHTML =
-                "";
-
-            document
-                .getElementById(
-                    "filtroPrioridade"
-                )
-                .value =
                 "";
 
 
