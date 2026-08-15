@@ -1737,6 +1737,22 @@ input[readonly] {
 
 </select>
 
+
+
+<div class="form-group">
+
+<label>⭐ Prioridade:</label>
+
+<select id="filtroPrioridade">
+<option value="">Todas as prioridades</option>
+<option value="Urgente">🔴 Urgente</option>
+<option value="Alta">🟠 Alta</option>
+<option value="Moderada">🟡 Moderada</option>
+<option value="Baixa">🟢 Baixa</option>
+</select>
+
+</div>
+
 </div>
 
 
@@ -1921,6 +1937,15 @@ input[readonly] {
 
     💾 Salvar Alterações
 
+</button>
+
+<button
+    type="button"
+    id="btnFecharEdicao"
+    class="btn-cinza"
+    style="margin-top:10px;"
+>
+    ✖️ Fechar / Minimizar Chamado
 </button>
 
 
@@ -3671,6 +3696,11 @@ function mostrarChamados() {
                     );
 
 
+                const filtroPrioridade =
+                    document.getElementById(
+                        "filtroPrioridade"
+                    ).value;
+
                 const passouStatus =
                     !filtro ||
                     (
@@ -3679,10 +3709,18 @@ function mostrarChamados() {
                     ) ===
                     filtro;
 
+                const passouPrioridade =
+                    !filtroPrioridade ||
+                    (
+                        chamado.prioridade ||
+                        "Moderada"
+                    ) ===
+                    filtroPrioridade;
 
                 return (
                     passouPesquisa &&
-                    passouStatus
+                    passouStatus &&
+                    passouPrioridade
                 );
 
             }
@@ -3929,6 +3967,15 @@ document
 document
     .getElementById(
         "filtroStatus"
+    )
+    .addEventListener(
+        "change",
+        mostrarChamados
+    );
+
+document
+    .getElementById(
+        "filtroPrioridade"
     )
     .addEventListener(
         "change",
@@ -4254,6 +4301,50 @@ function mostrarEdicao(
         });
 
 }
+
+
+/* =====================================================
+   FECHAR / MINIMIZAR EDIÇÃO
+===================================================== */
+
+document
+    .getElementById(
+        "btnFecharEdicao"
+    )
+    .addEventListener(
+        "click",
+        function () {
+
+            document
+                .getElementById(
+                    "editarChamado"
+                )
+                .style.display =
+                "none";
+
+            document
+                .getElementById(
+                    "resultadoAtualizacao"
+                )
+                .style.display =
+                "none";
+
+            protocoloSelecionado = "";
+
+            document
+                .getElementById(
+                    "protocoloAdmin"
+                )
+                .value =
+                "";
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+
+        }
+    );
 
 
 /* =====================================================
@@ -4687,6 +4778,13 @@ document
                     "listaChamados"
                 )
                 .innerHTML =
+                "";
+
+            document
+                .getElementById(
+                    "filtroPrioridade"
+                )
+                .value =
                 "";
 
 
