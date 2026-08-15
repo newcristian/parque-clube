@@ -367,6 +367,8 @@ input[readonly] {
 
 .resultado {
 
+                atualizarHistoricoConsultaProtocolo(resultado);
+
     display: none;
 
     margin-top: 18px;
@@ -743,6 +745,29 @@ input[readonly] {
 .historico-destaque-valor {
     font-weight: 700;
     text-align: right;
+}
+</style>
+
+
+<style>
+.historico-consulta-protocolo {
+    margin-top: 14px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: #f1f7f3;
+    border: 1px solid #c9dfcf;
+}
+.historico-consulta-protocolo .titulo {
+    font-weight: 700;
+    color: #176b35;
+    margin-bottom: 8px;
+}
+.historico-consulta-protocolo .linha {
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(0,0,0,.06);
+}
+.historico-consulta-protocolo .linha:last-child {
+    border-bottom: 0;
 }
 </style>
 
@@ -1966,6 +1991,25 @@ input[readonly] {
     placeholder="Informe o que foi realizado..."
 ></textarea>
 
+
+<div id="historicoConsultaProtocolo" class="historico-consulta-protocolo">
+    <div class="titulo">🕒 Histórico do Protocolo</div>
+
+    <div class="linha">
+        📥 <strong>Recebido em:</strong>
+        <span id="consultaRecebidoEm">-</span>
+    </div>
+
+    <div class="linha">
+        🔄 <strong>Última atualização:</strong>
+        <span id="consultaAtualizadoEm">-</span>
+    </div>
+
+    <div class="linha">
+        ✅ <strong>Concluído em:</strong>
+        <span id="consultaConcluidoEm">-</span>
+    </div>
+</div>
 </div>
 
 
@@ -2072,6 +2116,50 @@ input[readonly] {
 
 
 <script>
+
+function atualizarHistoricoConsultaProtocolo(chamado) {
+
+    const recebido =
+        document.getElementById("consultaRecebidoEm");
+
+    const atualizado =
+        document.getElementById("consultaAtualizadoEm");
+
+    const concluido =
+        document.getElementById("consultaConcluidoEm");
+
+    if (!recebido || !atualizado || !concluido) {
+        return;
+    }
+
+    recebido.textContent =
+        (
+            chamado?.dataAbertura ||
+            "-"
+        ) +
+        (
+            chamado?.horaAbertura
+                ? " às " + chamado.horaAbertura
+                : ""
+        );
+
+    atualizado.textContent =
+        chamado?.ultimaAtualizacao ||
+        "-";
+
+    concluido.textContent =
+        (
+            chamado?.dataConclusao ||
+            "-"
+        ) +
+        (
+            chamado?.horaConclusao
+                ? " às " + chamado.horaConclusao
+                : ""
+        );
+}
+
+
 
 function atualizarHistoricoHorariosAdmin(chamado) {
 
