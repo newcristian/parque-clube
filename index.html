@@ -1199,33 +1199,6 @@ input[readonly] {
     A prioridade é opcional e começa como Moderada. A Administração poderá reclassificar o chamado.
 </small>
 
-
-<div class="historico-horarios" style="margin-top:12px;padding:10px;border-radius:8px;background:#f5f7fa;">
-
-    <div>
-        📥 <strong>Recebido em:</strong>
-        ${escapar(
-            chamado.dataAbertura || "-"
-        )}
-        ${chamado.horaAbertura ? " às " + escapar(chamado.horaAbertura) : ""}
-    </div>
-
-    <div style="margin-top:5px;">
-        🔄 <strong>Última atualização:</strong>
-        ${escapar(
-            chamado.ultimaAtualizacao || "-"
-        )}
-    </div>
-
-    <div style="margin-top:5px;">
-        ✅ <strong>Concluído em:</strong>
-        ${escapar(
-            chamado.dataConclusao || "-"
-        )}
-        ${chamado.horaConclusao ? " às " + escapar(chamado.horaConclusao) : ""}
-    </div>
-
-</div>
 </div>
 
 
