@@ -124,11 +124,6 @@ function verificarSenha(
     env
 ) {
 
-    /*
-     * Remove espaços acidentais do Secret
-     * e da senha enviada pelo navegador.
-     */
-
     const senhaAdmin =
         String(
             env.ADMIN_PASSWORD || ""
@@ -268,7 +263,11 @@ function converterChamado(row) {
             row.ultima_atualizacao || "",
 
         criadoEm:
-            row.criado_em || ""
+            row.criado_em || "",
+
+        prioridade:
+            row.prioridade ||
+            "Moderada"
     };
 }
 
@@ -462,6 +461,39 @@ async function criarChamado(
         `PC-${data.dia}-${data.mes}-${String(data.ano).slice(-2)}-${sequencial}`;
 
 
+    /*
+     * PRIORIDADE
+     *
+     * Moderada é o padrão.
+     * A prioridade é independente
+     * do tipo de ocorrência.
+     */
+
+    const prioridadesPermitidas = [
+
+        "Urgente",
+        "Alta",
+        "Moderada",
+        "Baixa"
+
+    ];
+
+
+    const prioridadeInformada =
+        String(
+            dados.prioridade ||
+            "Moderada"
+        ).trim();
+
+
+    const prioridade =
+        prioridadesPermitidas.includes(
+            prioridadeInformada
+        )
+            ? prioridadeInformada
+            : "Moderada";
+
+
     const chamado = {
 
         protocolo,
@@ -518,6 +550,8 @@ async function criarChamado(
         observacaoSolucao:
             "",
 
+        prioridade,
+
         criadoEm:
             new Date().toISOString()
     };
@@ -547,6 +581,7 @@ async function criarChamado(
                 detalhes,
                 responsavel,
                 observacao_solucao,
+                prioridade,
                 criado_em
 
             )
@@ -555,7 +590,8 @@ async function criarChamado(
 
                 ?, ?, ?, ?, ?,
                 ?, ?, ?, ?, ?,
-                ?, ?, ?, ?, ?, ?
+                ?, ?, ?, ?, ?,
+                ?, ?
 
             )
             `
@@ -592,7 +628,10 @@ async function criarChamado(
 
             chamado.observacaoSolucao,
 
+            chamado.prioridade,
+
             chamado.criadoEm
+
         )
         .run();
 
@@ -676,6 +715,7 @@ async function atualizarChamado(
         "Resolvido",
 
         "Cancelado"
+
     ];
 
 
@@ -697,6 +737,37 @@ async function atualizarChamado(
             400
         );
     }
+
+
+    const prioridadesPermitidas = [
+
+        "Urgente",
+
+        "Alta",
+
+        "Moderada",
+
+        "Baixa"
+
+    ];
+
+
+    const prioridade =
+        prioridadesPermitidas.includes(
+            String(
+                dados.prioridade ||
+                ""
+            ).trim()
+        )
+
+            ? String(
+                dados.prioridade
+            ).trim()
+
+            : (
+                chamadoAtual.prioridade ||
+                "Moderada"
+            );
 
 
     const data =
@@ -755,6 +826,8 @@ async function atualizarChamado(
 
                 observacao_solucao = ?,
 
+                prioridade = ?,
+
                 data_conclusao = ?,
 
                 hora_conclusao = ?,
@@ -774,6 +847,8 @@ async function atualizarChamado(
             dados.observacaoSolucao ||
                 "",
 
+            prioridade,
+
             dataConclusao,
 
             horaConclusao,
@@ -781,6 +856,7 @@ async function atualizarChamado(
             ultimaAtualizacao,
 
             protocolo
+
         )
         .run();
 
@@ -802,6 +878,89 @@ async function atualizarChamado(
 
         chamado:
             atualizado
+    });
+}
+
+
+/* =========================================================
+   EXCLUIR CHAMADO
+========================================================= */
+
+async function excluirChamado(
+    env,
+    dados
+) {
+
+    if (!dados.protocolo) {
+
+        return resposta(
+            {
+                sucesso:
+                    false,
+
+                erro:
+                    "Informe o protocolo."
+            },
+
+            400
+        );
+    }
+
+
+    const protocolo =
+        String(
+            dados.protocolo
+        )
+        .trim()
+        .toUpperCase();
+
+
+    const chamado =
+        await buscarChamado(
+            env,
+            protocolo
+        );
+
+
+    if (!chamado) {
+
+        return resposta(
+            {
+                sucesso:
+                    false,
+
+                erro:
+                    "Protocolo não encontrado."
+            },
+
+            404
+        );
+    }
+
+
+    await env.DB
+        .prepare(
+            `
+            DELETE FROM chamados
+            WHERE protocolo = ?
+            `
+        )
+        .bind(
+            protocolo
+        )
+        .run();
+
+
+    return resposta({
+
+        sucesso:
+            true,
+
+        mensagem:
+            "Chamado excluído com sucesso.",
+
+        protocolo:
+            protocolo
     });
 }
 
@@ -975,14 +1134,6 @@ export default {
             /*
              * =================================================
              * API
-             *
-             * NOVA ROTA:
-             * /api/protocolo
-             *
-             * ROTA ANTIGA:
-             * /.netlify/functions/protocolo
-             *
-             * A antiga fica temporariamente ativa.
              * =================================================
              */
 
@@ -1023,8 +1174,6 @@ export default {
             /*
              * =================================================
              * CONSULTA DIRETA
-             *
-             * /?protocolo=...
              * =================================================
              */
 
@@ -1089,10 +1238,7 @@ export default {
 
             /*
              * =================================================
-             * POST
-             *
-             * A API aceita POST na rota nova e também
-             * na rota antiga durante a transição.
+             * SOMENTE POST A PARTIR DAQUI
              * =================================================
              */
 
@@ -1236,6 +1382,41 @@ export default {
 
 
                 return atualizarChamado(
+
+                    env,
+
+                    dados
+                );
+            }
+
+
+            /*
+             * =================================================
+             * EXCLUIR
+             * =================================================
+             */
+
+            if (
+                dados.action ===
+                "delete"
+            ) {
+
+                const autenticacao =
+                    verificarSenha(
+                        dados,
+                        env
+                    );
+
+
+                if (
+                    !autenticacao.ok
+                ) {
+
+                    return autenticacao.resposta;
+                }
+
+
+                return excluirChamado(
 
                     env,
 
