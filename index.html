@@ -1199,6 +1199,33 @@ input[readonly] {
     A prioridade é opcional e começa como Moderada. A Administração poderá reclassificar o chamado.
 </small>
 
+
+<div class="historico-horarios" style="margin-top:12px;padding:10px;border-radius:8px;background:#f5f7fa;">
+
+    <div>
+        📥 <strong>Recebido em:</strong>
+        ${escapar(
+            chamado.dataAbertura || "-"
+        )}
+        ${chamado.horaAbertura ? " às " + escapar(chamado.horaAbertura) : ""}
+    </div>
+
+    <div style="margin-top:5px;">
+        🔄 <strong>Última atualização:</strong>
+        ${escapar(
+            chamado.ultimaAtualizacao || "-"
+        )}
+    </div>
+
+    <div style="margin-top:5px;">
+        ✅ <strong>Concluído em:</strong>
+        ${escapar(
+            chamado.dataConclusao || "-"
+        )}
+        ${chamado.horaConclusao ? " às " + escapar(chamado.horaConclusao) : ""}
+    </div>
+
+</div>
 </div>
 
 
@@ -1840,6 +1867,13 @@ input[readonly] {
     id="editarChamado"
     class="admin-box"
 >
+<div id="historicoHorariosAdmin"
+     style="margin:12px 0;padding:12px;border-radius:8px;background:#f5f7fa;">
+    <div>📥 <strong>Recebido em:</strong> <span id="adminRecebidoEm">-</span></div>
+    <div style="margin-top:5px;">🔄 <strong>Última atualização:</strong> <span id="adminAtualizadoEm">-</span></div>
+    <div style="margin-top:5px;">✅ <strong>Concluído em:</strong> <span id="adminConcluidoEm">-</span></div>
+</div>
+
 
 
 <div class="admin-titulo">
@@ -2020,6 +2054,50 @@ input[readonly] {
 
 
 <script>
+
+function atualizarHistoricoHorariosAdmin(chamado) {
+
+    const recebido =
+        document.getElementById("adminRecebidoEm");
+
+    const atualizado =
+        document.getElementById("adminAtualizadoEm");
+
+    const concluido =
+        document.getElementById("adminConcluidoEm");
+
+    if (!recebido || !atualizado || !concluido) {
+        return;
+    }
+
+    recebido.textContent =
+        (
+            chamado?.dataAbertura ||
+            "-"
+        ) +
+        (
+            chamado?.horaAbertura
+                ? " às " + chamado.horaAbertura
+                : ""
+        );
+
+    atualizado.textContent =
+        chamado?.ultimaAtualizacao ||
+        "-";
+
+    concluido.textContent =
+        (
+            chamado?.dataConclusao ||
+            "-"
+        ) +
+        (
+            chamado?.horaConclusao
+                ? " às " + chamado.horaConclusao
+                : ""
+        );
+}
+
+
 
 /* =====================================================
    CONFIGURAÇÕES
@@ -3922,15 +4000,53 @@ function criarCard(
                 <br>
 
 
-                📅
+                📥
                 <strong>
-                    Data:
+                    Recebido em:
                 </strong>
 
                 ${escapar(
                     chamado.dataAbertura ||
-                    ""
+                    "Não informado"
                 )}
+
+                ${
+                    chamado.horaAbertura
+                        ? " às " +
+                          escapar(
+                              chamado.horaAbertura
+                          )
+                        : ""
+                }
+
+                <br>
+
+                🔄
+                <strong>
+                    Última atualização:
+                </strong>
+
+                ${escapar(
+                    chamado.ultimaAtualizacao ||
+                    "Ainda não atualizado"
+                )}
+
+                ${
+                    chamado.dataConclusao
+                        ? "<br>✅ <strong>Concluído em:</strong> " +
+                          escapar(
+                              chamado.dataConclusao
+                          ) +
+                          (
+                              chamado.horaConclusao
+                                  ? " às " +
+                                    escapar(
+                                        chamado.horaConclusao
+                                    )
+                                  : ""
+                          )
+                        : ""
+                }
 
             </div>
 
@@ -4194,6 +4310,71 @@ function mostrarEdicao(
                 )}
 
             </div>
+
+
+            <div class="resultado-item">
+
+                <strong>
+                    📥 Recebido em
+                </strong>
+
+                ${escapar(
+                    chamado.dataAbertura ||
+                    "Não informado"
+                )}
+
+                ${
+                    chamado.horaAbertura
+                        ? " às " +
+                          escapar(
+                              chamado.horaAbertura
+                          )
+                        : ""
+                }
+
+            </div>
+
+
+            <div class="resultado-item">
+
+                <strong>
+                    🔄 Última atualização
+                </strong>
+
+                ${escapar(
+                    chamado.ultimaAtualizacao ||
+                    "Ainda não atualizado"
+                )}
+
+            </div>
+
+
+            ${
+                chamado.dataConclusao
+                    ? `
+            <div class="resultado-item">
+
+                <strong>
+                    ✅ Concluído em
+                </strong>
+
+                ${escapar(
+                    chamado.dataConclusao
+                )}
+
+                ${
+                    chamado.horaConclusao
+                        ? " às " +
+                          escapar(
+                              chamado.horaConclusao
+                          )
+                        : ""
+                }
+
+            </div>
+                    `
+                    : ""
+            }
 
 
             <div class="resultado-item">
@@ -4515,8 +4696,35 @@ document
                         );
 
 
-                mensagem.textContent =
-                    "✅ Chamado atualizado com sucesso.";
+                const chamadoAtualizado =
+                    dados.chamado || {};
+
+                mensagem.innerHTML =
+                    "✅ Chamado atualizado com sucesso." +
+                    "<br><br>" +
+                    "🔄 Última atualização: <strong>" +
+                    escapar(
+                        chamadoAtualizado.ultimaAtualizacao ||
+                        "Registrada agora"
+                    ) +
+                    "</strong>" +
+                    (
+                        chamadoAtualizado.dataConclusao
+                            ? "<br>✅ Concluído em: <strong>" +
+                              escapar(
+                                  chamadoAtualizado.dataConclusao
+                              ) +
+                              (
+                                  chamadoAtualizado.horaConclusao
+                                      ? " às " +
+                                        escapar(
+                                            chamadoAtualizado.horaConclusao
+                                        )
+                                      : ""
+                              ) +
+                              "</strong>"
+                            : ""
+                    );
 
 
                 mensagem.className =
@@ -4549,6 +4757,59 @@ document
                     atualizarEstatisticas();
 
                     mostrarChamados();
+
+                    /*
+                     * Atualiza os dados exibidos no painel
+                     * imediatamente, incluindo a data/hora.
+                     */
+                    mostrarEdicao(
+                        dados.chamado
+                    );
+
+                    document
+                        .getElementById(
+                            "resultadoAtualizacao"
+                        )
+                        .innerHTML =
+                        "✅ Chamado atualizado com sucesso." +
+                        "<br><br>" +
+                        "🔄 Última atualização: <strong>" +
+                        escapar(
+                            dados.chamado.ultimaAtualizacao ||
+                            "Registrada agora"
+                        ) +
+                        "</strong>" +
+                        (
+                            dados.chamado.dataConclusao
+                                ? "<br>✅ Concluído em: <strong>" +
+                                  escapar(
+                                      dados.chamado.dataConclusao
+                                  ) +
+                                  (
+                                      dados.chamado.horaConclusao
+                                          ? " às " +
+                                            escapar(
+                                                dados.chamado.horaConclusao
+                                            )
+                                          : ""
+                                  ) +
+                                  "</strong>"
+                                : ""
+                        );
+
+                    document
+                        .getElementById(
+                            "resultadoAtualizacao"
+                        )
+                        .className =
+                        "mensagem sucesso";
+
+                    document
+                        .getElementById(
+                            "resultadoAtualizacao"
+                        )
+                        .style.display =
+                        "block";
 
                 }
 
