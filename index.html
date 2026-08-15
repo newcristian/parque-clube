@@ -2807,6 +2807,18 @@ function montarMensagemChamado(
     dados
 ) {
 
+    const dataOcorrencia =
+        dados.dataOcorrencia ||
+        "-";
+
+    const horaInicial =
+        dados.horaInicial ||
+        "-";
+
+    const horaFinal =
+        dados.horaFinal ||
+        "-";
+
     return (
         "PARQUE CLUBE\n\n" +
 
@@ -2834,26 +2846,14 @@ function montarMensagemChamado(
         "\nOcorrência: " +
         (dados.ocorrencia || "") +
 
-        (
-            dados.dataOcorrencia
-                ? "\nData da ocorrência: " +
-                  dados.dataOcorrencia
-                : ""
-        ) +
+        "\n📅 Data da ocorrência: " +
+        dataOcorrencia +
 
-        (
-            dados.horaInicial
-                ? "\nHorário inicial: " +
-                  dados.horaInicial
-                : ""
-        ) +
+        "\n⏰ Hora inicial: " +
+        horaInicial +
 
-        (
-            dados.horaFinal
-                ? "\nHorário final: " +
-                  dados.horaFinal
-                : ""
-        ) +
+        "\n⏰ Hora final: " +
+        horaFinal +
 
         "\n\nDetalhes:\n" +
         (dados.detalhes || "") +
