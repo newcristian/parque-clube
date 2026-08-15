@@ -4302,6 +4302,15 @@ function mostrarEdicao(
     chamado
 ) {
 
+    /*
+     * Atualiza o destaque do histórico do protocolo.
+     * O mesmo registro é usado tanto para chamados novos
+     * quanto para protocolos antigos.
+     */
+    atualizarHistoricoHorariosAdmin(
+        chamado
+    );
+
 
     document
         .getElementById(
