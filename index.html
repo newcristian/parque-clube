@@ -906,7 +906,7 @@ input[readonly] {
 <select
     id="bloco"
     required
->
+ onchange="const area=document.getElementById('areaPavimento');const mostrar=this.value.trim().startsWith('Bloco ');area.style.display=mostrar?'block':'none';if(!mostrar){document.querySelectorAll('input[name=\'pavimento\']').forEach(c=>c.checked=false);}">
 
 <option value="">
 
@@ -947,6 +947,44 @@ input[readonly] {
 <option>Garagens</option>
 <option>Jardim</option>
 
+
+
+<option value="Churrasqueira Sub1">
+    Churrasqueira Sub1
+</option>
+
+<option value="Churrasqueira Sub2">
+    Churrasqueira Sub2
+</option>
+
+<option value="Portaria">
+    Portaria
+</option>
+
+
+<option value="Administração">
+    Administração
+</option>
+
+
+<option value="Sala de Reunião">
+    Sala de Reunião
+</option>
+
+
+<option value="Correios">
+    Correios
+</option>
+
+
+<option value="Container Lixo">
+    Container Lixo
+</option>
+
+
+<option value="Almoxarifado">
+    Almoxarifado
+</option>
 </select>
 
 </div>
@@ -959,13 +997,13 @@ input[readonly] {
 <div
     class="form-group"
     id="areaPavimento"
-    style="display:none;"
+    style="display:none;width:100%;"
 >
 
 <label>
     Andar / Pavimento:
     <small style="font-weight:normal;">
-        (pode selecionar mais de um)
+        (selecione um ou mais andares)
     </small>
 </label>
 
@@ -2105,31 +2143,47 @@ function limparPavimentos() {
 
 }
 
-blocoSelect.addEventListener(
-    "change",
-    function () {
+function atualizarAreaPavimento() {
 
-        const ehBloco =
-            this.value.startsWith(
-                "Bloco "
-            );
+    const valor =
+        String(
+            blocoSelect.value || ""
+        ).trim();
 
-        if (ehBloco) {
+    const ehBloco =
+        valor.startsWith(
+            "Bloco "
+        );
 
-            areaPavimento.style.display =
-                "block";
+    if (ehBloco) {
 
-        } else {
+        areaPavimento.style.display =
+            "block";
 
-            areaPavimento.style.display =
-                "none";
+    } else {
 
-            limparPavimentos();
+        areaPavimento.style.display =
+            "none";
 
-        }
+        limparPavimentos();
 
     }
+
+}
+
+
+blocoSelect.addEventListener(
+    "change",
+    atualizarAreaPavimento
 );
+
+
+/*
+ * Inicializa a área corretamente ao carregar
+ * a página e evita depender somente do evento change.
+ */
+
+atualizarAreaPavimento();
 
 
 /*
