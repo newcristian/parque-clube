@@ -367,8 +367,6 @@ input[readonly] {
 
 .resultado {
 
-                atualizarHistoricoConsultaProtocolo(resultado);
-
     display: none;
 
     margin-top: 18px;
@@ -748,29 +746,12 @@ input[readonly] {
 }
 </style>
 
-
 <style>
-.historico-consulta-protocolo {
-    margin-top: 14px;
-    padding: 12px 14px;
-    border-radius: 10px;
-    background: #f1f7f3;
-    border: 1px solid #c9dfcf;
-}
-.historico-consulta-protocolo .titulo {
-    font-weight: 700;
-    color: #176b35;
-    margin-bottom: 8px;
-}
-.historico-consulta-protocolo .linha {
-    padding: 5px 0;
-    border-bottom: 1px solid rgba(0,0,0,.06);
-}
-.historico-consulta-protocolo .linha:last-child {
-    border-bottom: 0;
-}
+.historico-consulta-protocolo{margin-top:14px;padding:12px 14px;border-radius:10px;background:#f1f7f3;border:1px solid #c9dfcf}
+.historico-consulta-protocolo .titulo{font-weight:700;color:#176b35;margin-bottom:8px}
+.historico-consulta-protocolo .linha{padding:5px 0;border-bottom:1px solid rgba(0,0,0,.06)}
+.historico-consulta-protocolo .linha:last-child{border-bottom:0}
 </style>
-
 </head>
 
 
@@ -1506,6 +1487,13 @@ input[readonly] {
     class="resultado-corpo"
 ></div>
 
+<div id="historicoConsultaProtocolo" class="historico-consulta-protocolo" style="display:none;">
+    <div class="titulo">🕒 Histórico do Protocolo</div>
+    <div class="linha">📥 <strong>Recebido em:</strong> <span id="consultaRecebidoEm">-</span></div>
+    <div class="linha">🔄 <strong>Última atualização:</strong> <span id="consultaAtualizadoEm">-</span></div>
+    <div class="linha">✅ <strong>Concluído em:</strong> <span id="consultaConcluidoEm">-</span></div>
+</div>
+
 
 </div>
 
@@ -1991,25 +1979,6 @@ input[readonly] {
     placeholder="Informe o que foi realizado..."
 ></textarea>
 
-
-<div id="historicoConsultaProtocolo" class="historico-consulta-protocolo">
-    <div class="titulo">🕒 Histórico do Protocolo</div>
-
-    <div class="linha">
-        📥 <strong>Recebido em:</strong>
-        <span id="consultaRecebidoEm">-</span>
-    </div>
-
-    <div class="linha">
-        🔄 <strong>Última atualização:</strong>
-        <span id="consultaAtualizadoEm">-</span>
-    </div>
-
-    <div class="linha">
-        ✅ <strong>Concluído em:</strong>
-        <span id="consultaConcluidoEm">-</span>
-    </div>
-</div>
 </div>
 
 
@@ -2116,47 +2085,26 @@ input[readonly] {
 
 
 <script>
-
 function atualizarHistoricoConsultaProtocolo(chamado) {
+    const bloco = document.getElementById("historicoConsultaProtocolo");
+    const recebido = document.getElementById("consultaRecebidoEm");
+    const atualizado = document.getElementById("consultaAtualizadoEm");
+    const concluido = document.getElementById("consultaConcluidoEm");
 
-    const recebido =
-        document.getElementById("consultaRecebidoEm");
-
-    const atualizado =
-        document.getElementById("consultaAtualizadoEm");
-
-    const concluido =
-        document.getElementById("consultaConcluidoEm");
-
-    if (!recebido || !atualizado || !concluido) {
-        return;
-    }
+    if (!bloco || !recebido || !atualizado || !concluido) return;
 
     recebido.textContent =
-        (
-            chamado?.dataAbertura ||
-            "-"
-        ) +
-        (
-            chamado?.horaAbertura
-                ? " às " + chamado.horaAbertura
-                : ""
-        );
+        (chamado?.dataAbertura || "-") +
+        (chamado?.horaAbertura ? " às " + chamado.horaAbertura : "");
 
     atualizado.textContent =
-        chamado?.ultimaAtualizacao ||
-        "-";
+        chamado?.ultimaAtualizacao || "-";
 
     concluido.textContent =
-        (
-            chamado?.dataConclusao ||
-            "-"
-        ) +
-        (
-            chamado?.horaConclusao
-                ? " às " + chamado.horaConclusao
-                : ""
-        );
+        (chamado?.dataConclusao || "-") +
+        (chamado?.horaConclusao ? " às " + chamado.horaConclusao : "");
+
+    bloco.style.display = "block";
 }
 
 
@@ -3446,6 +3394,8 @@ function mostrarResultado(
 
     `;
 
+
+    atualizarHistoricoConsultaProtocolo(chamado);
 
     resultado.style.display =
         "block";
