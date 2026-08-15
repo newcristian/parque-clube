@@ -1971,6 +1971,7 @@ input[readonly] {
     id="btnFecharEdicao"
     class="btn-cinza"
     style="margin-top:10px;"
+    onclick="fecharEdicaoChamado(); return false;"
 >
     ✖️ Fechar / Minimizar Chamado
 </button>
@@ -4324,6 +4325,43 @@ function mostrarEdicao(
 
         });
 
+}
+
+
+/* =====================================================
+   FECHAR / MINIMIZAR CHAMADO
+===================================================== */
+
+function fecharEdicaoChamado() {
+
+    const painel = document.getElementById("editarChamado");
+
+    if (painel) {
+        painel.style.display = "none";
+    }
+
+    const resultado = document.getElementById("resultadoAtualizacao");
+    if (resultado) {
+        resultado.style.display = "none";
+        resultado.innerHTML = "";
+    }
+
+    const dados = document.getElementById("dadosAdmin");
+    if (dados) {
+        dados.innerHTML = "";
+    }
+
+    const protocolo = document.getElementById("protocoloAdmin");
+    if (protocolo) {
+        protocolo.value = "";
+    }
+
+    protocoloSelecionado = "";
+
+    const lista = document.getElementById("listaChamados");
+    if (lista) {
+        lista.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
 }
 
 
