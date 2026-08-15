@@ -1095,6 +1095,10 @@ input[readonly] {
 </option>
 
 <option>
+    Vazamento de água
+</option>
+
+<option>
     Elevador
 </option>
 
@@ -1131,6 +1135,31 @@ input[readonly] {
 </option>
 
 </select>
+
+</div>
+
+
+<div class="form-group">
+
+<label for="prioridade">
+    Prioridade:
+</label>
+
+<select
+    id="prioridade"
+    name="prioridade"
+>
+    <option value="Urgente">🔴 Urgente</option>
+    <option value="Alta">🟠 Alta</option>
+    <option value="Moderada" selected>🟡 Moderada</option>
+    <option value="Baixa">🟢 Baixa</option>
+</select>
+
+<small
+    style="display:block;margin-top:6px;color:#666;"
+>
+    A prioridade é opcional e começa como Moderada. A Administração poderá reclassificar o chamado.
+</small>
 
 </div>
 
@@ -1815,6 +1844,37 @@ input[readonly] {
 </div>
 
 
+<div class="form-group">
+
+<label>
+
+    ⭐ Prioridade:
+
+</label>
+
+<select id="prioridadeAdmin">
+
+<option value="Urgente">
+    🔴 Urgente
+</option>
+
+<option value="Alta">
+    🟠 Alta
+</option>
+
+<option value="Moderada" selected>
+    🟡 Moderada
+</option>
+
+<option value="Baixa">
+    🟢 Baixa
+</option>
+
+</select>
+
+</div>
+
+
 <button
     type="button"
     id="btnAtualizarAdmin"
@@ -1830,6 +1890,25 @@ input[readonly] {
     id="resultadoAtualizacao"
     class="mensagem"
 ></div>
+
+
+<button
+    type="button"
+    id="btnExcluirAdmin"
+    style="
+        margin-top:12px;
+        background:#b91c1c;
+        color:#fff;
+        border:0;
+        padding:11px 16px;
+        border-radius:8px;
+        cursor:pointer;
+        width:100%;
+        font-weight:600;
+    "
+>
+    🗑️ Excluir Chamado
+</button>
 
 
 </div>
@@ -1964,58 +2043,32 @@ const ocorrenciaSelect =
         "ocorrencia"
     );
 
-const intervaloCamera =
+const prioridadeSelect =
     document.getElementById(
-        "intervaloCamera"
+        "prioridade"
     );
 
-const dataOcorrenciaContainer =
-    document.getElementById(
-        "dataOcorrenciaContainer"
-    );
 
-const dataOcorrencia =
-    document.getElementById(
-        "dataOcorrencia"
-    );
+prioridadeSelect.value = "Moderada";
 
-const horaInicialInput =
-    document.getElementById(
-        "horaInicial"
-    );
+function definirPrioridadePadrao() {
 
-const horaFinalInput =
-    document.getElementById(
-        "horaFinal"
-    );
+    prioridadeSelect.value = "Moderada";
 
-function atualizarIntervaloCamera() {
-
-    const ehCamera =
-        ocorrenciaSelect.value ===
-        "Câmera/Imagens";
-
-    intervaloCamera.style.display =
-        ehCamera ? "block" : "none";
-
-    dataOcorrenciaContainer.style.display =
-        ehCamera ? "block" : "none";
-
-    if (!ehCamera) {
-
-        dataOcorrencia.value = "";
-        horaInicialInput.value = "";
-        horaFinalInput.value = "";
-
-    }
 }
+
 
 ocorrenciaSelect.addEventListener(
     "change",
-    atualizarIntervaloCamera
+    function () {
+
+        atualizarIntervaloCamera();
+
+    }
 );
 
 atualizarIntervaloCamera();
+definirPrioridadePadrao();
 
 
 /* =====================================================
@@ -2233,6 +2286,13 @@ document
                         document
                             .getElementById(
                                 "ocorrencia"
+                            )
+                            .value,
+
+                    prioridade:
+                        document
+                            .getElementById(
+                                "prioridade"
                             )
                             .value,
 
@@ -3658,6 +3718,18 @@ function criarCard(
 
                 <br>
 
+                ⭐
+                <strong>
+                    Prioridade:
+                </strong>
+
+                ${escapar(
+                    chamado.prioridade ||
+                    "Moderada"
+                )}
+
+                <br>
+
 
                 📅
                 <strong>
@@ -3989,6 +4061,20 @@ function mostrarEdicao(
 
             </div>
 
+
+            <div class="resultado-item">
+
+                <strong>
+                    Prioridade atual
+                </strong>
+
+                ${escapar(
+                    chamado.prioridade ||
+                    "Moderada"
+                )}
+
+            </div>
+
         `;
 
 
@@ -3999,6 +4085,15 @@ function mostrarEdicao(
         .value =
         chamado.status ||
         "Aberto";
+
+
+    document
+        .getElementById(
+            "prioridadeAdmin"
+        )
+        .value =
+        chamado.prioridade ||
+        "Moderada";
 
 
     document
@@ -4131,7 +4226,14 @@ document
                                                 "observacaoAdmin"
                                             )
                                             .value
-                                            .trim()
+                                            .trim(),
+
+                                    prioridade:
+                                        document
+                                            .getElementById(
+                                                "prioridadeAdmin"
+                                            )
+                                            .value
 
                                 })
 
@@ -4230,6 +4332,166 @@ document
 
                 this.textContent =
                     "💾 Salvar Alterações";
+
+            }
+
+        }
+    );
+
+
+
+/* =====================================================
+   EXCLUIR CHAMADO - ADMINISTRAÇÃO
+===================================================== */
+
+document
+    .getElementById(
+        "btnExcluirAdmin"
+    )
+    .addEventListener(
+        "click",
+        async function () {
+
+            if (!senhaAdministrativa) {
+
+                alert(
+                    "Faça o login administrativo."
+                );
+
+                return;
+
+            }
+
+            if (!protocoloSelecionado) {
+
+                alert(
+                    "Nenhum protocolo selecionado."
+                );
+
+                return;
+
+            }
+
+            const confirmou =
+                confirm(
+                    "Tem certeza que deseja excluir esta OS?\n\n" +
+                    "Protocolo: " +
+                    protocoloSelecionado +
+                    "\n\n" +
+                    "Essa ação não poderá ser desfeita."
+                );
+
+            if (!confirmou) {
+                return;
+            }
+
+            this.disabled = true;
+            this.textContent = "⏳ Excluindo...";
+
+            try {
+
+                const resposta =
+                    await fetch(
+                        API,
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify({
+
+                                    action:
+                                        "delete",
+
+                                    adminPassword:
+                                        senhaAdministrativa,
+
+                                    protocolo:
+                                        protocoloSelecionado
+
+                                })
+                        }
+                    );
+
+                const texto =
+                    await resposta.text();
+
+                let dados = {};
+
+                try {
+                    dados =
+                        texto
+                            ? JSON.parse(texto)
+                            : {};
+                } catch {
+                    throw new Error(
+                        "O servidor respondeu sem JSON válido."
+                    );
+                }
+
+                if (
+                    !resposta.ok ||
+                    !dados.sucesso
+                ) {
+
+                    throw new Error(
+                        dados.erro ||
+                        "Não foi possível excluir o chamado."
+                    );
+                }
+
+                chamados =
+                    chamados.filter(
+                        chamado =>
+                            chamado.protocolo !==
+                            protocoloSelecionado
+                    );
+
+                protocoloSelecionado =
+                    "";
+
+                mostrarChamados();
+
+                atualizarEstatisticas();
+
+                document
+                    .getElementById(
+                        "editarChamado"
+                    )
+                    .style.display =
+                    "none";
+
+                document
+                    .getElementById(
+                        "protocoloAdmin"
+                    )
+                    .value =
+                    "";
+
+                alert(
+                    "Chamado excluído com sucesso."
+                );
+
+            }
+
+            catch (error) {
+
+                alert(
+                    error.message ||
+                    "Erro ao excluir o chamado."
+                );
+
+            }
+
+            finally {
+
+                this.disabled = false;
+                this.textContent =
+                    "🗑️ Excluir Chamado";
 
             }
 
