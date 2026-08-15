@@ -713,6 +713,39 @@ input[readonly] {
 
 </style>
 
+
+<style>
+.historico-destaque {
+    margin: 14px 0;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: #eef7ff;
+    border: 1px solid #c9e4fb;
+}
+.historico-destaque-titulo {
+    font-weight: 700;
+    margin-bottom: 9px;
+    color: #123b5d;
+}
+.historico-destaque-linha {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(0,0,0,.06);
+}
+.historico-destaque-linha:last-child {
+    border-bottom: 0;
+}
+.historico-destaque-label {
+    font-weight: 600;
+}
+.historico-destaque-valor {
+    font-weight: 700;
+    text-align: right;
+}
+</style>
+
 </head>
 
 
@@ -1840,11 +1873,23 @@ input[readonly] {
     id="editarChamado"
     class="admin-box"
 >
-<div id="historicoHorariosAdmin"
-     style="margin:12px 0;padding:12px;border-radius:8px;background:#f5f7fa;">
-    <div>📥 <strong>Recebido em:</strong> <span id="adminRecebidoEm">-</span></div>
-    <div style="margin-top:5px;">🔄 <strong>Última atualização:</strong> <span id="adminAtualizadoEm">-</span></div>
-    <div style="margin-top:5px;">✅ <strong>Concluído em:</strong> <span id="adminConcluidoEm">-</span></div>
+<div id="historicoHorariosAdmin" class="historico-destaque">
+    <div class="historico-destaque-titulo">🕒 Histórico do Protocolo</div>
+
+    <div class="historico-destaque-linha">
+        <span class="historico-destaque-label">📥 Recebido em:</span>
+        <span id="adminRecebidoEm" class="historico-destaque-valor">-</span>
+    </div>
+
+    <div class="historico-destaque-linha">
+        <span class="historico-destaque-label">🔄 Última atualização:</span>
+        <span id="adminAtualizadoEm" class="historico-destaque-valor">-</span>
+    </div>
+
+    <div class="historico-destaque-linha">
+        <span class="historico-destaque-label">✅ Concluído em:</span>
+        <span id="adminConcluidoEm" class="historico-destaque-valor">-</span>
+    </div>
 </div>
 
 
