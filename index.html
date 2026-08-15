@@ -2081,6 +2081,72 @@ const ocorrenciaSelect =
         "ocorrencia"
     );
 
+const dataOcorrenciaContainer =
+    document.getElementById(
+        "dataOcorrenciaContainer"
+    );
+
+const intervaloCamera =
+    document.getElementById(
+        "intervaloCamera"
+    );
+
+
+function atualizarIntervaloCamera() {
+
+    const ocorrencia =
+        ocorrenciaSelect
+            ? ocorrenciaSelect.value
+            : "";
+
+    const ehCamera =
+        ocorrencia ===
+        "Câmera/Imagens";
+
+    if (dataOcorrenciaContainer) {
+
+        dataOcorrenciaContainer.style.display =
+            ehCamera
+                ? "block"
+                : "none";
+
+    }
+
+    if (intervaloCamera) {
+
+        intervaloCamera.style.display =
+            ehCamera
+                ? "block"
+                : "none";
+
+    }
+
+    if (!ehCamera) {
+
+        const data =
+            document.getElementById(
+                "dataOcorrencia"
+            );
+
+        const inicial =
+            document.getElementById(
+                "horaInicial"
+            );
+
+        const final =
+            document.getElementById(
+                "horaFinal"
+            );
+
+        if (data) data.value = "";
+        if (inicial) inicial.value = "";
+        if (final) final.value = "";
+
+    }
+
+}
+
+
 const prioridadeSelect =
     document.getElementById(
         "prioridade"
