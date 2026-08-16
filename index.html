@@ -5600,6 +5600,8 @@ function gerarRelatorioHTMLV11(abrirJanela=true){
     const tabela = (items,total) => {
         if(!items.length) return '<div class="empty">Nenhum registro no período.</div>';
 
+        const totalTabela = items.reduce((s, [,qtd]) => s + Number(qtd || 0), 0);
+
         return `<table>
             <thead>
                 <tr>
@@ -5616,8 +5618,65 @@ function gerarRelatorioHTMLV11(abrirJanela=true){
                         <td>${pct(qtd,total)}</td>
                     </tr>
                 `).join("")}
+                <tr class="total-row">
+                    <td>TOTAL</td>
+                    <td>${totalTabela}</td>
+                    <td>${pct(totalTabela,total)}</td>
+                </tr>
             </tbody>
         </table>`;
+    };
+
+
+    const graficoPizzaPrioridade = (items,total) => {
+        if(!items.length){
+            return '<div class="empty">Nenhuma prioridade encontrada no período.</div>';
+        }
+
+        const cores = ["#d9534f","#f0a51a","#f4c542","#2e8b57","#6c757d","#1d78b5"];
+        let acumulado = 0;
+        const baseTotal = items.reduce((s,[,q]) => s + Number(q || 0), 0);
+
+        const fatias = items.map(([nome,qtd],i) => {
+            const inicio = acumulado / baseTotal * 360;
+            const fim = (acumulado + qtd) / baseTotal * 360;
+            acumulado += qtd;
+
+            const raio = 88, cx = 100, cy = 100;
+            const a1 = (inicio - 90) * Math.PI / 180;
+            const a2 = (fim - 90) * Math.PI / 180;
+            const x1 = cx + raio * Math.cos(a1);
+            const y1 = cy + raio * Math.sin(a1);
+            const x2 = cx + raio * Math.cos(a2);
+            const y2 = cy + raio * Math.sin(a2);
+            const grande = (fim - inicio) > 180 ? 1 : 0;
+
+            const caminho = items.length === 1
+                ? `M ${cx} ${cy-raio} A ${raio} ${raio} 0 1 1 ${cx-0.01} ${cy-raio} L ${cx} ${cy} Z`
+                : `M ${cx} ${cy} L ${x1} ${y1} A ${raio} ${raio} 0 ${grande} 1 ${x2} ${y2} Z`;
+
+            return `<path d="${caminho}" fill="${cores[i % cores.length]}" stroke="#fff" stroke-width="2">
+                <title>${escapar(nome)} — ${qtd} (${pct(qtd,baseTotal)})</title>
+            </path>`;
+        }).join("");
+
+        const legenda = items.map(([nome,qtd],i) => `
+            <div class="pie-legend-item">
+                <span class="pie-dot" style="background:${cores[i % cores.length]}"></span>
+                <span class="pie-name">${escapar(nome)}</span>
+                <strong>${qtd}</strong>
+                <span>${pct(qtd,baseTotal)}</span>
+            </div>
+        `).join("");
+
+        return `<div class="pie-chart-box">
+            <div class="pie-visual">
+                <svg viewBox="0 0 200 200" role="img" aria-label="Distribuição por prioridade">
+                    ${fatias}
+                </svg>
+            </div>
+            <div class="pie-legend">${legenda}</div>
+        </div>`;
     };
 
     const status = [
@@ -6184,7 +6243,7 @@ td:nth-child(2),td:nth-child(3){
 
 <section class="section">
     <h2>4. Distribuição por prioridade</h2>
-    ${grafico(d.prioridades,d.total)}
+    ${graficoPizzaPrioridade(d.prioridades,d.total)}
     ${tabela(d.prioridades,d.total)}
 </section>
 
