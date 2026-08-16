@@ -774,6 +774,54 @@ input[readonly] {
 </style>
 
 <style id="admin-menu-v11">
+
+/* ===== MENU PRINCIPAL DA ÁREA ADMINISTRATIVA ===== */
+.admin-menu-v11{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:10px;
+    align-items:stretch;
+}
+.admin-menu-card{
+    min-height:126px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+    text-align:center;
+    padding:14px 12px 13px;
+}
+.admin-menu-card .icon{
+    width:100%;
+    min-height:42px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:31px;
+    line-height:1;
+    margin:0 0 7px;
+}
+.admin-menu-card .title{
+    width:100%;
+    text-align:center;
+    text-transform:uppercase;
+    font-weight:800;
+    font-size:15px;
+    line-height:1.15;
+    color:#123b5d;
+}
+.admin-menu-card .desc{
+    width:100%;
+    margin-top:6px;
+    text-align:center;
+    font-size:10.5px;
+    line-height:1.35;
+    color:#65737d;
+}
+@media(max-width:620px){
+    .admin-menu-v11{grid-template-columns:1fr;}
+}
+
 .admin-menu-v11{
     display:grid;
     grid-template-columns:repeat(2,minmax(0,1fr));
@@ -1605,14 +1653,14 @@ input[readonly] {
 <div class="admin-menu-v11" id="adminMenuV11">
     <button type="button" class="admin-menu-card" id="menuPesquisarAdmin">
         <div class="icon">🔎</div>
-        <div class="title">Pesquisar chamados</div>
+        <div class="title">PESQUISAR CHAMADOS</div>
         <div class="desc">Consultar protocolos, usar filtros, abrir um chamado e realizar as ações administrativas.</div>
     </button>
 
     <button type="button" class="admin-menu-card" id="menuRelatorioAdmin">
         <div class="icon">📊</div>
-        <div class="title">Gerar relatório</div>
-        <div class="desc">Acessar o painel, selecionar o período e gerar relatórios gerenciais em HTML ou PDF.</div>
+        <div class="title">GERAR RELATÓRIO</div>
+        <div class="desc">Acessar o painel, selecionar o período e gerar relatórios gerenciais em PDF.</div>
     </button>
 </div>
 
@@ -1889,7 +1937,7 @@ input[readonly] {
 <div style="color:#687680;font-size:12px;margin-top:-6px;margin-bottom:10px;">Indicadores calculados a partir dos protocolos carregados no sistema.</div>
 <div class="form-group"><label for="dashboardPeriodo">📅 Período:</label>
 <select id="dashboardPeriodo">
-<option value="hoje">Hoje</option><option value="semana">Esta semana</option><option value="mes" selected>Este mês</option><option value="mesAnterior">Mês anterior</option><option value="personalizado">Período personalizado</option>
+<option value="hoje">DIA</option><option value="semana">Esta semana</option><option value="mes" selected>Este mês</option><option value="mesAnterior">Mês anterior</option><option value="personalizado">Período personalizado</option>
 </select></div>
 <div class="form-group">
 <label for="dashboardEscopo">🏢 Área do relatório:</label>
