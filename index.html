@@ -1766,31 +1766,7 @@ input[readonly] {
 
 <!-- FILTROS -->
 
-<div id="adminConteudoRelatorioV11" style="display:none;">
-<div class="admin-box dashboard-v11" id="dashboardV11" style="display:none">
-<div class="admin-titulo">📊 PAINEL ADMINISTRATIVO</div>
-<div style="color:#687680;font-size:12px;margin-top:-6px;margin-bottom:10px;">Indicadores calculados a partir dos protocolos carregados no sistema.</div>
-<div class="form-group"><label for="dashboardPeriodo">📅 Período:</label>
-<select id="dashboardPeriodo">
-<option value="hoje">Hoje</option><option value="semana">Esta semana</option><option value="mes" selected>Este mês</option><option value="mesAnterior">Mês anterior</option><option value="personalizado">Período personalizado</option>
-</select></div>
-<div id="dashboardPersonalizado" style="display:none">
-<div class="form-group"><label>Data inicial:</label><input type="date" id="dashboardDataInicio"></div>
-<div class="form-group"><label>Data final:</label><input type="date" id="dashboardDataFim"></div>
-</div>
-<div class="dashboard-toolbar">
-<button type="button" id="btnAtualizarDashboard" class="btn-azul">📊 Atualizar Painel</button>
-<button type="button" id="btnGerarHTML" class="btn-verde">🌐 Gerar HTML</button>
-<button type="button" id="btnGerarPDF" class="btn-cinza">📄 Gerar PDF</button>
-</div>
-<div id="dashboardResumo" class="dashboard-grid"></div>
-<div class="dashboard-section"><h3>📈 Chamados mais frequentes</h3><div id="dashboardOcorrencias" class="dashboard-bars"></div></div>
-<div class="dashboard-section"><h3>📊 Chamados por área</h3><div id="dashboardAreas" class="dashboard-bars"></div></div>
-<div class="dashboard-section"><h3>⭐ Distribuição por prioridade</h3><div id="dashboardPrioridades" class="dashboard-bars"></div></div>
-<div class="dashboard-section"><h3>🔄 Situação dos chamados</h3><div id="dashboardStatus" class="dashboard-status-grid"></div></div>
-<div class="dashboard-section"><h3>⏱️ Indicadores de atendimento</h3><div id="dashboardAtendimento" class="dashboard-bars"></div></div>
-</div>
-</div>
+
 <div
     id="filtros"
     style="display:none;"
@@ -1906,6 +1882,33 @@ input[readonly] {
 
 </div>
 </div>
+
+<div id="adminConteudoRelatorioV11" style="display:none;">
+<div class="admin-box dashboard-v11" id="dashboardV11" style="display:none">
+<div class="admin-titulo">📊 PAINEL ADMINISTRATIVO</div>
+<div style="color:#687680;font-size:12px;margin-top:-6px;margin-bottom:10px;">Indicadores calculados a partir dos protocolos carregados no sistema.</div>
+<div class="form-group"><label for="dashboardPeriodo">📅 Período:</label>
+<select id="dashboardPeriodo">
+<option value="hoje">Hoje</option><option value="semana">Esta semana</option><option value="mes" selected>Este mês</option><option value="mesAnterior">Mês anterior</option><option value="personalizado">Período personalizado</option>
+</select></div>
+<div id="dashboardPersonalizado" style="display:none">
+<div class="form-group"><label>Data inicial:</label><input type="date" id="dashboardDataInicio"></div>
+<div class="form-group"><label>Data final:</label><input type="date" id="dashboardDataFim"></div>
+</div>
+<div class="dashboard-toolbar">
+<button type="button" id="btnAtualizarDashboard" class="btn-azul">📊 Atualizar Painel</button>
+<button type="button" id="btnGerarHTML" class="btn-verde">🌐 Gerar HTML</button>
+<button type="button" id="btnGerarPDF" class="btn-cinza">📄 Gerar PDF</button>
+</div>
+<div id="dashboardResumo" class="dashboard-grid"></div>
+<div class="dashboard-section"><h3>📈 Chamados mais frequentes</h3><div id="dashboardOcorrencias" class="dashboard-bars"></div></div>
+<div class="dashboard-section"><h3>📊 Chamados por área</h3><div id="dashboardAreas" class="dashboard-bars"></div></div>
+<div class="dashboard-section"><h3>⭐ Distribuição por prioridade</h3><div id="dashboardPrioridades" class="dashboard-bars"></div></div>
+<div class="dashboard-section"><h3>🔄 Situação dos chamados</h3><div id="dashboardStatus" class="dashboard-status-grid"></div></div>
+<div class="dashboard-section"><h3>⏱️ Indicadores de atendimento</h3><div id="dashboardAtendimento" class="dashboard-bars"></div></div>
+</div>
+</div>
+
 
 
 <!-- =====================================================
@@ -5497,16 +5500,16 @@ function inicializarDashboardV11(){
     const btnBuscarAdmin = document.getElementById("btnBuscarAdmin");
 
     function esconderTudoAdminV11(){
-        if(search) search.style.display = "none";
-        if(report) report.style.display = "none";
+        if(search) { search.style.display = "none"; search.hidden = true; }
+        if(report) { report.style.display = "none"; report.hidden = true; }
         if(voltar) voltar.style.display = "none";
-        if(menu) menu.style.display = "grid";
+        if(menu) { menu.style.display = "grid"; menu.hidden = false; }
     }
 
     function mostrarPesquisaAdminV11(){
         if(menu) menu.style.display = "none";
         if(report) report.style.display = "none";
-        if(search) search.style.display = "block";
+        if(search) { search.style.display = "block"; search.hidden = false; }
         if(voltar) voltar.style.display = "flex";
         if(titulo) titulo.textContent = "🔎 Pesquisar chamados";
 
@@ -5533,11 +5536,13 @@ function inicializarDashboardV11(){
         if(voltar) voltar.style.display = "flex";
         if(titulo) titulo.textContent = "📊 Gerar relatório";
 
-        if(report) report.style.display = "block";
+        if(report) { report.style.display = "block"; report.hidden = false; }
 
-        // Load the real protocols if they have not yet been loaded.
+        // The existing administrative loader is reused so the report uses
+        // the same real protocol data as the search screen.
         const btnListar = document.getElementById("btnListarTodos");
-        if(btnListar && (!Array.isArray(window.chamados) || window.chamados.length === 0)){
+
+        if(btnListar){
             btnListar.click();
         }
 
@@ -5548,7 +5553,7 @@ function inicializarDashboardV11(){
             if(typeof renderDashboardV11 === "function"){
                 renderDashboardV11();
             }
-        }, 900);
+        }, 1100);
     }
 
     if(btnPesquisar) btnPesquisar.addEventListener("click", mostrarPesquisaAdminV11);
