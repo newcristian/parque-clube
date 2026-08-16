@@ -1,26 +1,18 @@
 /*
-============================================================
- PARQUE CLUBE - CLOUDFLARE WORKER
- Sistema de Chamados / Ordem de Serviço
 
- D1:
- Binding: DB
+PARQUE CLUBE - CLOUDFLARE WORKER Sistema de Chamados / Ordem de Serviço
 
- Secret:
- ADMIN_PASSWORD
+D1: Binding: DB
 
- API OFICIAL:
- /api/protocolo
+Secret: ADMIN_PASSWORD
 
- ROTA ANTIGA MANTIDA TEMPORARIAMENTE:
- /.netlify/functions/protocolo
-============================================================
-*/
+API OFICIAL: /api/protocolo
 
+ROTA ANTIGA MANTIDA TEMPORARIAMENTE: /.netlify/functions/protocolo
+============================================================ */
 
-/* =========================================================
-   RESPOSTA JSON
-========================================================= */
+/* ========================================================= RESPOSTA
+JSON ========================================================= */
 
 function resposta(dados, status = 200) {
 
@@ -44,12 +36,11 @@ function resposta(dados, status = 200) {
             }
         }
     );
+
 }
 
-
-/* =========================================================
-   DATA DE BRASÍLIA
-========================================================= */
+/* ========================================================= DATA DE
+BRASÍLIA ========================================================= */
 
 function obterDataBrasilia() {
 
@@ -88,12 +79,11 @@ function obterDataBrasilia() {
                     p.type === "day"
             ).value
     };
+
 }
 
-
-/* =========================================================
-   HORA DE BRASÍLIA
-========================================================= */
+/* ========================================================= HORA DE
+BRASÍLIA ========================================================= */
 
 function obterHoraBrasilia() {
 
@@ -112,17 +102,14 @@ function obterHoraBrasilia() {
     ).format(
         new Date()
     );
+
 }
 
-
 /* =========================================================
-   AUTENTICAÇÃO ADMINISTRATIVA
+AUTENTICAÇÃO ADMINISTRATIVA
 ========================================================= */
 
-function verificarSenha(
-    dados,
-    env
-) {
+function verificarSenha( dados, env ) {
 
     const senhaAdmin =
         String(
@@ -187,19 +174,22 @@ function verificarSenha(
     return {
         ok: true
     };
+
 }
 
+/* ========================================================= CONVERTER
+CHAMADO ========================================================= */
 
-/* =========================================================
-   CONVERTER CHAMADO
-========================================================= */
-
-function converterChamado(row) {
+function converterChamado(row, arquivo = null) {
 
     if (!row) {
         return null;
     }
 
+    const historicoArquivamento =
+        arquivo && arquivo.historico_json
+            ? JSON.parse(arquivo.historico_json)
+            : [];
 
     return {
 
@@ -267,19 +257,77 @@ function converterChamado(row) {
 
         prioridade:
             row.prioridade ||
-            "Moderada"
+            "Moderada",
+
+        arquivado:
+            arquivo
+                ? Number(arquivo.arquivado || 0) === 1
+                : false,
+
+        dataHoraArquivamento:
+            arquivo?.data_ultimo_arquivamento || "",
+
+        dataHoraReabertura:
+            arquivo?.data_ultima_reabertura || "",
+
+        historicoArquivamento
     };
+
 }
 
-
-/* =========================================================
-   BUSCAR CHAMADO
+/* ========================================================= TABELA
+AUXILIAR DE ARQUIVAMENTO Não altera a tabela existente “chamados”.
 ========================================================= */
 
-async function buscarChamado(
-    env,
-    protocolo
-) {
+async function garantirTabelaArquivamento(env) {
+
+    await env.DB
+        .prepare(
+            `
+            CREATE TABLE IF NOT EXISTS chamados_arquivamento (
+
+                protocolo TEXT PRIMARY KEY,
+
+                arquivado INTEGER NOT NULL DEFAULT 0,
+
+                data_ultimo_arquivamento TEXT DEFAULT '',
+
+                data_ultima_reabertura TEXT DEFAULT '',
+
+                historico_json TEXT DEFAULT '[]'
+            )
+            `
+        )
+        .run();
+
+}
+
+/* ========================================================= BUSCAR
+REGISTRO DE ARQUIVAMENTO
+========================================================= */
+
+async function buscarArquivamento( env, protocolo ) {
+
+    await garantirTabelaArquivamento(env);
+
+    return env.DB
+        .prepare(
+            `
+            SELECT *
+            FROM chamados_arquivamento
+            WHERE protocolo = ?
+            LIMIT 1
+            `
+        )
+        .bind(protocolo)
+        .first();
+
+}
+
+/* ========================================================= BUSCAR
+CHAMADO ========================================================= */
+
+async function buscarChamado( env, protocolo ) {
 
     const resultado =
         await env.DB
@@ -297,19 +345,25 @@ async function buscarChamado(
             .first();
 
 
+    const arquivo =
+        await buscarArquivamento(
+            env,
+            protocolo
+        );
+
     return converterChamado(
-        resultado
+        resultado,
+        arquivo
     );
+
 }
 
+/* ========================================================= LISTAR
+TODOS ========================================================= */
 
-/* =========================================================
-   LISTAR TODOS
-========================================================= */
+async function listarChamados( env ) {
 
-async function listarChamados(
-    env
-) {
+    await garantirTabelaArquivamento(env);
 
     const resultado =
         await env.DB
@@ -322,6 +376,25 @@ async function listarChamados(
             )
             .all();
 
+    const arquivos =
+        await env.DB
+            .prepare(
+                `
+                SELECT *
+                FROM chamados_arquivamento
+                `
+            )
+            .all();
+
+    const mapaArquivos =
+        new Map(
+            (arquivos.results || []).map(
+                item => [
+                    item.protocolo,
+                    item
+                ]
+            )
+        );
 
     const chamados =
         (
@@ -329,63 +402,81 @@ async function listarChamados(
             []
         )
         .map(
-            converterChamado
+            row =>
+                converterChamado(
+                    row,
+                    mapaArquivos.get(
+                        row.protocolo
+                    ) || null
+                )
         )
         .filter(Boolean);
 
+    const chamadosArquivados =
+        chamados.filter(
+            c =>
+                c.arquivado === true
+        );
+
+    const chamadosAtivos =
+        chamados.filter(
+            c =>
+                c.arquivado !== true
+        );
 
     const estatisticas = {
 
         total:
-            chamados.length,
+            chamadosAtivos.length,
 
         abertos:
-            chamados.filter(
+            chamadosAtivos.filter(
                 c =>
                     c.status ===
                     "Aberto"
             ).length,
 
         andamento:
-            chamados.filter(
+            chamadosAtivos.filter(
                 c =>
                     c.status ===
                     "Em andamento"
             ).length,
 
         resolvidos:
-            chamados.filter(
+            chamadosAtivos.filter(
                 c =>
                     c.status ===
                     "Resolvido"
             ).length,
 
         cancelados:
-            chamados.filter(
+            chamadosAtivos.filter(
                 c =>
                     c.status ===
                     "Cancelado"
-            ).length
-    };
+            ).length,
 
+        arquivados:
+            chamadosArquivados.length
+    };
 
     return {
 
-        chamados,
+        chamados:
+            chamadosAtivos,
+
+        chamadosArquivados,
 
         estatisticas
     };
+
 }
 
+/* ========================================================= CRIAR
+CHAMADO ========================================================= */
 
-/* =========================================================
-   CRIAR CHAMADO
-========================================================= */
-
-async function criarChamado(
-    env,
-    dados
-) {
+async function criarChamado( env, dados ) {
 
     const data =
         obterDataBrasilia();
@@ -647,17 +738,13 @@ async function criarChamado(
         chamado:
             chamado
     });
+
 }
 
+/* ========================================================= ATUALIZAR
+CHAMADO ========================================================= */
 
-/* =========================================================
-   ATUALIZAR CHAMADO
-========================================================= */
-
-async function atualizarChamado(
-    env,
-    dados
-) {
+async function atualizarChamado( env, dados ) {
 
     if (!dados.protocolo) {
 
@@ -879,17 +966,244 @@ async function atualizarChamado(
         chamado:
             atualizado
     });
+
 }
 
+/* ========================================================= ARQUIVAR
+CHAMADO ========================================================= */
 
-/* =========================================================
-   EXCLUIR CHAMADO
-========================================================= */
+async function arquivarChamado( env, dados ) {
 
-async function excluirChamado(
-    env,
-    dados
-) {
+    if (!dados.protocolo) {
+        return resposta({
+            sucesso: false,
+            erro: "Informe o protocolo."
+        }, 400);
+    }
+
+    const protocolo =
+        String(dados.protocolo)
+            .trim()
+            .toUpperCase();
+
+    const chamado =
+        await buscarChamado(
+            env,
+            protocolo
+        );
+
+    if (!chamado) {
+        return resposta({
+            sucesso: false,
+            erro: "Protocolo não encontrado."
+        }, 404);
+    }
+
+    await garantirTabelaArquivamento(env);
+
+    const data =
+        obterDataBrasilia();
+
+    const hora =
+        obterHoraBrasilia();
+
+    const agora =
+        `${data.dia}/${data.mes}/${data.ano} ${hora}`;
+
+    const registro =
+        await buscarArquivamento(
+            env,
+            protocolo
+        );
+
+    let historico = [];
+
+    if (
+        registro &&
+        registro.historico_json
+    ) {
+        try {
+            historico =
+                JSON.parse(
+                    registro.historico_json
+                );
+        } catch {
+            historico = [];
+        }
+    }
+
+    if (
+        !Array.isArray(historico)
+    ) {
+        historico = [];
+    }
+
+    historico.push({
+        tipo: "ARQUIVADO",
+        dataHora: agora
+    });
+
+    await env.DB
+        .prepare(
+            `
+            INSERT INTO chamados_arquivamento (
+                protocolo,
+                arquivado,
+                data_ultimo_arquivamento,
+                data_ultima_reabertura,
+                historico_json
+            )
+            VALUES (?, 1, ?, ?, ?)
+            ON CONFLICT(protocolo)
+            DO UPDATE SET
+                arquivado = 1,
+                data_ultimo_arquivamento = excluded.data_ultimo_arquivamento,
+                historico_json = excluded.historico_json
+            `
+        )
+        .bind(
+            protocolo,
+            agora,
+            registro?.data_ultima_reabertura || "",
+            JSON.stringify(historico)
+        )
+        .run();
+
+    const atualizado =
+        await buscarChamado(
+            env,
+            protocolo
+        );
+
+    return resposta({
+        sucesso: true,
+        mensagem:
+            "Chamado arquivado com sucesso.",
+        chamado: atualizado
+    });
+
+}
+
+/* ========================================================= REABRIR
+CHAMADO ========================================================= */
+
+async function reabrirChamado( env, dados ) {
+
+    if (!dados.protocolo) {
+        return resposta({
+            sucesso: false,
+            erro: "Informe o protocolo."
+        }, 400);
+    }
+
+    const protocolo =
+        String(dados.protocolo)
+            .trim()
+            .toUpperCase();
+
+    const chamado =
+        await buscarChamado(
+            env,
+            protocolo
+        );
+
+    if (!chamado) {
+        return resposta({
+            sucesso: false,
+            erro: "Protocolo não encontrado."
+        }, 404);
+    }
+
+    await garantirTabelaArquivamento(env);
+
+    const registro =
+        await buscarArquivamento(
+            env,
+            protocolo
+        );
+
+    if (
+        !registro ||
+        Number(registro.arquivado || 0) !== 1
+    ) {
+        return resposta({
+            sucesso: true,
+            mensagem:
+                "O chamado já está ativo.",
+            chamado
+        });
+    }
+
+    const data =
+        obterDataBrasilia();
+
+    const hora =
+        obterHoraBrasilia();
+
+    const agora =
+        `${data.dia}/${data.mes}/${data.ano} ${hora}`;
+
+    let historico = [];
+
+    try {
+        historico =
+            JSON.parse(
+                registro.historico_json || "[]"
+            );
+    } catch {
+        historico = [];
+    }
+
+    if (
+        !Array.isArray(historico)
+    ) {
+        historico = [];
+    }
+
+    historico.push({
+        tipo: "REABERTO",
+        dataHora: agora
+    });
+
+    await env.DB
+        .prepare(
+            `
+            UPDATE chamados_arquivamento
+
+            SET
+                arquivado = 0,
+                data_ultima_reabertura = ?,
+                historico_json = ?
+
+            WHERE protocolo = ?
+            `
+        )
+        .bind(
+            agora,
+            JSON.stringify(historico),
+            protocolo
+        )
+        .run();
+
+    const atualizado =
+        await buscarChamado(
+            env,
+            protocolo
+        );
+
+    return resposta({
+        sucesso: true,
+        mensagem:
+            "Chamado reaberto com sucesso.",
+        chamado: atualizado
+    });
+
+}
+
+/* ========================================================= EXCLUIR
+CHAMADO ========================================================= */
+
+async function excluirChamado( env, dados ) {
 
     if (!dados.protocolo) {
 
@@ -938,10 +1252,24 @@ async function excluirChamado(
     }
 
 
+    await garantirTabelaArquivamento(env);
+
     await env.DB
         .prepare(
             `
             DELETE FROM chamados
+            WHERE protocolo = ?
+            `
+        )
+        .bind(
+            protocolo
+        )
+        .run();
+
+    await env.DB
+        .prepare(
+            `
+            DELETE FROM chamados_arquivamento
             WHERE protocolo = ?
             `
         )
@@ -962,17 +1290,13 @@ async function excluirChamado(
         protocolo:
             protocolo
     });
+
 }
 
-
-/* =========================================================
-   LOGIN
+/* ========================================================= LOGIN
 ========================================================= */
 
-async function login(
-    env,
-    dados
-) {
+async function login( env, dados ) {
 
     const autenticacao =
         verificarSenha(
@@ -997,17 +1321,13 @@ async function login(
         mensagem:
             "Acesso administrativo autorizado."
     });
+
 }
 
+/* ========================================================= CONSULTAR
+PROTOCOLO ========================================================= */
 
-/* =========================================================
-   CONSULTAR PROTOCOLO
-========================================================= */
-
-async function consultarProtocolo(
-    env,
-    protocolo
-) {
+async function consultarProtocolo( env, protocolo ) {
 
     if (!protocolo) {
 
@@ -1064,17 +1384,13 @@ async function consultarProtocolo(
         chamado:
             chamado
     });
+
 }
 
+/* ========================================================= SERVIR
+INDEX.HTML ========================================================= */
 
-/* =========================================================
-   SERVIR INDEX.HTML
-========================================================= */
-
-async function servirIndex(
-    request,
-    env
-) {
+async function servirIndex( request, env ) {
 
     return env.ASSETS.fetch(
 
@@ -1088,12 +1404,11 @@ async function servirIndex(
             request
         )
     );
+
 }
 
-
-/* =========================================================
-   FUNÇÃO PRINCIPAL
-========================================================= */
+/* ========================================================= FUNÇÃO
+PRINCIPAL ========================================================= */
 
 export default {
 
@@ -1349,6 +1664,9 @@ export default {
                     chamados:
                         resultado.chamados,
 
+                    chamadosArquivados:
+                        resultado.chamadosArquivados,
+
                     estatisticas:
                         resultado.estatisticas
                 });
@@ -1385,6 +1703,66 @@ export default {
 
                     env,
 
+                    dados
+                );
+            }
+
+
+            /*
+             * =================================================
+             * ARQUIVAR
+             * =================================================
+             */
+
+            if (
+                dados.action ===
+                "archive"
+            ) {
+
+                const autenticacao =
+                    verificarSenha(
+                        dados,
+                        env
+                    );
+
+                if (
+                    !autenticacao.ok
+                ) {
+                    return autenticacao.resposta;
+                }
+
+                return arquivarChamado(
+                    env,
+                    dados
+                );
+            }
+
+
+            /*
+             * =================================================
+             * REABRIR
+             * =================================================
+             */
+
+            if (
+                dados.action ===
+                "reopen"
+            ) {
+
+                const autenticacao =
+                    verificarSenha(
+                        dados,
+                        env
+                    );
+
+                if (
+                    !autenticacao.ok
+                ) {
+                    return autenticacao.resposta;
+                }
+
+                return reabrirChamado(
+                    env,
                     dados
                 );
             }
@@ -1465,4 +1843,5 @@ export default {
             );
         }
     }
+
 };
