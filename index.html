@@ -5420,6 +5420,29 @@ function renderDashboardV11(){
         ? ((total - totalAnterior) / totalAnterior) * 100
         : (total > 0 ? null : 0);
 
+    // Comparação por tipo de ocorrência: período atual x período anterior.
+    const ocorrenciasAtualMapa = {};
+    const ocorrenciasAnteriorMapa = {};
+    lista.forEach(c => {
+        const nome = String(c.ocorrencia || c.tipoOcorrencia || "Não informado").trim() || "Não informado";
+        ocorrenciasAtualMapa[nome] = (ocorrenciasAtualMapa[nome] || 0) + 1;
+    });
+    listaAnterior.forEach(c => {
+        const nome = String(c.ocorrencia || c.tipoOcorrencia || "Não informado").trim() || "Não informado";
+        ocorrenciasAnteriorMapa[nome] = (ocorrenciasAnteriorMapa[nome] || 0) + 1;
+    });
+
+    const tiposOcorrenciaComparativo = Array.from(
+        new Set([...Object.keys(ocorrenciasAtualMapa), ...Object.keys(ocorrenciasAnteriorMapa)])
+    ).map(nome => {
+        const atual = ocorrenciasAtualMapa[nome] || 0;
+        const anterior = ocorrenciasAnteriorMapa[nome] || 0;
+        const variacao = anterior
+            ? ((atual - anterior) / anterior) * 100
+            : (atual > 0 ? null : 0);
+        return {nome, atual, anterior, variacao};
+    }).sort((a,b) => b.atual - a.atual);
+
     // Ranking de blocos para o relatório geral.
     const rankingBlocos = contarDashboardV11(lista, "bloco", 10);
 
@@ -5497,7 +5520,7 @@ function renderDashboardV11(){
         prioridades:contarDashboardV11(lista,"prioridade",10),
         hoje:hojeLista.length,semana:semanaLista.length,mes:mesLista.length,
         pct,media,criticos,totalAnterior,variacaoPercentual,rankingBlocos,
-        evolucaoMensal,chamadoMaisAntigo
+        evolucaoMensal,chamadoMaisAntigo,tiposOcorrenciaComparativo
     };
 }
 function linhasRelatorioDashboardV11(items){
@@ -5780,6 +5803,56 @@ function gerarRelatorioHTMLV11(abrirJanela=true){
     const idadeMaisAntigo = d.chamadoMaisAntigo
         ? Math.max(0, Math.floor((new Date().getTime()-parseDataDashboardV11(d.chamadoMaisAntigo.dataAbertura).getTime())/86400000))
         : null;
+
+
+    const nomeMesAnterior = (() => {
+        const x = new Date(d.intervalo.inicio);
+        x.setMonth(x.getMonth()-1);
+        return x.toLocaleDateString("pt-BR",{month:"long"}).toUpperCase();
+    })();
+
+    const nomeMesAtual = (() => {
+        const x = new Date(d.intervalo.inicio);
+        return x.toLocaleDateString("pt-BR",{month:"long"}).toUpperCase();
+    })();
+
+    const comparativoTipos = (items) => {
+        if(!items || !items.length){
+            return '<div class="empty">Nenhum tipo de ocorrência encontrado para comparação.</div>';
+        }
+
+        return `<table class="comparison-types-table">
+            <thead>
+                <tr>
+                    <th>Tipo de ocorrência</th>
+                    <th>${nomeMesAtual}</th>
+                    <th>${nomeMesAnterior}</th>
+                    <th>Variação</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${items.map(x => {
+                    const texto = x.variacao === null
+                        ? "NOVO"
+                        : x.variacao > 0
+                            ? `▲ ${x.variacao.toFixed(1).replace(".",",")}%`
+                            : x.variacao < 0
+                                ? `▼ ${Math.abs(x.variacao).toFixed(1).replace(".",",")}%`
+                                : "0,0%";
+                    const cor = x.variacao === null
+                        ? "#17632d"
+                        : x.variacao > 0 ? "#b42318" : x.variacao < 0 ? "#17632d" : "#5f6e77";
+
+                    return `<tr>
+                        <td>${escapar(x.nome)}</td>
+                        <td>${x.atual}</td>
+                        <td>${x.anterior}</td>
+                        <td class="variation-cell" style="color:${cor}">${texto}</td>
+                    </tr>`;
+                }).join("")}
+            </tbody>
+        </table>`;
+    };
 
     const status = [
         ["Abertos",d.abertos],
@@ -6410,6 +6483,33 @@ td:nth-child(2),td:nth-child(3){
     .comparison-card{grid-template-columns:1fr}
 }
 
+
+.comparison-subsection{
+    margin-top:18px;
+    padding-top:12px;
+    border-top:2px solid #e2e9ed;
+}
+.comparison-subsection h3{
+    margin:0 0 4px;
+    color:#123b5d;
+    font-size:15px;
+}
+.comparison-types-table{
+    margin-top:9px;
+}
+.comparison-types-table th,
+.comparison-types-table td{
+    padding:7px 8px;
+}
+.comparison-types-table th:not(:first-child),
+.comparison-types-table td:not(:first-child){
+    text-align:center;
+}
+.variation-cell{
+    font-weight:800;
+    white-space:nowrap;
+}
+
 .footer{
     margin-top:28px;
     padding-top:10px;
@@ -6563,6 +6663,15 @@ td:nth-child(2),td:nth-child(3){
     <h2>3. Chamados mais frequentes</h2>
     ${graficoPizza(d.ocorrencias,d.total)}
     ${tabela(d.ocorrencias,d.total)}
+
+    <div class="comparison-subsection">
+        <h3>Comparação com o período anterior</h3>
+        <p class="section-note">
+            Comparativo mensal para identificar quais tipos de ocorrência aumentaram,
+            reduziram ou surgiram no período atual.
+        </p>
+        ${comparativoTipos(d.tiposOcorrenciaComparativo)}
+    </div>
 </section>
 
 <section class="section">
