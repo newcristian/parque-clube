@@ -5464,19 +5464,10 @@ function renderDashboardV11(){
         ) + 1;
 
     }else if(tipoPeriodoAtual === "hoje"){
-        const atual = new Date(intervalo.inicio);
-        const dia = atual.getDate();
-        const mesAnterior = atual.getMonth() - 1;
-
-        const ultimoDia = new Date(
-            atual.getFullYear(), mesAnterior + 1, 0
-        ).getDate();
-
-        const anterior = new Date(
-            atual.getFullYear(),
-            mesAnterior,
-            Math.min(dia, ultimoDia)
-        );
+        // "DIA" compara o dia selecionado com o dia calendário imediatamente anterior.
+        // Ex.: relatório de 16/08/26 -> comparação com 15/08/26.
+        const atual = inicioDiaDashboardV11(new Date(intervalo.inicio));
+        const anterior = new Date(atual.getTime() - 86400000);
 
         intervaloAnterior = {
             inicio: inicioDiaDashboardV11(anterior),
