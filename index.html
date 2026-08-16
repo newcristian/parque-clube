@@ -5427,37 +5427,461 @@ function gerarRelatorioHTMLV11(abrirJanela=true){
     renderDashboardV11();
     const d=window.dashboardDadosAtualV11;
     if(!d)return;
-    const htmlRel=`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Relatório Parque Clube</title>
+
+    const dataBR = (dt) => {
+        if(!dt) return "-";
+        const x = new Date(dt);
+        return String(x.getDate()).padStart(2,"0") + "/" +
+               String(x.getMonth()+1).padStart(2,"0") + "/" +
+               x.getFullYear();
+    };
+
+    const inicio = dataBR(d.intervalo.inicio);
+    const fim = dataBR(d.intervalo.fim);
+    const periodoExato =
+        d.intervalo.label === "Hoje"
+        ? inicio
+        : `${inicio} a ${fim}`;
+
+    const pct = (q,total) =>
+        total ? ((q/total)*100).toFixed(1).replace(".",",") + "%" : "0,0%";
+
+    const grafico = (items,total) => {
+        if(!items.length){
+            return '<div class="empty">Nenhum chamado encontrado no período.</div>';
+        }
+
+        return `<div class="chart">
+            ${items.map(([nome,qtd]) => `
+                <div class="chart-row">
+                    <div class="chart-label" title="${escapar(nome)}">${escapar(nome)}</div>
+                    <div class="chart-track">
+                        <div class="chart-fill" style="width:${total ? (qtd/Math.max(...items.map(x=>x[1]),1))*100 : 0}%"></div>
+                    </div>
+                    <div class="chart-number">${qtd}</div>
+                    <div class="chart-percent">${pct(qtd,total)}</div>
+                </div>
+            `).join("")}
+        </div>`;
+    };
+
+    const tabela = (items,total) => {
+        if(!items.length) return '<div class="empty">Nenhum registro no período.</div>';
+
+        return `<table>
+            <thead>
+                <tr>
+                    <th>Categoria</th>
+                    <th>Quantidade</th>
+                    <th>Percentual</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${items.map(([nome,qtd]) => `
+                    <tr>
+                        <td>${escapar(nome)}</td>
+                        <td>${qtd}</td>
+                        <td>${pct(qtd,total)}</td>
+                    </tr>
+                `).join("")}
+            </tbody>
+        </table>`;
+    };
+
+    const status = [
+        ["Abertos",d.abertos],
+        ["Em andamento",d.andamento],
+        ["Resolvidos",d.resolvidos],
+        ["Cancelados",d.cancelados]
+    ];
+
+    const htmlRel=`<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Relatório Gerencial — Sistema Parque Clube</title>
+
 <style>
-body{font-family:Arial,sans-serif;color:#222;margin:30px}h1{color:#123b5d}h2{color:#17632d;border-bottom:2px solid #ddd;padding-bottom:6px}
-.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.card{background:#f1f5f7;padding:15px;border-radius:10px;text-align:center}.card b{display:block;font-size:25px;color:#123b5d}
-table{border-collapse:collapse;width:100%;margin:10px 0 25px}th,td{border:1px solid #d7dee5;padding:8px;text-align:left}th{background:#123b5d;color:#fff}
-@media print{button{display:none}}
-</style></head><body>
-<h1>🏢 SISTEMA PARQUE CLUBE</h1>
-<p><b>📊 Relatório Gerencial de Chamados</b></p>
-<p><b>Período:</b> ${escapar(d.intervalo.label)}</p>
-<div class="cards">
-<div class="card">Hoje<b>${d.hoje}</b></div><div class="card">Semana<b>${d.semana}</b></div>
-<div class="card">Mês<b>${d.mes}</b></div><div class="card">Período<b>${d.total}</b></div>
+@page{
+    size:A4;
+    margin:14mm;
+}
+
+*{box-sizing:border-box}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    color:#24323d;
+    background:#fff;
+    margin:0;
+    line-height:1.45;
+}
+
+.report{
+    max-width:920px;
+    margin:0 auto;
+}
+
+.header{
+    display:flex;
+    align-items:center;
+    gap:22px;
+    padding:18px 20px;
+    border-radius:14px;
+    background:linear-gradient(135deg,#123b5d,#17632d);
+    color:#fff;
+    margin-bottom:18px;
+}
+
+.header img{
+    width:145px;
+    max-height:78px;
+    object-fit:contain;
+    background:#fff;
+    border-radius:10px;
+    padding:6px;
+}
+
+.header-title{
+    flex:1;
+}
+
+.header-title .system{
+    font-size:25px;
+    font-weight:800;
+    letter-spacing:.3px;
+}
+
+.header-title .report-title{
+    margin-top:4px;
+    font-size:16px;
+    opacity:.95;
+}
+
+.period-box{
+    border:2px solid #17632d;
+    border-radius:14px;
+    padding:16px 18px;
+    background:#f4faf5;
+    margin-bottom:18px;
+}
+
+.period-box .label{
+    color:#17632d;
+    font-size:13px;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:.5px;
+}
+
+.period-box .period{
+    margin-top:4px;
+    font-size:22px;
+    font-weight:800;
+    color:#123b5d;
+}
+
+.period-box .exact{
+    margin-top:3px;
+    font-size:13px;
+    color:#60707b;
+}
+
+.summary{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    margin-bottom:20px;
+}
+
+.card{
+    background:#f5f8fa;
+    border:1px solid #dce5ea;
+    border-radius:11px;
+    padding:13px;
+    text-align:center;
+}
+
+.card .label{
+    color:#65737d;
+    font-size:12px;
+    font-weight:700;
+}
+
+.card .value{
+    color:#123b5d;
+    font-size:26px;
+    font-weight:800;
+    margin-top:3px;
+}
+
+.section{
+    margin-top:22px;
+    page-break-inside:avoid;
+}
+
+.section h2{
+    color:#123b5d;
+    font-size:18px;
+    margin:0 0 9px;
+    padding-bottom:7px;
+    border-bottom:2px solid #17632d;
+}
+
+.chart{
+    border:1px solid #dce4e9;
+    border-radius:11px;
+    padding:13px;
+    background:#fff;
+}
+
+.chart-row{
+    display:grid;
+    grid-template-columns:155px 1fr 45px 58px;
+    align-items:center;
+    gap:8px;
+    margin:8px 0;
+    font-size:12px;
+}
+
+.chart-label{
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+
+.chart-track{
+    height:15px;
+    background:#edf2f5;
+    border-radius:99px;
+    overflow:hidden;
+}
+
+.chart-fill{
+    height:100%;
+    background:#1d78b5;
+    border-radius:99px;
+}
+
+.chart-number{
+    font-weight:800;
+    text-align:right;
+    color:#123b5d;
+}
+
+.chart-percent{
+    text-align:right;
+    color:#5f6e77;
+    font-weight:700;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:10px;
+    font-size:12px;
+}
+
+th,td{
+    border:1px solid #d4dee5;
+    padding:8px;
+    text-align:left;
+}
+
+th{
+    background:#123b5d;
+    color:#fff;
+}
+
+td:nth-child(2),td:nth-child(3){
+    text-align:center;
+}
+
+.total-row td{
+    background:#eaf3f9;
+    font-weight:800;
+}
+
+.kpi-box{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+.kpi{
+    border:1px solid #dce5ea;
+    border-radius:11px;
+    padding:14px;
+    background:#f8fafb;
+}
+
+.kpi strong{
+    display:block;
+    color:#17632d;
+    font-size:12px;
+}
+
+.kpi span{
+    display:block;
+    color:#123b5d;
+    font-size:22px;
+    font-weight:800;
+    margin-top:3px;
+}
+
+.empty{
+    padding:14px;
+    background:#f7f7f7;
+    border-radius:9px;
+    color:#777;
+}
+
+.footer{
+    margin-top:28px;
+    padding-top:10px;
+    border-top:1px solid #dce4e9;
+    color:#74818a;
+    font-size:10px;
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+}
+
+.actions{
+    text-align:center;
+    margin:22px 0;
+}
+
+.actions button{
+    border:0;
+    border-radius:9px;
+    padding:11px 16px;
+    background:#17632d;
+    color:#fff;
+    font-weight:800;
+    cursor:pointer;
+}
+
+@media(max-width:650px){
+    .header{flex-direction:column;text-align:center}
+    .summary{grid-template-columns:repeat(2,1fr)}
+    .chart-row{grid-template-columns:100px 1fr 35px 50px}
+    .kpi-box{grid-template-columns:1fr}
+}
+
+@media print{
+    .actions{display:none}
+    .header{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    th,.chart-fill{ -webkit-print-color-adjust:exact; print-color-adjust:exact}
+}
+</style>
+</head>
+
+<body>
+<div class="report">
+
+<header class="header">
+    ${logo_data ? `<img src="${logo_data}" alt="Parque Clube">` : ""}
+    <div class="header-title">
+        <div class="system">SISTEMA PARQUE CLUBE</div>
+        <div class="report-title">Relatório Gerencial de Chamados / Ordens de Serviço</div>
+    </div>
+</header>
+
+<section class="period-box">
+    <div class="label">Período Apurado</div>
+    <div class="period">${escapar(d.intervalo.label)}</div>
+    <div class="exact">📅 ${periodoExato}</div>
+</section>
+
+<div class="summary">
+    <div class="card"><div class="label">Chamados hoje</div><div class="value">${d.hoje}</div></div>
+    <div class="card"><div class="label">Chamados na semana</div><div class="value">${d.semana}</div></div>
+    <div class="card"><div class="label">Chamados no mês</div><div class="value">${d.mes}</div></div>
+    <div class="card"><div class="label">Total no período</div><div class="value">${d.total}</div></div>
 </div>
-<h2>🔄 Situação dos chamados</h2>
-<table><tr><th>Status</th><th>Quantidade</th></tr>
-<tr><td>Abertos</td><td>${d.abertos}</td></tr><tr><td>Em andamento</td><td>${d.andamento}</td></tr>
-<tr><td>Resolvidos</td><td>${d.resolvidos}</td></tr><tr><td>Cancelados</td><td>${d.cancelados}</td></tr></table>
-<h2>📈 Chamados mais frequentes</h2>${linhasRelatorioDashboardV11(d.ocorrencias)}
-<h2>📊 Chamados por área</h2>${linhasRelatorioDashboardV11(d.areas)}
-<h2>⭐ Distribuição por prioridade</h2>${linhasRelatorioDashboardV11(d.prioridades)}
-<h2>⏱️ Indicadores de atendimento</h2>
-<p><b>Percentual resolvido:</b> ${d.pct}%</p>
-<p><b>Tempo médio até conclusão:</b> ${d.media===null?"Não disponível":d.media.toFixed(1)+" horas"}</p>
-<p style="color:#777;font-size:12px">Gerado pelo Sistema Parque Clube em ${new Date().toLocaleString("pt-BR")}.</p>
-<button onclick="window.print()">📄 Imprimir / Salvar como PDF</button>
-</body></html>`;
+
+<section class="section">
+    <h2>1. Situação dos chamados</h2>
+    <div class="chart">
+        ${status.map(([nome,qtd]) => `
+            <div class="chart-row">
+                <div class="chart-label">${nome}</div>
+                <div class="chart-track">
+                    <div class="chart-fill" style="width:${d.total ? (qtd/d.total)*100 : 0}%"></div>
+                </div>
+                <div class="chart-number">${qtd}</div>
+                <div class="chart-percent">${pct(qtd,d.total)}</div>
+            </div>
+        `).join("")}
+    </div>
+
+    <table>
+        <thead><tr><th>Status</th><th>Quantidade</th><th>%</th></tr></thead>
+        <tbody>
+            ${status.map(([nome,qtd]) => `
+                <tr><td>${nome}</td><td>${qtd}</td><td>${pct(qtd,d.total)}</td></tr>
+            `).join("")}
+            <tr class="total-row"><td>TOTAL</td><td>${d.total}</td><td>100%</td></tr>
+        </tbody>
+    </table>
+</section>
+
+<section class="section">
+    <h2>2. Chamados mais frequentes</h2>
+    ${grafico(d.ocorrencias,d.total)}
+    ${tabela(d.ocorrencias,d.total)}
+</section>
+
+<section class="section">
+    <h2>3. Chamados por área</h2>
+    ${grafico(d.areas,d.total)}
+    ${tabela(d.areas,d.total)}
+</section>
+
+<section class="section">
+    <h2>4. Distribuição por prioridade</h2>
+    ${grafico(d.prioridades,d.total)}
+    ${tabela(d.prioridades,d.total)}
+</section>
+
+<section class="section">
+    <h2>5. Indicadores de atendimento</h2>
+    <div class="kpi-box">
+        <div class="kpi">
+            <strong>PERCENTUAL DE CHAMADOS RESOLVIDOS</strong>
+            <span>${d.pct}%</span>
+        </div>
+        <div class="kpi">
+            <strong>TEMPO MÉDIO ATÉ CONCLUSÃO</strong>
+            <span>${d.media===null ? "Não disponível" : d.media.toFixed(1)+" horas"}</span>
+        </div>
+    </div>
+</section>
+
+<div class="actions">
+    <button onclick="window.print()">📄 Imprimir / Salvar como PDF</button>
+</div>
+
+<footer class="footer">
+    <span>Sistema Parque Clube — Relatório Gerencial</span>
+    <span>Gerado em ${new Date().toLocaleString("pt-BR")}</span>
+</footer>
+
+</div>
+</body>
+</html>`;
+
     if(abrirJanela){
         const w=window.open("","_blank");
-        if(!w){alert("O navegador bloqueou a nova janela. Permita pop-ups para gerar o relatório.");return}
-        w.document.open();w.document.write(htmlRel);w.document.close();
+        if(!w){
+            alert("O navegador bloqueou a nova janela. Permita pop-ups para gerar o relatório.");
+            return;
+        }
+        w.document.open();
+        w.document.write(htmlRel);
+        w.document.close();
     }
     return htmlRel;
 }
