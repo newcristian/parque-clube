@@ -6357,6 +6357,59 @@ td:nth-child(2),td:nth-child(3){
 .signature-action{
     margin-top:2px;
 }
+
+.comparison-card{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+}
+.comparison-card>div{
+    border:1px solid #dce5ea;
+    border-radius:11px;
+    padding:15px;
+    background:#f8fafb;
+    text-align:center;
+}
+.comparison-card strong{
+    display:block;
+    font-size:10px;
+    color:#65737d;
+}
+.comparison-card span{
+    display:block;
+    margin-top:5px;
+    font-size:18px;
+    font-weight:800;
+    color:#123b5d;
+}
+.scope-focus-card{
+    border:1px solid #bcd2df;
+    background:#eaf3f9;
+    border-radius:11px;
+    padding:18px;
+    text-align:center;
+}
+.scope-focus-card strong{
+    display:block;
+    font-size:18px;
+    color:#123b5d;
+}
+.scope-focus-card span{
+    display:block;
+    margin-top:4px;
+    font-size:12px;
+    color:#5f6e77;
+}
+.signature-section-wrapper{
+    page-break-inside:avoid;
+}
+.signature-section-wrapper>h2{
+    margin-bottom:0;
+}
+@media(max-width:650px){
+    .comparison-card{grid-template-columns:1fr}
+}
+
 .footer{
     margin-top:28px;
     padding-top:10px;
@@ -6463,46 +6516,19 @@ td:nth-child(2),td:nth-child(3){
     </div>
 </div>
 
-<section class="section">
-    <h2>1. Situação dos chamados</h2>
-    <div class="chart">
-        ${status.map(([nome,qtd]) => `
-            <div class="chart-row">
-                <div class="chart-label">${nome}</div>
-                <div class="chart-track">
-                    <div class="chart-fill" style="width:${d.total ? (qtd/d.total)*100 : 0}%"></div>
-                </div>
-                <div class="chart-number">${qtd}</div>
-                <div class="chart-percent">${pct(qtd,d.total)}</div>
-            </div>
-        `).join("")}
-    </div>
-
-    <table>
-        <thead><tr><th>Status</th><th>Quantidade</th><th>%</th></tr></thead>
-        <tbody>
-            ${status.map(([nome,qtd]) => `
-                <tr><td>${nome}</td><td>${qtd}</td><td>${pct(qtd,d.total)}</td></tr>
-            `).join("")}
-            <tr class="total-row"><td>TOTAL</td><td>${d.total}</td><td>100%</td></tr>
-        </tbody>
-    </table>
-</section>
-
 
 <section class="section">
-    <h2>2. Resumo executivo</h2>
+    <h2>1. Resumo executivo</h2>
     <div class="executive-grid">
         <div class="exec-card"><strong>Total de chamados</strong><span>${d.total}</span></div>
         <div class="exec-card"><strong>Resolvidos</strong><span>${d.resolvidos} <small>${d.pct}%</small></span></div>
         <div class="exec-card"><strong>Em andamento</strong><span>${d.andamento}</span></div>
         <div class="exec-card"><strong>Chamados críticos</strong><span>${d.criticos}</span><small>Urgente + Alta</small></div>
     </div>
-
     <div class="management-highlight">
         <div>
-            <strong>Comparativo com período anterior</strong>
-            <span style="color:${corVariacao}">${sinalVariacao}</span>
+            <strong>Chamados pendentes</strong>
+            <span>${d.abertos+d.andamento}</span>
         </div>
         <div>
             <strong>Chamado aberto mais antigo</strong>
@@ -6516,39 +6542,7 @@ td:nth-child(2),td:nth-child(3){
 </section>
 
 <section class="section">
-    <h2>3. Evolução dos chamados</h2>
-    <p class="section-note">Quantidade de chamados por mês nos últimos seis meses, considerando o escopo selecionado.</p>
-    ${graficoEvolucao(d.evolucaoMensal)}
-</section>
-
-${d.escopo === "condominio" ? `
-<section class="section">
-    <h2>4. Chamados por bloco</h2>
-    <p class="section-note">Ranking dos blocos com maior número de chamados no período.</p>
-    ${graficoRankingBlocos}
-    ${rankingBlocosTabela}
-</section>` : ""}
-
-<section class="section">
-    <h2>${d.escopo === "condominio" ? "5" : "4"}. Chamados mais frequentes</h2>
-    ${graficoPizza(d.ocorrencias,d.total)}
-    ${tabela(d.ocorrencias,d.total)}
-</section>
-
-<section class="section">
-    <h2>6. Chamados por área</h2>
-    ${graficoAreasVertical(d.areas,d.total)}
-    ${tabela(d.areas,d.total)}
-</section>
-
-<section class="section">
-    <h2>7. Distribuição por prioridade</h2>
-    ${graficoPizzaPrioridade(d.prioridades,d.total)}
-    ${tabela(d.prioridades,d.total)}
-</section>
-
-<section class="section">
-    <h2>8. Indicadores de atendimento</h2>
+    <h2>2. Indicadores de atendimento</h2>
     <div class="kpi-box">
         <div class="kpi">
             <strong>PERCENTUAL DE CHAMADOS RESOLVIDOS</strong>
@@ -6558,27 +6552,116 @@ ${d.escopo === "condominio" ? `
             <strong>TEMPO MÉDIO ATÉ CONCLUSÃO</strong>
             <span>${d.media===null ? "Não disponível" : d.media.toFixed(1)+" horas"}</span>
         </div>
+        <div class="kpi">
+            <strong>CHAMADOS CRÍTICOS</strong>
+            <span>${d.criticos}</span>
+        </div>
     </div>
 </section>
 
-<section class="signature-section">
-    <div class="signature-logo">
-        ${logoRelatorioV11
-            ? `<img src="${logoRelatorioV11}" alt="Parque Clube">`
-            : ""}
+<section class="section">
+    <h2>3. Chamados mais frequentes</h2>
+    ${graficoPizza(d.ocorrencias,d.total)}
+    ${tabela(d.ocorrencias,d.total)}
+</section>
+
+<section class="section">
+    <h2>4. Chamados por área</h2>
+    ${graficoAreasVertical(d.areas,d.total)}
+    ${tabela(d.areas,d.total)}
+</section>
+
+<section class="section">
+    <h2>5. Distribuição por prioridade</h2>
+    ${graficoPizzaPrioridade(d.prioridades,d.total)}
+    ${tabela(d.prioridades,d.total)}
+</section>
+
+<section class="section">
+    <h2>6. Chamados por bloco</h2>
+    ${d.escopo === "condominio" ? `
+        <p class="section-note">Ranking dos blocos com maior número de chamados no período.</p>
+        ${graficoRankingBlocos}
+        ${rankingBlocosTabela}
+    ` : `
+        <p class="section-note">O relatório está filtrado especificamente para ${escapar(d.escopo)}.</p>
+        <div class="scope-focus-card">
+            <strong>${escapar(d.escopo)}</strong>
+            <span>${d.total} chamado(s) no período</span>
+        </div>
+    `}
+</section>
+
+<section class="section">
+    <h2>7. Evolução dos chamados</h2>
+    <p class="section-note">Quantidade de chamados por mês nos últimos seis meses, considerando o escopo selecionado.</p>
+    ${graficoEvolucao(d.evolucaoMensal)}
+</section>
+
+<section class="section">
+    <h2>8. Situação dos chamados</h2>
+    <div class="chart">
+        ${status.map(([nome,qtd]) => `
+            <div class="chart-row">
+                <div class="chart-label">${nome}</div>
+                <div class="chart-track">
+                    <div class="chart-fill" style="width:${d.total ? (qtd/d.total)*100 : 0}%"></div>
+                </div>
+                <div class="chart-number">${qtd}</div>
+                <div class="chart-percent">${pct(qtd,d.total)}</div>
+            </div>
+        `).join("")}
     </div>
+    <table>
+        <thead><tr><th>Status</th><th>Quantidade</th><th>%</th></tr></thead>
+        <tbody>
+            ${status.map(([nome,qtd]) => `
+                <tr><td>${nome}</td><td>${qtd}</td><td>${pct(qtd,d.total)}</td></tr>
+            `).join("")}
+            <tr class="total-row"><td>TOTAL</td><td>${d.total}</td><td>100%</td></tr>
+        </tbody>
+    </table>
+</section>
 
-    <div class="signature-date">${dataFormalEmissao}</div>
-
-    <div class="signature-line"></div>
-
-    <div class="signature-role">
-        ${d.escopo === "condominio"
-            ? "SÍNDICO(A)"
-            : "SUBSÍNDICO(A) " + escapar(d.escopo.replace(/^Bloco\s*/i,"BLOCO "))}
+<section class="section">
+    <h2>9. Comparativo com período anterior</h2>
+    <div class="comparison-card">
+        <div>
+            <strong>Período atual</strong>
+            <span>${d.total} chamados</span>
+        </div>
+        <div>
+            <strong>Período anterior</strong>
+            <span>${d.totalAnterior} chamados</span>
+        </div>
+        <div>
+            <strong>Variação</strong>
+            <span style="color:${corVariacao}">${sinalVariacao}</span>
+        </div>
     </div>
+    <p class="section-note">
+        A comparação utiliza períodos de mesma duração, permitindo identificar aumento,
+        redução ou estabilidade na demanda.
+    </p>
+</section>
 
-    <div class="signature-action">ASSINATURA</div>
+<section class="section signature-section-wrapper">
+    <h2>10. Assinatura</h2>
+    <div class="signature-section">
+        <div class="signature-logo">
+            ${logoRelatorioV11
+                ? `<img src="${logoRelatorioV11}" alt="Parque Clube">`
+                : ""}
+        </div>
+        <div class="signature-date">${dataFormalEmissao}</div>
+        <div class="signature-line"></div>
+        <div class="signature-role">
+            ${d.escopo === "condominio"
+                ? "SÍNDICO(A)"
+                : "SUBSÍNDICO(A) " + escapar(d.escopo.replace(/^Bloco\s*/i,"BLOCO "))}
+        </div>
+        <div class="signature-action">ASSINATURA</div>
+    </div>
 </section>
 
 <div class="actions">
