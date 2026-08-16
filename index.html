@@ -5996,13 +5996,10 @@ function gerarRelatorioHTMLV11(abrirJanela=true){
     const faixaComparacao = (inicio, fim) => {
         const i = new Date(inicio);
         const f = new Date(fim);
-        const mesmoMes = i.getMonth() === f.getMonth() && i.getFullYear() === f.getFullYear();
+        const formatarDataCurta = (d) =>
+            `${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}/${String(d.getFullYear()).slice(-2)}`;
 
-        if(mesmoMes){
-            return `${i.toLocaleDateString("pt-BR",{day:"2-digit"})} a ${f.toLocaleDateString("pt-BR",{day:"2-digit"})}/${String(f.getFullYear()).slice(-2)}`;
-        }
-
-        return `${i.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"})}/${String(i.getFullYear()).slice(-2)} a ${f.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"})}/${String(f.getFullYear()).slice(-2)}`;
+        return `${formatarDataCurta(i)} a ${formatarDataCurta(f)}`;
     };
 
     const faixaAtualComparacao = faixaComparacao(d.intervalo.inicio,d.intervalo.fim);
