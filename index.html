@@ -713,6 +713,10 @@ input[readonly] {
 
 
 <style id="arquivamento-v11-style">
+.btn-atualizar-v11{background:#59636d !important;color:#fff !important;}
+.btn-ativos-v11{background:#17632d !important;color:#fff !important;}
+.btn-arquivar-todos-v11{background:#8a5a00 !important;color:#fff !important;}
+.btn-atualizar-v11:hover,.btn-ativos-v11:hover,.btn-arquivar-todos-v11:hover{filter:brightness(.94);}
 .admin-list-buttons-v11{
     display:grid;
     grid-template-columns:1fr 1fr;
@@ -958,7 +962,7 @@ input[readonly] {
 
 <h1>
 
-    SISTEMA DE CHAMADO PARQUE CLUBE
+    SISTEMA DE GESTÃO DO CONDOMÍNIO
 
 </h1>
 
@@ -1331,6 +1335,14 @@ input[readonly] {
 </option>
 
 <option>
+    Dedetização
+</option>
+
+<option>
+    Limpeza caixa d'água
+</option>
+
+<option>
     Outros
 </option>
 
@@ -1338,6 +1350,31 @@ input[readonly] {
 
 </div>
 
+<div class="form-group" id="areaExecucaoContainer" style="display:none;">
+
+<label for="areaExecucao">
+    Área/Local da Execução:
+</label>
+
+<select id="areaExecucao">
+    <option value="">Selecione a área/local</option>
+    <option>Condomínio Geral</option>
+    <option>Todos os Blocos</option>
+    <option>Bloco 1A</option>
+    <option>Bloco 1B</option>
+    <option>Bloco 1C</option>
+    <option>Bloco 1D</option>
+    <option>Bloco 1E</option>
+    <option>Bloco 2A</option>
+    <option>Bloco 2B</option>
+    <option>Bloco 2C</option>
+    <option>Bloco 2D</option>
+    <option>Bloco 2E</option>
+    <option>Somente Área Comum Sub1</option>
+    <option>Somente Área Comum Sub2</option>
+</select>
+
+</div>
 
 <div class="form-group">
 
@@ -1736,7 +1773,7 @@ input[readonly] {
 <button
     type="button"
     id="btnListarTodos"
-    class="btn-azul"
+    class="btn-azul btn-atualizar-v11"
 >
 
     🔄 Atualizar Lista de Chamados
@@ -1748,7 +1785,7 @@ input[readonly] {
     <button
         type="button"
         id="btnChamadosAtivos"
-        class="btn-azul"
+        class="btn-azul btn-ativos-v11"
     >
         📋 CHAMADOS ATIVOS
     </button>
@@ -1759,6 +1796,14 @@ input[readonly] {
         class="btn-cinza"
     >
         📦 CHAMADOS ARQUIVADOS
+    </button>
+
+    <button
+        type="button"
+        id="btnArquivarTodosResolvidos"
+        class="btn-arquivar-todos-v11"
+    >
+        📦 ARQUIVAR TODOS OS RESOLVIDOS
     </button>
 
 </div>
@@ -2580,6 +2625,37 @@ const intervaloCamera =
     );
 
 
+const areaExecucaoContainer =
+    document.getElementById(
+        "areaExecucaoContainer"
+    );
+
+const areaExecucaoSelect =
+    document.getElementById(
+        "areaExecucao"
+    );
+
+function atualizarAreaExecucao() {
+
+    const ocorrencia =
+        ocorrenciaSelect
+            ? ocorrenciaSelect.value
+            : "";
+
+    const exigeArea =
+        ocorrencia === "Dedetização" ||
+        ocorrencia === "Limpeza caixa d'água";
+
+    if (areaExecucaoContainer) {
+        areaExecucaoContainer.style.display =
+            exigeArea ? "block" : "none";
+    }
+
+    if (!exigeArea && areaExecucaoSelect) {
+        areaExecucaoSelect.value = "";
+    }
+}
+
 function atualizarIntervaloCamera() {
 
     const ocorrencia =
@@ -2661,11 +2737,13 @@ ocorrenciaSelect.addEventListener(
     function () {
 
         atualizarIntervaloCamera();
+        atualizarAreaExecucao();
 
     }
 );
 
 atualizarIntervaloCamera();
+atualizarAreaExecucao();
 
 
 /* =====================================================
@@ -2899,6 +2977,13 @@ document
                         document
                             .getElementById(
                                 "ocorrencia"
+                            )
+                            .value,
+
+                    areaExecucao:
+                        document
+                            .getElementById(
+                                "areaExecucao"
                             )
                             .value,
 
@@ -3301,7 +3386,7 @@ function prepararBotoesEnvio(
             async function () {
 
                 const assunto =
-                    "Novo Chamado Parque Clube - " +
+                    "Novo Chamado - " +
                     protocolo;
 
                 const botao =
@@ -3347,6 +3432,11 @@ function prepararBotoesEnvio(
                     formData.append(
                         "Tipo de Ocorrência",
                         dados.ocorrencia || ""
+                    );
+
+                    formData.append(
+                        "Área/Local da Execução",
+                        dados.areaExecucao || "Não se aplica"
                     );
 
                     formData.append(
@@ -3641,6 +3731,20 @@ function mostrarResultado(
             )}
 
         </div>
+
+        ${
+            chamado.areaExecucao
+                ? `
+        <div class="resultado-item">
+
+            <strong>Área/Local da Execução</strong>
+
+            ${escapar(chamado.areaExecucao)}
+
+        </div>
+                `
+                : ""
+        }
 
 
         <div class="resultado-item">
@@ -5940,6 +6044,130 @@ document
 
 
 /* =====================================================
+   ARQUIVAR TODOS OS CHAMADOS RESOLVIDOS
+===================================================== */
+
+async function arquivarTodosResolvidosV11() {
+
+    if (!senhaAdministrativa) {
+        alert("Faça o login administrativo.");
+        return;
+    }
+
+    const resolvidos = chamados.filter(
+        chamado =>
+            String(chamado.status || "")
+                .trim()
+                .toLowerCase() === "resolvido"
+    );
+
+    if (!resolvidos.length) {
+        alert("Não há chamados com status Resolvido para arquivar.");
+        return;
+    }
+
+    const confirmar = confirm(
+        "📦 ARQUIVAR TODOS OS CHAMADOS RESOLVIDOS\n\n" +
+        `Foram encontrados ${resolvidos.length} chamado(s) com status Resolvido.\n\n` +
+        "Eles sairão da lista de chamados ativos, mas não serão excluídos. " +
+        "O histórico será preservado e poderá ser consultado em CHAMADOS ARQUIVADOS.\n\n" +
+        "Deseja continuar?"
+    );
+
+    if (!confirmar) return;
+
+    const botao = document.getElementById("btnArquivarTodosResolvidos");
+    if (botao) {
+        botao.disabled = true;
+        botao.textContent = "⏳ Arquivando...";
+    }
+
+    let sucesso = 0;
+    let falhas = 0;
+
+    try {
+        for (const chamado of resolvidos) {
+            try {
+                const resposta = await fetch(API, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        action: "archive",
+                        protocolo: chamado.protocolo,
+                        adminPassword: senhaAdministrativa
+                    })
+                });
+
+                const texto = await resposta.text();
+                let dados = {};
+                try {
+                    dados = texto ? JSON.parse(texto) : {};
+                } catch {
+                    throw new Error("Resposta inválida do servidor.");
+                }
+
+                if (!resposta.ok || !dados.sucesso) {
+                    throw new Error(dados.erro || "Falha ao arquivar.");
+                }
+
+                const atualizado = dados.chamado;
+
+                chamados = chamados.filter(
+                    item => item.protocolo !== atualizado.protocolo
+                );
+
+                chamadosArquivadosV11 = chamadosArquivadosV11.filter(
+                    item => item.protocolo !== atualizado.protocolo
+                );
+
+                chamadosArquivadosV11.push(atualizado);
+                sucesso++;
+            } catch (erro) {
+                console.error("Falha ao arquivar", chamado.protocolo, erro);
+                falhas++;
+            }
+        }
+
+        chamadosHistoricoV11 = [
+            ...chamados,
+            ...chamadosArquivadosV11
+        ];
+
+        const totalArquivados = document.getElementById("totalArquivados");
+        if (totalArquivados) {
+            totalArquivados.textContent = chamadosArquivadosV11.length;
+        }
+
+        atualizarEstatisticas();
+        mostrarChamados();
+        renderizarChamadosArquivadosV11();
+
+        alert(
+            `📦 Processo concluído.\n\n` +
+            `Arquivados com sucesso: ${sucesso}\n` +
+            `Não arquivados: ${falhas}`
+        );
+    } finally {
+        if (botao) {
+            botao.disabled = false;
+            botao.textContent = "📦 ARQUIVAR TODOS OS RESOLVIDOS";
+        }
+    }
+}
+
+const btnArquivarTodosResolvidos = document.getElementById(
+    "btnArquivarTodosResolvidos"
+);
+
+if (btnArquivarTodosResolvidos) {
+    btnArquivarTodosResolvidos.addEventListener(
+        "click",
+        arquivarTodosResolvidosV11
+    );
+}
+
+
+/* =====================================================
    CHAMADOS ATIVOS / ARQUIVADOS
 ===================================================== */
 
@@ -7822,7 +8050,7 @@ td:nth-child(2),td:nth-child(3){
 <header class="header">
     ${logoRelatorioV11 ? `<img src="${logoRelatorioV11}" alt="Parque Clube">` : ""}
     <div class="header-title">
-        <div class="system">SISTEMA DE CHAMADO PARQUE CLUBE</div>
+        <div class="system">SISTEMA DE GESTÃO DO CONDOMÍNIO</div>
         <div class="report-title">Relatório Gerencial de Chamados / Ordens de Serviço</div>
     </div>
 </header>
