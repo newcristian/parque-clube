@@ -5299,6 +5299,12 @@ function inicioSemanaDashboardV11(d){
     x.setDate(x.getDate()+diff);
     return new Date(x.getFullYear(),x.getMonth(),x.getDate());
 }
+function inicioDiaDashboardV11(d){
+    const x = new Date(d);
+    x.setHours(0,0,0,0);
+    return x;
+}
+
 function fimDiaDashboardV11(d){return new Date(d.getFullYear(),d.getMonth(),d.getDate(),23,59,59,999)}
 function formatarDataDashboardV11(d){
     if(!d)return "-";
@@ -5408,23 +5414,47 @@ function renderDashboardV11(){
     const resolvidos=lista.filter(c=>c.status==="Resolvido").length;
     const cancelados=lista.filter(c=>c.status==="Cancelado").length;
 
-    // Período imediatamente anterior, com a mesma quantidade de dias
-    // do período apurado. Assim a comparação fica tecnicamente equivalente.
-    const diasPeriodo = Math.max(
-        1,
-        Math.round(
-            (fimDiaDashboardV11(intervalo.fim).getTime() -
-             inicioDiaDashboardV11(intervalo.inicio).getTime()) / 86400000
-        ) + 1
-    );
+    // Período de comparação:
+    // - Hoje: dia anterior
+    // - Esta semana: semana imediatamente anterior
+    // - Este mês: do dia 1 até a mesma data do mês anterior
+    // - Mês anterior: mês completo imediatamente anterior
+    // - Personalizado: mesma quantidade de dias imediatamente anterior
+    const tipoPeriodoAtual = document.getElementById("dashboardPeriodo")?.value || "mes";
+    let intervaloAnterior;
+    let diasPeriodo;
 
-    const fimAnterior = new Date(intervalo.inicio.getTime() - 86400000);
-    const inicioAnterior = new Date(fimAnterior.getTime() - (diasPeriodo - 1) * 86400000);
+    if(tipoPeriodoAtual === "mesAnterior"){
+        const base = new Date(intervalo.inicio);
+        const anoAnterior = base.getFullYear();
+        const mesAnterior = base.getMonth() - 1;
+        const primeiro = new Date(anoAnterior, mesAnterior, 1);
+        const ultimo = new Date(anoAnterior, mesAnterior + 1, 0);
+        intervaloAnterior = {
+            inicio: inicioDiaDashboardV11(primeiro),
+            fim: fimDiaDashboardV11(ultimo)
+        };
+        diasPeriodo = Math.round((intervaloAnterior.fim - intervaloAnterior.inicio)/86400000) + 1;
+    }else{
+        diasPeriodo = Math.max(
+            1,
+            Math.round(
+                (fimDiaDashboardV11(intervalo.fim).getTime() -
+                 inicioDiaDashboardV11(intervalo.inicio).getTime()) / 86400000
+            ) + 1
+        );
 
-    const intervaloAnterior = {
-        inicio: inicioDiaDashboardV11(inicioAnterior),
-        fim: fimDiaDashboardV11(fimAnterior)
-    };
+        const fimAnterior = new Date(intervalo.inicio.getTime() - 86400000);
+        const inicioAnterior = new Date(
+            fimAnterior.getTime() - (diasPeriodo - 1) * 86400000
+        );
+
+        intervaloAnterior = {
+            inicio: inicioDiaDashboardV11(inicioAnterior),
+            fim: fimDiaDashboardV11(fimAnterior)
+        };
+    }
+
     const listaAnterior = chamadosEscopo.filter(c => chamadoDentroDashboardV11(c, intervaloAnterior));
     const totalAnterior = listaAnterior.length;
     const variacaoPercentual = totalAnterior
@@ -6899,7 +6929,7 @@ function gerarPDFV11(){
             </div>
         `);
         w.document.close();
-        alert("Ocorreu um erro ao montar o relatório. Abra o console do navegador para mais detalhes.");
+        alert("Ocorreu um erro ao montar o relatório. A página foi preservada. Tente novamente.");
     }
 }
 
