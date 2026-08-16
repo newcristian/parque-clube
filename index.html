@@ -1891,6 +1891,22 @@ input[readonly] {
 <select id="dashboardPeriodo">
 <option value="hoje">Hoje</option><option value="semana">Esta semana</option><option value="mes" selected>Este mês</option><option value="mesAnterior">Mês anterior</option><option value="personalizado">Período personalizado</option>
 </select></div>
+<div class="form-group">
+<label for="dashboardEscopo">🏢 Área do relatório:</label>
+<select id="dashboardEscopo">
+<option value="condominio">Condomínio — geral</option>
+<option value="Bloco 1A">Bloco 1A</option>
+<option value="Bloco 1B">Bloco 1B</option>
+<option value="Bloco 1C">Bloco 1C</option>
+<option value="Bloco 1D">Bloco 1D</option>
+<option value="Bloco 1E">Bloco 1E</option>
+<option value="Bloco 2A">Bloco 2A</option>
+<option value="Bloco 2B">Bloco 2B</option>
+<option value="Bloco 2C">Bloco 2C</option>
+<option value="Bloco 2D">Bloco 2D</option>
+<option value="Bloco 2E">Bloco 2E</option>
+</select>
+</div>
 <div id="dashboardPersonalizado" style="display:none">
 <div class="form-group"><label>Data inicial:</label><input type="date" id="dashboardDataInicio"></div>
 <div class="form-group"><label>Data final:</label><input type="date" id="dashboardDataFim"></div>
@@ -5358,22 +5374,33 @@ function renderDashboardV11(){
         document.getElementById("dashboardResumo").innerHTML='<div class="dashboard-empty" style="grid-column:1/-1">Informe um período personalizado válido.</div>';
         return;
     }
-    const lista=chamados.filter(c=>chamadoDentroDashboardV11(c,intervalo));
     const agora=new Date();
-    const hojeLista=chamados.filter(c=>{
+    const escopoEl=document.getElementById("dashboardEscopo");
+    const escopo=escopoEl ? escopoEl.value : "condominio";
+
+    const porEscopo=(c)=>{
+        return escopo==="condominio" || String(c.bloco||"").trim()===escopo;
+    };
+
+    const chamadosEscopo=chamados.filter(porEscopo);
+    const lista=chamadosEscopo.filter(c=>chamadoDentroDashboardV11(c,intervalo));
+
+    const hojeLista=chamadosEscopo.filter(c=>{
         const d=parseDataDashboardV11(c.dataAbertura);
         if(!d)return false;
         return d.toDateString()===agora.toDateString();
     });
+
     const semana=inicioSemanaDashboardV11(agora);
-    const semanaLista=chamados.filter(c=>{
+    const semanaLista=chamadosEscopo.filter(c=>{
         const d=parseDataDashboardV11(c.dataAbertura);
-        return d && d>=semana && d<=fimDiaDashboardV11(new Date(semana.getFullYear(),semana.getMonth(),semana.getDate()+6));
+        return d && d>=semana && d<=fimDiaDashboardV11(agora);
     });
+
     const mesInicio=new Date(agora.getFullYear(),agora.getMonth(),1);
-    const mesLista=chamados.filter(c=>{
+    const mesLista=chamadosEscopo.filter(c=>{
         const d=parseDataDashboardV11(c.dataAbertura);
-        return d && d>=mesInicio && d<=fimDiaDashboardV11(new Date(agora.getFullYear(),agora.getMonth()+1,0));
+        return d && d>=mesInicio && d<=fimDiaDashboardV11(agora);
     });
     const total=lista.length;
     const abertos=lista.filter(c=>(c.status||"Aberto")==="Aberto").length;
@@ -5414,7 +5441,7 @@ function renderDashboardV11(){
         <div class="dashboard-bar-row"><span>Resolvidos</span><div class="dashboard-bar-track"><div class="dashboard-bar-fill" style="width:${pct}%"></div></div><strong>${pct}%</strong></div>
         <div class="dashboard-bar-row"><span>Tempo médio até conclusão</span><div></div><strong>${media===null?"-":media.toFixed(1)+"h"}</strong></div>`;
 
-    window.dashboardDadosAtualV11={intervalo,lista,total,abertos,andamento,resolvidos,cancelados,
+    window.dashboardDadosAtualV11={intervalo,lista,total,abertos,andamento,resolvidos,cancelados,escopo,
         ocorrencias:contarDashboardV11(lista,"ocorrencia",10),areas:contarDashboardV11(lista,"bloco",10),
         prioridades:contarDashboardV11(lista,"prioridade",10),hoje:hojeLista.length,semana:semanaLista.length,mes:mesLista.length,pct,media};
 }
@@ -5466,6 +5493,9 @@ function gerarRelatorioHTMLV11(abrirJanela=true){
         d.intervalo.label === "Hoje"
         ? inicio
         : `${inicio} a ${fim}`;
+
+    const abrangenciaRelatorio =
+        d.escopo === "condominio" ? "Condomínio — Geral" : d.escopo;
 
     const pct = (q,total) =>
         total ? ((q/total)*100).toFixed(1).replace(".",",") + "%" : "0,0%";
@@ -5613,6 +5643,11 @@ body{
     color:#6a7881;
     font-weight:600;
     white-space:nowrap;
+}
+.period-box .scope-line{
+    margin-top:6px;
+    color:#123b5d;
+    font-size:12px;
 }
 .period-box .issued{
     margin-top:9px;
@@ -5815,6 +5850,22 @@ td:nth-child(2),td:nth-child(3){
     .header{-webkit-print-color-adjust:exact;print-color-adjust:exact}
     th,.chart-fill{ -webkit-print-color-adjust:exact; print-color-adjust:exact}
 }
+
+.report .header-title{
+    text-align:center;
+}
+.report .header-title .system{
+    white-space:nowrap;
+    font-size:22px;
+}
+.report .header-title .report-title{
+    white-space:nowrap;
+}
+@media(max-width:650px){
+    .report .header-title .system{white-space:normal;font-size:20px}
+    .report .header-title .report-title{white-space:normal}
+}
+
 </style>
 </head>
 
@@ -5833,6 +5884,7 @@ td:nth-child(2),td:nth-child(3){
     <div class="label">Período Apurado</div>
     <div class="period">${escapar(d.intervalo.label)}</div>
     <div class="exact">📅 ${periodoExato}</div>
+    <div class="scope-line">🏢 <strong>Abrangência:</strong> ${escapar(abrangenciaRelatorio)}</div>
     <div class="issued">🕒 <strong>Relatório emitido em:</strong> ${dataEmissao} às ${horaEmissao}</div>
 </section>
 
@@ -6024,6 +6076,7 @@ function inicializarDashboardV11(){
     painel.style.display="block";
     const periodo=document.getElementById("dashboardPeriodo");
     const personalizado=document.getElementById("dashboardPersonalizado");
+    const escopo=document.getElementById("dashboardEscopo");
     if(periodo.dataset.v11==="1"){renderDashboardV11();return;}
     periodo.dataset.v11="1";
     periodo.addEventListener("change",function(){
@@ -6032,6 +6085,7 @@ function inicializarDashboardV11(){
     });
     document.getElementById("dashboardDataInicio").addEventListener("change",renderDashboardV11);
     document.getElementById("dashboardDataFim").addEventListener("change",renderDashboardV11);
+    if(escopo) escopo.addEventListener("change",renderDashboardV11);
     document.getElementById("btnAtualizarDashboard").addEventListener("click",renderDashboardV11);
     document.getElementById("btnGerarPDF").addEventListener("click",gerarPDFV11);
     renderDashboardV11();
