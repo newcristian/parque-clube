@@ -937,6 +937,271 @@ input[readonly] {
 #adminPainel #adminConteudoRelatorioV11{display:none}
 </style>
 
+
+<style id="layout-responsivo-v12">
+
+/* =========================================================
+   V1.2 — LAYOUT RESPONSIVO
+   COMPUTADOR = ÁREA AMPLA
+   TABLET = ÁREA INTERMEDIÁRIA
+   CELULAR = LAYOUT VERTICAL
+========================================================= */
+
+/* ---------- COMPUTADOR ---------- */
+@media (min-width: 1000px) {
+
+    body {
+        padding: 18px;
+    }
+
+    /* O aplicativo ocupa praticamente toda a largura disponível */
+    body > .container {
+        width: 100%;
+        max-width: 1500px;
+        padding: 28px 32px;
+        border-radius: 20px;
+    }
+
+    /* Cabeçalho */
+    .logo img {
+        width: 210px;
+    }
+
+    h1 {
+        font-size: 28px;
+    }
+
+    .subtitle {
+        font-size: 15px;
+    }
+
+    /* Menu principal */
+    .menu {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+    }
+
+    .menu button:last-child {
+        width: 100%;
+        grid-column: auto;
+    }
+
+    /* Formulário de abertura */
+    #formChamado {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        column-gap: 20px;
+        row-gap: 0;
+    }
+
+    #formChamado .form-group {
+        min-width: 0;
+    }
+
+    /* Campos que precisam ocupar a largura inteira */
+    #formChamado .form-group:has(#protocolo),
+    #formChamado .form-group:has(#detalhes),
+    #formChamado .form-group:has(#btnEnviar),
+    #formChamado #areaExecucaoContainer,
+    #formChamado #dataOcorrenciaContainer,
+    #formChamado #intervaloCamera {
+        grid-column: 1 / -1;
+    }
+
+    /* Campo de execução fica em linha própria quando aparecer */
+    #areaExecucaoContainer {
+        width: 100%;
+    }
+
+    /* Painéis */
+    .admin-box {
+        padding: 20px;
+    }
+
+    .stats {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+    }
+
+    .admin-list-buttons-v11 {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .admin-list-buttons-v11 button {
+        width: 100%;
+    }
+
+    /* Menu administrativo */
+    .admin-menu-v11 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .admin-menu-card {
+        min-height: 145px;
+    }
+
+    /* Dashboard */
+    .dashboard-v11 .dashboard-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+    }
+
+    .dashboard-v11 .dashboard-status-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    /* Filtros e resultados administrativos */
+    #filtros {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+        align-items: end;
+    }
+
+    #filtros .form-group {
+        margin-bottom: 0;
+    }
+
+    /* Cards dos chamados */
+    #listaChamados {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+        align-items: start;
+    }
+
+    #listaChamados .card {
+        margin-top: 0;
+        height: 100%;
+    }
+
+    /* Histórico e resultados podem usar toda a largura */
+    .resultado,
+    .historico-consulta-protocolo,
+    #editarChamado {
+        width: 100%;
+    }
+
+    /* Relatório visual continua com largura controlada */
+    .report {
+        max-width: 1100px;
+    }
+}
+
+
+/* ---------- TABLET ---------- */
+@media (min-width: 600px) and (max-width: 999px) {
+
+    body > .container {
+        width: 96%;
+        max-width: 900px;
+        padding: 22px;
+    }
+
+    .menu {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .menu button:last-child {
+        width: 100%;
+        grid-column: auto;
+    }
+
+    #formChamado {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        column-gap: 14px;
+    }
+
+    #formChamado .form-group:has(#protocolo),
+    #formChamado .form-group:has(#detalhes),
+    #formChamado .form-group:has(#btnEnviar),
+    #formChamado #areaExecucaoContainer,
+    #formChamado #dataOcorrenciaContainer,
+    #formChamado #intervaloCamera {
+        grid-column: 1 / -1;
+    }
+
+    .stats {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .admin-menu-v11 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .admin-list-buttons-v11 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    #listaChamados {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    #listaChamados .card {
+        margin-top: 0;
+    }
+}
+
+
+/* ---------- CELULAR ---------- */
+@media (max-width: 599px) {
+
+    /* Mantém a experiência mobile que já aprovamos */
+    body {
+        padding: 10px;
+    }
+
+    body > .container {
+        width: 100%;
+        max-width: 620px;
+        padding: 16px;
+    }
+
+    .menu {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .menu button:last-child {
+        grid-column: 1 / -1;
+        width: 100%;
+    }
+
+    #formChamado {
+        display: block;
+    }
+
+    #listaChamados {
+        display: block;
+    }
+
+    .stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .admin-list-buttons-v11 {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-menu-v11 {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-v11 .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .dashboard-v11 .dashboard-status-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+</style>
+
 </head>
 
 
