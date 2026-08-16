@@ -6007,6 +6007,14 @@ function gerarRelatorioHTMLV11(abrirJanela=true){
     const nomeMesAtual = faixaAtualComparacao;
     const nomeMesAnterior = faixaAnteriorComparacao;
 
+    const tipoComparacaoRelatorio = ({
+        hoje: "DIA",
+        semana: "SEMANA",
+        mes: "MÊS",
+        mesAnterior: "MÊS",
+        personalizado: "PERÍODO PERSONALIZADO"
+    })[document.getElementById("dashboardPeriodo")?.value || "mes"] || "PERÍODO";
+
     const comparativoTipos = (items) => {
         if(!items || !items.length){
             return '<div class="empty">Nenhum tipo de ocorrência encontrado para comparação.</div>';
@@ -6911,7 +6919,7 @@ td:nth-child(2),td:nth-child(3){
     ${tabela(d.ocorrencias,d.total)}
 
     <div class="comparison-subsection">
-        <h3>Comparação com o período anterior</h3>
+        <h3>Comparação com o período anterior (${tipoComparacaoRelatorio})</h3>
         <p class="section-note">
             Comparação com o período anterior de mesma duração:
             <strong>${faixaAtualComparacao}</strong> × <strong>${faixaAnteriorComparacao}</strong>.
@@ -6933,7 +6941,7 @@ td:nth-child(2),td:nth-child(3){
     ${tabela(d.prioridades,d.total)}
 
     <div class="comparison-subsection">
-        <h3>Comparação com o período anterior</h3>
+        <h3>Comparação com o período anterior (${tipoComparacaoRelatorio})</h3>
         <p class="section-note">
             Comparação das prioridades no período atual com o período anterior
             de mesma duração: <strong>${nomeMesAtual}</strong> × <strong>${nomeMesAnterior}</strong>.
