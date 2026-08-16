@@ -6097,6 +6097,26 @@ td:nth-child(2),td:nth-child(3){
     color:#777;
 }
 
+
+.signature-section{
+    margin-top:42px;
+    page-break-inside:avoid;
+    text-align:center;
+    padding:0 80px;
+}
+.signature-line{
+    width:300px;
+    max-width:100%;
+    margin:0 auto 7px;
+    border-top:1.5px solid #24323d;
+}
+.signature-role{
+    font-size:12px;
+    font-weight:800;
+    letter-spacing:.4px;
+    color:#24323d;
+}
+
 .footer{
     margin-top:28px;
     padding-top:10px;
@@ -6258,6 +6278,15 @@ td:nth-child(2),td:nth-child(3){
             <strong>TEMPO MÉDIO ATÉ CONCLUSÃO</strong>
             <span>${d.media===null ? "Não disponível" : d.media.toFixed(1)+" horas"}</span>
         </div>
+    </div>
+</section>
+
+<section class="signature-section">
+    <div class="signature-line"></div>
+    <div class="signature-role">
+        ${d.escopo === "condominio"
+            ? "SÍNDICO(A)"
+            : "ASSINATURA SUBSÍNDICO(A)"}
     </div>
 </section>
 
