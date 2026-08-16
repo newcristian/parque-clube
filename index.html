@@ -5649,6 +5649,28 @@ body{
     color:#123b5d;
     font-size:12px;
 }
+
+.period-box .report-scope-highlight{
+    margin-top:10px;
+    padding:10px 12px;
+    border-radius:10px;
+    background:#eaf3f9;
+    border:1px solid #bcd2df;
+    text-align:center;
+}
+.period-box .report-scope-label{
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:1px;
+    color:#17632d;
+}
+.period-box .report-scope-title{
+    margin-top:2px;
+    font-size:18px;
+    font-weight:800;
+    color:#123b5d;
+}
+
 .period-box .issued{
     margin-top:9px;
     padding-top:8px;
@@ -5884,8 +5906,15 @@ td:nth-child(2),td:nth-child(3){
     <div class="label">Período Apurado</div>
     <div class="period">${escapar(d.intervalo.label)}</div>
     <div class="exact">📅 ${periodoExato}</div>
-    <div class="scope-line">🏢 <strong>Abrangência:</strong> ${escapar(abrangenciaRelatorio)}</div>
     <div class="issued">🕒 <strong>Relatório emitido em:</strong> ${dataEmissao} às ${horaEmissao}</div>
+    <div class="report-scope-highlight">
+        <div class="report-scope-label">CONDOMÍNIO / BLOCO</div>
+        <div class="report-scope-title">
+            ${d.escopo === "condominio"
+                ? "Relatório do Condomínio"
+                : "Relatório do " + escapar(d.escopo)}
+        </div>
+    </div>
 </section>
 
 <div class="summary">
