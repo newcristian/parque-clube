@@ -5415,28 +5415,94 @@ function renderDashboardV11(){
     const cancelados=lista.filter(c=>c.status==="Cancelado").length;
 
     // Período de comparação:
-    // - Hoje: dia anterior
-    // - Esta semana: semana imediatamente anterior
-    // - Este mês: do dia 1 até a mesma data do mês anterior
-    // - Mês anterior: mês completo imediatamente anterior
-    // - Personalizado: mesma quantidade de dias imediatamente anterior
+    // Para o mês corrente, comparamos o mesmo intervalo de dias do mês anterior:
+    // 01/08 a 16/08 -> 01/07 a 16/07.
+    // Para hoje, comparamos o mesmo dia do mês anterior.
+    // Para semana, comparamos a semana imediatamente anterior.
+    // Para mês anterior, comparamos o mês completo imediatamente anterior.
+    // Para período personalizado, deslocamos o mesmo intervalo exatamente um mês
+    // quando possível; se isso não for possível, usamos a mesma duração anterior.
     const tipoPeriodoAtual = document.getElementById("dashboardPeriodo")?.value || "mes";
     let intervaloAnterior;
     let diasPeriodo;
 
-    if(tipoPeriodoAtual === "mesAnterior"){
+    if(tipoPeriodoAtual === "mes"){
+        const inicioAtual = new Date(intervalo.inicio);
+        const fimAtual = new Date(intervalo.fim);
+
+        const anoAnterior = inicioAtual.getFullYear();
+        const mesAnterior = inicioAtual.getMonth() - 1;
+
+        const inicioAnterior = new Date(
+            anoAnterior, mesAnterior, inicioAtual.getDate()
+        );
+
+        // Mantém o mesmo dia do mês atual, limitado ao último dia
+        // existente no mês anterior.
+        const ultimoDiaMesAnterior = new Date(
+            anoAnterior, mesAnterior + 1, 0
+        ).getDate();
+
+        inicioAnterior.setDate(
+            Math.min(inicioAtual.getDate(), ultimoDiaMesAnterior)
+        );
+
+        const fimAnterior = new Date(
+            anoAnterior, mesAnterior, fimAtual.getDate()
+        );
+        fimAnterior.setDate(
+            Math.min(fimAtual.getDate(), ultimoDiaMesAnterior)
+        );
+
+        intervaloAnterior = {
+            inicio: inicioDiaDashboardV11(inicioAnterior),
+            fim: fimDiaDashboardV11(fimAnterior)
+        };
+
+        diasPeriodo = Math.round(
+            (intervaloAnterior.fim - intervaloAnterior.inicio) / 86400000
+        ) + 1;
+
+    }else if(tipoPeriodoAtual === "hoje"){
+        const atual = new Date(intervalo.inicio);
+        const dia = atual.getDate();
+        const mesAnterior = atual.getMonth() - 1;
+
+        const ultimoDia = new Date(
+            atual.getFullYear(), mesAnterior + 1, 0
+        ).getDate();
+
+        const anterior = new Date(
+            atual.getFullYear(),
+            mesAnterior,
+            Math.min(dia, ultimoDia)
+        );
+
+        intervaloAnterior = {
+            inicio: inicioDiaDashboardV11(anterior),
+            fim: fimDiaDashboardV11(anterior)
+        };
+        diasPeriodo = 1;
+
+    }else if(tipoPeriodoAtual === "mesAnterior"){
         const base = new Date(intervalo.inicio);
-        const anoAnterior = base.getFullYear();
-        const mesAnterior = base.getMonth() - 1;
-        const primeiro = new Date(anoAnterior, mesAnterior, 1);
-        const ultimo = new Date(anoAnterior, mesAnterior + 1, 0);
+        const primeiro = new Date(
+            base.getFullYear(), base.getMonth() - 1, 1
+        );
+        const ultimo = new Date(
+            base.getFullYear(), base.getMonth(), 0
+        );
+
         intervaloAnterior = {
             inicio: inicioDiaDashboardV11(primeiro),
             fim: fimDiaDashboardV11(ultimo)
         };
-        diasPeriodo = Math.round((intervaloAnterior.fim - intervaloAnterior.inicio)/86400000) + 1;
-    }else{
-        diasPeriodo = Math.max(
+        diasPeriodo = Math.round(
+            (intervaloAnterior.fim - intervaloAnterior.inicio) / 86400000
+        ) + 1;
+
+    }else if(tipoPeriodoAtual === "semana"){
+        const diasAtual = Math.max(
             1,
             Math.round(
                 (fimDiaDashboardV11(intervalo.fim).getTime() -
@@ -5446,13 +5512,66 @@ function renderDashboardV11(){
 
         const fimAnterior = new Date(intervalo.inicio.getTime() - 86400000);
         const inicioAnterior = new Date(
-            fimAnterior.getTime() - (diasPeriodo - 1) * 86400000
+            fimAnterior.getTime() - (diasAtual - 1) * 86400000
         );
 
         intervaloAnterior = {
             inicio: inicioDiaDashboardV11(inicioAnterior),
             fim: fimDiaDashboardV11(fimAnterior)
         };
+        diasPeriodo = diasAtual;
+
+    }else{
+        // Período personalizado: tenta manter as mesmas datas no mês anterior.
+        const inicioAtual = new Date(intervalo.inicio);
+        const fimAtual = new Date(intervalo.fim);
+
+        const ultimoDiaMesAnterior = new Date(
+            inicioAtual.getFullYear(), inicioAtual.getMonth(), 0
+        ).getDate();
+
+        const inicioAnterior = new Date(
+            inicioAtual.getFullYear(),
+            inicioAtual.getMonth() - 1,
+            Math.min(inicioAtual.getDate(), ultimoDiaMesAnterior)
+        );
+
+        const ultimoDiaFimMesAnterior = new Date(
+            fimAtual.getFullYear(), fimAtual.getMonth(), 0
+        ).getDate();
+
+        const fimAnterior = new Date(
+            fimAtual.getFullYear(),
+            fimAtual.getMonth() - 1,
+            Math.min(fimAtual.getDate(), ultimoDiaFimMesAnterior)
+        );
+
+        intervaloAnterior = {
+            inicio: inicioDiaDashboardV11(inicioAnterior),
+            fim: fimDiaDashboardV11(fimAnterior)
+        };
+
+        if(intervaloAnterior.fim < intervaloAnterior.inicio){
+            const dias = Math.max(
+                1,
+                Math.round(
+                    (fimDiaDashboardV11(intervalo.fim) -
+                     inicioDiaDashboardV11(intervalo.inicio)) / 86400000
+                ) + 1
+            );
+            const fimFallback = new Date(intervalo.inicio.getTime() - 86400000);
+            const inicioFallback = new Date(
+                fimFallback.getTime() - (dias - 1) * 86400000
+            );
+            intervaloAnterior = {
+                inicio: inicioDiaDashboardV11(inicioFallback),
+                fim: fimDiaDashboardV11(fimFallback)
+            };
+        }
+
+        diasPeriodo = Math.round(
+            (intervaloAnterior.fim - intervaloAnterior.inicio) / 86400000
+        ) + 1;
     }
 
     const listaAnterior = chamadosEscopo.filter(c => chamadoDentroDashboardV11(c, intervaloAnterior));
