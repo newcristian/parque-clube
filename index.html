@@ -6874,6 +6874,94 @@ td:nth-child(2),td:nth-child(3){
     .report .header-title .report-title{white-space:normal}
 }
 
+
+
+/* =========================================================
+   IMPRESSÃO / PDF — A4 COM MARGENS FIXAS E TABELAS INTEGRAS
+   ========================================================= */
+@page{
+    size:A4 portrait;
+    margin:12mm 12mm 14mm 12mm;
+}
+
+@media print{
+    html, body{
+        width:210mm;
+        min-width:210mm;
+        margin:0 !important;
+        padding:0 !important;
+        background:#fff !important;
+    }
+
+    .report{
+        width:auto !important;
+        max-width:none !important;
+        margin:0 !important;
+        padding:0 !important;
+        box-shadow:none !important;
+        border:none !important;
+    }
+
+    /* Mantém cada tabela como uma unidade sempre que houver espaço. */
+    table,
+    .comparison-types-table,
+    .chart,
+    .vertical-chart,
+    .pie-chart,
+    .kpi-box,
+    .executive-grid,
+    .management-highlight,
+    .comparison-card{
+        break-inside:avoid !important;
+        page-break-inside:avoid !important;
+    }
+
+    /* Não separa uma linha da seguinte entre páginas. */
+    tr,
+    td,
+    th{
+        break-inside:avoid !important;
+        page-break-inside:avoid !important;
+    }
+
+    /* Repete o cabeçalho da tabela caso uma tabela realmente precise
+       continuar em outra página. */
+    thead{
+        display:table-header-group;
+    }
+
+    tfoot{
+        display:table-footer-group;
+    }
+
+    /* Evita que o título fique sozinho no final da página. */
+    h2, h3{
+        break-after:avoid !important;
+        page-break-after:avoid !important;
+        break-inside:avoid !important;
+        page-break-inside:avoid !important;
+    }
+
+    /* O rodapé/assinatura permanece inteiro. */
+    .signature-section,
+    .signature-section-wrapper{
+        break-inside:avoid !important;
+        page-break-inside:avoid !important;
+    }
+
+    .actions{
+        display:none !important;
+    }
+
+    th,
+    .chart-fill,
+    .vertical-bar,
+    .evolution-fill{
+        -webkit-print-color-adjust:exact !important;
+        print-color-adjust:exact !important;
+    }
+}
+
 </style>
 </head>
 
