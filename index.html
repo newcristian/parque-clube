@@ -5295,12 +5295,14 @@ function obterIntervaloDashboardV11(){
     if(tipo==="hoje") return {inicio:hoje,fim:fimDiaDashboardV11(hoje),label:"Hoje"};
     if(tipo==="semana"){
         const i=inicioSemanaDashboardV11(hoje);
-        return {inicio:i,fim:fimDiaDashboardV11(new Date(i.getFullYear(),i.getMonth(),i.getDate()+6)),label:"Esta semana"};
+        // A semana corrente é apurada somente até o momento da emissão,
+        // sem incluir dias futuros.
+        return {inicio:i,fim:fimDiaDashboardV11(hoje),label:"Esta semana"};
     }
     if(tipo==="mes"){
         const i=new Date(hoje.getFullYear(),hoje.getMonth(),1);
-        const f=new Date(hoje.getFullYear(),hoje.getMonth()+1,0);
-        return {inicio:i,fim:fimDiaDashboardV11(f),label:"Este mês"};
+        // O mês corrente também é apurado somente até a data de emissão.
+        return {inicio:i,fim:fimDiaDashboardV11(hoje),label:"Este mês"};
     }
     if(tipo==="mesAnterior"){
         const i=new Date(hoje.getFullYear(),hoje.getMonth()-1,1);
@@ -5866,7 +5868,7 @@ td:nth-child(2),td:nth-child(3){
 
 <footer class="footer">
     <span>Sistema de Chamado Parque Clube — Relatório Gerencial</span>
-    <span>Gerado em ${new Date().toLocaleString("pt-BR")}</span>
+    <span>Relatório emitido em ${new Date().toLocaleString("pt-BR")}</span>
 </footer>
 
 </div>
