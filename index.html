@@ -861,7 +861,7 @@ input[readonly] {
 
 <h1>
 
-    Abertura de Chamado Parque Clube
+    SISTEMA DE CHAMADO PARQUE CLUBE
 
 </h1>
 
@@ -5864,7 +5864,7 @@ td:nth-child(2),td:nth-child(3){
 </div>
 
 <footer class="footer">
-    <span>Sistema Parque Clube — Relatório Gerencial</span>
+    <span>Sistema de Chamado Parque Clube — Relatório Gerencial</span>
     <span>Gerado em ${new Date().toLocaleString("pt-BR")}</span>
 </footer>
 
@@ -5889,24 +5889,44 @@ td:nth-child(2),td:nth-child(3){
 let janelaRelatorioPDFV11 = null;
 
 function gerarPDFV11(){
-    renderDashboardV11();
+    // Open/reuse the report window immediately, while this function is still
+    // directly inside the user's click event. This prevents popup blockers.
+    let w = janelaRelatorioPDFV11;
 
-    const abrirNovaJanela = () => {
+    if(!w || w.closed){
+        w = window.open("", "parque_clube_relatorio_pdf");
+        janelaRelatorioPDFV11 = w;
+    }
+
+    if(!w){
+        alert("O navegador bloqueou a janela do relatório. Permita pop-ups para gerar o PDF.");
+        return;
+    }
+
+    // Show immediate feedback while the report is being assembled.
+    w.document.open();
+    w.document.write(`
+        <!DOCTYPE html>
+        <html lang="pt-BR">
+        <head>
+            <meta charset="UTF-8">
+            <title>Gerando relatório...</title>
+        </head>
+        <body style="font-family:Arial;text-align:center;padding:50px;color:#123b5d">
+            <h2>📊 Preparando relatório...</h2>
+            <p>Aguarde um momento.</p>
+        </body>
+        </html>
+    `);
+    w.document.close();
+
+    try{
+        renderDashboardV11();
+
         const htmlRel = gerarRelatorioHTMLV11(false);
-        if(!htmlRel) return;
 
-        let w = janelaRelatorioPDFV11;
-
-        // Reuse the report window. This avoids popup-blocker behavior
-        // after the first generation and lets the administrator regenerate
-        // the PDF repeatedly with a different period.
-        if(!w || w.closed){
-            w = window.open("", "parque_clube_relatorio_pdf");
-            janelaRelatorioPDFV11 = w;
-        }
-
-        if(!w){
-            alert("O navegador bloqueou a janela do relatório. Permita pop-ups para gerar o PDF.");
+        if(!htmlRel){
+            w.close();
             return;
         }
 
@@ -5915,14 +5935,29 @@ function gerarPDFV11(){
         w.document.close();
         w.focus();
 
-        // Open the native print dialog so the user can choose
-        // "Salvar como PDF".
+        // Native print dialog -> user chooses "Salvar como PDF".
         setTimeout(function(){
-            try{ w.print(); }catch(e){}
-        }, 500);
-    };
+            try{
+                w.focus();
+                w.print();
+            }catch(e){
+                console.error("Erro ao abrir impressão do relatório:",e);
+                alert("O relatório foi aberto, mas o diálogo de impressão não pôde ser aberto automaticamente. Use Ctrl+P ou o menu Imprimir do navegador.");
+            }
+        }, 700);
 
-    abrirNovaJanela();
+    }catch(e){
+        console.error("Erro ao gerar relatório:",e);
+        w.document.open();
+        w.document.write(`
+            <div style="font-family:Arial;padding:30px">
+                <h2>Não foi possível gerar o relatório.</h2>
+                <p>Atualize a página e tente novamente.</p>
+            </div>
+        `);
+        w.document.close();
+        alert("Ocorreu um erro ao montar o relatório. Abra o console do navegador para mais detalhes.");
+    }
 }
 
 function inicializarDashboardV11(){
