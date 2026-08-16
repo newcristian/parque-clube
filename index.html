@@ -82,6 +82,161 @@ body>*{display:none!important}
 }
 </style>
 
+
+<style id="dashboard-profissional-v11">
+.dashboard-v11 {
+    margin: 18px 0 28px;
+    padding: 18px;
+    border-radius: 18px;
+    background: linear-gradient(180deg,#f8fbfd 0%,#ffffff 100%);
+    border: 1px solid #dce7ee;
+    box-shadow: 0 8px 28px rgba(18,59,93,.08);
+}
+.dashboard-v11 .dash-header {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+    flex-wrap:wrap;
+    margin-bottom:16px;
+}
+.dashboard-v11 .dash-title {
+    font-size:22px;
+    font-weight:800;
+    color:#123b5d;
+}
+.dashboard-v11 .dash-subtitle {
+    margin-top:4px;
+    color:#64727e;
+    font-size:13px;
+}
+.dashboard-v11 .dash-filter {
+    display:flex;
+    gap:8px;
+    align-items:center;
+    flex-wrap:wrap;
+}
+.dashboard-v11 select,
+.dashboard-v11 input {
+    border:1px solid #cbd8e1;
+    border-radius:9px;
+    padding:9px 11px;
+    background:#fff;
+}
+.dashboard-v11 .dash-cards {
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:10px;
+    margin:14px 0;
+}
+.dashboard-v11 .dash-card {
+    padding:14px;
+    border-radius:13px;
+    background:#fff;
+    border:1px solid #e1e9ee;
+}
+.dashboard-v11 .dash-card .label {
+    color:#667580;
+    font-size:12px;
+    font-weight:700;
+}
+.dashboard-v11 .dash-card .value {
+    margin-top:5px;
+    font-size:25px;
+    font-weight:800;
+    color:#123b5d;
+}
+.dashboard-v11 .dash-grid {
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:14px;
+    margin-top:14px;
+}
+.dashboard-v11 .dash-panel {
+    background:#fff;
+    border:1px solid #e1e9ee;
+    border-radius:14px;
+    padding:14px;
+    min-width:0;
+}
+.dashboard-v11 .dash-panel h4 {
+    margin:0 0 10px;
+    color:#123b5d;
+    font-size:15px;
+}
+.dashboard-v11 .dash-bars {
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+.dashboard-v11 .dash-bar-row {
+    display:grid;
+    grid-template-columns:minmax(95px,1.2fr) 3fr 42px;
+    gap:8px;
+    align-items:center;
+    font-size:12px;
+}
+.dashboard-v11 .dash-bar-track {
+    height:10px;
+    background:#edf2f5;
+    border-radius:99px;
+    overflow:hidden;
+}
+.dashboard-v11 .dash-bar-fill {
+    height:100%;
+    border-radius:99px;
+    background:#176b35;
+}
+.dashboard-v11 .dash-status-grid {
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:8px;
+}
+.dashboard-v11 .dash-status {
+    padding:10px;
+    border-radius:10px;
+    background:#f7f9fa;
+    border:1px solid #e6ecef;
+}
+.dashboard-v11 .dash-status strong {
+    display:block;
+    font-size:19px;
+    color:#123b5d;
+}
+.dashboard-v11 .dash-actions {
+    display:flex;
+    justify-content:flex-end;
+    gap:8px;
+    margin-top:14px;
+    flex-wrap:wrap;
+}
+.dashboard-v11 .dash-actions button {
+    border:0;
+    border-radius:10px;
+    padding:10px 14px;
+    font-weight:800;
+    cursor:pointer;
+}
+.dashboard-v11 .btn-pdf {
+    background:#123b5d;
+    color:#fff;
+}
+.dashboard-v11 .btn-html {
+    background:#176b35;
+    color:#fff;
+}
+@media (max-width: 800px) {
+    .dashboard-v11 .dash-cards { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .dashboard-v11 .dash-grid { grid-template-columns:1fr; }
+}
+@media (max-width: 480px) {
+    .dashboard-v11 { padding:12px; border-radius:14px; }
+    .dashboard-v11 .dash-cards { grid-template-columns:1fr 1fr; gap:7px; }
+    .dashboard-v11 .dash-card .value { font-size:21px; }
+    .dashboard-v11 .dash-bar-row { grid-template-columns:82px 1fr 30px; }
+}
+</style>
+
 </head>
 <body>
 <div class="container">
@@ -216,7 +371,7 @@ body>*{display:none!important}
 </div>
 </div>
 <div class="admin-box" id="dashboardV11" style="margin-top:18px">
-<div class="admin-titulo">📊 Dashboard / Relatórios — V1.1</div>
+<div class="admin-titulo">📊 Dashboard / Relatórios — V1.1<div class="dash-subtitle">Indicadores calculados a partir dos protocolos registrados no sistema.</div></div>
 
 <div class="form-group">
 <label>📅 Período do relatório:</label>
