@@ -5469,6 +5469,12 @@ function gerarRelatorioHTMLV11(abrirJanela=true){
     const agoraEmissao = new Date();
     const dataEmissao = dataBR(agoraEmissao);
     const horaEmissao = agoraEmissao.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+    const mesesEmissao = [
+        "JANEIRO","FEVEREIRO","MARÇO","ABRIL","MAIO","JUNHO",
+        "JULHO","AGOSTO","SETEMBRO","OUTUBRO","NOVEMBRO","DEZEMBRO"
+    ];
+    const dataFormalEmissao =
+        `VALPARAÍSO DE GOIÁS-GO, ${agoraEmissao.getDate()} DE ${mesesEmissao[agoraEmissao.getMonth()]} DE ${agoraEmissao.getFullYear()}.`;
 
     const dataCurta = (dt) => {
         if(!dt) return "-";
@@ -6099,10 +6105,25 @@ td:nth-child(2),td:nth-child(3){
 
 
 .signature-section{
-    margin-top:42px;
+    margin-top:38px;
     page-break-inside:avoid;
+    padding:0 28px;
+}
+.signature-logo{
     text-align:center;
-    padding:0 80px;
+    margin-bottom:18px;
+}
+.signature-logo img{
+    width:72px;
+    max-height:42px;
+    object-fit:contain;
+}
+.signature-date{
+    text-align:right;
+    font-size:11px;
+    font-weight:800;
+    color:#24323d;
+    margin-bottom:28px;
 }
 .signature-line{
     width:300px;
@@ -6110,22 +6131,18 @@ td:nth-child(2),td:nth-child(3){
     margin:0 auto 7px;
     border-top:1.5px solid #24323d;
 }
-.signature-role{
-    font-size:12px;
-    font-weight:800;
-    letter-spacing:.4px;
-    color:#24323d;
-}
-
-.signature-block{
-    margin-top:3px;
+.signature-role,
+.signature-action{
+    text-align:center;
     font-size:11px;
-    font-weight:700;
-    color:#5f6e77;
-    letter-spacing:.4px;
+    font-weight:800;
+    color:#24323d;
+    letter-spacing:.3px;
+    line-height:1.4;
 }
-
-
+.signature-action{
+    margin-top:2px;
+}
 .footer{
     margin-top:28px;
     padding-top:10px;
@@ -6291,15 +6308,23 @@ td:nth-child(2),td:nth-child(3){
 </section>
 
 <section class="signature-section">
+    <div class="signature-logo">
+        ${logoRelatorioV11
+            ? `<img src="${logoRelatorioV11}" alt="Parque Clube">`
+            : ""}
+    </div>
+
+    <div class="signature-date">${dataFormalEmissao}</div>
+
     <div class="signature-line"></div>
+
     <div class="signature-role">
         ${d.escopo === "condominio"
             ? "SÍNDICO(A)"
-            : "ASSINATURA SUBSÍNDICO(A)"}
+            : "SUBSÍNDICO(A) " + escapar(d.escopo.replace(/^Bloco\s*/i,"BLOCO "))}
     </div>
-    ${d.escopo !== "condominio"
-        ? `<div class="signature-block">${escapar(d.escopo)}</div>`
-        : ""}
+
+    <div class="signature-action">ASSINATURA</div>
 </section>
 
 <div class="actions">
