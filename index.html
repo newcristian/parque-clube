@@ -5293,10 +5293,10 @@ function parseDataDashboardV11(v){
     return isNaN(d.getTime())?null:d;
 }
 function inicioSemanaDashboardV11(d){
+    // Calendário semanal do condomínio: domingo a sábado.
     const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());
-    const dia=x.getDay();
-    const diff=dia===0?-6:1-dia;
-    x.setDate(x.getDate()+diff);
+    const dia=x.getDay(); // 0 = domingo
+    x.setDate(x.getDate()-dia);
     return new Date(x.getFullYear(),x.getMonth(),x.getDate());
 }
 function inicioDiaDashboardV11(d){
@@ -5502,24 +5502,23 @@ function renderDashboardV11(){
         ) + 1;
 
     }else if(tipoPeriodoAtual === "semana"){
-        const diasAtual = Math.max(
-            1,
-            Math.round(
-                (fimDiaDashboardV11(intervalo.fim).getTime() -
-                 inicioDiaDashboardV11(intervalo.inicio).getTime()) / 86400000
-            ) + 1
+        // A semana corrente começa no domingo e termina no sábado.
+        // Quando o relatório é emitido antes do sábado, o período termina
+        // no dia da emissão, sem incluir dias futuros.
+        const inicioSemanaAtual = inicioSemanaDashboardV11(intervalo.inicio);
+        const fimSemanaAnterior = new Date(
+            inicioSemanaAtual.getTime() - 86400000
         );
-
-        const fimAnterior = new Date(intervalo.inicio.getTime() - 86400000);
-        const inicioAnterior = new Date(
-            fimAnterior.getTime() - (diasAtual - 1) * 86400000
-        );
+        const inicioSemanaAnterior = inicioSemanaDashboardV11(fimSemanaAnterior);
 
         intervaloAnterior = {
-            inicio: inicioDiaDashboardV11(inicioAnterior),
-            fim: fimDiaDashboardV11(fimAnterior)
+            inicio: inicioDiaDashboardV11(inicioSemanaAnterior),
+            fim: fimDiaDashboardV11(fimSemanaAnterior)
         };
-        diasPeriodo = diasAtual;
+
+        diasPeriodo = Math.round(
+            (intervaloAnterior.fim - intervaloAnterior.inicio) / 86400000
+        ) + 1;
 
     }else{
         // Período personalizado: tenta manter as mesmas datas no mês anterior.
