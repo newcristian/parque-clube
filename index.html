@@ -5762,11 +5762,17 @@ document
 
             const confirmou =
                 confirm(
-                    "Tem certeza que deseja excluir esta OS?\n\n" +
+                    "⚠️ EXCLUSÃO DEFINITIVA\n\n" +
                     "Protocolo: " +
                     protocoloSelecionado +
                     "\n\n" +
-                    "Essa ação não poderá ser desfeita."
+                    "Este chamado será removido permanentemente " +
+                    "do sistema e deixará de fazer parte dos " +
+                    "relatórios e das estatísticas.\n\n" +
+                    "Se você deseja apenas retirar o chamado " +
+                    "da lista de ativos, utilize 📦 ARQUIVAR CHAMADO.\n\n" +
+                    "Essa ação não poderá ser desfeita.\n\n" +
+                    "Deseja realmente excluir definitivamente?"
                 );
 
             if (!confirmou) {
@@ -5838,6 +5844,29 @@ document
                             chamado.protocolo !==
                             protocoloSelecionado
                     );
+
+                chamadosArquivadosV11 =
+                    chamadosArquivadosV11.filter(
+                        chamado =>
+                            chamado.protocolo !==
+                            protocoloSelecionado
+                    );
+
+                chamadosHistoricoV11 =
+                    [
+                        ...chamados,
+                        ...chamadosArquivadosV11
+                    ];
+
+                const totalArquivados =
+                    document.getElementById(
+                        "totalArquivados"
+                    );
+
+                if (totalArquivados) {
+                    totalArquivados.textContent =
+                        chamadosArquivadosV11.length;
+                }
 
                 protocoloSelecionado =
                     "";
