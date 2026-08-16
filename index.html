@@ -5438,6 +5438,28 @@ function gerarRelatorioHTMLV11(abrirJanela=true){
                x.getFullYear();
     };
 
+
+    const agoraEmissao = new Date();
+    const dataEmissao = dataBR(agoraEmissao);
+    const horaEmissao = agoraEmissao.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+
+    const dataCurta = (dt) => {
+        if(!dt) return "-";
+        return String(dt.getDate()).padStart(2,"0") + "/" +
+               String(dt.getMonth()+1).padStart(2,"0") + "/" +
+               String(dt.getFullYear()).slice(-2);
+    };
+
+    const inicioSemanaKPI = inicioSemanaDashboardV11(agoraEmissao);
+    const fimSemanaKPI = agoraEmissao;
+    const inicioMesKPI = new Date(agoraEmissao.getFullYear(),agoraEmissao.getMonth(),1);
+
+    const faixaSemanaKPI =
+        `${dataCurta(inicioSemanaKPI)} a ${dataCurta(fimSemanaKPI)}`;
+
+    const faixaMesKPI =
+        `${dataCurta(inicioMesKPI)} a ${dataCurta(fimSemanaKPI)}`;
+
     const inicio = dataBR(d.intervalo.inicio);
     const fim = dataBR(d.intervalo.fim);
     const periodoExato =
@@ -5582,6 +5604,22 @@ body{
     font-size:22px;
     font-weight:800;
     color:#123b5d;
+}
+
+
+.date-subtitle{
+    margin-top:5px;
+    font-size:10px;
+    color:#6a7881;
+    font-weight:600;
+    white-space:nowrap;
+}
+.period-box .issued{
+    margin-top:9px;
+    padding-top:8px;
+    border-top:1px solid #cfe0d2;
+    color:#17632d;
+    font-size:12px;
 }
 
 .period-box .exact{
@@ -5795,13 +5833,30 @@ td:nth-child(2),td:nth-child(3){
     <div class="label">Período Apurado</div>
     <div class="period">${escapar(d.intervalo.label)}</div>
     <div class="exact">📅 ${periodoExato}</div>
+    <div class="issued">🕒 <strong>Relatório emitido em:</strong> ${dataEmissao} às ${horaEmissao}</div>
 </section>
 
 <div class="summary">
-    <div class="card"><div class="label">Chamados hoje</div><div class="value">${d.hoje}</div></div>
-    <div class="card"><div class="label">Chamados na semana</div><div class="value">${d.semana}</div></div>
-    <div class="card"><div class="label">Chamados no mês</div><div class="value">${d.mes}</div></div>
-    <div class="card"><div class="label">Total no período</div><div class="value">${d.total}</div></div>
+    <div class="card">
+        <div class="label">Chamados hoje</div>
+        <div class="value">${d.hoje}</div>
+        <div class="date-subtitle">📅 ${dataCurta(agoraEmissao)}</div>
+    </div>
+    <div class="card">
+        <div class="label">Chamados na semana</div>
+        <div class="value">${d.semana}</div>
+        <div class="date-subtitle">📅 ${faixaSemanaKPI}</div>
+    </div>
+    <div class="card">
+        <div class="label">Chamados no mês</div>
+        <div class="value">${d.mes}</div>
+        <div class="date-subtitle">📅 ${faixaMesKPI}</div>
+    </div>
+    <div class="card">
+        <div class="label">Total no período</div>
+        <div class="value">${d.total}</div>
+        <div class="date-subtitle">📅 ${dataCurta(d.intervalo.inicio)} a ${dataCurta(d.intervalo.fim)}</div>
+    </div>
 </div>
 
 <section class="section">
