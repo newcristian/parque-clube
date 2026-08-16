@@ -6117,6 +6117,15 @@ td:nth-child(2),td:nth-child(3){
     color:#24323d;
 }
 
+.signature-block{
+    margin-top:3px;
+    font-size:11px;
+    font-weight:700;
+    color:#5f6e77;
+    letter-spacing:.4px;
+}
+
+
 .footer{
     margin-top:28px;
     padding-top:10px;
@@ -6288,6 +6297,9 @@ td:nth-child(2),td:nth-child(3){
             ? "SÍNDICO(A)"
             : "ASSINATURA SUBSÍNDICO(A)"}
     </div>
+    ${d.escopo !== "condominio"
+        ? `<div class="signature-block">${escapar(d.escopo)}</div>`
+        : ""}
 </section>
 
 <div class="actions">
