@@ -1897,7 +1897,6 @@ input[readonly] {
 </div>
 <div class="dashboard-toolbar">
 <button type="button" id="btnAtualizarDashboard" class="btn-azul">📊 Atualizar Painel</button>
-<button type="button" id="btnGerarHTML" class="btn-verde">🌐 Gerar HTML</button>
 <button type="button" id="btnGerarPDF" class="btn-cinza">📄 Gerar PDF</button>
 </div>
 <div id="dashboardResumo" class="dashboard-grid"></div>
@@ -5500,7 +5499,7 @@ function gerarRelatorioHTMLV11(abrirJanela=true){
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Relatório Gerencial — Sistema Parque Clube</title>
+<title>Relatório Gerencial — Sistema de Chamado Parque Clube</title>
 
 <style>
 @page{
@@ -5784,7 +5783,7 @@ td:nth-child(2),td:nth-child(3){
 <header class="header">
     ${logo_data ? `<img src="${logo_data}" alt="Parque Clube">` : ""}
     <div class="header-title">
-        <div class="system">SISTEMA PARQUE CLUBE</div>
+        <div class="system">SISTEMA DE CHAMADO PARQUE CLUBE</div>
         <div class="report-title">Relatório Gerencial de Chamados / Ordens de Serviço</div>
     </div>
 </header>
@@ -5861,7 +5860,7 @@ td:nth-child(2),td:nth-child(3){
 </section>
 
 <div class="actions">
-    <button onclick="window.print()">📄 Imprimir / Salvar como PDF</button>
+    <button onclick="window.print()">📄 Salvar relatório em PDF</button>
 </div>
 
 <footer class="footer">
@@ -5886,6 +5885,46 @@ td:nth-child(2),td:nth-child(3){
     return htmlRel;
 }
 
+
+let janelaRelatorioPDFV11 = null;
+
+function gerarPDFV11(){
+    renderDashboardV11();
+
+    const abrirNovaJanela = () => {
+        const htmlRel = gerarRelatorioHTMLV11(false);
+        if(!htmlRel) return;
+
+        let w = janelaRelatorioPDFV11;
+
+        // Reuse the report window. This avoids popup-blocker behavior
+        // after the first generation and lets the administrator regenerate
+        // the PDF repeatedly with a different period.
+        if(!w || w.closed){
+            w = window.open("", "parque_clube_relatorio_pdf");
+            janelaRelatorioPDFV11 = w;
+        }
+
+        if(!w){
+            alert("O navegador bloqueou a janela do relatório. Permita pop-ups para gerar o PDF.");
+            return;
+        }
+
+        w.document.open();
+        w.document.write(htmlRel);
+        w.document.close();
+        w.focus();
+
+        // Open the native print dialog so the user can choose
+        // "Salvar como PDF".
+        setTimeout(function(){
+            try{ w.print(); }catch(e){}
+        }, 500);
+    };
+
+    abrirNovaJanela();
+}
+
 function inicializarDashboardV11(){
     const painel=document.getElementById("dashboardV11");
     if(!painel)return;
@@ -5901,8 +5940,7 @@ function inicializarDashboardV11(){
     document.getElementById("dashboardDataInicio").addEventListener("change",renderDashboardV11);
     document.getElementById("dashboardDataFim").addEventListener("change",renderDashboardV11);
     document.getElementById("btnAtualizarDashboard").addEventListener("click",renderDashboardV11);
-    document.getElementById("btnGerarHTML").addEventListener("click",gerarRelatorioHTMLV11);
-    document.getElementById("btnGerarPDF").addEventListener("click",gerarRelatorioHTMLV11);
+    document.getElementById("btnGerarPDF").addEventListener("click",gerarPDFV11);
     renderDashboardV11();
 }
 
