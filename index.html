@@ -5485,6 +5485,33 @@ function renderDashboardV11(){
     }).sort((a,b) => b.atual - a.atual);
 
     // Ranking de blocos para o relatório geral.
+    const prioridadesAtualMapa = {};
+    const prioridadesAnteriorMapa = {};
+
+    lista.forEach(c => {
+        const nome = String(c.prioridade || "Não informado").trim() || "Não informado";
+        prioridadesAtualMapa[nome] = (prioridadesAtualMapa[nome] || 0) + 1;
+    });
+
+    listaAnterior.forEach(c => {
+        const nome = String(c.prioridade || "Não informado").trim() || "Não informado";
+        prioridadesAnteriorMapa[nome] = (prioridadesAnteriorMapa[nome] || 0) + 1;
+    });
+
+    const prioridadesComparativo = Array.from(
+        new Set([
+            ...Object.keys(prioridadesAtualMapa),
+            ...Object.keys(prioridadesAnteriorMapa)
+        ])
+    ).map(nome => {
+        const atual = prioridadesAtualMapa[nome] || 0;
+        const anterior = prioridadesAnteriorMapa[nome] || 0;
+        const variacao = anterior
+            ? ((atual - anterior) / anterior) * 100
+            : (atual > 0 ? null : 0);
+        return {nome, atual, anterior, variacao};
+    }).sort((a,b) => b.atual - a.atual);
+
     const rankingBlocos = contarDashboardV11(lista, "bloco", 10);
 
     // Evolução dos últimos 6 meses, sempre até a data atual quando o mês é o corrente.
@@ -5562,7 +5589,7 @@ function renderDashboardV11(){
         hoje:hojeLista.length,semana:semanaLista.length,mes:mesLista.length,
         pct,media,criticos,totalAnterior,variacaoPercentual,rankingBlocos,
         evolucaoMensal,chamadoMaisAntigo,tiposOcorrenciaComparativo,
-        intervaloAnterior,diasPeriodo
+        prioridadesComparativo,intervaloAnterior,diasPeriodo
     };
 }
 function linhasRelatorioDashboardV11(items){
@@ -5902,6 +5929,47 @@ function gerarRelatorioHTMLV11(abrirJanela=true){
             </tbody>
         </table>`;
     };
+
+
+    const prioridadesComparativo = (items) => {
+        if(!items || !items.length){
+            return '<div class="empty">Nenhuma prioridade encontrada para comparação.</div>';
+        }
+
+        return `<table class="comparison-types-table priority-comparison-table">
+            <thead>
+                <tr>
+                    <th>Prioridade</th>
+                    <th>Período atual<br><small>${nomeMesAtual}</small></th>
+                    <th>Período anterior<br><small>${nomeMesAnterior}</small></th>
+                    <th>Variação</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${items.map(x => {
+                    const texto = x.variacao === null
+                        ? "NOVO"
+                        : x.variacao > 0
+                            ? `▲ ${x.variacao.toFixed(1).replace(".",",")}%`
+                            : x.variacao < 0
+                                ? `▼ ${Math.abs(x.variacao).toFixed(1).replace(".",",")}%`
+                                : "0,0%";
+                    const cor = x.variacao === null
+                        ? "#17632d"
+                        : x.variacao > 0 ? "#b42318" : x.variacao < 0 ? "#17632d" : "#5f6e77";
+
+                    return `<tr>
+                        <td>${escapar(x.nome)}</td>
+                        <td>${x.atual}</td>
+                        <td>${x.anterior}</td>
+                        <td class="variation-cell" style="color:${cor}">${texto}</td>
+                    </tr>`;
+                }).join("")}
+            </tbody>
+        </table>`;
+    };
+
+    const prioridadesComparativoDados = d.prioridadesComparativo || [];
 
     const status = [
         ["Abertos",d.abertos],
@@ -6568,6 +6636,11 @@ td:nth-child(2),td:nth-child(3){
     opacity:.9;
 }
 
+
+.priority-comparison-table td:first-child{
+    font-weight:800;
+}
+
 .footer{
     margin-top:28px;
     padding-top:10px;
@@ -6743,6 +6816,15 @@ td:nth-child(2),td:nth-child(3){
     <h2>5. Distribuição por prioridade</h2>
     ${graficoPizzaPrioridade(d.prioridades,d.total)}
     ${tabela(d.prioridades,d.total)}
+
+    <div class="comparison-subsection">
+        <h3>Comparação com o período anterior</h3>
+        <p class="section-note">
+            Comparação das prioridades no período atual com o período anterior
+            de mesma duração: <strong>${nomeMesAtual}</strong> × <strong>${nomeMesAnterior}</strong>.
+        </p>
+        ${prioridadesComparativo(prioridadesComparativoDados)}
+    </div>
 </section>
 
 <section class="section">
