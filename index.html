@@ -2327,7 +2327,7 @@ input[readonly] {
         font-weight:600;
     "
 >
-    🗑️ Excluir Chamado
+    🗑️ Excluir Definitivamente
 </button>
 
 
@@ -5762,20 +5762,42 @@ document
 
             const confirmou =
                 confirm(
-                    "⚠️ EXCLUSÃO DEFINITIVA\n\n" +
+                    "🗑️ EXCLUIR DEFINITIVAMENTE\n\n" +
+                    "1º PASSO — CONFIRMAÇÃO\n\n" +
+                    "⚠️ ATENÇÃO: EXCLUSÃO DEFINITIVA\n\n" +
                     "Protocolo: " +
                     protocoloSelecionado +
                     "\n\n" +
-                    "Este chamado será removido permanentemente " +
-                    "do sistema e deixará de fazer parte dos " +
-                    "relatórios e das estatísticas.\n\n" +
-                    "Se você deseja apenas retirar o chamado " +
-                    "da lista de ativos, utilize 📦 ARQUIVAR CHAMADO.\n\n" +
+                    "O chamado será removido permanentemente do sistema " +
+                    "e deixará de fazer parte dos relatórios e estatísticas.\n\n" +
+                    "Ao continuar, será solicitada a senha administrativa " +
+                    "no 2º passo para confirmar a exclusão definitiva.\n\n" +
                     "Essa ação não poderá ser desfeita.\n\n" +
-                    "Deseja realmente excluir definitivamente?"
+                    "Deseja continuar para o 2º passo?"
                 );
 
             if (!confirmou) {
+                return;
+            }
+
+            const senhaExclusao =
+                prompt(
+                    "🔐 2º PASSO — SENHA ADMINISTRATIVA\n\n" +
+                    "Digite a senha administrativa para confirmar " +
+                    "a EXCLUSÃO DEFINITIVA do chamado " +
+                    protocoloSelecionado +
+                    ":"
+                );
+
+            if (senhaExclusao === null) {
+                return;
+            }
+
+            if (!senhaExclusao.trim()) {
+                alert(
+                    "A senha administrativa é obrigatória para concluir " +
+                    "a exclusão definitiva."
+                );
                 return;
             }
 
@@ -5802,7 +5824,7 @@ document
                                         "delete",
 
                                     adminPassword:
-                                        senhaAdministrativa,
+                                        senhaExclusao.trim(),
 
                                     protocolo:
                                         protocoloSelecionado
@@ -5834,7 +5856,7 @@ document
 
                     throw new Error(
                         dados.erro ||
-                        "Não foi possível excluir o chamado."
+                        "Senha administrativa incorreta ou não foi possível excluir o chamado."
                     );
                 }
 
@@ -5890,7 +5912,7 @@ document
                     "";
 
                 alert(
-                    "Chamado excluído com sucesso."
+                    "Chamado excluído definitivamente com sucesso."
                 );
 
             }
