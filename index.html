@@ -772,6 +772,70 @@ input[readonly] {
 .dashboard-v11 .dashboard-empty{padding:16px;text-align:center;color:#777;background:#f7f7f7;border-radius:10px}
 @media(max-width:700px){.dashboard-v11 .dashboard-grid{grid-template-columns:repeat(2,1fr)}.dashboard-v11 .dashboard-status-grid{grid-template-columns:repeat(2,1fr)}.dashboard-v11 .dashboard-bar-row{grid-template-columns:95px 1fr 34px}}
 </style>
+
+<style id="admin-menu-v11">
+.admin-menu-v11{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:14px;
+    margin:16px 0;
+}
+.admin-menu-card{
+    border:1px solid #dbe5ea;
+    border-radius:15px;
+    padding:18px;
+    background:#fff;
+    box-shadow:0 6px 20px rgba(18,59,93,.06);
+    cursor:pointer;
+    transition:.15s ease;
+    text-align:left;
+}
+.admin-menu-card:hover{
+    transform:translateY(-1px);
+    box-shadow:0 9px 25px rgba(18,59,93,.10);
+}
+.admin-menu-card .icon{
+    font-size:30px;
+    margin-bottom:8px;
+}
+.admin-menu-card .title{
+    font-size:17px;
+    font-weight:800;
+    color:#123b5d;
+}
+.admin-menu-card .desc{
+    margin-top:5px;
+    font-size:12px;
+    color:#687680;
+    line-height:1.45;
+}
+.admin-submenu-v11{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+    margin:12px 0;
+    padding:10px 12px;
+    border:1px solid #dce7ee;
+    border-radius:11px;
+    background:#f8fbfd;
+}
+.admin-submenu-v11 .titulo{
+    font-weight:800;
+    color:#123b5d;
+}
+@media(max-width:650px){
+    .admin-menu-v11{grid-template-columns:1fr}
+}
+</style>
+
+
+<style id="admin-menu-hide-v11">
+#adminPainel #adminConteudoPesquisaV11,
+#adminPainel #adminConteudoRelatorioV11{display:none}
+</style>
+
 </head>
 
 
@@ -1538,6 +1602,28 @@ input[readonly] {
 >
 
 
+<div class="admin-menu-v11" id="adminMenuV11">
+    <button type="button" class="admin-menu-card" id="menuPesquisarAdmin">
+        <div class="icon">🔎</div>
+        <div class="title">Pesquisar chamados</div>
+        <div class="desc">Consultar protocolos, usar filtros, abrir um chamado e realizar as ações administrativas.</div>
+    </button>
+
+    <button type="button" class="admin-menu-card" id="menuRelatorioAdmin">
+        <div class="icon">📊</div>
+        <div class="title">Gerar relatório</div>
+        <div class="desc">Acessar o painel, selecionar o período e gerar relatórios gerenciais em HTML ou PDF.</div>
+    </button>
+</div>
+
+<div class="admin-submenu-v11" id="adminVoltarMenu" style="display:none;">
+    <div class="titulo" id="adminModoTitulo">🔎 Pesquisar chamados</div>
+    <button type="button" class="btn-cinza" id="btnVoltarAdminMenu">↩️ Voltar ao menu</button>
+</div>
+
+
+
+<div id="adminConteudoPesquisaV11" style="display:none;">
 <div class="admin-box">
 
 
@@ -1680,6 +1766,7 @@ input[readonly] {
 
 <!-- FILTROS -->
 
+<div id="adminConteudoRelatorioV11" style="display:none;">
 <div class="admin-box dashboard-v11" id="dashboardV11" style="display:none">
 <div class="admin-titulo">📊 PAINEL ADMINISTRATIVO</div>
 <div style="color:#687680;font-size:12px;margin-top:-6px;margin-bottom:10px;">Indicadores calculados a partir dos protocolos carregados no sistema.</div>
@@ -1702,6 +1789,7 @@ input[readonly] {
 <div class="dashboard-section"><h3>⭐ Distribuição por prioridade</h3><div id="dashboardPrioridades" class="dashboard-bars"></div></div>
 <div class="dashboard-section"><h3>🔄 Situação dos chamados</h3><div id="dashboardStatus" class="dashboard-status-grid"></div></div>
 <div class="dashboard-section"><h3>⏱️ Indicadores de atendimento</h3><div id="dashboardAtendimento" class="dashboard-bars"></div></div>
+</div>
 </div>
 <div
     id="filtros"
@@ -1816,6 +1904,7 @@ input[readonly] {
 ></div>
 
 
+</div>
 </div>
 
 
@@ -5389,6 +5478,95 @@ function inicializarDashboardV11(){
     document.getElementById("btnGerarPDF").addEventListener("click",gerarRelatorioHTMLV11);
     renderDashboardV11();
 }
+
+
+
+(function(){
+    const menu = document.getElementById("adminMenuV11");
+    const search = document.getElementById("adminConteudoPesquisaV11");
+    const report = document.getElementById("adminConteudoRelatorioV11");
+    const voltar = document.getElementById("adminVoltarMenu");
+    const titulo = document.getElementById("adminModoTitulo");
+
+    const btnPesquisar = document.getElementById("menuPesquisarAdmin");
+    const btnRelatorio = document.getElementById("menuRelatorioAdmin");
+    const btnVoltar = document.getElementById("btnVoltarAdminMenu");
+
+    const localizar = document.getElementById("editarChamado");
+    const protocoloAdmin = document.getElementById("protocoloAdmin");
+    const btnBuscarAdmin = document.getElementById("btnBuscarAdmin");
+
+    function esconderTudoAdminV11(){
+        if(search) search.style.display = "none";
+        if(report) report.style.display = "none";
+        if(voltar) voltar.style.display = "none";
+        if(menu) menu.style.display = "grid";
+    }
+
+    function mostrarPesquisaAdminV11(){
+        if(menu) menu.style.display = "none";
+        if(report) report.style.display = "none";
+        if(search) search.style.display = "block";
+        if(voltar) voltar.style.display = "flex";
+        if(titulo) titulo.textContent = "🔎 Pesquisar chamados";
+
+        // The existing V1.0 search/list functions remain responsible for loading data.
+        const btnListar = document.getElementById("btnListarTodos");
+        if(btnListar){
+            btnListar.style.display = "block";
+            btnListar.click();
+        }
+
+        // Reveal the existing search/filter/list controls after the load handler has run.
+        setTimeout(function(){
+            const ids = ["estatisticas","filtros","listaChamados"];
+            ids.forEach(function(id){
+                const el = document.getElementById(id);
+                if(el) el.style.display = id === "listaChamados" ? "block" : "block";
+            });
+        }, 500);
+    }
+
+    function mostrarRelatorioAdminV11(){
+        if(menu) menu.style.display = "none";
+        if(search) search.style.display = "none";
+        if(voltar) voltar.style.display = "flex";
+        if(titulo) titulo.textContent = "📊 Gerar relatório";
+
+        if(report) report.style.display = "block";
+
+        // Load the real protocols if they have not yet been loaded.
+        const btnListar = document.getElementById("btnListarTodos");
+        if(btnListar && (!Array.isArray(window.chamados) || window.chamados.length === 0)){
+            btnListar.click();
+        }
+
+        setTimeout(function(){
+            if(typeof inicializarDashboardV11 === "function"){
+                inicializarDashboardV11();
+            }
+            if(typeof renderDashboardV11 === "function"){
+                renderDashboardV11();
+            }
+        }, 900);
+    }
+
+    if(btnPesquisar) btnPesquisar.addEventListener("click", mostrarPesquisaAdminV11);
+    if(btnRelatorio) btnRelatorio.addEventListener("click", mostrarRelatorioAdminV11);
+
+    if(btnVoltar){
+        btnVoltar.addEventListener("click", function(){
+            // If a call is being edited, close/minimize it before returning.
+            if(typeof fecharEdicaoChamado === "function"){
+                try{ fecharEdicaoChamado(); }catch(e){}
+            }
+            esconderTudoAdminV11();
+        });
+    }
+
+    // Initially, after login, only the two choices are visible.
+    esconderTudoAdminV11();
+})();
 
 </script>
 </body>
