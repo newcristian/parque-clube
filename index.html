@@ -1370,6 +1370,60 @@ input[readonly] {
 }
 </style>
 
+
+<style id="administrativo-v13-css">
+.admin-v13-wrap{padding:12px}
+.admin-v13-header{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.admin-v13-title{font-size:18px;font-weight:800;color:#123b5d}
+.admin-v13-actions{display:flex;gap:8px;flex-wrap:wrap}
+.admin-v13-card{background:#fff;border:1px solid #d7e0e5;border-radius:10px;padding:14px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.admin-v13-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.admin-v13-grid .full{grid-column:1/-1}
+.admin-v13-label{display:block;font-size:12px;font-weight:700;color:#24404f;margin-bottom:4px}
+.admin-v13-input,.admin-v13-select,.admin-v13-textarea{width:100%;box-sizing:border-box;border:1px solid #c9d3d9;border-radius:7px;padding:9px;font:inherit;background:#fff}
+.admin-v13-textarea{min-height:90px;resize:vertical}
+.admin-v13-hint{font-size:11px;color:#667780;margin-top:4px}
+.admin-v13-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:12px}
+.admin-v13-kpi{border:1px solid #d7e0e5;border-radius:9px;padding:10px;background:#f7fafb;text-align:center;cursor:pointer;transition:.15s ease;user-select:none}
+.admin-v13-kpi:hover{transform:translateY(-1px);border-color:#176b35;box-shadow:0 2px 7px rgba(0,0,0,.08)}
+.admin-v13-kpi strong{display:block;font-size:20px;color:#123b5d}
+.admin-v13-kpi span{font-size:11px;color:#60717b}
+.admin-v13-kpi.active{background:#176b35;border-color:#176b35}
+.admin-v13-kpi.active strong,.admin-v13-kpi.active span{color:#fff}
+.admin-v13-kpi.disabled{cursor:default;opacity:.65}
+.admin-v13-kpi.disabled:hover{transform:none;border-color:#d7e0e5;box-shadow:none}
+.admin-v13-alert{border:1px solid #e5b74f;background:#fff7dc;border-radius:8px;padding:10px;color:#5e4600;font-size:13px;font-weight:700;margin:8px 0}
+.admin-v13-table{width:100%;border-collapse:collapse;font-size:12px}
+.admin-v13-table th{background:#123b5d;color:#fff;text-align:left;padding:8px}
+.admin-v13-table td{border:1px solid #d8e0e4;padding:7px;vertical-align:top}
+.admin-v13-table tr:nth-child(even){background:#f8fafb}
+.admin-v13-badge{display:inline-block;border-radius:20px;padding:3px 8px;font-weight:700;font-size:11px}
+.admin-v13-badge.adv{background:#fff0d6;color:#8a4b00}.admin-v13-badge.not{background:#fde1e5;color:#8a1f2c}
+.admin-v13-btn{border:0;border-radius:7px;padding:9px 12px;cursor:pointer;font-weight:700}
+.admin-v13-btn.green{background:#176b35;color:#fff}.admin-v13-btn.blue{background:#1d6fae;color:#fff}.admin-v13-btn.gray{background:#6b6b6b;color:#fff}.admin-v13-btn.red{background:#a8202c;color:#fff}
+.admin-v13-btn:disabled{opacity:.6;cursor:wait}
+.admin-v13-result{max-height:360px;overflow:auto}
+.admin-v13-protocol{font-family:monospace;font-weight:800;color:#123b5d}
+.admin-v13-modal{display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.55);align-items:center;justify-content:center;padding:18px;box-sizing:border-box}
+.admin-v13-modal.open{display:flex}
+.admin-v13-modal-box{width:min(680px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,.25);border:1px solid #d7e0e5}
+.admin-v13-modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#176b35;color:#fff;padding:14px 16px;border-radius:14px 14px 0 0}
+.admin-v13-modal-title{font-size:17px;font-weight:800}
+.admin-v13-modal-close{width:auto!important;margin:0!important;background:transparent!important;color:#fff!important;border:0!important;font-size:25px!important;padding:0 4px!important;line-height:1;cursor:pointer}
+.admin-v13-modal-body{padding:16px}
+.admin-v13-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.admin-v13-detail{border:1px solid #e0e6ea;border-radius:9px;padding:10px;background:#f8fafb}
+.admin-v13-detail.full{grid-column:1/-1}
+.admin-v13-detail-label{font-size:11px;color:#687680;font-weight:700;margin-bottom:4px}
+.admin-v13-detail-value{font-size:14px;color:#16364a;font-weight:600;white-space:pre-wrap;word-break:break-word}
+.admin-v13-modal-footer{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:14px}
+.admin-v13-modal-footer button{width:auto!important;margin-top:0!important}
+@media(max-width:600px){.admin-v13-detail-grid{grid-template-columns:1fr}.admin-v13-detail.full{grid-column:auto}.admin-v13-modal{padding:10px}.admin-v13-modal-box{max-height:94vh}}
+
+@media(max-width:700px){.admin-v13-grid{grid-template-columns:1fr}.admin-v13-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-v13-table{font-size:11px;min-width:760px}.admin-v13-result{overflow:auto}}
+@media print{.admin-v13-wrap .no-print{display:none!important}}
+</style>
+
 </head>
 
 
@@ -2247,6 +2301,12 @@ input[readonly] {
         <div class="title">GERAR RELATÓRIO</div>
         <div class="desc">Acessar o painel, selecionar o período e gerar relatórios gerenciais em PDF.</div>
     </button>
+
+    <button type="button" class="admin-menu-card" id="menuAdministrativoV13">
+        <div class="icon">⚠️</div>
+        <div class="title">ADVERTÊNCIAS / NOTIFICAÇÕES</div>
+        <div class="desc">Registrar medidas administrativas, consultar histórico por unidade e acompanhar reincidências.</div>
+    </button>
 </div>
 
 <div class="admin-submenu-v11" id="adminVoltarMenu" style="display:none;">
@@ -2572,6 +2632,145 @@ input[readonly] {
     id="listaChamados"
 ></div>
 
+
+</div>
+</div>
+
+
+<div id="adminConteudoAdministrativoV13" style="display:none;">
+<div class="admin-v13-wrap">
+
+<div class="admin-v13-header">
+    <div>
+        <div class="admin-v13-title">⚠️ Advertências / Notificações</div>
+        <div class="admin-v13-hint">Registro administrativo por unidade, com protocolo próprio e vínculo opcional a um chamado.</div>
+    </div>
+    <div class="admin-v13-actions no-print">
+        <button type="button" class="admin-v13-btn blue" id="btnAtualizarAdministrativoV13">🔄 Atualizar registros</button>
+        <button type="button" class="admin-v13-btn gray" id="btnNovaAdministrativaV13">➕ Nova advertência/notificação</button>
+    </div>
+</div>
+
+<div class="admin-v13-kpis" id="v13Kpis" style="display:none">
+    <div class="admin-v13-kpi active" role="button" tabindex="0" data-v13-kpi="todos" title="Mostrar todos os registros encontrados">
+        <strong id="v13TotalMedidas">0</strong><span>Total de registros</span>
+    </div>
+    <div class="admin-v13-kpi" role="button" tabindex="0" data-v13-kpi="advertencias" title="Mostrar somente Advertências">
+        <strong id="v13TotalAdvertencias">0</strong><span>Advertências</span>
+    </div>
+    <div class="admin-v13-kpi" role="button" tabindex="0" data-v13-kpi="notificacoes" title="Mostrar somente Notificações">
+        <strong id="v13TotalNotificacoes">0</strong><span>Notificações</span>
+    </div>
+    <div class="admin-v13-kpi" role="button" tabindex="0" data-v13-kpi="reincidencias" title="Mostrar registros envolvidos em reincidência">
+        <strong id="v13TotalReincidencias">0</strong><span>Unidades com reincidência</span>
+    </div>
+</div>
+<div id="v13FiltroAtivo" class="admin-v13-hint" style="display:none;margin:-4px 0 10px;font-weight:700"></div>
+
+<div class="admin-v13-card" id="adminV13FormCard">
+    <h3 style="margin:0 0 12px;color:#123b5d">📄 Novo registro administrativo</h3>
+    <form id="formAdministrativoV13">
+        <div class="admin-v13-grid">
+            <div>
+                <label class="admin-v13-label">Tipo de medida *</label>
+                <select id="v13Tipo" class="admin-v13-select" required>
+                    <option value="">Selecione...</option>
+                    <option value="Advertência">Advertência</option>
+                    <option value="Notificação">Notificação</option>
+                </select>
+            </div>
+            <div>
+                <label class="admin-v13-label">Data do registro *</label>
+                <input id="v13DataRegistro" class="admin-v13-input" type="date" required>
+            </div>
+            <div>
+                <label class="admin-v13-label">Data da ocorrência</label>
+                <input id="v13DataOcorrencia" class="admin-v13-input" type="date">
+            </div>
+            <div>
+                <label class="admin-v13-label">Chamado relacionado (opcional)</label>
+                <select id="v13ProtocoloChamado" class="admin-v13-select">
+                    <option value="">— Sem chamado associado —</option>
+                </select>
+                <div class="admin-v13-hint">O protocolo do chamado fica vinculado ao registro administrativo.</div>
+            </div>
+            <div>
+                <label class="admin-v13-label">Bloco *</label>
+                <select id="v13Bloco" class="admin-v13-select" required>
+                    <option value="">Selecione...</option>
+                    <option>1A</option><option>1B</option><option>1C</option><option>1D</option><option>1E</option>
+                    <option>2A</option><option>2B</option><option>2C</option><option>2D</option><option>2E</option>
+                </select>
+            </div>
+            <div>
+                <label class="admin-v13-label">Unidade *</label>
+                <input id="v13Unidade" class="admin-v13-input" type="text" inputmode="numeric" maxlength="8" placeholder="Ex.: 804" required>
+            </div>
+            <div>
+                <label class="admin-v13-label">Infração / ocorrência *</label>
+                <select id="v13Infracao" class="admin-v13-select" required>
+                    <option value="">Selecione...</option>
+                    <option>Barulho / perturbação do sossego</option>
+                    <option>Xixi de cachorro</option>
+                    <option>Fumar em área comum</option>
+                    <option>Reforma fora do horário permitido</option>
+                    <option>Uso inadequado de área comum</option>
+                    <option>Descarte irregular de resíduos</option>
+                    <option>Outros</option>
+                </select>
+            </div>
+            <div>
+                <label class="admin-v13-label">Responsável pelo registro</label>
+                <input id="v13Responsavel" class="admin-v13-input" type="text" placeholder="Nome do subsíndico/administrador">
+            </div>
+            <div class="full">
+                <label class="admin-v13-label">Base no Regimento Interno</label>
+                <input id="v13BaseRegimento" class="admin-v13-input" type="text" placeholder="Ex.: Art. 23, §2º — Perturbação do sossego">
+            </div>
+            <div class="full">
+                <label class="admin-v13-label">Descrição detalhada *</label>
+                <textarea id="v13Descricao" class="admin-v13-textarea" required placeholder="Descreva a ocorrência e a circunstância registrada."></textarea>
+            </div>
+            <div class="full">
+                <label class="admin-v13-label">Observações</label>
+                <textarea id="v13Observacoes" class="admin-v13-textarea" style="min-height:65px" placeholder="Informações administrativas adicionais."></textarea>
+            </div>
+        </div>
+        <div class="admin-v13-actions no-print" style="margin-top:12px">
+            <button type="submit" class="admin-v13-btn green" id="btnSalvarAdministrativoV13">💾 Registrar medida</button>
+            <button type="button" class="admin-v13-btn gray" id="btnCancelarAdministrativoV13">Cancelar</button>
+        </div>
+    </form>
+</div>
+
+<div class="admin-v13-card">
+    <h3 style="margin:0 0 12px;color:#123b5d">🔎 Histórico da unidade</h3>
+    <div class="admin-v13-grid">
+        <div>
+            <label class="admin-v13-label">Bloco</label>
+            <select id="v13BuscaBloco" class="admin-v13-select">
+                <option value="">Todos</option>
+                <option>1A</option><option>1B</option><option>1C</option><option>1D</option><option>1E</option>
+                <option>2A</option><option>2B</option><option>2C</option><option>2D</option><option>2E</option>
+            </select>
+        </div>
+        <div>
+            <label class="admin-v13-label">Unidade</label>
+            <input id="v13BuscaUnidade" class="admin-v13-input" type="text" placeholder="Ex.: 804">
+        </div>
+        <div class="full admin-v13-actions no-print">
+            <button type="button" class="admin-v13-btn blue" id="btnConsultarHistoricoV13">🔎 Consultar histórico</button>
+            <button type="button" class="admin-v13-btn gray" id="btnLimparHistoricoV13">Limpar</button>
+            <button type="button" class="admin-v13-btn green" id="btnRelatorioUnidadeV13">📄 Relatório da unidade</button>
+        </div>
+    </div>
+    <div id="v13HistoricoResumo" style="margin-top:12px"></div>
+</div>
+
+<div class="admin-v13-card">
+    <h3 style="margin:0 0 10px;color:#123b5d">📋 Registros administrativos</h3>
+    <div id="v13ListaMedidas" class="admin-v13-result">Carregando...</div>
+</div>
 
 </div>
 </div>
@@ -3014,8 +3213,7 @@ function atualizarHistoricoHorariosAdmin(chamado) {
    CONFIGURAÇÕES
 ===================================================== */
 
-const API =
-    "https://parque-clube.newcristian.workers.dev/api/protocolo";
+const API = "/api/protocolo";
 
 const FORM_ENDPOINT =
     "https://formspree.io/f/mljrnqgv";
@@ -5178,6 +5376,21 @@ function criarCard(
 
                 👁️ Ver / Gerenciar
 
+            </button>
+
+            <button
+                type="button"
+                class="btn-cinza"
+                style="margin-top:8px;"
+                onclick="
+                    abrirAdministrativoParaChamado(
+                        '${encodeURIComponent(
+                            chamado.protocolo
+                        )}'
+                    )
+                "
+            >
+                ⚠️ Gerar Advertência / Notificação
             </button>
 
 
@@ -9231,6 +9444,9 @@ td:nth-child(2),td:nth-child(3){
 </footer>
 
 </div>
+
+
+
 </body>
 </html>`;
 
@@ -9249,10 +9465,11 @@ td:nth-child(2),td:nth-child(3){
 
 
 let janelaRelatorioPDFV11 = null;
+let urlRelatorioPDFV11 = null;
 
 function gerarPDFV11(){
-    // Open/reuse the report window immediately, while this function is still
-    // directly inside the user's click event. This prevents popup blockers.
+    // Abre a janela imediatamente, ainda dentro do clique do usuário,
+    // para evitar bloqueio de pop-up.
     let w = janelaRelatorioPDFV11;
 
     if(!w || w.closed){
@@ -9265,60 +9482,129 @@ function gerarPDFV11(){
         return;
     }
 
-    // Show immediate feedback while the report is being assembled.
-    w.document.open();
-    w.document.write(`
-        <!DOCTYPE html>
-        <html lang="pt-BR">
-        <head>
-            <meta charset="UTF-8">
-            <title>Gerando relatório...</title>
-        </head>
-        <body style="font-family:Arial;text-align:center;padding:50px;color:#123b5d">
-            <h2>📊 Preparando relatório...</h2>
-            <p>Aguarde um momento.</p>
-        </body>
-        </html>
-    `);
-    w.document.close();
+    // Tela provisória enquanto o relatório é montado.
+    try{
+        w.document.open();
+        w.document.write(`
+            <!DOCTYPE html>
+            <html lang="pt-BR">
+            <head>
+                <meta charset="UTF-8">
+                <title>Gerando relatório...</title>
+            </head>
+            <body style="font-family:Arial;text-align:center;padding:50px;color:#123b5d">
+                <h2>📊 Preparando relatório...</h2>
+                <p>Aguarde um momento.</p>
+            </body>
+            </html>
+        `);
+        w.document.close();
+    }catch(e){
+        console.error("Erro ao preparar a janela do relatório:",e);
+    }
 
     try{
+        // Atualiza os dados do dashboard com os filtros atualmente selecionados.
         renderDashboardV11();
 
+        // Monta o HTML completo do relatório sem abrir outra janela.
         const htmlRel = gerarRelatorioHTMLV11(false);
 
         if(!htmlRel){
-            w.close();
+            alert("Não foi possível montar o relatório.");
             return;
         }
 
-        w.document.open();
-        w.document.write(htmlRel);
-        w.document.close();
-        w.focus();
+        // Em vez de document.write() na janela final, usa um Blob URL.
+        // Isso evita problemas de carregamento/execução da impressão em
+        // páginas geradas dinamicamente.
+        const blob = new Blob([htmlRel], {type:"text/html;charset=utf-8"});
+        const url = URL.createObjectURL(blob);
 
-        // Native print dialog -> user chooses "Salvar como PDF".
-        setTimeout(function(){
+        // Libera a URL anterior, se houver.
+        if(urlRelatorioPDFV11){
+            try{ URL.revokeObjectURL(urlRelatorioPDFV11); }catch(e){}
+        }
+        urlRelatorioPDFV11 = url;
+
+        let impressaoIniciada = false;
+
+        const abrirImpressao = function(){
+            if(impressaoIniciada) return;
+            impressaoIniciada = true;
             try{
                 w.focus();
                 w.print();
             }catch(e){
                 console.error("Erro ao abrir impressão do relatório:",e);
-                alert("O relatório foi aberto, mas o diálogo de impressão não pôde ser aberto automaticamente. Use Ctrl+P ou o menu Imprimir do navegador.");
+                alert("O relatório foi aberto, mas a impressão automática não pôde ser iniciada. Use Ctrl+P ou o menu Imprimir.");
             }
-        }, 700);
+        };
+
+        // Aguarda o carregamento completo do documento, incluindo imagens/logo,
+        // antes de chamar print().
+        w.onload = function(){
+            const aguardarImagens = function(){
+                const imagens = Array.from(w.document.images || []);
+                if(!imagens.length){
+                    setTimeout(abrirImpressao, 250);
+                    return;
+                }
+
+                let pendentes = imagens.filter(img => !img.complete);
+                if(!pendentes.length){
+                    setTimeout(abrirImpressao, 250);
+                    return;
+                }
+
+                let restante = pendentes.length;
+                const pronto = function(){
+                    restante--;
+                    if(restante <= 0) setTimeout(abrirImpressao, 250);
+                };
+                pendentes.forEach(img => {
+                    img.addEventListener("load", pronto, {once:true});
+                    img.addEventListener("error", pronto, {once:true});
+                });
+            };
+            aguardarImagens();
+        };
+
+        // Navega a janela já autorizada para o relatório final.
+        w.location.href = url;
+        w.focus();
+
+        // Fallback para navegadores que não disparem onload como esperado.
+        setTimeout(function(){
+            if(!impressaoIniciada) abrirImpressao();
+        }, 1800);
+
+        // Não revoga imediatamente: o navegador precisa manter o Blob disponível
+        // durante a impressão.
+        setTimeout(function(){
+            if(urlRelatorioPDFV11 === url){
+                try{ URL.revokeObjectURL(url); }catch(e){}
+                urlRelatorioPDFV11 = null;
+            }
+        }, 60000);
 
     }catch(e){
         console.error("Erro ao gerar relatório:",e);
-        w.document.open();
-        w.document.write(`
-            <div style="font-family:Arial;padding:30px">
-                <h2>Não foi possível gerar o relatório.</h2>
-                <p>Atualize a página e tente novamente.</p>
-            </div>
-        `);
-        w.document.close();
-        alert("Ocorreu um erro ao montar o relatório. A página foi preservada. Tente novamente.");
+        try{
+            w.document.open();
+            w.document.write(`
+                <!DOCTYPE html>
+                <html lang="pt-BR">
+                <head><meta charset="UTF-8"><title>Erro</title></head>
+                <body style="font-family:Arial;padding:30px">
+                    <h2>Não foi possível gerar o relatório.</h2>
+                    <p>Atualize a página e tente novamente.</p>
+                </body>
+                </html>
+            `);
+            w.document.close();
+        }catch(_e){}
+        alert("Ocorreu um erro ao montar o relatório. A página principal foi preservada. Tente novamente.");
     }
 }
 
@@ -9615,6 +9901,504 @@ function inicializarDashboardV11(){
 
 })();
 </script>
+
+<script id="administrativo-v13-js">
+(function(){
+    const menu = document.getElementById('adminMenuV11');
+    const search = document.getElementById('adminConteudoPesquisaV11');
+    const report = document.getElementById('adminConteudoRelatorioV11');
+    const admin = document.getElementById('adminConteudoAdministrativoV13');
+    const voltar = document.getElementById('adminVoltarMenu');
+    const titulo = document.getElementById('adminModoTitulo');
+    const btnMenu = document.getElementById('menuAdministrativoV13');
+    const btnAtualizar = document.getElementById('btnAtualizarAdministrativoV13');
+    const form = document.getElementById('formAdministrativoV13');
+    const selectChamado = document.getElementById('v13ProtocoloChamado');
+    const lista = document.getElementById('v13ListaMedidas');
+    let medidas = [];
+    let ultimaConsulta = { bloco:'', unidade:'' };
+
+    function hojeLocal(){
+        const d=new Date();
+        const m=String(d.getMonth()+1).padStart(2,'0');
+        const dia=String(d.getDate()).padStart(2,'0');
+        return `${d.getFullYear()}-${m}-${dia}`;
+    }
+    function esc(v){ return typeof escapar==='function' ? escapar(v) : String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+    function formatarData(v){
+        if(!v) return '-';
+        const p=String(v).split('-');
+        return p.length===3 ? `${p[2]}/${p[1]}/${p[0]}` : v;
+    }
+    function mostrarAdmin(){
+        if(menu) menu.style.display='none';
+        if(search) search.style.display='none';
+        if(report) report.style.display='none';
+        if(admin) admin.style.display='block';
+        if(voltar) voltar.style.display='flex';
+        if(titulo) titulo.textContent='⚠️ Advertências / Notificações';
+    }
+    function preencherDatas(){
+        const h=hojeLocal();
+        const a=document.getElementById('v13DataRegistro');
+        const b=document.getElementById('v13DataOcorrencia');
+        if(a && !a.value) a.value=h;
+        if(b && !b.value) b.value=h;
+    }
+    function carregarChamadosSelect(){
+        if(!selectChamado) return;
+        const atuais = Array.isArray(window.chamados) ? window.chamados : (typeof chamados!=='undefined' ? chamados : []);
+        const arquivados = Array.isArray(window.chamadosArquivadosV11) ? window.chamadosArquivadosV11 : (typeof chamadosArquivadosV11!=='undefined' ? chamadosArquivadosV11 : []);
+        const todos=[...atuais,...arquivados].filter((x,i,a)=>x?.protocolo && a.findIndex(y=>y.protocolo===x.protocolo)===i);
+        const valor=selectChamado.value;
+        selectChamado.innerHTML='<option value="">— Sem chamado associado —</option>';
+        todos.sort((a,b)=>String(b.protocolo).localeCompare(String(a.protocolo))).forEach(c=>{
+            const o=document.createElement('option');
+            o.value=c.protocolo;
+            o.textContent=`${c.protocolo} — ${c.ocorrencia||'Sem ocorrência'} — ${c.bloco||'Sem bloco'}${c.arquivado?' — Arquivado':''}`;
+            selectChamado.appendChild(o);
+        });
+        if(valor) selectChamado.value=valor;
+    }
+    let filtroKpiAtual = 'todos';
+    let registrosDaPesquisaAtual = [];
+
+    function calcularReincidencias(regs){
+        const mapa={};
+        regs.forEach(x=>{
+            const k=`${x.bloco}|${x.unidade}|${x.infracao}`;
+            mapa[k]=(mapa[k]||0)+1;
+        });
+        return mapa;
+    }
+
+    function registrosReincidentes(regs){
+        const mapa=calcularReincidencias(regs);
+        return regs.filter(x=>{
+            const k=`${x.bloco}|${x.unidade}|${x.infracao}`;
+            return (mapa[k]||0)>1;
+        });
+    }
+
+    function atualizarKpis(regs=registrosDaPesquisaAtual){
+        const base=Array.isArray(regs)?regs:[];
+        const adv=base.filter(x=>x.tipo==='Advertência').length;
+        const not=base.filter(x=>x.tipo==='Notificação').length;
+        const reinc=Object.values(calcularReincidencias(base)).filter(n=>n>1).length;
+
+        document.getElementById('v13TotalMedidas').textContent=base.length;
+        document.getElementById('v13TotalAdvertencias').textContent=adv;
+        document.getElementById('v13TotalNotificacoes').textContent=not;
+        document.getElementById('v13TotalReincidencias').textContent=reinc;
+
+        const kpis=document.getElementById('v13Kpis');
+        if(kpis) kpis.style.display=base.length || registrosDaPesquisaAtual.length ? 'grid' : 'none';
+
+        const botoes=document.querySelectorAll('[data-v13-kpi]');
+        botoes.forEach(b=>{
+            b.classList.toggle('active',b.dataset.v13Kpi===filtroKpiAtual);
+            b.classList.toggle('disabled',base.length===0);
+        });
+
+        const rotulos={
+            todos:'Todos os registros',
+            advertencias:'Somente Advertências',
+            notificacoes:'Somente Notificações',
+            reincidencias:'Registros envolvidos em reincidência'
+        };
+        const aviso=document.getElementById('v13FiltroAtivo');
+        if(aviso){
+            aviso.style.display='block';
+            aviso.innerHTML=`Filtro ativo: <strong>${rotulos[filtroKpiAtual]}</strong> · ${base.length} registro(s)`;
+        }
+    }
+
+    function aplicarFiltroKpi(filtro){
+        if(!registrosDaPesquisaAtual.length) return;
+        filtroKpiAtual=filtro;
+        let regs=registrosDaPesquisaAtual;
+        if(filtro==='advertencias') regs=regs.filter(x=>x.tipo==='Advertência');
+        if(filtro==='notificacoes') regs=regs.filter(x=>x.tipo==='Notificação');
+        if(filtro==='reincidencias') regs=registrosReincidentes(regs);
+        renderLista(regs);
+        atualizarKpis(registrosDaPesquisaAtual);
+    }
+
+    function reincidenciasDaUnidade(regs){
+        const mapa={}; regs.forEach(x=>{mapa[x.infracao]=(mapa[x.infracao]||0)+1;});
+        return Object.entries(mapa).filter(([,n])=>n>1).map(([i,n])=>`${i} (${n} registros)`);
+    }
+
+    function renderLista(regs=medidas){
+        if(!lista) return;
+        if(!regs.length){
+            lista.innerHTML='<div style="padding:16px;text-align:center;color:#64737c">Nenhum registro administrativo encontrado para o filtro selecionado.</div>';
+            return;
+        }
+        lista.innerHTML=`<table class="admin-v13-table"><thead><tr><th>Protocolo</th><th>Data</th><th>Unidade</th><th>Tipo</th><th>Infração</th><th>Chamado</th><th>Ações</th></tr></thead><tbody>${regs.map(x=>`<tr>
+            <td><span class="admin-v13-protocol">${esc(x.protocolo)}</span></td>
+            <td>${esc(formatarData(x.dataRegistro))}</td>
+            <td>${esc(x.unidade)} / ${esc(x.bloco)}</td>
+            <td><span class="admin-v13-badge ${x.tipo==='Advertência'?'adv':'not'}">${esc(x.tipo)}</span></td>
+            <td>${esc(x.infracao)}<br><small>${esc(x.descricao||'')}</small></td>
+            <td>${x.protocoloChamado?`<span class="admin-v13-protocol">${esc(x.protocoloChamado)}</span>`:'—'}</td>
+            <td><button class="admin-v13-btn gray" type="button" data-v13-view="${esc(x.protocolo)}">👁️ Ver</button></td>
+        </tr>`).join('')}</tbody></table>`;
+        lista.querySelectorAll('[data-v13-view]').forEach(b=>b.addEventListener('click',()=>verRegistro(b.dataset.v13View)));
+    }
+
+    let adm13RegistroModalAtual = null;
+    function verRegistro(protocolo){
+        const x=medidas.find(m=>m.protocolo===protocolo); if(!x) return;
+        const hist=medidas.filter(m=>m.bloco===x.bloco && m.unidade===x.unidade);
+        const rec=hist.filter(m=>m.infracao===x.infracao).length;
+        adm13RegistroModalAtual = x;
+        const tipo = x.tipo === 'Notificação' ? '📄 Detalhes da Notificação' : '⚠️ Detalhes da Advertência';
+        const set=(id,value)=>{const el=document.getElementById(id); if(el) el.textContent=value||'Não informado';};
+        const modal=document.getElementById('adm13DetalhesModal');
+        document.getElementById('adm13ModalTitulo').textContent=tipo;
+        set('adm13ModalProtocolo',x.protocolo);
+        set('adm13ModalTipo',x.tipo);
+        set('adm13ModalData',formatarData(x.dataRegistro));
+        set('adm13ModalUnidade',`${x.unidade||'—'} / ${x.bloco||'—'}`);
+        set('adm13ModalInfracao',x.infracao);
+        set('adm13ModalBase',x.baseRegimento);
+        set('adm13ModalResponsavel',x.responsavel);
+        set('adm13ModalDescricao',x.descricao);
+        set('adm13ModalObservacoes',x.observacoes);
+        set('adm13ModalChamado',x.protocoloChamado||'Não associado');
+        set('adm13ModalHistorico',`${hist.length} registro(s) nesta unidade · ${rec} registro(s) da mesma infração.`);
+        const btnChamado=document.getElementById('btnAbrirChamadoAdm13');
+        if(btnChamado){
+            btnChamado.style.display=x.protocoloChamado?'inline-block':'none';
+        }
+        if(modal){modal.classList.add('open');modal.setAttribute('aria-hidden','false');}
+    }
+    function fecharModalAdm13(){
+        const modal=document.getElementById('adm13DetalhesModal');
+        if(modal){modal.classList.remove('open');modal.setAttribute('aria-hidden','true');}
+        adm13RegistroModalAtual=null;
+    }
+    function consultarChamadoRelacionadoAdm13(){
+        const p=adm13RegistroModalAtual?.protocoloChamado;
+        if(!p) return;
+        fecharModalAdm13();
+        const input=document.getElementById('consultaProtocolo');
+        const btn=document.getElementById('btnConsultar');
+        if(input) input.value=p;
+        try{ mostrarSecao('consultar'); }catch(e){}
+        if(btn) btn.click();
+    }
+
+    function imprimirMedidaAdm13(){
+        const x=adm13RegistroModalAtual;
+        if(!x) return;
+        const tipo = x.tipo === 'Notificação' ? 'NOTIFICAÇÃO' : 'ADVERTÊNCIA';
+        const esc = (v)=>String(v ?? '').replace(/[&<>\"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c]));
+        const w=window.open('', '_blank', 'width=900,height=800');
+        if(!w){ alert('O navegador bloqueou a janela de impressão. Permita pop-ups para este site.'); return; }
+        w.document.write(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>${esc(tipo)} - ${esc(x.protocolo)}</title><style>
+            *{box-sizing:border-box} body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:35px;color:#183447;background:#fff}
+            .cab{border-bottom:3px solid #176b35;padding-bottom:14px;margin-bottom:24px}.cab h1{margin:0;color:#176b35;font-size:22px}.cab h2{margin:6px 0 0;font-size:18px}.sub{color:#667;margin-top:5px;font-size:13px}
+            .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.item{border:1px solid #d9e1e6;border-radius:8px;padding:10px}.full{grid-column:1/-1}.lab{font-size:11px;color:#687680;font-weight:bold;margin-bottom:5px}.val{font-size:14px;font-weight:600;white-space:pre-wrap;word-break:break-word;min-height:18px}
+            .assin{margin-top:70px;display:grid;grid-template-columns:1fr 1fr;gap:60px;text-align:center}.linha{border-top:1px solid #333;padding-top:7px;font-size:12px}.rod{margin-top:30px;color:#777;font-size:11px;text-align:center}
+            @media print{body{padding:18mm}.no-print{display:none}}
+        </style></head><body>
+        <div class="cab"><h1>SISTEMA DE GESTÃO DO CONDOMÍNIO</h1><h2>${esc(tipo)}</h2><div class="sub">Protocolo ${esc(x.protocolo)}</div></div>
+        <div class="grid">
+          <div class="item"><div class="lab">Protocolo</div><div class="val">${esc(x.protocolo)}</div></div>
+          <div class="item"><div class="lab">Tipo</div><div class="val">${esc(x.tipo)}</div></div>
+          <div class="item"><div class="lab">Data do registro</div><div class="val">${esc(formatarData(x.dataRegistro))}</div></div>
+          <div class="item"><div class="lab">Unidade / Bloco</div><div class="val">${esc((x.unidade||'—')+' / '+(x.bloco||'—'))}</div></div>
+          <div class="item full"><div class="lab">Infração / Ocorrência</div><div class="val">${esc(x.infracao||'Não informado')}</div></div>
+          <div class="item"><div class="lab">Base no Regimento</div><div class="val">${esc(x.baseRegimento||'Não informado')}</div></div>
+          <div class="item"><div class="lab">Responsável</div><div class="val">${esc(x.responsavel||'Não informado')}</div></div>
+          <div class="item full"><div class="lab">Descrição</div><div class="val">${esc(x.descricao||'Não informado')}</div></div>
+          <div class="item full"><div class="lab">Observações</div><div class="val">${esc(x.observacoes||'Não informado')}</div></div>
+          <div class="item full"><div class="lab">Chamado relacionado</div><div class="val">${esc(x.protocoloChamado||'Não associado')}</div></div>
+        </div>
+        <div class="assin"><div class="linha">Responsável pela administração</div><div class="linha">Ciente / assinatura do responsável pela unidade</div></div>
+        <div class="rod">Documento emitido pelo Sistema de Gestão do Condomínio.</div>
+        <script>window.onload=()=>setTimeout(()=>window.print(),250);<\/script>
+        </body></html>`);
+        w.document.close();
+    }
+    async function carregarMedidas(){
+        if(!senhaAdministrativa){alert('Faça o login administrativo primeiro.');return;}
+        if(btnAtualizar){btnAtualizar.disabled=true;btnAtualizar.textContent='⏳ Atualizando...';}
+        try{
+            const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'listAdministrative',adminPassword:senhaAdministrativa})});
+            const d=await r.json();
+            if(!r.ok||!d.sucesso){
+                const detalhe = d.detalhe ? `\n\nDetalhe técnico: ${d.detalhe}` : '';
+                throw new Error((d.erro||'Não foi possível carregar os registros.') + detalhe);
+            }
+            medidas=Array.isArray(d.medidas)?d.medidas:[];
+            registrosDaPesquisaAtual=[];
+            filtroKpiAtual='todos';
+            const kpis=document.getElementById('v13Kpis');
+            const aviso=document.getElementById('v13FiltroAtivo');
+            if(kpis) kpis.style.display='none';
+            if(aviso) aviso.style.display='none';
+            renderLista([]);
+            carregarChamadosSelect();
+        }catch(e){
+            console.error('V1.3 - erro ao listar Advertências/Notificações:', e);
+            alert(e.message||'Erro ao carregar registros administrativos.');
+        }
+        finally{if(btnAtualizar){btnAtualizar.disabled=false;btnAtualizar.textContent='🔄 Atualizar registros';}}
+    }
+    async function garantirChamadosCarregados(){
+        const tem = (typeof chamados!=='undefined' && (chamados.length || chamadosArquivadosV11.length));
+        if(tem){carregarChamadosSelect();return true;}
+
+        const r = await fetch(API,{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({action:'list',adminPassword:senhaAdministrativa})
+        });
+
+        const d = await r.json();
+
+        if(!r.ok || !d.sucesso){
+            throw new Error(d.erro || 'Não foi possível carregar os chamados.');
+        }
+
+        if(typeof chamados!=='undefined') chamados=d.chamados||[];
+        if(typeof chamadosArquivadosV11!=='undefined') chamadosArquivadosV11=d.chamadosArquivados||[];
+
+        carregarChamadosSelect();
+        return true;
+    }
+    function limparForm(){
+        if(form) form.reset(); preencherDatas();
+    }
+    async function salvar(e){
+        e.preventDefault();
+        const bot=document.getElementById('btnSalvarAdministrativoV13');
+        const payload={
+            action:'createAdministrative', adminPassword:senhaAdministrativa,
+            tipo:document.getElementById('v13Tipo').value,
+            dataRegistro:document.getElementById('v13DataRegistro').value,
+            dataOcorrencia:document.getElementById('v13DataOcorrencia').value,
+            bloco:document.getElementById('v13Bloco').value,
+            unidade:document.getElementById('v13Unidade').value.trim(),
+            infracao:document.getElementById('v13Infracao').value,
+            descricao:document.getElementById('v13Descricao').value.trim(),
+            baseRegimento:document.getElementById('v13BaseRegimento').value.trim(),
+            responsavel:document.getElementById('v13Responsavel').value.trim(),
+            observacoes:document.getElementById('v13Observacoes').value.trim(),
+            protocoloChamado:document.getElementById('v13ProtocoloChamado').value
+        };
+        if(!payload.tipo||!payload.bloco||!payload.unidade||!payload.infracao||!payload.descricao){alert('Preencha os campos obrigatórios.');return;}
+        bot.disabled=true;bot.textContent='⏳ Registrando...';
+        try{
+            const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+            const d=await r.json(); if(!r.ok||!d.sucesso) throw new Error(d.erro||'Não foi possível registrar.');
+            alert(`✅ ${d.medida.tipo} registrada com sucesso.\n\nProtocolo: ${d.medida.protocolo}`);
+            limparForm(); await carregarMedidas(); consultarHistorico(payload.bloco,payload.unidade);
+        }catch(e){alert(e.message||'Erro ao registrar medida administrativa.');}
+        finally{bot.disabled=false;bot.textContent='💾 Registrar medida';}
+    }
+    function consultarHistorico(blocoArg,unidadeArg){
+        const bloco=blocoArg!==undefined?blocoArg:document.getElementById('v13BuscaBloco').value;
+        const unidade=unidadeArg!==undefined?String(unidadeArg).trim():document.getElementById('v13BuscaUnidade').value.trim();
+        ultimaConsulta={bloco,unidade};
+
+        if(!bloco&&!unidade){
+            registrosDaPesquisaAtual=[];
+            filtroKpiAtual='todos';
+            const kpis=document.getElementById('v13Kpis');
+            const aviso=document.getElementById('v13FiltroAtivo');
+            if(kpis) kpis.style.display='none';
+            if(aviso) aviso.style.display='none';
+            const resumo=document.getElementById('v13HistoricoResumo');
+            if(resumo) resumo.innerHTML='<div class="admin-v13-hint">Informe o bloco e/ou a unidade para consultar o histórico.</div>';
+            renderLista([]);
+            return;
+        }
+
+        const regs=medidas.filter(x=>(!bloco||x.bloco===bloco)&&(!unidade||x.unidade===unidade));
+        registrosDaPesquisaAtual=regs;
+        filtroKpiAtual='todos';
+
+        const resumo=document.getElementById('v13HistoricoResumo');
+        if(!resumo) return;
+
+        const rec=reincidenciasDaUnidade(regs);
+        resumo.innerHTML=`<div style="font-weight:800;color:#123b5d;margin-bottom:7px">Histórico — ${unidade?`Unidade ${esc(unidade)}`:''}${bloco?` / Bloco ${esc(bloco)}`:''}</div>
+            <div class="admin-v13-hint">${regs.length} registro(s) encontrado(s).</div>
+            ${rec.length?`<div class="admin-v13-alert">⚠️ ATENÇÃO — possível reincidência: ${esc(rec.join('; '))}</div>`:'<div style="margin-top:8px;color:#176b35;font-weight:700">✓ Nenhuma reincidência identificada entre os registros encontrados.</div>'}`;
+
+        atualizarKpis(regs);
+        renderLista(regs);
+    }
+
+    function relatorioUnidade(){
+        const bloco=ultimaConsulta.bloco || document.getElementById('v13BuscaBloco').value;
+        const unidade=ultimaConsulta.unidade || document.getElementById('v13BuscaUnidade').value.trim();
+        if(!bloco||!unidade){alert('Consulte primeiro o bloco e a unidade.');return;}
+        const regs=medidas.filter(x=>x.bloco===bloco&&x.unidade===unidade);
+        const w=window.open('','_blank');
+        if(!w){alert('O navegador bloqueou a nova janela. Permita pop-ups para gerar o relatório.');return;}
+        const rows=regs.map(x=>`<tr><td>${esc(x.dataRegistro)}</td><td>${esc(x.protocolo)}</td><td>${esc(x.tipo)}</td><td>${esc(x.infracao)}</td><td>${esc(x.protocoloChamado||'—')}</td></tr>`).join('');
+        w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Histórico ${esc(unidade)}/${esc(bloco)}</title><style>body{font-family:Arial,sans-serif;color:#18313f;margin:30px}h1{color:#123b5d}table{width:100%;border-collapse:collapse}th{background:#123b5d;color:#fff;text-align:left;padding:8px}td{border:1px solid #ccd7dc;padding:7px;font-size:12px}.box{border:1px solid #d6e0e5;border-radius:8px;padding:12px;margin:12px 0} @media print{button{display:none}}</style></head><body><img src="${location.origin}/logo parqueclube.png" style="max-width:180px"><h1>Histórico de Advertências / Notificações</h1><div class="box"><strong>Unidade:</strong> ${esc(unidade)} &nbsp; <strong>Bloco:</strong> ${esc(bloco)}<br><strong>Total de registros:</strong> ${regs.length}</div><table><thead><tr><th>Data</th><th>Protocolo</th><th>Tipo</th><th>Infração</th><th>Chamado relacionado</th></tr></thead><tbody>${rows||'<tr><td colspan="5">Nenhum registro encontrado.</td></tr>'}</tbody></table><div class="box"><strong>Observação:</strong> documento destinado ao acompanhamento administrativo da unidade.</div><button onclick="window.print()">🖨️ Imprimir / Salvar PDF</button></body></html>`);w.document.close();setTimeout(()=>w.print(),500);
+    }
+    async function abrir(){
+        mostrarAdmin();
+        preencherDatas();
+        await carregarMedidas();
+        try{
+            await garantirChamadosCarregados();
+        }catch(e){
+            console.warn('V1.3 TESTE: chamados não disponíveis no D1 de teste. O cadastro administrativo continuará funcionando sem vínculo de chamado.', e);
+            chamados = [];
+            chamadosArquivadosV11 = [];
+            carregarChamadosSelect();
+        }
+    }
+    window.abrirAdministrativoParaChamado = async function(protocoloCodificado){
+        const protocolo=decodeURIComponent(protocoloCodificado||'');
+        mostrarAdmin();
+        preencherDatas();
+        try{
+            await garantirChamadosCarregados();
+            carregarChamadosSelect();
+            if(selectChamado) selectChamado.value=protocolo;
+            const todos=[...(typeof chamados!=='undefined'?chamados:[]),...(typeof chamadosArquivadosV11!=='undefined'?chamadosArquivadosV11:[])];
+            const c=todos.find(x=>x.protocolo===protocolo);
+            if(c){
+                if(c.bloco) document.getElementById('v13Bloco').value=String(c.bloco).replace(/^Bloco\s+/i,'').toUpperCase();
+                if(c.dataOcorrencia) document.getElementById('v13DataOcorrencia').value=c.dataOcorrencia;
+                if(c.ocorrencia){
+                    const sel=document.getElementById('v13Infracao');
+                    const opt=[...sel.options].find(o=>o.textContent.toLowerCase().includes(String(c.ocorrencia).toLowerCase()));
+                    if(opt) sel.value=opt.value;
+                }
+            }
+            document.getElementById('adminV13FormCard')?.scrollIntoView({behavior:'smooth'});
+        }catch(e){alert(e.message||'Não foi possível carregar o chamado relacionado.');}
+        carregarMedidas();
+    };
+    if(btnMenu) btnMenu.addEventListener('click',abrir);
+    document.getElementById('btnVoltarAdminMenu')?.addEventListener('click',()=>{ if(admin) admin.style.display='none'; });
+    if(btnAtualizar) btnAtualizar.addEventListener('click',carregarMedidas);
+    if(form) form.addEventListener('submit',salvar);
+    document.getElementById('btnNovaAdministrativaV13')?.addEventListener('click',()=>{document.getElementById('adminV13FormCard')?.scrollIntoView({behavior:'smooth'});limparForm();});
+    document.getElementById('btnCancelarAdministrativoV13')?.addEventListener('click',limparForm);
+    document.getElementById('btnConsultarHistoricoV13')?.addEventListener('click',()=>consultarHistorico());
+    document.getElementById('btnLimparHistoricoV13')?.addEventListener('click',()=>{
+        ultimaConsulta={bloco:'',unidade:''};
+        registrosDaPesquisaAtual=[];
+        filtroKpiAtual='todos';
+        document.getElementById('v13BuscaBloco').value='';
+        document.getElementById('v13BuscaUnidade').value='';
+        document.getElementById('v13HistoricoResumo').innerHTML='';
+        const kpis=document.getElementById('v13Kpis');
+        const aviso=document.getElementById('v13FiltroAtivo');
+        if(kpis) kpis.style.display='none';
+        if(aviso) aviso.style.display='none';
+        renderLista([]);
+    });
+    document.getElementById('btnRelatorioUnidadeV13')?.addEventListener('click',relatorioUnidade);
+
+    document.querySelectorAll('[data-v13-kpi]').forEach(btn=>{
+        const ativar=()=>aplicarFiltroKpi(btn.dataset.v13Kpi);
+        btn.addEventListener('click',ativar);
+        btn.addEventListener('keydown',e=>{
+            if(e.key==='Enter'||e.key===' '){e.preventDefault();ativar();}
+        });
+    });
+
+    function configurarModalAdm13(){
+        document.getElementById('btnFecharAdm13Modal')?.addEventListener('click',fecharModalAdm13);
+        document.getElementById('btnFecharAdm13Modal2')?.addEventListener('click',fecharModalAdm13);
+        document.getElementById('btnAbrirChamadoAdm13')?.addEventListener('click',consultarChamadoRelacionadoAdm13);
+        document.getElementById('btnImprimirAdm13Modal')?.addEventListener('click',imprimirMedidaAdm13);
+        document.getElementById('adm13DetalhesModal')?.addEventListener('click',(e)=>{
+            if(e.target.id==='adm13DetalhesModal') fecharModalAdm13();
+        });
+    }
+    if(document.readyState==='loading'){
+        document.addEventListener('DOMContentLoaded',configurarModalAdm13,{once:true});
+    }else{
+        configurarModalAdm13();
+    }
+    document.addEventListener('keydown',(e)=>{
+        if(e.key==='Escape') fecharModalAdm13();
+    });
+    selectChamado?.addEventListener('change',()=>{
+        const p=selectChamado.value;
+        const todos=[...(typeof chamados!=='undefined'?chamados:[]),...(typeof chamadosArquivadosV11!=='undefined'?chamadosArquivadosV11:[])];
+        const c=todos.find(x=>x.protocolo===p);
+        if(c && c.bloco){document.getElementById('v13Bloco').value=String(c.bloco).replace(/^Bloco\s+/i,'').toUpperCase();}
+        if(c && c.dataOcorrencia){document.getElementById('v13DataOcorrencia').value=c.dataOcorrencia;}
+        if(c && c.ocorrencia){const sel=document.getElementById('v13Infracao');const opt=[...sel.options].find(o=>o.textContent.toLowerCase().includes(String(c.ocorrencia).toLowerCase()));if(opt)sel.value=opt.value;}
+    });
+})();
+</script>
+
+<div id="adm13DetalhesModal" class="admin-v13-modal" aria-hidden="true">
+    <div class="admin-v13-modal-box" role="dialog" aria-modal="true" aria-labelledby="adm13ModalTitulo">
+        <div class="admin-v13-modal-head">
+            <div id="adm13ModalTitulo" class="admin-v13-modal-title">⚠️ Detalhes da Advertência</div>
+            <button type="button" id="btnFecharAdm13Modal" class="admin-v13-modal-close" aria-label="Fechar">×</button>
+        </div>
+        <div class="admin-v13-modal-body">
+            <div class="admin-v13-detail-grid">
+                <div class="admin-v13-detail">
+                    <div class="admin-v13-detail-label">Protocolo</div>
+                    <div id="adm13ModalProtocolo" class="admin-v13-detail-value"></div>
+                </div>
+                <div class="admin-v13-detail">
+                    <div class="admin-v13-detail-label">Tipo</div>
+                    <div id="adm13ModalTipo" class="admin-v13-detail-value"></div>
+                </div>
+                <div class="admin-v13-detail">
+                    <div class="admin-v13-detail-label">Data do registro</div>
+                    <div id="adm13ModalData" class="admin-v13-detail-value"></div>
+                </div>
+                <div class="admin-v13-detail">
+                    <div class="admin-v13-detail-label">Unidade / Bloco</div>
+                    <div id="adm13ModalUnidade" class="admin-v13-detail-value"></div>
+                </div>
+                <div class="admin-v13-detail full">
+                    <div class="admin-v13-detail-label">Infração / Ocorrência</div>
+                    <div id="adm13ModalInfracao" class="admin-v13-detail-value"></div>
+                </div>
+                <div class="admin-v13-detail">
+                    <div class="admin-v13-detail-label">Base no Regimento</div>
+                    <div id="adm13ModalBase" class="admin-v13-detail-value"></div>
+                </div>
+                <div class="admin-v13-detail">
+                    <div class="admin-v13-detail-label">Responsável</div>
+                    <div id="adm13ModalResponsavel" class="admin-v13-detail-value"></div>
+                </div>
+                <div class="admin-v13-detail full">
+                    <div class="admin-v13-detail-label">Descrição</div>
+                    <div id="adm13ModalDescricao" class="admin-v13-detail-value"></div>
+                </div>
+                <div class="admin-v13-detail full">
+                    <div class="admin-v13-detail-label">Observações</div>
+                    <div id="adm13ModalObservacoes" class="admin-v13-detail-value"></div>
+                </div>
+                <div class="admin-v13-detail full">
+                    <div class="admin-v13-detail-label">🔗 Chamado relacionado</div>
+                    <div id="adm13ModalChamado" class="admin-v13-detail-value"></div>
+                </div>
+                <div class="admin-v13-detail full">
+                    <div class="admin-v13-detail-label">Histórico da unidade</div>
+                    <div id="adm13ModalHistorico" class="admin-v13-detail-value"></div>
+                </div>
+            </div>
+            <div class="admin-v13-modal-footer">
+                <button type="button" id="btnAbrirChamadoAdm13" class="admin-v13-btn blue" style="display:none">🔎 Consultar chamado relacionado</button>
+                <button type="button" id="btnImprimirAdm13Modal" class="admin-v13-btn green">🖨️ Imprimir</button>
+                <button type="button" id="btnFecharAdm13Modal2" class="admin-v13-btn gray">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 </body>
 
