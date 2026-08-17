@@ -1233,6 +1233,26 @@ input[readonly] {
 }
 </style>
 
+
+<style id="area-execucao-estilo-blocos">
+/* Área/Local da Execução usa exatamente o mesmo padrão visual dos andares. */
+#areaExecucaoOptions.pavimentos-box {
+    width: 100%;
+}
+
+@media (min-width: 600px) {
+    #areaExecucaoOptions.pavimentos-box {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 480px) {
+    #areaExecucaoOptions.pavimentos-box {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
 </head>
 
 
@@ -1647,60 +1667,89 @@ input[readonly] {
 </div>
 
 
-<div class="form-group" id="areaExecucaoContainer" style="display:none;">
+<div class="form-group" id="areaExecucaoContainer" style="display:none;width:100%;">
 
-<label for="areaExecucaoDropdown">
-    Área/Local da Execução:
+<label>
+    Área / Local da Execução:
+    <small style="font-weight:normal;">
+        (selecione um ou mais locais)
+    </small>
 </label>
 
-<!-- Campo oculto compatível com o código existente do sistema -->
 <input type="hidden" id="areaExecucao" name="areaExecucao" value="">
 
-<div class="area-multi-wrapper">
-    <button type="button" id="areaExecucaoDropdown" class="area-multi-button" aria-expanded="false">
-        Selecione os locais <span>▼</span>
-    </button>
+<div id="areaExecucaoOptions" class="pavimentos-box">
 
-    <div id="areaExecucaoOptions" class="area-multi-options" style="display:none;">
+<label class="pavimento-option">
+    <input type="checkbox" name="areaExecucaoMulti" value="Condomínio Geral" id="areaCondominioGeral">
+    <span>Condomínio Geral</span>
+</label>
 
-        <label class="area-multi-option">
-            <input type="checkbox" data-area-value="Condomínio Geral">
-            <span>Condomínio Geral</span>
-        </label>
+<label class="pavimento-option">
+    <input type="checkbox" name="areaExecucaoMulti" value="Todos os Blocos" id="areaTodosBlocos">
+    <span>Todos os Blocos</span>
+</label>
 
-        <label class="area-multi-option">
-            <input type="checkbox" id="areaTodosBlocos" data-area-value="Todos os Blocos">
-            <span>Todos os Blocos</span>
-        </label>
+<label class="pavimento-option">
+    <input type="checkbox" name="areaExecucaoMulti" value="Bloco 1A">
+    <span>Bloco 1A</span>
+</label>
 
-        <div class="area-multi-group">
-            <div class="area-multi-title">Blocos</div>
-            <label class="area-multi-option"><input type="checkbox" data-area-value="Bloco 1A"><span>Bloco 1A</span></label>
-            <label class="area-multi-option"><input type="checkbox" data-area-value="Bloco 1B"><span>Bloco 1B</span></label>
-            <label class="area-multi-option"><input type="checkbox" data-area-value="Bloco 1C"><span>Bloco 1C</span></label>
-            <label class="area-multi-option"><input type="checkbox" data-area-value="Bloco 1D"><span>Bloco 1D</span></label>
-            <label class="area-multi-option"><input type="checkbox" data-area-value="Bloco 1E"><span>Bloco 1E</span></label>
-            <label class="area-multi-option"><input type="checkbox" data-area-value="Bloco 2A"><span>Bloco 2A</span></label>
-            <label class="area-multi-option"><input type="checkbox" data-area-value="Bloco 2B"><span>Bloco 2B</span></label>
-            <label class="area-multi-option"><input type="checkbox" data-area-value="Bloco 2C"><span>Bloco 2C</span></label>
-            <label class="area-multi-option"><input type="checkbox" data-area-value="Bloco 2D"><span>Bloco 2D</span></label>
-            <label class="area-multi-option"><input type="checkbox" data-area-value="Bloco 2E"><span>Bloco 2E</span></label>
-        </div>
+<label class="pavimento-option">
+    <input type="checkbox" name="areaExecucaoMulti" value="Bloco 1B">
+    <span>Bloco 1B</span>
+</label>
 
-        <label class="area-multi-option">
-            <input type="checkbox" data-area-value="Somente Área Comum Sub1">
-            <span>Somente Área Comum Sub1</span>
-        </label>
+<label class="pavimento-option">
+    <input type="checkbox" name="areaExecucaoMulti" value="Bloco 1C">
+    <span>Bloco 1C</span>
+</label>
 
-        <label class="area-multi-option">
-            <input type="checkbox" data-area-value="Somente Área Comum Sub2">
-            <span>Somente Área Comum Sub2</span>
-        </label>
+<label class="pavimento-option">
+    <input type="checkbox" name="areaExecucaoMulti" value="Bloco 1D">
+    <span>Bloco 1D</span>
+</label>
 
-        <div class="area-multi-footer">
-            <button type="button" id="limparAreasExecucao">Limpar seleção</button>
-        </div>
-    </div>
+<label class="pavimento-option">
+    <input type="checkbox" name="areaExecucaoMulti" value="Bloco 1E">
+    <span>Bloco 1E</span>
+</label>
+
+<label class="pavimento-option">
+    <input type="checkbox" name="areaExecucaoMulti" value="Bloco 2A">
+    <span>Bloco 2A</span>
+</label>
+
+<label class="pavimento-option">
+    <input type="checkbox" name="areaExecucaoMulti" value="Bloco 2B">
+    <span>Bloco 2B</span>
+</label>
+
+<label class="pavimento-option">
+    <input type="checkbox" name="areaExecucaoMulti" value="Bloco 2C">
+    <span>Bloco 2C</span>
+</label>
+
+<label class="pavimento-option">
+    <input type="checkbox" name="areaExecucaoMulti" value="Bloco 2D">
+    <span>Bloco 2D</span>
+</label>
+
+<label class="pavimento-option">
+    <input type="checkbox" name="areaExecucaoMulti" value="Bloco 2E">
+    <span>Bloco 2E</span>
+</label>
+
+<label class="pavimento-option">
+    <input type="checkbox" name="areaExecucaoMulti" value="Somente Área Comum Sub1">
+    <span>Somente Área Comum Sub1</span>
+</label>
+
+<label class="pavimento-option">
+    <input type="checkbox" name="areaExecucaoMulti" value="Somente Área Comum Sub2">
+    <span>Somente Área Comum Sub2</span>
+</label>
+
 </div>
 
 <small id="areaExecucaoResumo" style="display:block;margin-top:6px;color:#666;">
@@ -8810,80 +8859,181 @@ function inicializarDashboardV11(){
 
 <script id="area-multipla-v12-js">
 (function(){
-    const container=document.getElementById("areaExecucaoContainer");
-    const button=document.getElementById("areaExecucaoDropdown");
-    const options=document.getElementById("areaExecucaoOptions");
-    const hidden=document.getElementById("areaExecucao");
-    const summary=document.getElementById("areaExecucaoResumo");
-    const all=document.getElementById("areaTodosBlocos");
-    const clear=document.getElementById("limparAreasExecucao");
 
-    if(!container||!button||!options||!hidden)return;
+    const ocorrenciaSelect =
+        document.getElementById("ocorrencia");
 
-    const boxes=()=>Array.from(options.querySelectorAll("input[data-area-value]"));
-    const values=()=>boxes().filter(x=>x.checked).map(x=>x.getAttribute("data-area-value"));
+    const areaExecucaoContainer =
+        document.getElementById("areaExecucaoContainer");
 
-    function sync(){
-        const v=values();
-        hidden.value=v.join(", ");
-        if(!v.length){
-            button.innerHTML='Selecione os locais <span>▼</span>';
-            summary.textContent="Nenhum local selecionado.";
-        }else if(v.includes("Todos os Blocos")){
-            button.innerHTML='Todos os Blocos <span>▼</span>';
-            summary.textContent="Todos os blocos selecionados.";
-        }else{
-            button.innerHTML=(v.length===1?v[0]:v.length+" locais selecionados")+' <span>▼</span>';
-            summary.textContent=v.join(" • ");
-        }
-    }
+    const areaExecucaoHidden =
+        document.getElementById("areaExecucao");
 
-    function setBlocks(flag){
-        boxes().forEach(x=>{
-            const v=x.getAttribute("data-area-value");
-            if(v && v.indexOf("Bloco ")===0)x.checked=flag;
-        });
-    }
+    const areaTodosBlocos =
+        document.getElementById("areaTodosBlocos");
 
-    boxes().forEach(box=>{
-        box.addEventListener("change",function(){
-            const v=this.getAttribute("data-area-value");
-            if(v==="Todos os Blocos"){
-                setBlocks(this.checked);
-            }else if(v && v.indexOf("Bloco ")===0 && all){
-                const bs=boxes().filter(x=>{
-                    const q=x.getAttribute("data-area-value")||"";
-                    return q.indexOf("Bloco ")===0;
-                });
-                all.checked=bs.length>0 && bs.every(x=>x.checked);
+    const areaBoxes =
+        () => Array.from(
+            document.querySelectorAll(
+                'input[name="areaExecucaoMulti"]'
+            )
+        );
+
+    function limparAreasExecucao() {
+
+        areaBoxes().forEach(
+            checkbox => {
+                checkbox.checked = false;
             }
-            sync();
-        });
-    });
+        );
 
-    if(all)all.addEventListener("change",function(){setBlocks(this.checked);sync()});
+        if (areaExecucaoHidden) {
+            areaExecucaoHidden.value = "";
+        }
 
-    button.addEventListener("click",function(e){
-        e.stopPropagation();
-        const open=options.style.display!=="none";
-        options.style.display=open?"none":"block";
-        button.setAttribute("aria-expanded",String(!open));
-    });
+        atualizarResumoAreas();
+    }
 
-    options.addEventListener("click",function(e){e.stopPropagation()});
-    document.addEventListener("click",function(){
-        options.style.display="none";
-        button.setAttribute("aria-expanded","false");
-    });
+    function atualizarResumoAreas() {
 
-    if(clear)clear.addEventListener("click",function(){
-        boxes().forEach(x=>x.checked=false);
-        sync();
-    });
+        const selecionados =
+            areaBoxes()
+                .filter(checkbox => checkbox.checked)
+                .map(checkbox => checkbox.value);
 
-    // Compatibilidade com o código existente: document.getElementById("areaExecucao").value
-    window.getAreasExecucaoSelecionadas=values;
-    sync();
+        if (areaExecucaoHidden) {
+            areaExecucaoHidden.value =
+                selecionados.join(", ");
+        }
+
+        const resumo =
+            document.getElementById(
+                "areaExecucaoResumo"
+            );
+
+        if (resumo) {
+
+            resumo.textContent =
+                selecionados.length
+                    ? selecionados.join(" • ")
+                    : "Nenhum local selecionado.";
+
+        }
+
+    }
+
+    function atualizarAreaExecucao() {
+
+        const valor =
+            ocorrenciaSelect
+                ? ocorrenciaSelect.value
+                : "";
+
+        const exigeArea =
+            valor === "Dedetização" ||
+            valor === "Limpeza caixa d'água";
+
+        if (areaExecucaoContainer) {
+
+            areaExecucaoContainer.style.display =
+                exigeArea
+                    ? "block"
+                    : "none";
+
+        }
+
+        if (!exigeArea) {
+            limparAreasExecucao();
+        }
+
+    }
+
+    if (ocorrenciaSelect) {
+
+        ocorrenciaSelect.addEventListener(
+            "change",
+            atualizarAreaExecucao
+        );
+
+        atualizarAreaExecucao();
+
+    }
+
+    /*
+     * Funcionamento igual ao campo de andares:
+     *
+     * - Todos os Blocos é uma seleção exclusiva.
+     * - Se marcar Todos os Blocos, os blocos individuais são desmarcados.
+     * - Se marcar qualquer bloco individual, Todos os Blocos é desmarcado.
+     * - As demais opções podem ser combinadas.
+     */
+
+    areaBoxes().forEach(
+        checkbox => {
+
+            checkbox.addEventListener(
+                "change",
+                function() {
+
+                    if (
+                        this.id === "areaTodosBlocos" &&
+                        this.checked
+                    ) {
+
+                        areaBoxes().forEach(
+                            outro => {
+
+                                if (
+                                    outro !== this &&
+                                    outro.value.startsWith("Bloco ")
+                                ) {
+                                    outro.checked = false;
+                                }
+
+                            }
+                        );
+
+                    }
+
+                    if (
+                        this.value.startsWith("Bloco ") &&
+                        this.checked &&
+                        areaTodosBlocos &&
+                        areaTodosBlocos.checked
+                    ) {
+
+                        areaTodosBlocos.checked = false;
+
+                    }
+
+                    atualizarResumoAreas();
+
+                }
+            );
+
+        }
+    );
+
+    /*
+     * Disponibiliza a seleção para o restante do sistema.
+     */
+    window.getAreasExecucaoSelecionadas =
+        function() {
+
+            return areaBoxes()
+                .filter(
+                    checkbox =>
+                        checkbox.checked
+                )
+                .map(
+                    checkbox =>
+                        checkbox.value
+                );
+
+        };
+
+    atualizarResumoAreas();
+
 })();
 </script>
 
