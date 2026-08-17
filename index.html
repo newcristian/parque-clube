@@ -1264,6 +1264,46 @@ input[readonly] {
 }
 </style>
 
+
+<style id="v12-final-acoes">
+/* V1.2 — ações finais do painel */
+.stat-filtro {
+    cursor: pointer;
+    user-select: none;
+    transition: transform .15s ease, box-shadow .15s ease, outline .15s ease;
+}
+.stat-filtro:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,.12);
+}
+.stat-filtro:focus {
+    outline: 3px solid rgba(18,59,93,.25);
+    outline-offset: 2px;
+}
+.stat-filtro.ativo {
+    outline: 3px solid #123b5d;
+    outline-offset: 2px;
+    transform: translateY(-1px);
+}
+.btn-desarquivar-todos-v12 {
+    width: 100%;
+    margin-top: 10px;
+    padding: 11px 16px;
+    border: 0;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #123b5d;
+    color: #fff;
+    font-weight: 700;
+}
+.btn-desarquivar-todos-v12:hover {
+    filter: brightness(1.08);
+}
+.btn-desarquivar-todos-v12:disabled {
+    opacity: .65;
+    cursor: wait;
+}
+
 </head>
 
 
@@ -2197,6 +2237,14 @@ input[readonly] {
         class="btn-arquivar-todos-v11"
     >
         📦 ARQUIVAR TODOS OS RESOLVIDOS
+    </button>
+
+    <button
+        type="button"
+        id="btnDesarquivarTodos"
+        class="btn-desarquivar-todos-v12"
+    >
+        📥 DESARQUIVAR TODOS
     </button>
 
 </div>
@@ -6593,6 +6641,230 @@ if (btnArquivarTodosResolvidos) {
         arquivarTodosResolvidosV11
     );
 }
+
+
+
+/* =====================================================
+   DESARQUIVAR TODOS — V1.2
+   Exige confirmação + nova validação da senha administrativa.
+===================================================== */
+
+async function desarquivarTodosV12() {
+
+    if (!senhaAdministrativa) {
+        alert("Faça o login administrativo.");
+        return;
+    }
+
+    const arquivados = Array.isArray(chamadosArquivadosV11)
+        ? [...chamadosArquivadosV11]
+        : [];
+
+    if (!arquivados.length) {
+        alert("Não há chamados arquivados para desarquivar.");
+        return;
+    }
+
+    const confirmar = confirm(
+        "📥 DESARQUIVAR TODOS OS CHAMADOS\n\n" +
+        `Foram encontrados ${arquivados.length} chamado(s) arquivado(s).\n\n` +
+        "Eles sairão de CHAMADOS ARQUIVADOS e voltarão para a lista de chamados ativos. " +
+        "Os dados e históricos serão preservados.\n\n" +
+        "Deseja continuar?"
+    );
+
+    if (!confirmar) return;
+
+    const senha = prompt(
+        "🔐 SENHA DO PAINEL ADMINISTRATIVO\n\n" +
+        "Digite novamente a senha administrativa para confirmar o desarquivamento:"
+    );
+
+    if (senha === null) return;
+
+    if (!senha.trim()) {
+        alert("A senha administrativa não foi informada.");
+        return;
+    }
+
+    const botao = document.getElementById("btnDesarquivarTodos");
+    if (botao) {
+        botao.disabled = true;
+        botao.textContent = "⏳ Validando e desarquivando...";
+    }
+
+    let sucesso = 0;
+    let falhas = 0;
+
+    try {
+
+        /* Valida novamente a senha no Worker antes de executar a ação em massa. */
+        const login = await fetch(API, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                action: "login",
+                adminPassword: senha.trim()
+            })
+        });
+
+        const loginText = await login.text();
+        let loginData = {};
+        try {
+            loginData = loginText ? JSON.parse(loginText) : {};
+        } catch {
+            throw new Error("Resposta inválida ao validar a senha administrativa.");
+        }
+
+        if (!login.ok || !loginData.sucesso) {
+            throw new Error(loginData.erro || "Senha administrativa incorreta.");
+        }
+
+        for (const chamado of arquivados) {
+            try {
+                const resposta = await fetch(API, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        action: "reopen",
+                        protocolo: chamado.protocolo,
+                        adminPassword: senha.trim()
+                    })
+                });
+
+                const texto = await resposta.text();
+                let dados = {};
+                try {
+                    dados = texto ? JSON.parse(texto) : {};
+                } catch {
+                    throw new Error("Resposta inválida do servidor.");
+                }
+
+                if (!resposta.ok || !dados.sucesso) {
+                    throw new Error(dados.erro || "Falha ao desarquivar.");
+                }
+
+                const atualizado = dados.chamado;
+
+                chamadosArquivadosV11 = chamadosArquivadosV11.filter(
+                    item => item.protocolo !== atualizado.protocolo
+                );
+
+                chamados = chamados.filter(
+                    item => item.protocolo !== atualizado.protocolo
+                );
+
+                chamados.push(atualizado);
+                sucesso++;
+
+            } catch (erro) {
+                console.error("Falha ao desarquivar", chamado.protocolo, erro);
+                falhas++;
+            }
+        }
+
+        chamadosHistoricoV11 = [
+            ...chamados,
+            ...chamadosArquivadosV11
+        ];
+
+        atualizarEstatisticas();
+        mostrarChamados();
+        renderizarChamadosArquivadosV11();
+
+        document.getElementById("listaChamados").style.display = "block";
+        document.getElementById("listaChamadosArquivados").style.display = "none";
+        document.getElementById("btnChamadosAtivos")?.classList.add("ativo");
+        document.getElementById("btnChamadosArquivados")?.classList.remove("ativo");
+
+        alert(
+            "📥 Processo concluído.\n\n" +
+            `Desarquivados com sucesso: ${sucesso}\n` +
+            `Não desarquivados: ${falhas}`
+        );
+
+    } catch (erro) {
+        alert(erro.message || "Não foi possível desarquivar os chamados.");
+    } finally {
+        if (botao) {
+            botao.disabled = false;
+            botao.textContent = "📥 DESARQUIVAR TODOS";
+        }
+    }
+}
+
+const btnDesarquivarTodos = document.getElementById("btnDesarquivarTodos");
+if (btnDesarquivarTodos) {
+    btnDesarquivarTodos.addEventListener("click", desarquivarTodosV12);
+}
+
+
+/* =====================================================
+   FILTROS RÁPIDOS PELOS INDICADORES
+===================================================== */
+
+function limparFiltroRapidoStatsV12() {
+    document.querySelectorAll(".stat-filtro").forEach(el => {
+        el.classList.remove("ativo");
+    });
+}
+
+function aplicarFiltroRapidoStatsV12(valor) {
+
+    limparFiltroRapidoStatsV12();
+
+    const alvo = Array.from(document.querySelectorAll(".stat-filtro"))
+        .find(el => (el.dataset.filtroStatus || "") === valor);
+    if (alvo) alvo.classList.add("ativo");
+
+    const lista = document.getElementById("listaChamados");
+    const arquivados = document.getElementById("listaChamadosArquivados");
+    const filtroStatus = document.getElementById("filtroStatus");
+
+    if (valor === "__ARQUIVADOS__") {
+        if (lista) lista.style.display = "none";
+        if (arquivados) {
+            arquivados.style.display = "block";
+            renderizarChamadosArquivadosV11();
+        }
+        document.getElementById("btnChamadosArquivados")?.classList.add("ativo");
+        document.getElementById("btnChamadosAtivos")?.classList.remove("ativo");
+        return;
+    }
+
+    if (lista) lista.style.display = "block";
+    if (arquivados) arquivados.style.display = "none";
+    document.getElementById("btnChamadosAtivos")?.classList.add("ativo");
+    document.getElementById("btnChamadosArquivados")?.classList.remove("ativo");
+
+    if (filtroStatus) {
+        filtroStatus.value = valor;
+    }
+
+    mostrarChamados();
+}
+
+function inicializarFiltrosRapidosStatsV12() {
+
+    document.querySelectorAll(".stat-filtro").forEach(el => {
+
+        const executar = () => {
+            const valor = el.dataset.filtroStatus || "";
+            aplicarFiltroRapidoStatsV12(valor);
+        };
+
+        el.addEventListener("click", executar);
+
+        el.addEventListener("keydown", event => {
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                executar();
+            }
+        });
+    });
+}
+
+inicializarFiltrosRapidosStatsV12();
 
 
 /* =====================================================
