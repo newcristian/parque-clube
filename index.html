@@ -7103,14 +7103,19 @@ function contarBlocosOficiaisV12(lista){
     blocosOficiais.forEach(bloco => mapa[bloco] = 0);
 
     lista.forEach(c => {
-        const valor = String(c.bloco || "").trim().toUpperCase();
+        let valor = String(c.bloco || "").trim().toUpperCase();
+
+        // O formulário grava, por exemplo, "Bloco 2D".
+        // Para comparar com a lista oficial, normalizamos removendo o prefixo.
+        valor = valor.replace(/^BLOCO\s+/, "");
+
         if (blocosOficiais.includes(valor)) {
             mapa[valor]++;
         }
     });
 
     return blocosOficiais
-        .map(bloco => [bloco, mapa[bloco]])
+        .map(bloco => [`Bloco ${bloco}`, mapa[bloco]])
         .filter(([,qtd]) => qtd > 0)
         .sort((a,b) => b[1] - a[1] || a[0].localeCompare(b[0]));
 }
@@ -7474,7 +7479,8 @@ function renderDashboardV11(){
         ocorrencias:contarDashboardV11(lista,"ocorrencia",10),
         // Distribuição completa para o relatório: não limita às 10 categorias mais frequentes.
         ocorrenciasRelatorio:contarDashboardV11(lista,"ocorrencia",Number.MAX_SAFE_INTEGER),
-        areas:contarDashboardV11(lista,"bloco",10),
+        // Distribuição completa das áreas: todas as áreas do período entram no relatório.
+        areas:contarDashboardV11(lista,"bloco",Number.MAX_SAFE_INTEGER),
         prioridades:contarDashboardV11(lista,"prioridade",10),
         hoje:hojeLista.length,semana:semanaLista.length,mes:mesLista.length,
         pct,media,criticos,totalAnterior,variacaoPercentual,rankingBlocos,
