@@ -8800,6 +8800,95 @@ td:nth-child(2),td:nth-child(3){
     }
 }
 
+
+/* =========================================================
+   CHAMADOS POR ÁREA — GRÁFICO HORIZONTAL COMPACTO
+   Estilos incorporados ao HTML do relatório/PDF.
+========================================================= */
+.area-horizontal-chart{
+    width:100%;
+    box-sizing:border-box;
+    border:1px solid #dce4e9;
+    border-radius:10px;
+    padding:10px 12px;
+    background:#fff;
+    overflow:hidden;
+}
+
+.area-row{
+    display:grid;
+    grid-template-columns:145px minmax(0,1fr) 34px 48px;
+    align-items:center;
+    gap:7px;
+    min-height:24px;
+    margin:2px 0;
+    font-size:10px;
+}
+
+.area-row-label{
+    min-width:0;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    color:#33434d;
+    font-weight:700;
+}
+
+.area-row-track{
+    height:11px;
+    min-width:0;
+    background:#edf2f5;
+    border-radius:99px;
+    overflow:hidden;
+}
+
+.area-row-fill{
+    height:100%;
+    background:#1d78b5;
+    border-radius:99px;
+}
+
+.area-row-value{
+    text-align:right;
+    font-weight:800;
+    color:#123b5d;
+}
+
+.area-row-percent{
+    text-align:right;
+    color:#5f6e77;
+    font-weight:700;
+}
+
+@media print{
+    .area-horizontal-chart{
+        width:100% !important;
+        max-width:100% !important;
+        overflow:visible !important;
+        box-sizing:border-box !important;
+        padding:8px 10px !important;
+        break-inside:avoid !important;
+        page-break-inside:avoid !important;
+    }
+
+    .area-row{
+        grid-template-columns:125px minmax(0,1fr) 30px 44px;
+        min-height:21px;
+        gap:6px;
+        font-size:9px;
+        margin:1px 0;
+    }
+
+    .area-row-track{
+        height:9px;
+    }
+
+    .area-row-fill{
+        -webkit-print-color-adjust:exact !important;
+        print-color-adjust:exact !important;
+    }
+}
+
 </style>
 </head>
 
