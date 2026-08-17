@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "parque-clube",
+  "name": "parque-clube-v13-teste",
   "main": "worker.js",
   "compatibility_date": "2026-08-13",
 
@@ -12,8 +12,8 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "protocolos-parque-clube",
-      "database_id": "6307f910-37b7-4b7a-9e12-0441a78601e9"
+      "database_name": "protocolos-parque-clube-v13-teste",
+      "database_id": "32c76501-2eee-4624-bb22-dac8ab7c9c63"
     }
   ]
 }
