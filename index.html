@@ -7453,6 +7453,8 @@ function renderDashboardV11(){
     window.dashboardDadosAtualV11={
         intervalo,lista,total,abertos,andamento,resolvidos,cancelados,escopo,
         ocorrencias:contarDashboardV11(lista,"ocorrencia",10),
+        // Distribuição completa para o relatório: não limita às 10 categorias mais frequentes.
+        ocorrenciasRelatorio:contarDashboardV11(lista,"ocorrencia",Number.MAX_SAFE_INTEGER),
         areas:contarDashboardV11(lista,"bloco",10),
         prioridades:contarDashboardV11(lista,"prioridade",10),
         hoje:hojeLista.length,semana:semanaLista.length,mes:mesLista.length,
@@ -7649,6 +7651,9 @@ function gerarRelatorioHTMLV11(abrirJanela=true){
         </table>`;
     };
 
+
+    // A distribuição por categoria do relatório usa todas as categorias do período.
+    // O painel continua exibindo apenas as 10 mais frequentes para preservar o layout.
 
     const graficoPizzaPrioridade = (items,total) => {
         if(!items.length){
@@ -8771,8 +8776,8 @@ td:nth-child(2),td:nth-child(3){
 
 <section class="section">
     <h2>3. Chamados mais frequentes</h2>
-    ${graficoPizza(d.ocorrencias,d.total)}
-    ${tabela(d.ocorrencias,d.total)}
+    ${graficoPizza(d.ocorrenciasRelatorio || d.ocorrencias,d.total)}
+    ${tabela(d.ocorrenciasRelatorio || d.ocorrencias,d.total)}
 
     <div class="comparison-subsection">
         <h3>Comparação com o período anterior (${tipoComparacaoRelatorio})</h3>
