@@ -7846,7 +7846,23 @@ function gerarRelatorioHTMLV11(abrirJanela=true){
         : "";
 
     const graficoRankingBlocos = d.escopo === "condominio"
-        ? `<div class="bloco-horizontal-chart">${graficoAreasVertical(d.rankingBlocos,d.total)}</div>`
+        ? (() => {
+            const itens = d.rankingBlocos || [];
+            const maxBloco = Math.max(...itens.map(x => Number(x[1] || 0)), 1);
+            return `<div class="bloco-horizontal-chart"><div class="area-horizontal-chart">
+                ${itens.map(([nome,qtd]) => {
+                    const altura = ((Number(qtd || 0) / maxBloco) * 100).toFixed(1);
+                    return `<div class="area-row">
+                        <div class="area-row-value">${qtd}</div>
+                        <div class="area-row-track">
+                            <div class="area-row-fill" style="height:${altura}%"></div>
+                        </div>
+                        <div class="area-row-percent">${pct(qtd,d.total)}</div>
+                        <div class="area-row-label">${escapar(nome)}</div>
+                    </div>`;
+                }).join("")}
+            </div></div>`;
+        })()
         : "";
 
     const graficoEvolucao = (items) => {
@@ -8892,32 +8908,97 @@ td:nth-child(2),td:nth-child(3){
 
 
 /* V1.2 — gráfico dos 10 blocos oficiais, horizontal e compacto */
-.bloco-horizontal-chart .area-row{
-    grid-template-columns:90px minmax(0,1fr) 30px 44px;
-    min-height:20px;
-    margin:1px 0;
-    font-size:9px;
+.bloco-horizontal-chart{
+    width:100%;
+    box-sizing:border-box;
 }
-.bloco-horizontal-chart .area-row-track{
-    height:9px;
+.bloco-horizontal-chart .area-horizontal-chart{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:7px;
+    min-height:165px;
+    padding:12px 10px 8px;
+    overflow:hidden;
+}
+.bloco-horizontal-chart .area-row{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-end;
+    flex:1 1 0;
+    min-width:0;
+    height:140px;
+    margin:0;
+    gap:4px;
+    font-size:8px;
 }
 .bloco-horizontal-chart .area-row-label{
+    order:4;
+    width:100%;
+    text-align:center;
     white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    font-weight:700;
+}
+.bloco-horizontal-chart .area-row-track{
+    order:2;
+    width:100%;
+    max-width:42px;
+    height:92px;
+    display:flex;
+    align-items:flex-end;
+    background:#edf2f5;
+    border-radius:5px 5px 0 0;
+    overflow:hidden;
+}
+.bloco-horizontal-chart .area-row-fill{
+    width:100% !important;
+    height:var(--barra-altura,0%);
+    background:#1d78b5;
+    border-radius:5px 5px 0 0;
+}
+.bloco-horizontal-chart .area-row-value{
+    order:1;
+    width:100%;
+    text-align:center;
+    font-size:9px;
+    font-weight:800;
+    color:#123b5d;
+}
+.bloco-horizontal-chart .area-row-percent{
+    order:3;
+    width:100%;
+    text-align:center;
+    font-size:7.5px;
+    color:#5f6e77;
 }
 @media print{
     .bloco-horizontal-chart{
-        padding:7px 9px !important;
+        padding:0 !important;
         break-inside:avoid !important;
         page-break-inside:avoid !important;
     }
-    .bloco-horizontal-chart .area-row{
-        grid-template-columns:82px minmax(0,1fr) 28px 42px;
-        min-height:19px;
-        font-size:8.5px;
+    .bloco-horizontal-chart .area-horizontal-chart{
+        min-height:145px;
+        padding:8px 7px 6px !important;
         gap:5px;
     }
+    .bloco-horizontal-chart .area-row{
+        height:124px;
+        font-size:7.5px;
+        gap:3px;
+    }
     .bloco-horizontal-chart .area-row-track{
-        height:8px;
+        height:82px;
+        max-width:34px;
+    }
+    .bloco-horizontal-chart .area-row-value{
+        font-size:8px;
+    }
+    .bloco-horizontal-chart .area-row-percent{
+        font-size:7px;
     }
 }
 
