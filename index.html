@@ -7477,8 +7477,19 @@ function renderDashboardV11(){
     const escopoEl=document.getElementById("dashboardEscopo");
     const escopo=escopoEl ? escopoEl.value : "condominio";
 
+    // Normaliza o nome do bloco para aceitar os dois formatos usados no sistema:
+    // "2D" e "Bloco 2D".
+    const normalizarBlocoDashboardV11=(valor)=>{
+        return String(valor||"")
+            .trim()
+            .toUpperCase()
+            .replace(/^BLOCO\s+/, "");
+    };
+
     const porEscopo=(c)=>{
-        return escopo==="condominio" || String(c.bloco||"").trim()===escopo;
+        if(escopo==="condominio") return true;
+        return normalizarBlocoDashboardV11(c.bloco) ===
+               normalizarBlocoDashboardV11(escopo);
     };
 
     const chamadosEscopo=dadosRelatorioV11.filter(porEscopo);
@@ -7929,7 +7940,7 @@ function gerarRelatorioHTMLV11(abrirJanela=true){
             const grande = (fim - inicio) > 180 ? 1 : 0;
 
             const caminho = items.length === 1
-                ? `M ${cx} ${cy-radius} A ${raio} ${raio} 0 1 1 ${cx-0.01} ${cy-radius} L ${cx} ${cy} Z`
+                ? `M ${cx} ${cy-raio} A ${raio} ${raio} 0 1 1 ${cx-0.01} ${cy-raio} L ${cx} ${cy} Z`
                 : `M ${cx} ${cy} L ${x1} ${y1} A ${raio} ${raio} 0 ${grande} 1 ${x2} ${y2} Z`;
 
             return `<path d="${caminho}" fill="${cores[i % cores.length]}" stroke="#fff" stroke-width="2">
@@ -10133,26 +10144,7 @@ function inicializarDashboardV11(){
                 const detalhe = d.detalhe ? `\n\nDetalhe técnico: ${d.detalhe}` : '';
                 throw new Error((d.erro||'Não foi possível carregar os registros.') + detalhe);
             }
-            medidas=Array.isArray(d.medidas)?d.medidas.map(x=>({
-                ...x,
-                id: x.id ?? x.ID,
-                protocolo: String(x.protocolo ?? x.protocolo_administrativo ?? '').trim(),
-                tipo: String(x.tipo ?? '').trim(),
-                dataRegistro: String(x.dataRegistro ?? x.data_registro ?? '').trim(),
-                dataOcorrencia: String(x.dataOcorrencia ?? x.data_ocorrencia ?? '').trim(),
-                bloco: String(x.bloco ?? '').trim().toUpperCase(),
-                unidade: String(x.unidade ?? '').trim(),
-                infracao: String(x.infracao ?? '').trim(),
-                descricao: String(x.descricao ?? '').trim(),
-                baseRegimento: String(x.baseRegimento ?? x.base_regimento ?? '').trim(),
-                responsavel: String(x.responsavel ?? '').trim(),
-                observacoes: String(x.observacoes ?? '').trim(),
-                protocoloChamado: String(x.protocoloChamado ?? x.protocolo_chamado ?? '').trim(),
-                status: String(x.status ?? '').trim(),
-                criadoEm: String(x.criadoEm ?? x.criado_em ?? '').trim(),
-                atualizadoEm: String(x.atualizadoEm ?? x.atualizado_em ?? '').trim()
-            })):[]; 
-            console.log('V4.4 TESTE - medidas administrativas carregadas:', medidas.length, medidas);
+            medidas=Array.isArray(d.medidas)?d.medidas:[];
             registrosDaPesquisaAtual=[];
             filtroKpiAtual='todos';
             const kpis=document.getElementById('v13Kpis');
@@ -10237,14 +10229,7 @@ function inicializarDashboardV11(){
             return;
         }
 
-        const blocoFiltro=String(bloco||'').trim().toUpperCase();
-        const unidadeFiltro=String(unidade||'').trim();
-        const regs=medidas.filter(x=>{
-            const blocoRegistro=String(x.bloco??'').trim().toUpperCase();
-            const unidadeRegistro=String(x.unidade??'').trim();
-            return (!blocoFiltro||blocoRegistro===blocoFiltro) &&
-                   (!unidadeFiltro||unidadeRegistro===unidadeFiltro);
-        });
+        const regs=medidas.filter(x=>(!bloco||x.bloco===bloco)&&(!unidade||x.unidade===unidade));
         registrosDaPesquisaAtual=regs;
         filtroKpiAtual='todos';
 
@@ -10264,12 +10249,7 @@ function inicializarDashboardV11(){
         const bloco=ultimaConsulta.bloco || document.getElementById('v13BuscaBloco').value;
         const unidade=ultimaConsulta.unidade || document.getElementById('v13BuscaUnidade').value.trim();
         if(!bloco||!unidade){alert('Consulte primeiro o bloco e a unidade.');return;}
-        const blocoFiltro=String(bloco||'').trim().toUpperCase();
-        const unidadeFiltro=String(unidade||'').trim();
-        const regs=medidas.filter(x=>
-            String(x.bloco??'').trim().toUpperCase()===blocoFiltro &&
-            String(x.unidade??'').trim()===unidadeFiltro
-        );
+        const regs=medidas.filter(x=>x.bloco===bloco&&x.unidade===unidade);
         const w=window.open('','_blank');
         if(!w){alert('O navegador bloqueou a nova janela. Permita pop-ups para gerar o relatório.');return;}
         const rows=regs.map(x=>`<tr><td>${esc(x.dataRegistro)}</td><td>${esc(x.protocolo)}</td><td>${esc(x.tipo)}</td><td>${esc(x.infracao)}</td><td>${esc(x.protocoloChamado||'—')}</td></tr>`).join('');
