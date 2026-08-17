@@ -1253,6 +1253,17 @@ input[readonly] {
 }
 </style>
 
+
+<style id="data-servicos-v12">
+/* Data obrigatória para serviços de Dedetização e Limpeza caixa d'água */
+#dataOcorrenciaContainer[data-servico-especial="true"] {
+    border-left: 4px solid #17632d;
+    padding-left: 10px;
+    background: #f4faf5;
+    border-radius: 6px;
+}
+</style>
+
 </head>
 
 
@@ -1793,7 +1804,7 @@ input[readonly] {
     style="display:none;"
 >
 
-<label for="dataOcorrencia">
+<label for="dataOcorrencia" id="dataOcorrenciaLabel">
     Data do ocorrido:
 </label>
 
@@ -3046,15 +3057,51 @@ function atualizarIntervaloCamera() {
             : "";
 
     const ehCamera =
-        ocorrencia ===
-        "Câmera/Imagens";
+        ocorrencia === "Câmera/Imagens";
+
+    const ehServicoComData =
+        ocorrencia === "Dedetização" ||
+        ocorrencia === "Limpeza caixa d'água";
+
+    const mostrarData =
+        ehCamera ||
+        ehServicoComData;
+
+    const data =
+        document.getElementById(
+            "dataOcorrencia"
+        );
+
+    const labelData =
+        document.getElementById(
+            "dataOcorrenciaLabel"
+        );
 
     if (dataOcorrenciaContainer) {
 
         dataOcorrenciaContainer.style.display =
-            ehCamera
+            mostrarData
                 ? "block"
                 : "none";
+
+        dataOcorrenciaContainer.dataset.servicoEspecial =
+            String(ehServicoComData);
+
+    }
+
+    if (data) {
+
+        data.required =
+            ehServicoComData;
+
+    }
+
+    if (labelData) {
+
+        labelData.textContent =
+            ehServicoComData
+                ? "Data da execução/registro:"
+                : "Data do ocorrido:";
 
     }
 
@@ -3067,12 +3114,15 @@ function atualizarIntervaloCamera() {
 
     }
 
-    if (!ehCamera) {
+    if (!mostrarData) {
 
-        const data =
-            document.getElementById(
-                "dataOcorrencia"
-            );
+        if (data) {
+            data.value = "";
+        }
+
+    }
+
+    if (!ehCamera) {
 
         const inicial =
             document.getElementById(
@@ -3083,10 +3133,6 @@ function atualizarIntervaloCamera() {
             document.getElementById(
                 "horaFinal"
             );
-
-        if (data) {
-            data.value = "";
-        }
 
         if (inicial) {
             inicial.value = "";
