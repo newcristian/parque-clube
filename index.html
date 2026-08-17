@@ -1274,6 +1274,102 @@ input[readonly] {
 .btn-desarquivar-todos-v12:hover{filter:brightness(1.08);}
 .btn-desarquivar-todos-v12:disabled{opacity:.65;cursor:wait;}
 </style>
+
+<style id="areas-impressao-v12">
+/* =========================================================
+   V1.2 — CHAMADOS POR ÁREA
+   Gráfico horizontal compacto, próprio para A4.
+========================================================= */
+.area-horizontal-chart{
+    width:100%;
+    box-sizing:border-box;
+    border:1px solid #dce4e9;
+    border-radius:10px;
+    padding:10px 12px;
+    background:#fff;
+    overflow:hidden;
+}
+
+.area-row{
+    display:grid;
+    grid-template-columns:145px minmax(0,1fr) 34px 48px;
+    align-items:center;
+    gap:7px;
+    min-height:24px;
+    margin:2px 0;
+    font-size:10px;
+}
+
+.area-row-label{
+    min-width:0;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    color:#33434d;
+    font-weight:700;
+}
+
+.area-row-track{
+    height:11px;
+    min-width:0;
+    background:#edf2f5;
+    border-radius:99px;
+    overflow:hidden;
+}
+
+.area-row-fill{
+    height:100%;
+    background:#1d78b5;
+    border-radius:99px;
+}
+
+.area-row-value{
+    text-align:right;
+    font-weight:800;
+    color:#123b5d;
+}
+
+.area-row-percent{
+    text-align:right;
+    color:#5f6e77;
+    font-weight:700;
+}
+
+@media print{
+    .area-horizontal-chart{
+        width:100% !important;
+        max-width:100% !important;
+        overflow:visible !important;
+        box-sizing:border-box !important;
+        padding:8px 10px !important;
+    }
+
+    .area-row{
+        grid-template-columns:125px minmax(0,1fr) 30px 44px;
+        min-height:21px;
+        gap:6px;
+        font-size:9px;
+        margin:1px 0;
+    }
+
+    .area-row-track{
+        height:9px;
+    }
+
+    .area-row-fill{
+        -webkit-print-color-adjust:exact !important;
+        print-color-adjust:exact !important;
+    }
+}
+
+@media(max-width:650px){
+    .area-row{
+        grid-template-columns:105px minmax(0,1fr) 28px 43px;
+        font-size:9px;
+    }
+}
+</style>
+
 </head>
 
 
@@ -7568,7 +7664,9 @@ function gerarRelatorioHTMLV11(abrirJanela=true){
         </div>`;
     };
 
-    // Gráfico vertical para distribuição por área.
+    // Gráfico compacto horizontal para distribuição por área.
+    // É mais adequado para impressão A4 porque acomoda rótulos longos sem
+    // ultrapassar a largura da página.
     const graficoAreasVertical = (items,total) => {
         if(!items.length){
             return '<div class="empty">Nenhum chamado encontrado no período.</div>';
@@ -7576,21 +7674,19 @@ function gerarRelatorioHTMLV11(abrirJanela=true){
 
         const max = Math.max(...items.map(x=>x[1]),1);
 
-        return `<div class="vertical-chart">
-            <div class="vertical-bars">
-                ${items.map(([nome,qtd]) => {
-                    const altura = (qtd/max)*100;
-                    return `
-                        <div class="vertical-item">
-                            <div class="vertical-value">${qtd}</div>
-                            <div class="vertical-track">
-                                <div class="vertical-fill" style="height:${altura}%"></div>
-                            </div>
-                            <div class="vertical-label" title="${escapar(nome)}">${escapar(nome)}</div>
-                            <div class="vertical-percent">${pct(qtd,total)}</div>
-                        </div>`;
-                }).join("")}
-            </div>
+        return `<div class="area-horizontal-chart">
+            ${items.map(([nome,qtd]) => {
+                const largura = (qtd/max)*100;
+                return `
+                    <div class="area-row">
+                        <div class="area-row-label" title="${escapar(nome)}">${escapar(nome)}</div>
+                        <div class="area-row-track">
+                            <div class="area-row-fill" style="width:${largura}%"></div>
+                        </div>
+                        <div class="area-row-value">${qtd}</div>
+                        <div class="area-row-percent">${pct(qtd,total)}</div>
+                    </div>`;
+            }).join("")}
         </div>`;
     };
 
