@@ -7097,6 +7097,24 @@ function chamadoDentroDashboardV11(c,intervalo){
     const d=parseDataDashboardV11(c.dataAbertura);
     return d && d>=intervalo.inicio && d<=intervalo.fim;
 }
+function contarBlocosOficiaisV12(lista){
+    const blocosOficiais = ["1A","1B","1C","1D","1E","2A","2B","2C","2D","2E"];
+    const mapa = {};
+    blocosOficiais.forEach(bloco => mapa[bloco] = 0);
+
+    lista.forEach(c => {
+        const valor = String(c.bloco || "").trim().toUpperCase();
+        if (blocosOficiais.includes(valor)) {
+            mapa[valor]++;
+        }
+    });
+
+    return blocosOficiais
+        .map(bloco => [bloco, mapa[bloco]])
+        .filter(([,qtd]) => qtd > 0)
+        .sort((a,b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+}
+
 function contarDashboardV11(lista,campo,limite=10){
     const mapa={};
     lista.forEach(c=>{
@@ -7381,7 +7399,8 @@ function renderDashboardV11(){
         return {nome, atual, anterior, variacao};
     }).sort((a,b) => b.atual - a.atual);
 
-    const rankingBlocos = contarDashboardV11(lista, "bloco", 10);
+    // Chamados por bloco considera SOMENTE os 10 blocos oficiais do condomínio.
+    const rankingBlocos = contarBlocosOficiaisV12(lista);
 
     // Evolução dos últimos 6 meses, sempre até a data atual quando o mês é o corrente.
     const evolucaoMensal = [];
@@ -8814,7 +8833,7 @@ td:nth-child(2),td:nth-child(3){
 <section class="section">
     <h2>6. Chamados por bloco</h2>
     ${d.escopo === "condominio" ? `
-        <p class="section-note">Ranking dos blocos com maior número de chamados no período.</p>
+        <p class="section-note">Ranking dos 10 blocos oficiais do condomínio com chamados registrados no período.</p>
         ${graficoRankingBlocos}
         ${rankingBlocosTabela}
     ` : `
