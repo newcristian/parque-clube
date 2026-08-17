@@ -1202,6 +1202,121 @@ input[readonly] {
 
 </style>
 
+
+<style id="area-execucao-multipla-v12">
+/* =========================================================
+   V1.2 — ÁREA/LOCAL DA EXECUÇÃO COM SELEÇÃO MÚLTIPLA
+========================================================= */
+
+.multi-select-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.multi-select-button {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #fff;
+    color: #374151;
+    text-align: left;
+    cursor: pointer;
+    font: inherit;
+}
+
+.multi-select-button:hover {
+    border-color: #17632d;
+}
+
+.multi-select-arrow {
+    float: right;
+}
+
+.multi-select-options {
+    position: absolute;
+    z-index: 1000;
+    left: 0;
+    right: 0;
+    max-height: 390px;
+    overflow-y: auto;
+    margin-top: 5px;
+    padding: 8px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 8px 24px rgba(0,0,0,.14);
+}
+
+.multi-option {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 8px;
+    margin: 0;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.multi-option:hover {
+    background: #f1f5f9;
+}
+
+.multi-option input {
+    width: 17px;
+    height: 17px;
+    margin: 0;
+    flex: 0 0 auto;
+}
+
+.multi-option-group {
+    margin: 5px 0;
+    padding: 5px 0;
+    border-top: 1px solid #e5e7eb;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.multi-option-group-title {
+    padding: 7px 8px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #64748b;
+}
+
+.multi-select-actions {
+    display: flex;
+    justify-content: flex-end;
+    padding: 8px 4px 2px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.multi-select-actions .secondary-btn {
+    padding: 7px 11px;
+    border: 0;
+    border-radius: 6px;
+    cursor: pointer;
+    background: #64748b;
+    color: #fff;
+}
+
+.field-help {
+    display: block;
+    margin-top: 6px;
+    color: #64748b;
+    font-size: 12px;
+}
+
+@media (max-width: 599px) {
+    .multi-select-options {
+        position: relative;
+        max-height: 330px;
+    }
+}
+</style>
+
 </head>
 
 
@@ -1615,32 +1730,102 @@ input[readonly] {
 
 </div>
 
-<div class="form-group" id="areaExecucaoContainer" style="display:none;">
 
-<label for="areaExecucao">
-    Área/Local da Execução:
-</label>
 
-<select id="areaExecucao">
-    <option value="">Selecione a área/local</option>
-    <option>Condomínio Geral</option>
-    <option>Todos os Blocos</option>
-    <option>Bloco 1A</option>
-    <option>Bloco 1B</option>
-    <option>Bloco 1C</option>
-    <option>Bloco 1D</option>
-    <option>Bloco 1E</option>
-    <option>Bloco 2A</option>
-    <option>Bloco 2B</option>
-    <option>Bloco 2C</option>
-    <option>Bloco 2D</option>
-    <option>Bloco 2E</option>
-    <option>Somente Área Comum Sub1</option>
-    <option>Somente Área Comum Sub2</option>
-</select>
+<input type="hidden" id="areaExecucao" name="areaExecucao" value="">
 
+<div id="areaExecucaoContainer" class="form-group" style="display:none;">
+    <label for="areaExecucaoDropdown">Área/Local da Execução</label>
+
+    <div class="multi-select-wrapper" id="areaExecucaoWrapper">
+        <button type="button"
+                id="areaExecucaoDropdown"
+                class="multi-select-button"
+                aria-expanded="false">
+            Selecionar locais <span class="multi-select-arrow">▼</span>
+        </button>
+
+        <div id="areaExecucaoOptions"
+             class="multi-select-options"
+             style="display:none;">
+
+            <label class="multi-option">
+                <input type="checkbox" name="areaExecucao" value="Condomínio Geral">
+                <span>Condomínio Geral</span>
+            </label>
+
+            <label class="multi-option">
+                <input type="checkbox" name="areaExecucao" value="Todos os Blocos" id="areaTodosBlocos">
+                <span>Todos os Blocos</span>
+            </label>
+
+            <div class="multi-option-group">
+                <div class="multi-option-group-title">Blocos</div>
+
+                <label class="multi-option">
+                    <input type="checkbox" name="areaExecucao" value="Bloco 1A">
+                    <span>Bloco 1A</span>
+                </label>
+                <label class="multi-option">
+                    <input type="checkbox" name="areaExecucao" value="Bloco 1B">
+                    <span>Bloco 1B</span>
+                </label>
+                <label class="multi-option">
+                    <input type="checkbox" name="areaExecucao" value="Bloco 1C">
+                    <span>Bloco 1C</span>
+                </label>
+                <label class="multi-option">
+                    <input type="checkbox" name="areaExecucao" value="Bloco 1D">
+                    <span>Bloco 1D</span>
+                </label>
+                <label class="multi-option">
+                    <input type="checkbox" name="areaExecucao" value="Bloco 1E">
+                    <span>Bloco 1E</span>
+                </label>
+                <label class="multi-option">
+                    <input type="checkbox" name="areaExecucao" value="Bloco 2A">
+                    <span>Bloco 2A</span>
+                </label>
+                <label class="multi-option">
+                    <input type="checkbox" name="areaExecucao" value="Bloco 2B">
+                    <span>Bloco 2B</span>
+                </label>
+                <label class="multi-option">
+                    <input type="checkbox" name="areaExecucao" value="Bloco 2C">
+                    <span>Bloco 2C</span>
+                </label>
+                <label class="multi-option">
+                    <input type="checkbox" name="areaExecucao" value="Bloco 2D">
+                    <span>Bloco 2D</span>
+                </label>
+                <label class="multi-option">
+                    <input type="checkbox" name="areaExecucao" value="Bloco 2E">
+                    <span>Bloco 2E</span>
+                </label>
+            </div>
+
+            <label class="multi-option">
+                <input type="checkbox" name="areaExecucao" value="Somente Área Comum Sub1">
+                <span>Somente Área Comum Sub1</span>
+            </label>
+
+            <label class="multi-option">
+                <input type="checkbox" name="areaExecucao" value="Somente Área Comum Sub2">
+                <span>Somente Área Comum Sub2</span>
+            </label>
+
+            <div class="multi-select-actions">
+                <button type="button" id="limparAreasExecucao" class="secondary-btn">
+                    Limpar seleção
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <small id="areaExecucaoResumo" class="field-help">
+        Nenhum local selecionado.
+    </small>
 </div>
-
 <div class="form-group">
 
 <label for="prioridade">
@@ -8535,6 +8720,123 @@ td:nth-child(2),td:nth-child(3){
 </footer>
 
 </div>
+
+<script id="area-execucao-multipla-js">
+(function () {
+    const container = document.getElementById("areaExecucaoContainer");
+    const button = document.getElementById("areaExecucaoDropdown");
+    const options = document.getElementById("areaExecucaoOptions");
+    const summary = document.getElementById("areaExecucaoResumo");
+    const clearButton = document.getElementById("limparAreasExecucao");
+    const allBlocks = document.getElementById("areaTodosBlocos");
+
+    if (!container || !button || !options) return;
+
+    const checks = () =>
+        Array.from(options.querySelectorAll('input[name="areaExecucao"]'));
+
+    function selected() {
+        return checks().filter(c => c.checked).map(c => c.value);
+    }
+
+    function updateSummary() {
+        const values = selected();
+
+        if (!values.length) {
+            button.innerHTML = 'Selecionar locais <span class="multi-select-arrow">▼</span>';
+            summary.textContent = "Nenhum local selecionado.";
+            return;
+        }
+
+        if (values.includes("Todos os Blocos")) {
+            button.innerHTML = 'Todos os Blocos <span class="multi-select-arrow">▼</span>';
+            summary.textContent = "Todos os blocos selecionados.";
+            return;
+        }
+
+        const label = values.length === 1
+            ? values[0]
+            : `${values.length} locais selecionados`;
+
+        button.innerHTML = `${label} <span class="multi-select-arrow">▼</span>`;
+        summary.textContent = values.join(" • ");
+    }
+
+    function setAllBlocks(checked) {
+        checks().forEach(c => {
+            if (c.value.startsWith("Bloco ")) {
+                c.checked = checked;
+            }
+        });
+    }
+
+    if (allBlocks) {
+        allBlocks.addEventListener("change", function () {
+            setAllBlocks(this.checked);
+            updateSummary();
+        });
+    }
+
+    checks().forEach(c => {
+        c.addEventListener("change", function () {
+            if (this.value.startsWith("Bloco ") && allBlocks) {
+                const blocks = checks().filter(x => x.value.startsWith("Bloco "));
+                allBlocks.checked = blocks.length > 0 && blocks.every(x => x.checked);
+            }
+            if (this.value === "Todos os Blocos" && !this.checked) {
+                setAllBlocks(false);
+            }
+            updateSummary();
+        });
+    });
+
+    button.addEventListener("click", function (event) {
+        event.stopPropagation();
+        const open = options.style.display !== "none";
+        options.style.display = open ? "none" : "block";
+        button.setAttribute("aria-expanded", String(!open));
+    });
+
+    options.addEventListener("click", function (event) {
+        event.stopPropagation();
+    });
+
+    document.addEventListener("click", function () {
+        options.style.display = "none";
+        button.setAttribute("aria-expanded", "false");
+    });
+
+    if (clearButton) {
+        clearButton.addEventListener("click", function () {
+            checks().forEach(c => c.checked = false);
+            updateSummary();
+        });
+    }
+
+    // Exposto para o código existente poder obter a seleção.
+    window.getAreasExecucaoSelecionadas = selected;
+
+    updateSummary();
+})();
+</script>
+
+
+<script id="area-execucao-sync-v12">
+(function () {
+    const sync = () => {
+        const hidden = document.getElementById("areaExecucao");
+        if (!hidden || typeof window.getAreasExecucaoSelecionadas !== "function") return;
+        hidden.value = window.getAreasExecucaoSelecionadas().join(", ");
+    };
+    document.addEventListener("change", function (e) {
+        if (e.target && e.target.name === "areaExecucao") sync();
+    });
+    document.addEventListener("click", function () {
+        setTimeout(sync, 0);
+    });
+})();
+</script>
+
 </body>
 </html>`;
 
