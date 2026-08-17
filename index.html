@@ -7202,7 +7202,6 @@ function contarBlocosOficiaisV12(lista){
         let valor = String(c.bloco || "").trim().toUpperCase();
 
         // O formulário grava, por exemplo, "Bloco 2D".
-        // Para comparar com a lista oficial, normalizamos removendo o prefixo.
         valor = valor.replace(/^BLOCO\s+/, "");
 
         if (blocosOficiais.includes(valor)) {
@@ -7210,10 +7209,12 @@ function contarBlocosOficiaisV12(lista){
         }
     });
 
-    return blocosOficiais
-        .map(bloco => [`Bloco ${bloco}`, mapa[bloco]])
-        .filter(([,qtd]) => qtd > 0)
-        .sort((a,b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+    // Retorna SEM remover os blocos com zero.
+    // A ordem é fixa para sempre mostrar os 10 blocos do condomínio.
+    return blocosOficiais.map(bloco => [
+        `Bloco ${bloco}`,
+        mapa[bloco]
+    ]);
 }
 
 function contarDashboardV11(lista,campo,limite=10){
@@ -7845,7 +7846,7 @@ function gerarRelatorioHTMLV11(abrirJanela=true){
         : "";
 
     const graficoRankingBlocos = d.escopo === "condominio"
-        ? graficoAreasVertical(d.rankingBlocos,d.total)
+        ? `<div class="bloco-horizontal-chart">${graficoAreasVertical(d.rankingBlocos,d.total)}</div>`
         : "";
 
     const graficoEvolucao = (items) => {
@@ -8889,6 +8890,37 @@ td:nth-child(2),td:nth-child(3){
     }
 }
 
+
+/* V1.2 — gráfico dos 10 blocos oficiais, horizontal e compacto */
+.bloco-horizontal-chart .area-row{
+    grid-template-columns:90px minmax(0,1fr) 30px 44px;
+    min-height:20px;
+    margin:1px 0;
+    font-size:9px;
+}
+.bloco-horizontal-chart .area-row-track{
+    height:9px;
+}
+.bloco-horizontal-chart .area-row-label{
+    white-space:nowrap;
+}
+@media print{
+    .bloco-horizontal-chart{
+        padding:7px 9px !important;
+        break-inside:avoid !important;
+        page-break-inside:avoid !important;
+    }
+    .bloco-horizontal-chart .area-row{
+        grid-template-columns:82px minmax(0,1fr) 28px 42px;
+        min-height:19px;
+        font-size:8.5px;
+        gap:5px;
+    }
+    .bloco-horizontal-chart .area-row-track{
+        height:8px;
+    }
+}
+
 </style>
 </head>
 
@@ -9024,7 +9056,7 @@ td:nth-child(2),td:nth-child(3){
 <section class="section">
     <h2>6. Chamados por bloco</h2>
     ${d.escopo === "condominio" ? `
-        <p class="section-note">Ranking dos 10 blocos oficiais do condomínio com chamados registrados no período.</p>
+        <p class="section-note">Chamados registrados em cada um dos 10 blocos oficiais do condomínio no período, incluindo blocos sem chamados.</p>
         ${graficoRankingBlocos}
         ${rankingBlocosTabela}
     ` : `
