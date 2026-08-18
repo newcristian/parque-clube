@@ -1763,6 +1763,32 @@ button:active{
     }
 }
 
+/* V4.5 — MELHORIAS DA TELA INICIAL */
+.home-bloco-titulo{
+    margin:10px 0 6px;padding:9px 12px;border-radius:10px;
+    background:#f2f7f3;border:1px solid #dce8df;color:#17632d;
+    font-size:13px;font-weight:800;letter-spacing:.2px;
+    text-transform:uppercase;
+}
+.home-bloco-subtitulo{margin:-2px 0 10px;color:#64748b;font-size:12px;line-height:1.4}
+.home-status-rapido{
+    display:none;margin:16px 0;padding:18px;border:1px solid #b9d9c2;
+    border-radius:14px;background:linear-gradient(180deg,#f0faf3,#fff);
+    box-shadow:0 6px 18px rgba(23,99,45,.08);text-align:center;
+}
+.home-status-rapido .status-icone{font-size:27px;margin-bottom:5px}
+.home-status-rapido .status-titulo{color:#17632d;font-size:17px;font-weight:800}
+.home-status-rapido .status-texto{margin-top:4px;color:#52606d;font-size:12px}
+.home-status-rapido .status-protocolo{
+    display:inline-block;margin:10px 0 12px;padding:8px 14px;border-radius:9px;
+    background:#fff;border:1px solid #b9d9c2;color:#104a22;font-size:18px;
+    font-weight:900;letter-spacing:.4px;
+}
+.btn-status-rapido{width:100%;max-width:320px;min-height:44px;border:0;border-radius:10px;background:#17632d;color:#fff;font-weight:800;cursor:pointer}
+.home-rodape{margin:22px 0 4px;padding:14px 8px 4px;border-top:1px solid #dfe8e2;text-align:center;color:#64748b;font-size:11px;line-height:1.5}
+.home-rodape strong{display:block;color:#17632d;font-size:12px}
+@media(max-width:700px){.home-bloco-titulo{margin-top:10px}.home-status-rapido{padding:15px}}
+
 </style>
 </head>
 
@@ -1832,6 +1858,8 @@ button:active{
 </button>
 
 
+<div class="home-bloco-titulo" style="grid-column:1 / -1;">🔐 Área Administrativa</div>
+<div class="home-bloco-subtitulo" style="grid-column:1 / -1;">Acesso restrito à administração do Parque Clube.</div>
 <button
     type="button"
     class="btn-azul"
@@ -1851,6 +1879,16 @@ button:active{
      ABRIR CHAMADO
 ===================================================== -->
 
+
+<div id="homeStatusRapido" class="home-status-rapido">
+    <div class="status-icone">✅</div>
+    <div class="status-titulo">Chamado registrado!</div>
+    <div class="status-texto">Seu protocolo foi gerado com sucesso:</div>
+    <div id="homeStatusProtocolo" class="status-protocolo">-</div>
+    <button type="button" class="btn-status-rapido" onclick="consultarProtocoloRapido()">
+        🔎 Consultar chamado
+    </button>
+</div>
 <section
     id="secaoAbrir"
     class="section active"
@@ -4088,6 +4126,9 @@ document
 
                 sucesso.style.display =
                     "block";
+        mostrarStatusRapidoAposCadastro(
+            resultado.protocolo
+        );
 
 
                 dataHoraRegistroWhatsApp =
@@ -7593,6 +7634,35 @@ function aplicarFiltroRapidoV12(valor, elemento) {
         });
     });
 })();
+
+function mostrarStatusRapidoAposCadastro(protocolo) {
+    const card = document.getElementById("homeStatusRapido");
+    const campo = document.getElementById("homeStatusProtocolo");
+    if (!card || !campo || !protocolo) return;
+    campo.textContent = protocolo;
+    card.style.display = "block";
+}
+
+function consultarProtocoloRapido() {
+    const protocolo = document.getElementById("homeStatusProtocolo")?.textContent?.trim();
+    if (!protocolo || protocolo === "-") return;
+
+    if (typeof mostrarSecao === "function") {
+        mostrarSecao("consultar");
+    }
+
+    const input = document.getElementById("consultaProtocolo");
+    if (input) input.value = protocolo;
+
+    if (typeof consultarProtocolo === "function") {
+        consultarProtocolo();
+    } else if (typeof localizarProtocolo === "function") {
+        localizarProtocolo();
+    } else if (input) {
+        input.focus();
+    }
+}
+
 </script>
 
 
@@ -10728,6 +10798,12 @@ function inicializarDashboardV11(){
 })();
 
 </script>
+
+<div class="home-rodape">
+    <strong>PARQUE CLUBE</strong>
+    Sistema de Gestão de Chamados<br>
+    Versão 4.5
+</div>
 </body>
 
 </html>
