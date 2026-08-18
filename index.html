@@ -11258,9 +11258,28 @@ Consulte todos os protocolos de Advertências e Notificações gerados pelo sist
 </select>
 </div>
 <div class="admin-v13-actions no-print" style="align-items:end">
-<button class="admin-v13-btn blue" id="btnBuscarProtocolosAdmV13" type="button">🔎 Consultar</button>
+<button class="admin-v13-btn blue" id="btnBuscarProtocolosAdmV13" type="button">🔎 Consultar</button><button class="admin-v13-btn green" id="btnImprimirProtocolosAdmV13" type="button">🖨️ Imprimir protocolos</button>
 <button class="admin-v13-btn gray" id="btnLimparProtocolosAdmV13" type="button">Limpar</button>
 <button class="admin-v13-btn gray" id="btnFecharProtocolosAdmV13" type="button">↩️ Voltar</button>
+</div>
+<div class="full no-print" style="margin-top:4px">
+<label class="admin-v13-label">📅 Período para impressão dos protocolos</label>
+<select class="admin-v13-select" id="v13PeriodoImpressaoAdm">
+<option value="hoje">Hoje</option>
+<option value="mes">Este mês</option>
+<option value="mes_anterior">Mês anterior</option>
+<option value="periodo">Período personalizado</option>
+</select>
+</div>
+<div class="admin-v13-grid full no-print" id="v13PeriodoPersonalizadoAdm" style="display:none;margin-top:4px">
+<div>
+<label class="admin-v13-label">Data inicial</label>
+<input class="admin-v13-input" id="v13DataInicialImpressaoAdm" type="date">
+</div>
+<div>
+<label class="admin-v13-label">Data final</label>
+<input class="admin-v13-input" id="v13DataFinalImpressaoAdm" type="date">
+</div>
 </div>
 </div>
 <div id="v13ProtocolosResumoAdm" style="margin-top:12px"></div>
@@ -12054,7 +12073,172 @@ async function carregarMedidas(){
     }
 
     
-    function renderProtocolosAdministrativos(filtroTexto='', filtroTipo=''){
+    
+    function imprimirProtocolosAdministrativos(){
+        const texto=document.getElementById('v13BuscaProtocoloAdm')?.value||'';
+        const tipo=document.getElementById('v13FiltroTipoAdm')?.value||'';
+        const periodo=document.getElementById('v13PeriodoImpressaoAdm')?.value||'hoje';
+        const termo=String(texto).trim().toLowerCase();
+
+        const agora=new Date();
+        const pad=n=>String(n).padStart(2,'0');
+        const isoLocal=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+
+        let inicio='', fim='', descricaoPeriodo='Hoje';
+
+        if(periodo==='hoje'){
+            inicio=isoLocal(agora);
+            fim=inicio;
+            descricaoPeriodo='Hoje';
+        }else if(periodo==='mes'){
+            inicio=`${agora.getFullYear()}-${pad(agora.getMonth()+1)}-01`;
+            fim=isoLocal(new Date(agora.getFullYear(),agora.getMonth()+1,0));
+            descricaoPeriodo='Este mês';
+        }else if(periodo==='mes_anterior'){
+            const primeiroMesAnterior=new Date(agora.getFullYear(),agora.getMonth()-1,1);
+            inicio=isoLocal(primeiroMesAnterior);
+            fim=isoLocal(new Date(agora.getFullYear(),agora.getMonth(),0));
+            descricaoPeriodo='Mês anterior';
+        }else{
+            inicio=document.getElementById('v13DataInicialImpressaoAdm')?.value||'';
+            fim=document.getElementById('v13DataFinalImpressaoAdm')?.value||'';
+            descricaoPeriodo=(inicio&&fim)?`${formatarData(inicio)} a ${formatarData(fim)}`:'Período personalizado';
+            if(!inicio||!fim){
+                alert('Informe a data inicial e a data final para gerar o relatório.');
+                return;
+            }
+            if(inicio>fim){
+                alert('A data inicial não pode ser posterior à data final.');
+                return;
+            }
+        }
+
+        const regs=medidas
+            .filter(x=>{
+                const d=String(x.dataRegistro||'').slice(0,10);
+                return d && d>=inicio && d<=fim;
+            })
+            .filter(x=>!tipo || String(x.tipo||'')===tipo)
+            .filter(x=>{
+                if(!termo) return true;
+                const base=[
+                    x.protocolo,x.unidade,x.bloco,x.tipo,
+                    x.infracao,x.descricao,x.protocoloChamado
+                ].map(v=>String(v||'').toLowerCase()).join(' ');
+                return base.includes(termo);
+            })
+            .slice()
+            .sort((a,b)=>String(b.dataRegistro||'').localeCompare(String(a.dataRegistro||'')) ||
+                         String(b.protocolo||'').localeCompare(String(a.protocolo||'')));
+
+        const esc=(v)=>String(v??'')
+            .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+            .replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+            .replace(/'/g,'&#39;');
+
+        const emissao=agora.toLocaleDateString('pt-BR')+' às '+
+            agora.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+
+        const rows=regs.map(x=>`
+        <tr>
+          <td><strong>${esc(x.protocolo||'—')}</strong></td>
+          <td>${esc(formatarData(x.dataRegistro||''))}</td>
+          <td>${esc(formatarData(x.dataOcorrencia||x.dataInfracao||x.dataFato||''))}</td>
+          <td>${esc(x.unidade||'—')} / ${esc(x.bloco||'—')}</td>
+          <td>${esc(x.tipo||'—')}</td>
+          <td>${esc(x.infracao||'—')}</td>
+        </tr>`).join('');
+
+        const w=window.open('','_blank','width=1100,height=900');
+        if(!w){
+            alert('O navegador bloqueou a janela de impressão. Permita pop-ups para este site.');
+            return;
+        }
+
+        w.document.write(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<title>RELATÓRIO DE PROTOCOLOS ADMINISTRATIVOS - Parque Clube</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:#fff}
+body{font-family:Arial,Helvetica,sans-serif;color:#18313f;font-size:11px}
+.page{width:210mm;min-height:297mm;margin:0 auto;padding:12mm 14mm 16mm}
+.header{display:flex;align-items:center;gap:13px;padding-bottom:6px;border-bottom:2px solid #222}
+.header-logo{width:92px;height:58px;object-fit:contain}
+.header-text{flex:1;text-align:center;padding-right:92px}
+.header-title{font-family:"Times New Roman",Times,serif;font-size:20px;font-weight:700;line-height:1.05}
+.header-sub{font-family:"Times New Roman",Times,serif;font-size:10.5px;line-height:1.25;margin-top:3px}
+.header-phone{font-family:"Times New Roman",Times,serif;font-size:10.5px}
+.title{text-align:center;font-size:18px;color:#123b5d;margin:20px 0 12px;font-weight:800;text-transform:uppercase}
+.meta{border:1px solid #d6e0e5;border-radius:7px;padding:9px;margin-bottom:10px}
+.meta strong{color:#123b5d}
+.emissao{text-align:right;font-size:9px;color:#555;margin-top:6px}
+table{width:100%;border-collapse:collapse;table-layout:fixed;margin-top:12px}
+th{background:#123b5d;color:#fff;text-align:left;padding:7px 6px;font-size:10px}
+td{border:1px solid #ccd7dc;padding:6px;font-size:9.5px;vertical-align:top;word-wrap:break-word}
+th:nth-child(1){width:18%}
+th:nth-child(2){width:13%}
+th:nth-child(3){width:13%}
+th:nth-child(4){width:18%}
+th:nth-child(5){width:13%}
+th:nth-child(6){width:25%}
+.note{margin-top:12px;border:1px solid #d6e0e5;border-radius:7px;padding:8px;color:#555;font-size:9px}
+.footer{margin-top:24px;border-top:1px solid #d6e0e5;padding-top:7px;font-size:8px;color:#666;display:flex;justify-content:space-between}
+.no-print{margin-top:15px;padding:8px 14px}
+@page{size:A4;margin:0}
+@media print{.page{width:auto;min-height:297mm;margin:0}.no-print{display:none!important}}
+</style></head><body><div class="page">
+
+<header class="header">
+<img class="header-logo" src="${location.origin}/logo parqueclube.png" alt="Parque Clube">
+<div class="header-text">
+<div class="header-title">CONDOMÍNIO PARQUE CLUBE</div>
+<div class="header-sub">Conjunto Residencial 05 - CR 05 Fazenda Santa Maria</div>
+<div class="header-sub">Valparaíso de Goiás – GO&nbsp;&nbsp; CEP: 72.872-600</div>
+<div class="header-phone">Telefone: 3054 – 8464</div>
+</div>
+</header>
+
+<div class="title">RELATÓRIO DE PROTOCOLOS ADMINISTRATIVOS</div>
+
+<div class="meta">
+<strong>Período:</strong> ${esc(descricaoPeriodo)}
+&nbsp;&nbsp;&nbsp;
+<strong>Total de protocolos:</strong> ${regs.length}
+${tipo?`&nbsp;&nbsp;&nbsp;<strong>Tipo:</strong> ${esc(tipo)}`:''}
+${termo?`<br><strong>Filtro:</strong> ${esc(texto)}`:''}
+<div class="emissao"><strong>Data e hora de emissão:</strong> ${esc(emissao)}</div>
+</div>
+
+<table>
+<thead><tr>
+<th>Protocolo</th>
+<th>Data do registro</th>
+<th>Data da infração</th>
+<th>Unidade / Bloco</th>
+<th>Tipo</th>
+<th>Descrição da infração</th>
+</tr></thead>
+<tbody>
+${rows||'<tr><td colspan="6" style="text-align:center;padding:14px">Nenhum protocolo encontrado para o período selecionado.</td></tr>'}
+</tbody></table>
+
+<div class="note">
+<strong>Observação:</strong> relatório dos protocolos administrativos registrados no Sistema de Gestão do Condomínio Parque Clube.
+</div>
+
+<div class="footer">
+<span>Sistema de Gestão do Condomínio</span>
+<span>Relatório de Protocolos Administrativos</span>
+</div>
+
+<button class="no-print" onclick="window.print()">🖨️ Imprimir / Salvar PDF</button>
+</div></body></html>`);
+
+        w.document.close();
+        setTimeout(()=>w.print(),500);
+    }
+
+function renderProtocolosAdministrativos(filtroTexto='', filtroTipo=''){
         const lista=document.getElementById('v13ProtocolosListaAdm');
         const resumo=document.getElementById('v13ProtocolosResumoAdm');
         if(!lista) return;
@@ -12320,7 +12504,14 @@ ${rows||'<tr><td colspan="5">Nenhum registro encontrado.</td></tr>'}
     if(form) form.addEventListener('submit',salvar);
     document.getElementById('btnNovaAdministrativaV13')?.addEventListener('click',()=>{document.getElementById('adminV13FormCard')?.scrollIntoView({behavior:'smooth'});limparForm();});
     document.getElementById('btnConsultarProtocolosAdmV13')?.addEventListener('click',abrirConsultaProtocolosAdministrativos);
-    document.getElementById('btnBuscarProtocolosAdmV13')?.addEventListener('click',()=>{
+        document.getElementById('btnImprimirProtocolosAdmV13')?.addEventListener('click',imprimirProtocolosAdministrativos);
+    document.getElementById('v13PeriodoImpressaoAdm')?.addEventListener('change',()=>{
+        const v=document.getElementById('v13PeriodoImpressaoAdm')?.value;
+        const box=document.getElementById('v13PeriodoPersonalizadoAdm');
+        if(box) box.style.display=v==='periodo'?'grid':'none';
+    });
+
+document.getElementById('btnBuscarProtocolosAdmV13')?.addEventListener('click',()=>{
         renderProtocolosAdministrativos(
             document.getElementById('v13BuscaProtocoloAdm')?.value||'',
             document.getElementById('v13FiltroTipoAdm')?.value||''
