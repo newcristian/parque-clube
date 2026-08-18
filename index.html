@@ -11803,67 +11803,262 @@ function controlarVisaoGeralAoAbrirAdvertencias(ocultar) {
     }
 
     function imprimirMedidaAdm13(){
-    const x=adm13RegistroModalAtual;
-    if(!x) return;
+        const x=adm13RegistroModalAtual;
+        if(!x) return;
+        const tipo = x.tipo === 'Notificação' ? 'NOTIFICAÇÃO' : 'ADVERTÊNCIA';
+        const esc = (v)=>String(v ?? '').replace(/[&<>\"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c]));
+        const w=window.open('', '_blank', 'width=900,height=800');
+        if(!w){ alert('O navegador bloqueou a janela de impressão. Permita pop-ups para este site.'); return; }
+        w.document.write(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>${esc(tipo)} - ${esc(x.protocolo)}</title><style>
+            *{box-sizing:border-box} body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:35px;color:#183447;background:#fff}
+            .cab{border-bottom:3px solid #176b35;padding-bottom:14px;margin-bottom:24px}.cab h1{margin:0;color:#176b35;font-size:22px}.cab h2{margin:6px 0 0;font-size:18px}.sub{color:#667;margin-top:5px;font-size:13px}
+            .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.item{border:1px solid #d9e1e6;border-radius:8px;padding:10px}.full{grid-column:1/-1}.lab{font-size:11px;color:#687680;font-weight:bold;margin-bottom:5px}.val{font-size:14px;font-weight:600;white-space:pre-wrap;word-break:break-word;min-height:18px}
+            .assin{margin-top:70px;display:grid;grid-template-columns:1fr 1fr;gap:60px;text-align:center}.linha{border-top:1px solid #333;padding-top:7px;font-size:12px}.rod{margin-top:30px;color:#777;font-size:11px;text-align:center}
+            @media print{body{padding:18mm}.no-print{display:none}}
+        </style></head><body>
+        <div class="cab"><h1>SISTEMA DE GESTÃO DO CONDOMÍNIO</h1><h2>${esc(tipo)}</h2><div class="sub">Protocolo ${esc(x.protocolo)}</div></div>
+        <div class="grid">
+          <div class="item"><div class="lab">Protocolo</div><div class="val">${esc(x.protocolo)}</div></div>
+          <div class="item"><div class="lab">Tipo</div><div class="val">${esc(x.tipo)}</div></div>
+          <div class="item"><div class="lab">Data do registro</div><div class="val">${esc(formatarData(x.dataRegistro))}</div></div>
+          <div class="item"><div class="lab">Unidade / Bloco</div><div class="val">${esc((x.unidade||'—')+' / '+(x.bloco||'—'))}</div></div>
+          <div class="item full"><div class="lab">Infração / Ocorrência</div><div class="val">${esc(x.infracao||'Não informado')}</div></div>
+          <div class="item"><div class="lab">Base no Regimento</div><div class="val">${esc(x.baseRegimento||'Não informado')}</div></div>
+          <div class="item"><div class="lab">Responsável</div><div class="val">${esc(x.responsavel||'Não informado')}</div></div>
+          <div class="item full"><div class="lab">Descrição</div><div class="val">${esc(x.descricao||'Não informado')}</div></div>
+          <div class="item full"><div class="lab">Observações</div><div class="val">${esc(x.observacoes||'Não informado')}</div></div>
+          <div class="item full"><div class="lab">Chamado relacionado</div><div class="val">${esc(x.protocoloChamado||'Não associado')}</div></div>
+        </div>
+        <div class="assin"><div class="linha">Responsável pela administração</div><div class="linha">Ciente / assinatura do responsável pela unidade</div></div>
+        <div class="rod">Documento emitido pelo Sistema de Gestão do Condomínio.</div>
+        <script>window.onload=()=>setTimeout(()=>window.print(),250);<\/script>
+        </body></html>`);
+        w.document.close();
+    }
+    async function carregarMedidas(){
+        if(!senhaAdministrativa){alert('Faça o login administrativo primeiro.');return;}
+        if(btnAtualizar){btnAtualizar.disabled=true;btnAtualizar.textContent='⏳ Atualizando...';}
+        try{
+            const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'listAdministrative',adminPassword:senhaAdministrativa})});
+            const d=await r.json();
+            if(!r.ok||!d.sucesso){
+                const detalhe = d.detalhe ? `\n\nDetalhe técnico: ${d.detalhe}` : '';
+                throw new Error((d.erro||'Não foi possível carregar os registros.') + detalhe);
+            }
+            medidas=Array.isArray(d.medidas)?d.medidas:[];
+            registrosDaPesquisaAtual=[];
+            filtroKpiAtual='todos';
+            const kpis=document.getElementById('v13Kpis');
+            const aviso=document.getElementById('v13FiltroAtivo');
+            if(kpis) kpis.style.display='none';
+            if(aviso) aviso.style.display='none';
+            renderLista([]);
+            carregarChamadosSelect();
+        }catch(e){
+            console.error('Erro ao listar Advertências/Notificações:', e);
+            alert(e.message||'Erro ao carregar registros administrativos.');
+        }
+        finally{if(btnAtualizar){btnAtualizar.disabled=false;btnAtualizar.textContent='🔄 Atualizar registros';}}
+    }
+    async function garantirChamadosCarregados(){
+        const tem = (typeof chamados!=='undefined' && (chamados.length || chamadosArquivadosV11.length));
+        if(tem){carregarChamadosSelect();return true;}
 
-    const esc=(v)=>String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-    const tipo=String(x.tipo||'Advertência');
-    const notificacao=tipo.toLowerCase()==='notificação';
-    const titulo=notificacao?'NOTIFICAÇÃO DE INFRAÇÃO ÀS NORMAS INTERNAS':'ADVERTÊNCIA POR INFRAÇÃO ÀS NORMAS INTERNAS';
-    const meses=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
-    const extenso=(v)=>{
-        if(!v)return '';
-        const p=String(v).split('-');
-        return p.length===3?`${Number(p[2])} de ${meses[Number(p[1])-1]||p[1]} de ${p[0]}`:formatarData(v);
+        const r = await fetch(API,{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({action:'list',adminPassword:senhaAdministrativa})
+        });
+
+        const d = await r.json();
+
+        if(!r.ok || !d.sucesso){
+            throw new Error(d.erro || 'Não foi possível carregar os chamados.');
+        }
+
+        if(typeof chamados!=='undefined') chamados=d.chamados||[];
+        if(typeof chamadosArquivadosV11!=='undefined') chamadosArquivadosV11=d.chamadosArquivados||[];
+
+        carregarChamadosSelect();
+        return true;
+    }
+    function limparForm(){
+        if(form) form.reset(); preencherDatas();
+    }
+    async function salvar(e){
+        e.preventDefault();
+        const bot=document.getElementById('btnSalvarAdministrativoV13');
+        const payload={
+            action:'createAdministrative', adminPassword:senhaAdministrativa,
+            tipo:document.getElementById('v13Tipo').value,
+            dataRegistro:document.getElementById('v13DataRegistro').value,
+            dataOcorrencia:document.getElementById('v13DataOcorrencia').value,
+            bloco:document.getElementById('v13Bloco').value,
+            unidade:document.getElementById('v13Unidade').value.trim(),
+            infracao:document.getElementById('v13Infracao').value,
+            descricao:document.getElementById('v13Descricao').value.trim(),
+            baseRegimento:document.getElementById('v13BaseRegimento').value.trim(),
+            responsavel:document.getElementById('v13Responsavel').value.trim(),
+            observacoes:document.getElementById('v13Observacoes').value.trim(),
+            protocoloChamado:document.getElementById('v13ProtocoloChamado').value,
+            origem:document.getElementById('v13Origem').value,
+            categoria:document.getElementById('v13Categoria').value,
+            multaCotas:document.getElementById('v13MultaCotas').value,
+            valorCota:document.getElementById('v13ValorCota').value,
+            valorMulta:(()=>{
+                const c=Number(document.getElementById('v13MultaCotas').value||0);
+                const v=Number(document.getElementById('v13ValorCota').value||0);
+                return c>0&&v>0 ? (c*v).toFixed(2) : '';
+            })(),
+            prazoRecurso:document.getElementById('v13PrazoRecurso').value,
+            recursoApresentado:document.getElementById('v13RecursoApresentado').value,
+            dataRecurso:document.getElementById('v13DataRecurso').value,
+            justificativaRecurso:document.getElementById('v13JustificativaRecurso').value.trim(),
+            decisao:document.getElementById('v13Decisao').value,
+            dataDecisao:document.getElementById('v13DataDecisao').value,
+            responsaveisDecisao:document.getElementById('v13ResponsaveisDecisao').value.trim(),
+            justificativaDecisao:document.getElementById('v13JustificativaDecisao').value.trim()
+        };
+        if(!payload.tipo||!payload.bloco||!payload.unidade||!payload.categoria||!payload.infracao||!payload.descricao){alert('Preencha os campos obrigatórios.');return;}
+        if(payload.tipo==='Notificação' && !payload.multaCotas){alert('Informe a quantidade de cotas da multa prevista para a Notificação.');return;}
+        bot.disabled=true;bot.textContent='⏳ Registrando...';
+        try{
+            const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+            const d=await r.json(); if(!r.ok||!d.sucesso) throw new Error(d.erro||'Não foi possível registrar.');
+            alert(`✅ ${d.medida.tipo} registrada com sucesso.\n\nProtocolo: ${d.medida.protocolo}`);
+            limparForm(); await carregarMedidas(); consultarHistorico(payload.bloco,payload.unidade);
+        }catch(e){alert(e.message||'Erro ao registrar medida administrativa.');}
+        finally{bot.disabled=false;bot.textContent='💾 Registrar medida';}
+    }
+    function consultarHistorico(blocoArg,unidadeArg){
+        const bloco=blocoArg!==undefined?blocoArg:document.getElementById('v13BuscaBloco').value;
+        const unidade=unidadeArg!==undefined?String(unidadeArg).trim():document.getElementById('v13BuscaUnidade').value.trim();
+        ultimaConsulta={bloco,unidade};
+
+        if(!bloco&&!unidade){
+            registrosDaPesquisaAtual=[];
+            filtroKpiAtual='todos';
+            const kpis=document.getElementById('v13Kpis');
+            const aviso=document.getElementById('v13FiltroAtivo');
+            if(kpis) kpis.style.display='none';
+            if(aviso) aviso.style.display='none';
+            const resumo=document.getElementById('v13HistoricoResumo');
+            if(resumo) resumo.innerHTML='<div class="admin-v13-hint">Informe o bloco e/ou a unidade para consultar o histórico.</div>';
+            renderLista([]);
+            return;
+        }
+
+        const regs=medidas.filter(x=>(!bloco||x.bloco===bloco)&&(!unidade||x.unidade===unidade));
+        registrosDaPesquisaAtual=regs;
+        filtroKpiAtual='todos';
+
+        const resumo=document.getElementById('v13HistoricoResumo');
+        if(!resumo) return;
+
+        const rec=reincidenciasDaUnidade(regs);
+        resumo.innerHTML=`<div style="font-weight:800;color:#123b5d;margin-bottom:7px">Histórico — ${unidade?`Unidade ${esc(unidade)}`:''}${bloco?` / Bloco ${esc(bloco)}`:''}</div>
+            <div class="admin-v13-hint">${regs.length} registro(s) encontrado(s).</div>
+            ${rec.length?`<div class="admin-v13-alert">⚠️ ATENÇÃO — possível reincidência: ${esc(rec.join('; '))}</div>`:'<div style="margin-top:8px;color:#176b35;font-weight:700">✓ Nenhuma reincidência identificada entre os registros encontrados.</div>'}`;
+
+        atualizarKpis(regs);
+        renderLista(regs);
+    }
+
+    function relatorioUnidade(){
+        const bloco=ultimaConsulta.bloco || document.getElementById('v13BuscaBloco').value;
+        const unidade=ultimaConsulta.unidade || document.getElementById('v13BuscaUnidade').value.trim();
+        if(!bloco||!unidade){alert('Consulte primeiro o bloco e a unidade.');return;}
+        const regs=medidas.filter(x=>x.bloco===bloco&&x.unidade===unidade);
+        const w=window.open('','_blank');
+        if(!w){alert('O navegador bloqueou a nova janela. Permita pop-ups para gerar o relatório.');return;}
+        const rows=regs.map(x=>`<tr><td>${esc(x.dataRegistro)}</td><td>${esc(x.protocolo)}</td><td>${esc(x.tipo)}</td><td>${esc(x.infracao)}</td><td>${esc(x.protocoloChamado||'—')}</td></tr>`).join('');
+        w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Histórico ${esc(unidade)}/${esc(bloco)}</title><style>body{font-family:Arial,sans-serif;color:#18313f;margin:30px}h1{color:#123b5d}table{width:100%;border-collapse:collapse}th{background:#123b5d;color:#fff;text-align:left;padding:8px}td{border:1px solid #ccd7dc;padding:7px;font-size:12px}.box{border:1px solid #d6e0e5;border-radius:8px;padding:12px;margin:12px 0} @media print{button{display:none}}</style></head><body><img src="${location.origin}/logo parqueclube.png" style="max-width:180px"><h1>Histórico de Advertências / Notificações</h1><div class="box"><strong>Unidade:</strong> ${esc(unidade)} &nbsp; <strong>Bloco:</strong> ${esc(bloco)}<br><strong>Total de registros:</strong> ${regs.length}</div><table><thead><tr><th>Data</th><th>Protocolo</th><th>Tipo</th><th>Infração</th><th>Chamado relacionado</th></tr></thead><tbody>${rows||'<tr><td colspan="5">Nenhum registro encontrado.</td></tr>'}</tbody></table><div class="box"><strong>Observação:</strong> documento destinado ao acompanhamento administrativo da unidade.</div><button onclick="window.print()">🖨️ Imprimir / Salvar PDF</button></body></html>`);w.document.close();setTimeout(()=>w.print(),500);
+    }
+    async function abrir(){
+        mostrarAdmin();
+        preencherDatas();
+        await carregarMedidas();
+        try{
+            await garantirChamadosCarregados();
+        }catch(e){
+            console.warn('Aviso: chamados relacionados não estão disponíveis no D1 oficial. O cadastro administrativo continuará funcionando sem vínculo de chamado.', e);
+            chamados = [];
+            chamadosArquivadosV11 = [];
+            carregarChamadosSelect();
+        }
+    }
+    window.abrirAdvertenciasNotificacoesV45 = abrir;
+    if(btnMenu){
+        btnMenu.onclick = function(e){
+            e.preventDefault();
+            e.stopPropagation();
+            abrir();
+        };
+    }
+    window.abrirAdministrativoParaChamado = async function(protocoloCodificado){
+        const protocolo=decodeURIComponent(protocoloCodificado||'');
+        mostrarAdmin();
+        preencherDatas();
+        try{
+            await garantirChamadosCarregados();
+            carregarChamadosSelect();
+            if(selectChamado) selectChamado.value=protocolo;
+            const todos=[...(typeof chamados!=='undefined'?chamados:[]),...(typeof chamadosArquivadosV11!=='undefined'?chamadosArquivadosV11:[])];
+            const c=todos.find(x=>x.protocolo===protocolo);
+            if(c){
+                if(c.bloco) document.getElementById('v13Bloco').value=String(c.bloco).replace(/^Bloco\s+/i,'').toUpperCase();
+                if(c.dataOcorrencia) document.getElementById('v13DataOcorrencia').value=c.dataOcorrencia;
+                if(c.ocorrencia){
+                    const sel=document.getElementById('v13Infracao');
+                    const opt=[...sel.options].find(o=>o.textContent.toLowerCase().includes(String(c.ocorrencia).toLowerCase()));
+                    if(opt) sel.value=opt.value;
+                }
+            }
+            document.getElementById('adminV13FormCard')?.scrollIntoView({behavior:'smooth'});
+        }catch(e){alert(e.message||'Não foi possível carregar o chamado relacionado.');}
+        carregarMedidas();
     };
+    if(btnMenu) btnMenu.addEventListener('click',abrir);
+    document.getElementById('btnVoltarAdminMenu')?.addEventListener('click',()=>{
+    if(admin){admin.style.display='none';admin.hidden=true;}
+    const localizarChamado=document.getElementById('localizarChamadoAdmin');
+    const editarChamado=document.getElementById('editarChamado');
+    if(localizarChamado) localizarChamado.style.display='none';
+    if(editarChamado) editarChamado.style.display='none';
+    if(search){search.style.display='none';search.hidden=true;}
+    if(report){report.style.display='none';report.hidden=true;}
+    if(voltar) voltar.style.display='none';
+    if(menu){menu.style.display='grid';menu.hidden=false;}
+});
+    if(btnAtualizar) btnAtualizar.addEventListener('click',carregarMedidas);
+    if(form) form.addEventListener('submit',salvar);
+    document.getElementById('btnNovaAdministrativaV13')?.addEventListener('click',()=>{document.getElementById('adminV13FormCard')?.scrollIntoView({behavior:'smooth'});limparForm();});
+    document.getElementById('btnCancelarAdministrativoV13')?.addEventListener('click',limparForm);
+    document.getElementById('btnConsultarHistoricoV13')?.addEventListener('click',()=>consultarHistorico());
+    document.getElementById('btnLimparHistoricoV13')?.addEventListener('click',()=>{
+        ultimaConsulta={bloco:'',unidade:''};
+        registrosDaPesquisaAtual=[];
+        filtroKpiAtual='todos';
+        document.getElementById('v13BuscaBloco').value='';
+        document.getElementById('v13BuscaUnidade').value='';
+        document.getElementById('v13HistoricoResumo').innerHTML='';
+        const kpis=document.getElementById('v13Kpis');
+        const aviso=document.getElementById('v13FiltroAtivo');
+        if(kpis) kpis.style.display='none';
+        if(aviso) aviso.style.display='none';
+        renderLista([]);
+    });
+    document.getElementById('btnRelatorioUnidadeV13')?.addEventListener('click',relatorioUnidade);
 
-    const dataRegistro=formatarData(x.dataRegistro||'');
-    const dataInfracao=formatarData(x.dataOcorrencia||x.dataInfracao||x.dataFato||'');
-    const unidadeBloco=`${x.unidade||'Não informada'} / ${x.bloco||'Não informado'}`;
-    const logoUrl=new URL('logo parqueclube.png',window.location.href).href;
-    const cotas=Number(x.multaCotas||0), valorCota=Number(x.valorCota||0), valorMulta=Number(x.valorMulta||0);
+    document.querySelectorAll('[data-v13-kpi]').forEach(btn=>{
+        const ativar=()=>aplicarFiltroKpi(btn.dataset.v13Kpi);
+        btn.addEventListener('click',ativar);
+        btn.addEventListener('keydown',e=>{
+            if(e.key==='Enter'||e.key===' '){e.preventDefault();ativar();}
+        });
+    });
 
-    const w=window.open('','_blank','width=900,height=900');
-    if(!w){alert('O navegador bloqueou a janela de impressão. Permita pop-ups para este site.');return;}
-
-    w.document.write(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
-<title>${esc(tipo)} - ${esc(x.protocolo)}</title>
-<style>
-*{box-sizing:border-box} body{margin:0;background:#fff;color:#222;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.55}
-.page{width:210mm;min-height:297mm;margin:0 auto;padding:17mm 20mm 15mm}
-.header{display:flex;align-items:center;gap:18px;border-bottom:3px solid #176b35;padding-bottom:11px;margin-bottom:18px}
-.header img{width:95px;height:68px;object-fit:contain}.system{color:#176b35;font-size:20px;font-weight:800;line-height:1.15}.system-sub{color:#536878;font-size:10px;margin-top:4px}
-.date-place{text-align:right;margin:8px 0 22px}.recipient{margin-bottom:18px}.reference{text-align:center;font-size:16px;font-weight:800;text-decoration:underline;margin:18px 0 24px}
-p{margin:0 0 13px;text-align:justify}.info-box{border-left:4px solid #176b35;background:#f5f8f6;padding:12px 14px;margin:18px 0}.info-line{margin:5px 0}.label{font-weight:800}
-.penalty{border:1px solid #d9b84a;background:#fff9df;padding:12px 14px;margin:18px 0}.signature{margin-top:52px;display:grid;grid-template-columns:1fr 1fr;gap:50px;text-align:center}.signature-line{border-top:1px solid #333;padding-top:7px;font-size:10px}
-.footer{margin-top:32px;padding-top:9px;border-top:1px solid #ddd;color:#777;text-align:center;font-size:9px}@page{size:A4;margin:0}@media print{.page{width:auto;min-height:auto}}
-</style></head><body><div class="page">
-<header class="header"><img src="${esc(logoUrl)}" alt="Parque Clube"><div><div class="system">SISTEMA DE GESTÃO DO CONDOMÍNIO</div><div class="system-sub">Sistema de Chamados / Ordem de Serviço</div></div></header>
-<div class="date-place">Valparaíso de Goiás, ${esc(extenso(x.dataRegistro||''))}.</div>
-<div class="recipient"><strong>À Unidade ${esc(unidadeBloco)}</strong><br>Condomínio Parque Clube</div>
-<div class="reference">REF.: ${esc(titulo)}</div>
-<p>Prezado(a) Senhor(a),</p>
-<p>Na qualidade de Administração do Condomínio Parque Clube, e em atenção às normas estabelecidas no Regimento Interno, comunicamos formalmente o registro da ocorrência relacionada à unidade <strong>${esc(unidadeBloco)}</strong>.</p>
-<div class="info-box">
-<div class="info-line"><span class="label">Protocolo:</span> ${esc(x.protocolo)}</div>
-<div class="info-line"><span class="label">Data do registro:</span> ${esc(dataRegistro||'Não informada')}</div>
-<div class="info-line"><span class="label">Data da infração:</span> ${esc(dataInfracao||'Não informada')}</div>
-<div class="info-line"><span class="label">Infração / ocorrência:</span> ${esc(x.infracao||'Não informada')}</div>
-<div class="info-line"><span class="label">Base no Regimento:</span> ${esc(x.baseRegimento||'Não informada')}</div>
-<div class="info-line"><span class="label">Responsável:</span> ${esc(x.responsavel||'Administração')}</div>
-</div>
-<p><span class="label">Descrição da ocorrência:</span><br>${esc(x.descricao||'Não informado.')}</p>
-${x.observacoes?`<p><span class="label">Observações:</span><br>${esc(x.observacoes)}</p>`:''}
-${notificacao?`<div class="penalty"><div class="label">PENALIDADE ADMINISTRATIVA</div><div>Multa prevista: ${cotas?esc(cotas)+' cota(s)':'Conforme Regimento Interno'}</div>${valorCota?`<div>Valor da cota: R$ ${valorCota.toFixed(2).replace('.',',')}</div>`:''}${valorMulta?`<div><strong>Valor da multa: R$ ${valorMulta.toFixed(2).replace('.',',')}</strong></div>`:''}<div>Prazo para recurso administrativo: <strong>7 dias úteis</strong>, conforme o Regimento Interno.</div></div>`:''}
-<p>${notificacao?'Solicitamos que sejam observadas as normas internas e, caso entenda necessário, seja utilizado o procedimento de recurso administrativo previsto no Regimento Interno.':'Solicitamos a adoção das providências necessárias para evitar a repetição da ocorrência e o cumprimento das normas internas, contribuindo para a boa convivência entre todos os moradores.'}</p>
-<p>Atenciosamente,</p>
-<div class="signature"><div class="signature-line">${esc(x.responsavel||'Administração')}<br>Administração do Condomínio Parque Clube</div><div class="signature-line">Ciente / assinatura do responsável pela unidade</div></div>
-<div class="footer">Documento emitido pelo Sistema de Gestão do Condomínio.<br>Protocolo administrativo: ${esc(x.protocolo)}</div>
-</div><script>window.onload=function(){setTimeout(function(){window.print();},300);};<\/script></body></html>`);
-    w.document.close();
-}
-
-function configurarModalAdm13(){
+    function configurarModalAdm13(){
         document.getElementById('btnFecharAdm13Modal')?.addEventListener('click',fecharModalAdm13);
         document.getElementById('btnFecharAdm13Modal2')?.addEventListener('click',fecharModalAdm13);
         document.getElementById('btnAbrirChamadoAdm13')?.addEventListener('click',consultarChamadoRelacionadoAdm13);
