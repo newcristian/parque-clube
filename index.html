@@ -11970,6 +11970,16 @@ function configurarModalAdm13(){
     });
     atualizarTipoAdministrativoV45();
 
+
+    // Correção V4.5: vínculo direto do cartão Advertências / Notificações.
+    // O listener foi recolocado dentro do mesmo IIFE para garantir acesso à mostrarAdmin().
+    if(btnMenu){
+        btnMenu.addEventListener('click', function(e){
+            e.preventDefault();
+            e.stopPropagation();
+            mostrarAdmin();
+        });
+    }
 })();
 
 
