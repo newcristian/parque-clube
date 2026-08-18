@@ -3464,7 +3464,7 @@ button:active{
      LOCALIZAR
 ===================================================== -->
 
-<div class="admin-box" id="localizarChamadoAdmin">
+<div class="admin-box" id="localizarChamadoAdmin" style="display:none;">
 
 
 <div class="admin-titulo">
@@ -3511,7 +3511,7 @@ button:active{
 <div
     id="editarChamado"
     class="admin-box"
->
+ style="display:none;">
 <div id="historicoHorariosAdmin" class="historico-destaque">
     <div class="historico-destaque-titulo">🕒 Histórico do Protocolo</div>
 
@@ -6429,6 +6429,7 @@ document
 function selecionarChamado(
     protocoloCodificado
 ) {
+    mostrarPainelDetalhesChamadoV45();
 
 
     const protocolo =
@@ -8294,6 +8295,7 @@ async function desarquivarTodosV12() {
 }
 
 function aplicarFiltroRapidoV12(valor, elemento) {
+    ocultarPainelDetalhesChamadoV45();
     document.querySelectorAll(".stat-filtro-v12").forEach(function(el) {
         el.classList.remove("ativo");
     });
@@ -8302,6 +8304,8 @@ function aplicarFiltroRapidoV12(valor, elemento) {
     const lista = document.getElementById("listaChamados");
     const listaArquivados = document.getElementById("listaChamadosArquivados");
     const filtroStatus = document.getElementById("filtroStatus");
+    const pesquisaChamado = document.getElementById("pesquisaChamado");
+    const filtroPrioridade = document.getElementById("filtroPrioridade");
 
     if (valor === "__ARQUIVADOS__") {
         if (lista) lista.style.display = "none";
@@ -8323,6 +8327,12 @@ function aplicarFiltroRapidoV12(valor, elemento) {
     if (at) at.classList.add("ativo");
     if (ab) ab.classList.remove("ativo");
     if (filtroStatus) filtroStatus.value = valor;
+
+    /* Ao usar os cartões de status, começar uma consulta limpa.
+       Assim "Em andamento: 2" realmente mostra os 2 chamados. */
+    if (pesquisaChamado) pesquisaChamado.value = "";
+    if (filtroPrioridade) filtroPrioridade.value = "";
+
     mostrarChamados();
 }
 
@@ -11693,6 +11703,23 @@ function mostrarRelatorioAdminV11(){
 })();
 
 
+
+
+function ocultarPainelDetalhesChamadoV45() {
+    ["localizarChamadoAdmin","editarChamado"].forEach(function(id){
+        const el=document.getElementById(id);
+        if(el) el.style.display="none";
+    });
+    const historico=document.getElementById("historicoChamado");
+    if(historico) historico.style.display="none";
+}
+
+function mostrarPainelDetalhesChamadoV45() {
+    ["localizarChamadoAdmin","editarChamado"].forEach(function(id){
+        const el=document.getElementById(id);
+        if(el) el.style.display="block";
+    });
+}
 
 </script>
 
