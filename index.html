@@ -1666,6 +1666,103 @@ button:active{
     }
 }
 
+
+/* =====================================================
+   V4.5 — PROTOCOLO DESTACADO NO HISTÓRICO
+===================================================== */
+
+.historico-cabecalho{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:10px 12px;
+    margin-bottom:4px;
+    background:#eaf5ed;
+    border-bottom:1px solid #cfe0d4;
+}
+
+.historico-cabecalho .titulo{
+    margin:0;
+    font-weight:700;
+    color:#17632d;
+}
+
+.historico-protocolo{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    white-space:nowrap;
+    padding:6px 10px;
+    border:1px solid #b8d2bf;
+    border-radius:8px;
+    background:#fff;
+    color:#334155;
+    font-size:12px;
+}
+
+.historico-protocolo strong{
+    color:#17632d;
+    font-size:14px;
+    letter-spacing:.2px;
+}
+
+@media (max-width:700px){
+    .historico-cabecalho{
+        align-items:flex-start;
+        flex-direction:column;
+        gap:7px;
+    }
+
+    .historico-protocolo{
+        width:100%;
+        justify-content:space-between;
+        box-sizing:border-box;
+    }
+}
+
+/* =====================================================
+   V4.5 — AÇÃO FINAL DA CONSULTA DE PROTOCOLO
+===================================================== */
+
+.consulta-final-acao{
+    margin-top:16px;
+    padding:12px 0 2px;
+    border-top:1px solid #dfe8e2;
+    text-align:center;
+}
+
+.btn-fechar-consulta{
+    width:100%;
+    max-width:360px;
+    min-height:46px;
+    border:1px solid #17632d;
+    background:#17632d;
+    color:#fff;
+    font-weight:700;
+    border-radius:10px;
+    cursor:pointer;
+    box-shadow:0 4px 12px rgba(23,99,45,.14);
+}
+
+.btn-fechar-consulta:hover{
+    background:#104a22;
+}
+
+.btn-fechar-consulta:active{
+    transform:scale(.99);
+}
+
+@media (max-width:700px){
+    .consulta-final-acao{
+        margin-top:14px;
+    }
+
+    .btn-fechar-consulta{
+        max-width:none;
+    }
+}
+
 </style>
 </head>
 
@@ -2452,10 +2549,26 @@ button:active{
 ></div>
 
 <div id="historicoConsultaProtocolo" class="historico-consulta-protocolo" style="display:none;">
-    <div class="titulo">🕒 Histórico do Protocolo</div>
+    <div class="historico-cabecalho">
+        <div class="titulo">🕒 Histórico do Protocolo</div>
+        <div class="historico-protocolo">
+            <span>Protocolo:</span>
+            <strong id="historicoProtocoloNumero">-</strong>
+        </div>
+    </div>
     <div class="linha">📥 <strong>Recebido em:</strong> <span id="consultaRecebidoEm">-</span></div>
     <div class="linha">🔄 <strong>Última atualização:</strong> <span id="consultaAtualizadoEm">-</span></div>
     <div class="linha">✅ <strong>Concluído em:</strong> <span id="consultaConcluidoEm">-</span></div>
+</div>
+
+<div class="consulta-final-acao">
+    <button
+        type="button"
+        class="btn-fechar-consulta"
+        onclick="fecharConsultaProtocolo()"
+    >
+        ⬆️ Fechar consulta e voltar ao início
+    </button>
 </div>
 
 
@@ -4512,6 +4625,51 @@ document
    MOSTRAR RESULTADO
 ===================================================== */
 
+
+function fecharConsultaProtocolo() {
+
+    const resultado =
+        document.getElementById("resultadoConsulta");
+
+    const erro =
+        document.getElementById("erroConsulta");
+
+    const input =
+        document.getElementById("consultaProtocolo");
+
+    if (resultado) {
+        resultado.style.display = "none";
+    }
+
+    if (erro) {
+        erro.style.display = "none";
+        erro.textContent = "";
+    }
+
+    if (input) {
+        input.value = "";
+    }
+
+    const protocoloHistorico =
+        document.getElementById(
+            "historicoProtocoloNumero"
+        );
+
+    if (protocoloHistorico) {
+        protocoloHistorico.textContent = "-";
+    }
+
+    /*
+     * Volta ao topo da aplicação com animação suave.
+     * Não altera seção, banco, protocolo ou Worker.
+     */
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+
+}
+
 function mostrarResultado(
     chamado
 ) {
@@ -4662,6 +4820,16 @@ function mostrarResultado(
 
 
     atualizarHistoricoConsultaProtocolo(chamado);
+
+    const protocoloHistorico =
+        document.getElementById(
+            "historicoProtocoloNumero"
+        );
+
+    if (protocoloHistorico) {
+        protocoloHistorico.textContent =
+            chamado.protocolo || "-";
+    }
 
     resultado.style.display =
         "block";
