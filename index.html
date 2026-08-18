@@ -2107,13 +2107,6 @@ button:active{
 .admin-v45-refresh:disabled{opacity:.65;cursor:wait}
 @media(max-width:700px){.admin-v45-dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-v45-kpi strong{font-size:20px}}
 </style>
-/* V4.5 — módulos administrativos independentes */
-body.admin-v13-active #adminConteudoPesquisaV11,
-body.admin-v13-active #editarChamado,
-body.admin-v13-active #adminConteudoRelatorioV11{
-    display:none !important;
-}
-
 </style>
 </head>
 
@@ -3470,7 +3463,7 @@ body.admin-v13-active #adminConteudoRelatorioV11{
      LOCALIZAR
 ===================================================== -->
 
-<div class="admin-box">
+<div class="admin-box" id="localizarChamadoAdmin">
 
 
 <div class="admin-titulo">
@@ -10717,90 +10710,35 @@ function inicializarDashboardV11(){
 
     function mostrarPesquisaAdminV11(){
     document.body.classList.remove('admin-v13-active');
-
     if(menu) menu.style.display='none';
     if(report) report.style.display='none';
+    if(search){search.style.display='block';search.hidden=false;}
 
-    if(search){
-        search.style.display='block';
-        search.hidden=false;
-    }
+    const localizarChamado=document.getElementById('localizarChamadoAdmin');
+    const editarChamado=document.getElementById('editarChamado');
+    if(localizarChamado) localizarChamado.style.display='block';
+    if(editarChamado) editarChamado.style.display='block';
 
     if(voltar) voltar.style.display='flex';
     if(titulo) titulo.textContent='🔎 Pesquisar chamados';
 
-    const localizarChamado =
-        document.getElementById('editarChamado');
-
-    if(localizarChamado){
-        localizarChamado.style.display='block';
-    }
-
-    const btnListar =
-        document.getElementById('btnListarTodos');
-
-    if(btnListar){
-        btnListar.click();
-    }
+    const btnListar=document.getElementById('btnListarTodos');
+    if(btnListar){btnListar.style.display='block';btnListar.click();}
 
     setTimeout(function(){
-        ['estatisticas','filtros','listaChamados']
-            .forEach(function(id){
-                const el=document.getElementById(id);
-                if(el) el.style.display='block';
-            });
+        ['estatisticas','filtros','listaChamados'].forEach(function(id){
+            const el=document.getElementById(id);
+            if(el) el.style.display='block';
+        });
     },500);
 }
+function mostrarRelatorioAdminV11(){
+        if(menu) menu.style.display = "none";
+        if(search) search.style.display = "none";
         if(voltar) voltar.style.display = "flex";
-        if(titulo) titulo.textContent = "🔎 Pesquisar chamados";
+        if(titulo) titulo.textContent = "📊 Gerar relatório";
 
-        // The existing V1.0 search/list functions remain responsible for loading data.
-        const btnListar = document.getElementById("btnListarTodos");
-        if(btnListar){
-            btnListar.style.display = "block";
-            btnListar.click();
-        }
-
-        // Reveal the existing search/filter/list controls after the load handler has run.
-        setTimeout(function(){
-            const ids = ["estatisticas","filtros","listaChamados"];
-            ids.forEach(function(id){
-                const el = document.getElementById(id);
-                if(el) el.style.display = id === "listaChamados" ? "block" : "block";
-            });
-        }, 500);
-    }
-
-    function mostrarRelatorioAdminV11(){
-    document.body.classList.remove('admin-v13-active');
-
-    if(menu) menu.style.display='none';
-    if(search) search.style.display='none';
-
-    if(voltar) voltar.style.display='flex';
-    if(titulo) titulo.textContent='📊 Gerar relatório';
-
-    if(report){
-        report.style.display='block';
-        report.hidden=false;
-    }
-
-    const btnListar =
-        document.getElementById('btnListarTodos');
-
-    if(btnListar){
-        btnListar.click();
-    }
-
-    setTimeout(function(){
-        if(typeof inicializarDashboardV11==='function'){
-            inicializarDashboardV11();
-        }
-        if(typeof renderDashboardV11==='function'){
-            renderDashboardV11();
-        }
-    },1100);
-}
+        if(report) { report.style.display = "block"; report.hidden = false; }
 
         // The existing administrative loader is reused so the report uses
         // the same real protocol data as the search screen.
@@ -11285,62 +11223,23 @@ function inicializarDashboardV11(){
     }
     function mostrarAdmin(){
     document.body.classList.add('admin-v13-active');
-
     if(menu) menu.style.display='none';
+    if(search){search.style.display='none';search.hidden=true;}
+    if(report){report.style.display='none';report.hidden=true;}
 
-    if(search){
-        search.style.display='none';
-        search.hidden=true;
-    }
+    const localizarChamado=document.getElementById('localizarChamadoAdmin');
+    const editarChamado=document.getElementById('editarChamado');
 
-    if(report){
-        report.style.display='none';
-        report.hidden=true;
-    }
+    if(localizarChamado) localizarChamado.style.display='none';
+    if(editarChamado) editarChamado.style.display='none';
 
-    const localizarChamado =
-        document.getElementById('editarChamado');
-
-    if(localizarChamado){
-        localizarChamado.style.display='none';
-    }
-
-    if(admin){
-        admin.style.display='block';
-        admin.hidden=false;
-    }
-
+    if(admin){admin.style.display='block';admin.hidden=false;}
     if(voltar) voltar.style.display='flex';
+    if(titulo) titulo.textContent='⚠️ Advertências / Notificações';
 
-    if(titulo){
-        titulo.textContent='⚠️ Advertências / Notificações';
-    }
-}
-
-    if(report){
-        report.style.display='none';
-        report.hidden=true;
-    }
-
-    /* Advertências/Notificações é um módulo separado.
-       Não exibir o bloco Localizar Chamado nessa tela. */
-    const localizarChamado =
-        document.getElementById('editarChamado');
-
-    if(localizarChamado){
-        localizarChamado.style.display='none';
-    }
-
-    if(admin){
-        admin.style.display='block';
-        admin.hidden=false;
-    }
-
-    if(voltar) voltar.style.display='flex';
-
-    if(titulo){
-        titulo.textContent='⚠️ Advertências / Notificações';
-    }
+    preencherDatas();
+    carregarChamadosSelect();
+    carregarMedidas();
 }
     function preencherDatas(){
         const h=hojeLocal();
@@ -11686,31 +11585,17 @@ function inicializarDashboardV11(){
     };
     if(btnMenu) btnMenu.addEventListener('click',abrir);
     document.getElementById('btnVoltarAdminMenu')?.addEventListener('click',()=>{
-    document.body.classList.remove('admin-v13-active');
-
-    if(admin){
-        admin.style.display='none';
-        admin.hidden=true;
-    }
-
-    if(search){
-        search.style.display='none';
-        search.hidden=true;
-    }
-
-    if(report){
-        report.style.display='none';
-        report.hidden=true;
-    }
-
+    if(admin){admin.style.display='none';admin.hidden=true;}
+    const localizarChamado=document.getElementById('localizarChamadoAdmin');
+    const editarChamado=document.getElementById('editarChamado');
+    if(localizarChamado) localizarChamado.style.display='none';
+    if(editarChamado) editarChamado.style.display='none';
+    if(search){search.style.display='none';search.hidden=true;}
+    if(report){report.style.display='none';report.hidden=true;}
     if(voltar) voltar.style.display='none';
-
-    if(menu){
-        menu.style.display='grid';
-        menu.hidden=false;
-    }
+    if(menu){menu.style.display='grid';menu.hidden=false;}
 });
-    if(btnAtualizar) btnAtualizar.addEventListener('click',carregarMedidas);
+    if(btnMenu) btnMenu.addEventListener('click',mostrarAdmin); if(btnAtualizar) btnAtualizar.addEventListener('click',carregarMedidas);
     if(form) form.addEventListener('submit',salvar);
     document.getElementById('btnNovaAdministrativaV13')?.addEventListener('click',()=>{document.getElementById('adminV13FormCard')?.scrollIntoView({behavior:'smooth'});limparForm();});
     document.getElementById('btnCancelarAdministrativoV13')?.addEventListener('click',limparForm);
