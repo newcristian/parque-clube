@@ -11222,13 +11222,38 @@ function inicializarDashboardV11(){
         return p.length===3 ? `${p[2]}/${p[1]}/${p[0]}` : v;
     }
     function mostrarAdmin(){
-        if(menu) menu.style.display='none';
-        if(search) search.style.display='none';
-        if(report) report.style.display='none';
-        if(admin) admin.style.display='block';
-        if(voltar) voltar.style.display='flex';
-        if(titulo) titulo.textContent='⚠️ Advertências / Notificações';
+    if(menu) menu.style.display='none';
+
+    if(search){
+        search.style.display='none';
+        search.hidden=true;
     }
+
+    if(report){
+        report.style.display='none';
+        report.hidden=true;
+    }
+
+    /* Advertências/Notificações é um módulo separado.
+       Não exibir o bloco Localizar Chamado nessa tela. */
+    const localizarChamado =
+        document.getElementById('editarChamado');
+
+    if(localizarChamado){
+        localizarChamado.style.display='none';
+    }
+
+    if(admin){
+        admin.style.display='block';
+        admin.hidden=false;
+    }
+
+    if(voltar) voltar.style.display='flex';
+
+    if(titulo){
+        titulo.textContent='⚠️ Advertências / Notificações';
+    }
+}
     function preencherDatas(){
         const h=hojeLocal();
         const a=document.getElementById('v13DataRegistro');
@@ -11572,7 +11597,29 @@ function inicializarDashboardV11(){
         carregarMedidas();
     };
     if(btnMenu) btnMenu.addEventListener('click',abrir);
-    document.getElementById('btnVoltarAdminMenu')?.addEventListener('click',()=>{ if(admin) admin.style.display='none'; });
+    document.getElementById('btnVoltarAdminMenu')?.addEventListener('click',()=>{
+    if(admin){
+        admin.style.display='none';
+        admin.hidden=true;
+    }
+
+    if(search){
+        search.style.display='none';
+        search.hidden=true;
+    }
+
+    if(report){
+        report.style.display='none';
+        report.hidden=true;
+    }
+
+    if(voltar) voltar.style.display='none';
+
+    if(menu){
+        menu.style.display='grid';
+        menu.hidden=false;
+    }
+});
     if(btnAtualizar) btnAtualizar.addEventListener('click',carregarMedidas);
     if(form) form.addEventListener('submit',salvar);
     document.getElementById('btnNovaAdministrativaV13')?.addEventListener('click',()=>{document.getElementById('adminV13FormCard')?.scrollIntoView({behavior:'smooth'});limparForm();});
