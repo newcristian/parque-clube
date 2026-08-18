@@ -2108,6 +2108,27 @@ button:active{
 @media(max-width:700px){.admin-v45-dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-v45-kpi strong{font-size:20px}}
 </style>
 
+
+.admin-v13-section-title{
+    font-weight:800;color:#123b5d;background:#f4f8fb;
+    border:1px solid #d7e3ea;border-radius:8px;padding:9px 11px;margin-bottom:10px
+}
+.admin-v13-penalty,.admin-v13-appeal,.admin-v13-decision{
+    border:1px solid #d7e3ea;border-radius:10px;padding:12px;
+    background:#fbfcfd
+}
+.admin-v13-penalty{border-left:4px solid #a56b00}
+.admin-v13-appeal{border-left:4px solid #315f8a}
+.admin-v13-decision{border-left:4px solid #176b35}
+.admin-v13-status{
+    display:inline-block;padding:4px 8px;border-radius:999px;font-weight:800;font-size:11px;
+    white-space:nowrap
+}
+.admin-v13-status.registrada{background:#e8eef2;color:#344b5a}
+.admin-v13-status.recurso{background:#fff0c2;color:#765400}
+.admin-v13-status.mantida{background:#f9d9d9;color:#8a2020}
+.admin-v13-status.cancelada{background:#d9f0df;color:#176b35}
+
 </style>
 </head>
 
@@ -11034,76 +11055,182 @@ function mostrarRelatorioAdminV11(){
 <div class="admin-v13-kpi" data-v13-kpi="reincidencias" role="button" tabindex="0" title="Mostrar registros envolvidos em reincidência">
 <strong id="v13TotalReincidencias">0</strong><span>Unidades com reincidência</span>
 </div>
+<div class="admin-v13-kpi" data-v13-kpi="recursos" role="button" tabindex="0" title="Mostrar notificações com recurso pendente">
+<strong id="v13TotalRecursos">0</strong><span>Recursos pendentes</span>
+</div>
 </div>
 <div class="admin-v13-hint" id="v13FiltroAtivo" style="display:none;margin:-4px 0 10px;font-weight:700"></div>
 <div class="admin-v13-card" id="adminV13FormCard">
 <h3 style="margin:0 0 12px;color:#123b5d">📄 Novo registro administrativo</h3>
 <form id="formAdministrativoV13">
 <div class="admin-v13-grid">
+
 <div>
 <label class="admin-v13-label">Tipo de medida *</label>
-<select class="admin-v13-select" id="v13Tipo" required="">
+<select class="admin-v13-select" id="v13Tipo" required>
 <option value="">Selecione...</option>
-<option value="Advertência">Advertência</option>
-<option value="Notificação">Notificação</option>
+<option value="Advertência">🟡 Advertência — sem multa</option>
+<option value="Notificação">🔴 Notificação — com multa</option>
 </select>
 </div>
+
 <div>
 <label class="admin-v13-label">Data do registro *</label>
-<input class="admin-v13-input" id="v13DataRegistro" required="" type="date"/>
+<input class="admin-v13-input" id="v13DataRegistro" required type="date"/>
 </div>
+
 <div>
-<label class="admin-v13-label">Data da ocorrência</label>
-<input class="admin-v13-input" id="v13DataOcorrencia" type="date"/>
+<label class="admin-v13-label">Data da infração *</label>
+<input class="admin-v13-input" id="v13DataOcorrencia" required type="date"/>
 </div>
+
 <div>
-<label class="admin-v13-label">Chamado relacionado (opcional)</label>
-<select class="admin-v13-select" id="v13ProtocoloChamado">
-<option value="">— Sem chamado associado —</option>
+<label class="admin-v13-label">Origem da ocorrência</label>
+<select class="admin-v13-select" id="v13Origem">
+<option>Administração</option>
+<option>Subsíndico</option>
+<option>Morador</option>
+<option>Funcionário</option>
+<option>CFTV</option>
+<option>Outro</option>
 </select>
-<div class="admin-v13-hint">O protocolo do chamado fica vinculado ao registro administrativo.</div>
 </div>
+
 <div>
 <label class="admin-v13-label">Bloco *</label>
-<select class="admin-v13-select" id="v13Bloco" required="">
+<select class="admin-v13-select" id="v13Bloco" required>
 <option value="">Selecione...</option>
 <option>1A</option><option>1B</option><option>1C</option><option>1D</option><option>1E</option>
 <option>2A</option><option>2B</option><option>2C</option><option>2D</option><option>2E</option>
 </select>
 </div>
+
 <div>
 <label class="admin-v13-label">Unidade *</label>
-<input class="admin-v13-input" id="v13Unidade" inputmode="numeric" maxlength="8" placeholder="Ex.: 804" required="" type="text"/>
+<input class="admin-v13-input" id="v13Unidade" inputmode="numeric" maxlength="8" placeholder="Ex.: 804" required type="text"/>
 </div>
+
 <div>
-<label class="admin-v13-label">Infração / ocorrência *</label>
-<select class="admin-v13-select" id="v13Infracao" required="">
+<label class="admin-v13-label">Categoria da infração *</label>
+<select class="admin-v13-select" id="v13Categoria" required>
 <option value="">Selecione...</option>
-<option>Barulho / perturbação do sossego</option>
-<option>Xixi de cachorro</option>
-<option>Fumar em área comum</option>
-<option>Reforma fora do horário permitido</option>
-<option>Uso inadequado de área comum</option>
-<option>Descarte irregular de resíduos</option>
-<option>Outros</option>
+<option value="Animais domésticos">🐶 Animais domésticos</option>
+<option value="Churrasqueira / Salão de festas">🎉 Churrasqueira / Salão de festas</option>
+<option value="Piscina">🏊 Piscina</option>
+<option value="Playground">🛝 Playground</option>
+<option value="Garagem">🚗 Garagem</option>
+<option value="Mudanças / Entregas / Obras">📦 Mudanças / Entregas / Obras</option>
+<option value="Quadra">🏀 Quadra</option>
+<option value="Elevadores">🛗 Elevadores</option>
+<option value="Ruídos / Sossego">🔊 Ruídos / Sossego</option>
+<option value="Proibições gerais">🚫 Proibições gerais</option>
+<option value="Acesso ao condomínio">🔐 Acesso ao condomínio</option>
 </select>
 </div>
+
+<div>
+<label class="admin-v13-label">Infração / ocorrência *</label>
+<select class="admin-v13-select" id="v13Infracao" required>
+<option value="">Selecione a categoria primeiro...</option>
+</select>
+</div>
+
+<div>
+<label class="admin-v13-label">Artigo / fundamento</label>
+<input class="admin-v13-input" id="v13BaseRegimento" readonly placeholder="Preenchido conforme a infração"/>
+</div>
+
 <div>
 <label class="admin-v13-label">Responsável pelo registro</label>
 <input class="admin-v13-input" id="v13Responsavel" placeholder="Nome do subsíndico/administrador" type="text"/>
 </div>
+
 <div class="full">
-<label class="admin-v13-label">Base no Regimento Interno</label>
-<input class="admin-v13-input" id="v13BaseRegimento" placeholder="Ex.: Art. 23, §2º — Perturbação do sossego" type="text"/>
+<label class="admin-v13-label">Chamado relacionado (opcional)</label>
+<select class="admin-v13-select" id="v13ProtocoloChamado">
+<option value="">— Sem chamado associado —</option>
+</select>
 </div>
+
 <div class="full">
 <label class="admin-v13-label">Descrição detalhada *</label>
-<textarea class="admin-v13-textarea" id="v13Descricao" placeholder="Descreva a ocorrência e a circunstância registrada." required=""></textarea>
+<textarea class="admin-v13-textarea" id="v13Descricao" placeholder="Descreva objetivamente a ocorrência, local e circunstâncias." required></textarea>
 </div>
+
 <div class="full">
-<label class="admin-v13-label">Observações</label>
+<label class="admin-v13-label">Observações administrativas</label>
 <textarea class="admin-v13-textarea" id="v13Observacoes" placeholder="Informações administrativas adicionais." style="min-height:65px"></textarea>
 </div>
+
+<div class="full admin-v13-penalty" id="v13NotificacaoArea" style="display:none">
+<div class="admin-v13-section-title">💰 Penalidade da Notificação</div>
+<div class="admin-v13-grid">
+<div>
+<label class="admin-v13-label">Multa prevista (cotas)</label>
+<input class="admin-v13-input" id="v13MultaCotas" inputmode="decimal" min="0" step="0.01" type="number" placeholder="Ex.: 1"/>
+</div>
+<div>
+<label class="admin-v13-label">Valor da cota (R$)</label>
+<input class="admin-v13-input" id="v13ValorCota" inputmode="decimal" min="0" step="0.01" type="number" placeholder="Ex.: 330,00"/>
+</div>
+<div>
+<label class="admin-v13-label">Valor da multa (R$)</label>
+<input class="admin-v13-input" id="v13ValorMulta" readonly type="text" placeholder="Calculado automaticamente"/>
+</div>
+<div>
+<label class="admin-v13-label">Prazo para recurso</label>
+<input class="admin-v13-input" id="v13PrazoRecurso" readonly value="7 dias úteis"/>
+</div>
+</div>
+</div>
+
+<div class="full admin-v13-appeal" id="v13RecursoArea" style="display:none">
+<div class="admin-v13-section-title">⚖️ Recurso administrativo</div>
+<div class="admin-v13-grid">
+<div>
+<label class="admin-v13-label">Recurso apresentado?</label>
+<select class="admin-v13-select" id="v13RecursoApresentado">
+<option value="Não">Não</option>
+<option value="Sim">Sim</option>
+</select>
+</div>
+<div>
+<label class="admin-v13-label">Data do recurso</label>
+<input class="admin-v13-input" id="v13DataRecurso" type="date"/>
+</div>
+<div class="full">
+<label class="admin-v13-label">Justificativa do recurso</label>
+<textarea class="admin-v13-textarea" id="v13JustificativaRecurso" style="min-height:80px" placeholder="Registre a argumentação apresentada pelo morador."></textarea>
+</div>
+</div>
+</div>
+
+<div class="full admin-v13-decision" id="v13DecisaoArea" style="display:none">
+<div class="admin-v13-section-title">🏛️ Análise — Síndico e Conselho</div>
+<div class="admin-v13-grid">
+<div>
+<label class="admin-v13-label">Decisão</label>
+<select class="admin-v13-select" id="v13Decisao">
+<option value="">Aguardando análise</option>
+<option value="Recurso acolhido">🟢 Recurso acolhido — multa cancelada</option>
+<option value="Recurso indeferido">🔴 Recurso indeferido — multa mantida</option>
+</select>
+</div>
+<div>
+<label class="admin-v13-label">Data da decisão</label>
+<input class="admin-v13-input" id="v13DataDecisao" type="date"/>
+</div>
+<div>
+<label class="admin-v13-label">Responsáveis pela decisão</label>
+<input class="admin-v13-input" id="v13ResponsaveisDecisao" placeholder="Síndico / Conselheiros"/>
+</div>
+<div class="full">
+<label class="admin-v13-label">Justificativa da decisão</label>
+<textarea class="admin-v13-textarea" id="v13JustificativaDecisao" style="min-height:80px" placeholder="Fundamente a decisão administrativa."></textarea>
+</div>
+</div>
+</div>
+
 </div>
 <div class="admin-v13-actions no-print" style="margin-top:12px">
 <button class="admin-v13-btn green" id="btnSalvarAdministrativoV13" type="submit">💾 Registrar medida</button>
@@ -11189,6 +11316,18 @@ function mostrarRelatorioAdminV11(){
 <div class="admin-v13-detail full">
 <div class="admin-v13-detail-label">🔗 Chamado relacionado</div>
 <div class="admin-v13-detail-value" id="adm13ModalChamado"></div>
+</div>
+<div class="admin-v13-detail full">
+<div class="admin-v13-detail-label">💰 Penalidade</div>
+<div class="admin-v13-detail-value" id="adm13ModalPenalidade"></div>
+</div>
+<div class="admin-v13-detail full">
+<div class="admin-v13-detail-label">⚖️ Recurso</div>
+<div class="admin-v13-detail-value" id="adm13ModalRecurso"></div>
+</div>
+<div class="admin-v13-detail full">
+<div class="admin-v13-detail-label">🏛️ Decisão</div>
+<div class="admin-v13-detail-value" id="adm13ModalDecisao"></div>
 </div>
 <div class="admin-v13-detail full">
 <div class="admin-v13-detail-label">Histórico da unidade</div>
@@ -11351,11 +11490,16 @@ function controlarVisaoGeralAoAbrirAdvertencias(ocultar) {
         const adv=base.filter(x=>x.tipo==='Advertência').length;
         const not=base.filter(x=>x.tipo==='Notificação').length;
         const reinc=Object.values(calcularReincidencias(base)).filter(n=>n>1).length;
+        const recursos=base.filter(x=>{
+            const m=obterMetaAdministrativa(x);
+            return x.tipo==='Notificação' && m.recursoApresentado==='Sim' && !m.decisao;
+        }).length;
 
         document.getElementById('v13TotalMedidas').textContent=base.length;
         document.getElementById('v13TotalAdvertencias').textContent=adv;
         document.getElementById('v13TotalNotificacoes').textContent=not;
         document.getElementById('v13TotalReincidencias').textContent=reinc;
+        const recEl=document.getElementById('v13TotalRecursos'); if(recEl) recEl.textContent=recursos;
 
         const kpis=document.getElementById('v13Kpis');
         if(kpis) kpis.style.display=base.length || registrosDaPesquisaAtual.length ? 'grid' : 'none';
@@ -11370,7 +11514,8 @@ function controlarVisaoGeralAoAbrirAdvertencias(ocultar) {
             todos:'Todos os registros',
             advertencias:'Somente Advertências',
             notificacoes:'Somente Notificações',
-            reincidencias:'Registros envolvidos em reincidência'
+            reincidencias:'Registros envolvidos em reincidência',
+            recursos:'Notificações com recurso pendente'
         };
         const aviso=document.getElementById('v13FiltroAtivo');
         if(aviso){
@@ -11386,6 +11531,10 @@ function controlarVisaoGeralAoAbrirAdvertencias(ocultar) {
         if(filtro==='advertencias') regs=regs.filter(x=>x.tipo==='Advertência');
         if(filtro==='notificacoes') regs=regs.filter(x=>x.tipo==='Notificação');
         if(filtro==='reincidencias') regs=registrosReincidentes(regs);
+        if(filtro==='recursos') regs=regs.filter(x=>{
+            const m=obterMetaAdministrativa(x);
+            return x.tipo==='Notificação' && m.recursoApresentado==='Sim' && !m.decisao;
+        });
         renderLista(regs);
         atualizarKpis(registrosDaPesquisaAtual);
     }
@@ -11395,22 +11544,211 @@ function controlarVisaoGeralAoAbrirAdvertencias(ocultar) {
         return Object.entries(mapa).filter(([,n])=>n>1).map(([i,n])=>`${i} (${n} registros)`);
     }
 
+
+    function obterMetaAdministrativa(x){
+        // Compatibility layer: until the Worker is upgraded, the new fields
+        // can be supplied by a future API without breaking old records.
+        return {
+            multaCotas:x.multaCotas ?? '',
+            valorCota:x.valorCota ?? '',
+            valorMulta:x.valorMulta ?? '',
+            recursoApresentado:x.recursoApresentado ?? 'Não',
+            dataRecurso:x.dataRecurso ?? '',
+            justificativaRecurso:x.justificativaRecurso ?? '',
+            decisao:x.decisao ?? '',
+            dataDecisao:x.dataDecisao ?? '',
+            responsaveisDecisao:x.responsaveisDecisao ?? '',
+            justificativaDecisao:x.justificativaDecisao ?? '',
+            origem:x.origem ?? 'Administração',
+            categoria:x.categoria ?? ''
+        };
+    }
+
+    function formatarMoeda(v){
+        const n=Number(v);
+        if(!Number.isFinite(n)) return String(v||'');
+        return n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+    }
+
+    function statusAdministrativo(meta){
+        if(meta.decisao==='Recurso acolhido'){
+            return {texto:'🟢 Cancelada',classe:'cancelada'};
+        }
+        if(meta.decisao==='Recurso indeferido'){
+            return {texto:'🔴 Multa mantida',classe:'mantida'};
+        }
+        if(meta.recursoApresentado==='Sim'){
+            return {texto:'⚖️ Recurso pendente',classe:'recurso'};
+        }
+        return {texto:'🟡 Registrada',classe:'registrada'};
+    }
+
+    function calcularPrazoRecurso(data){
+        if(!data) return '';
+        const d=new Date(data+'T12:00:00');
+        let uteis=0;
+        while(uteis<7){
+            d.setDate(d.getDate()+1);
+            const dia=d.getDay();
+            if(dia!==0 && dia!==6) uteis++;
+        }
+        return d.toISOString().slice(0,10);
+    }
+
+    const infracoesRegimentoV45={
+        "Animais domésticos":[
+            ["Animal que comprometa a tranquilidade, higiene ou segurança","Art. 1º"],
+            ["Animal em desacordo com as regras do condomínio","Art. 1º"],
+            ["Excrementos em jardim/área comum","Art. 1º"],
+            ["Circulação de animal em área comum em desacordo","Art. 1º"],
+            ["Entrada de animal em área de lazer proibida","Art. 1º"]
+        ],
+        "Churrasqueira / Salão de festas":[
+            ["Uso do espaço sem reserva","Arts. 2º e 3º"],
+            ["Excesso de convidados","Arts. 2º e 3º"],
+            ["Uso fora do horário permitido","Arts. 2º e 3º"],
+            ["Som/perturbação em desacordo com as regras","Arts. 2º e 3º"],
+            ["Danos ou falta de limpeza após o evento","Arts. 2º e 3º"]
+        ],
+        "Piscina":[
+            ["Uso fora do horário permitido","Art. 4º"],
+            ["Criança desacompanhada em situação proibida","Art. 4º"],
+            ["Traje inadequado","Art. 4º"],
+            ["Uso inadequado da área ou mobiliário","Art. 4º"],
+            ["Entrada com objetos/bebidas proibidos","Art. 4º"]
+        ],
+        "Playground":[
+            ["Uso inadequado dos brinquedos","Art. 5º"],
+            ["Criança desacompanhada em desacordo com a regra","Art. 5º"],
+            ["Danos aos brinquedos","Art. 5º"],
+            ["Consumo de bebida/cigarro em local proibido","Art. 5º"]
+        ],
+        "Garagem":[
+            ["Estacionar fora dos limites da vaga","Art. 6º"],
+            ["Veículo não cadastrado/autorizado","Art. 6º"],
+            ["Exceder 20 km/h","Art. 6º"],
+            ["Circular na contramão","Art. 6º"],
+            ["Mecânica/lanternagem/pintura na garagem","Art. 6º"],
+            ["Uso irregular da vaga","Art. 6º"]
+        ],
+        "Mudanças / Entregas / Obras":[
+            ["Mudança fora do horário","Arts. 7º e 8º"],
+            ["Entrega fora do horário","Arts. 7º e 8º"],
+            ["Falta de agendamento","Arts. 7º e 8º"],
+            ["Obra fora do horário permitido","Art. 8º"],
+            ["Obra em domingo/feriado","Art. 8º"]
+        ],
+        "Quadra":[
+            ["Uso fora do horário","Art. 9º"],
+            ["Excesso de visitantes","Art. 9º"],
+            ["Torneio sem autorização","Art. 9º"],
+            ["Xingamentos/gritaria/perturbação","Art. 9º"]
+        ],
+        "Elevadores":[
+            ["Excesso de carga","Art. 10º"],
+            ["Gritaria/algazarra","Art. 10º"],
+            ["Uso indevido dos comandos","Art. 10º"],
+            ["Mudança fora do horário","Art. 10º"],
+            ["Sujar elevador ou rol","Art. 10º"]
+        ],
+        "Ruídos / Sossego":[
+            ["Som automotivo em área comum","Arts. 11 e 12"],
+            ["Ruído perturbando o sossego","Arts. 11 e 12"],
+            ["Caixa de som após 22h","Art. 12"],
+            ["Gritaria nos corredores/áreas comuns","Arts. 12 e 13"],
+            ["Reincidência de perturbação do sossego","Art. 14"]
+        ],
+        "Proibições gerais":[
+            ["Descarte irregular de lixo/detritos","Art. 15"],
+            ["Fumo em área proibida","Art. 15"],
+            ["Bebida alcoólica em área proibida","Art. 15"],
+            ["Desacato/agressão/desrespeito à Administração","Art. 15"],
+            ["Veículo abandonado","Art. 15"],
+            ["Drogas ilícitas","Art. 15"],
+            ["Ato que viole a privacidade de terceiros","Art. 15"]
+        ],
+        "Acesso ao condomínio":[
+            ["Cadastro de morador desatualizado","Arts. 16 e 17"],
+            ["Veículo sem TAG cadastrada","Art. 17"],
+            ["Troca de veículo sem atualização da TAG","Art. 17"],
+            ["Uso da TAG em desacordo com as regras","Art. 17"]
+        ]
+    };
+
+    function atualizarInfracoesV45(){
+        const cat=document.getElementById('v13Categoria');
+        const inf=document.getElementById('v13Infracao');
+        const base=document.getElementById('v13BaseRegimento');
+        if(!cat||!inf) return;
+        const lista=cat.value ? (infracoesRegimentoV45[cat.value]||[]) : [];
+        inf.innerHTML='<option value="">Selecione...</option>'+lista.map(([nome,art])=>`<option value="${esc(nome)}" data-artigo="${esc(art)}">${esc(nome)}</option>`).join('');
+        if(base) base.value='';
+    }
+
+    function atualizarBaseV45(){
+        const inf=document.getElementById('v13Infracao');
+        const opt=inf?.selectedOptions?.[0];
+        const base=document.getElementById('v13BaseRegimento');
+        if(base) base.value=opt?.dataset?.artigo||'';
+    }
+
+    function atualizarTipoAdministrativoV45(){
+        const tipo=document.getElementById('v13Tipo')?.value;
+        const notificacao=tipo==='Notificação';
+        ['v13NotificacaoArea','v13RecursoArea','v13DecisaoArea'].forEach(id=>{
+            const el=document.getElementById(id);
+            if(el) el.style.display=notificacao?'block':'none';
+        });
+        if(!notificacao){
+            ['v13MultaCotas','v13ValorCota','v13ValorMulta','v13DataRecurso','v13JustificativaRecurso','v13DataDecisao','v13ResponsaveisDecisao','v13JustificativaDecisao'].forEach(id=>{
+                const el=document.getElementById(id); if(el) el.value='';
+            });
+            const r=document.getElementById('v13RecursoApresentado'); if(r) r.value='Não';
+            const d=document.getElementById('v13Decisao'); if(d) d.value='';
+        }
+        calcularMultaV45();
+    }
+
+    function calcularMultaV45(){
+        const c=Number(document.getElementById('v13MultaCotas')?.value||0);
+        const v=Number(document.getElementById('v13ValorCota')?.value||0);
+        const out=document.getElementById('v13ValorMulta');
+        if(out) out.value=(c>0&&v>0)?`R$ ${formatarMoeda(c*v)}`:'';
+    }
+
+    function atualizarRecursoV45(){
+        const sim=document.getElementById('v13RecursoApresentado')?.value==='Sim';
+        const area=document.getElementById('v13DecisaoArea');
+        if(area) area.style.display=sim?'block':'none';
+        if(sim){
+            const data=document.getElementById('v13DataRegistro')?.value;
+            const campo=document.getElementById('v13PrazoRecurso');
+            if(campo && data){
+                campo.value='7 dias úteis — até '+formatarData(calcularPrazoRecurso(data));
+            }
+        }
+    }
+
     function renderLista(regs=medidas){
         if(!lista) return;
         if(!regs.length){
             lista.innerHTML='<div style="padding:16px;text-align:center;color:#64737c">Nenhum registro administrativo encontrado para o filtro selecionado.</div>';
             return;
         }
-        lista.innerHTML=`<table class="admin-v13-table"><thead><tr><th>Protocolo</th><th>Data do registro</th><th>Data da infração</th><th>Unidade</th><th>Tipo</th><th>Infração</th><th>Chamado</th><th>Ações</th></tr></thead><tbody>${regs.map(x=>`<tr>
+        lista.innerHTML=`<table class="admin-v13-table"><thead><tr><th>Protocolo</th><th>Data do registro</th><th>Data da infração</th><th>Unidade</th><th>Tipo</th><th>Infração</th><th>Multa</th><th>Status</th><th>Ações</th></tr></thead><tbody>${regs.map(x=>{
+            const meta=obterMetaAdministrativa(x);
+            return `<tr>
             <td><span class="admin-v13-protocol">${esc(x.protocolo)}</span></td>
             <td>${esc(formatarData(x.dataRegistro))}</td>
             <td>${esc(formatarData(x.dataOcorrencia || x.dataInfracao || x.dataFato || ''))}</td>
             <td>${esc(x.unidade)} / ${esc(x.bloco)}</td>
             <td><span class="admin-v13-badge ${x.tipo==='Advertência'?'adv':'not'}">${esc(x.tipo)}</span></td>
             <td>${esc(x.infracao)}<br><small>${esc(x.descricao||'')}</small></td>
-            <td>${x.protocoloChamado?`<span class="admin-v13-protocol">${esc(x.protocoloChamado)}</span>`:'—'}</td>
+            <td>${x.tipo==='Notificação' && meta.valorMulta ? `R$ ${esc(formatarMoeda(meta.valorMulta))}` : '—'}</td>
+            <td>${esc(statusAdministrativo(meta).texto)}</td>
             <td><button class="admin-v13-btn gray" type="button" data-v13-view="${esc(x.protocolo)}">👁️ Ver</button></td>
-        </tr>`).join('')}</tbody></table>`;
+        </tr>`;
+        }).join('')}</tbody></table>`;
         lista.querySelectorAll('[data-v13-view]').forEach(b=>b.addEventListener('click',()=>verRegistro(b.dataset.v13View)));
 
     }
@@ -11435,6 +11773,11 @@ function controlarVisaoGeralAoAbrirAdvertencias(ocultar) {
         set('adm13ModalDescricao',x.descricao);
         set('adm13ModalObservacoes',x.observacoes);
         set('adm13ModalChamado',x.protocoloChamado||'Não associado');
+        const meta=obterMetaAdministrativa(x);
+        const st=statusAdministrativo(meta);
+        set('adm13ModalPenalidade',x.tipo==='Notificação' ? `${meta.multaCotas||'—'} cota(s)${meta.valorMulta?` · R$ ${formatarMoeda(meta.valorMulta)}`:''} · ${st.texto}` : 'Advertência — sem multa');
+        set('adm13ModalRecurso',x.tipo==='Notificação' ? `${meta.recursoApresentado==='Sim'?'Apresentado':'Não apresentado'}${meta.dataRecurso?' em '+formatarData(meta.dataRecurso):''}${meta.justificativaRecurso?' · '+meta.justificativaRecurso:''}` : 'Não se aplica');
+        set('adm13ModalDecisao',x.tipo==='Notificação' ? (meta.decisao ? `${meta.decisao}${meta.dataDecisao?' em '+formatarData(meta.dataDecisao):''}${meta.responsaveisDecisao?' · '+meta.responsaveisDecisao:''}` : 'Aguardando análise') : 'Não se aplica');
         set('adm13ModalHistorico',`${hist.length} registro(s) nesta unidade · ${rec} registro(s) da mesma infração.`);
         const btnChamado=document.getElementById('btnAbrirChamadoAdm13');
         if(btnChamado){
@@ -11461,196 +11804,34 @@ function controlarVisaoGeralAoAbrirAdvertencias(ocultar) {
     function imprimirMedidaAdm13(){
         const x=adm13RegistroModalAtual;
         if(!x) return;
-
         const tipo = x.tipo === 'Notificação' ? 'NOTIFICAÇÃO' : 'ADVERTÊNCIA';
-
-        const esc = (v)=>String(v ?? '')
-            .replace(/&/g,'&amp;')
-            .replace(/</g,'&lt;')
-            .replace(/>/g,'&gt;')
-            .replace(/"/g,'&quot;')
-            .replace(/'/g,'&#39;');
-
-        const dataExtenso = (valor)=>{
-            if(!valor) return '';
-            const p=String(valor).split('-');
-            if(p.length!==3) return String(valor);
-
-            const meses=[
-                'janeiro','fevereiro','março','abril','maio','junho',
-                'julho','agosto','setembro','outubro','novembro','dezembro'
-            ];
-
-            const d=Number(p[2]);
-            const m=Number(p[1]);
-            const a=Number(p[0]);
-
-            return `${d} de ${meses[m-1] || p[1]} de ${a}`;
-        };
-
-        const dataRegistro = formatarData(x.dataRegistro || '');
-        const dataInfracao = formatarData(
-            x.dataOcorrencia || x.dataInfracao || x.dataFato || ''
-        );
-
-        const unidade = x.unidade || 'Não informada';
-        const bloco = x.bloco || 'Não informado';
-        const unidadeBloco = `${unidade} / ${bloco}`;
-        const infracao = x.infracao || 'infração às normas internas';
-        const descricao = x.descricao || 'Não foram informados detalhes adicionais.';
-        const base = x.baseRegimento || 'Regimento Interno do Condomínio';
-        const responsavel = x.responsavel || 'Administração';
-        const observacoes = x.observacoes || '';
-
-        const enderecoLogo = new URL(
-            'logo parqueclube.png',
-            window.location.href
-        ).href;
-
-        const tituloReferencia =
-            tipo === 'ADVERTÊNCIA'
-            ? 'ADVERTÊNCIA POR INFRAÇÃO ÀS NORMAS INTERNAS'
-            : 'NOTIFICAÇÃO POR INFRAÇÃO ÀS NORMAS INTERNAS';
-
-        const w=window.open('', '_blank', 'width=900,height=900');
-
-        if(!w){
-            alert('O navegador bloqueou a janela de impressão. Permita pop-ups para este site.');
-            return;
-        }
-
-        w.document.write(`<!doctype html>
-<html lang="pt-BR">
-<head>
-<meta charset="utf-8">
-<title>${esc(tipo)} - ${esc(x.protocolo)}</title>
-<style>
-*{box-sizing:border-box}
-body{margin:0;background:#fff;color:#202020;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.55}
-.page{width:210mm;min-height:297mm;margin:0 auto;padding:18mm 20mm 16mm}
-.header{display:flex;align-items:center;gap:18px;border-bottom:3px solid #176b35;padding-bottom:12px;margin-bottom:20px}
-.header img{width:95px;max-height:70px;object-fit:contain}
-.header-text{flex:1}
-.system{color:#176b35;font-size:21px;font-weight:800;line-height:1.15}
-.system-sub{color:#52616b;font-size:11px;margin-top:4px}
-.date-place{text-align:right;margin-bottom:22px}
-.recipient{margin-bottom:18px}
-.reference{font-weight:800;font-size:16px;text-decoration:underline;margin:18px 0}
-p{margin:0 0 13px;text-align:justify}
-.info-box{border-left:4px solid #176b35;background:#f5f8f6;padding:12px 14px;margin:16px 0}
-.info-line{margin:4px 0}
-.label{font-weight:800}
-.signature{margin-top:55px;display:grid;grid-template-columns:1fr 1fr;gap:50px;text-align:center}
-.signature-line{border-top:1px solid #333;padding-top:7px;font-size:11px}
-.footer{margin-top:35px;padding-top:10px;border-top:1px solid #d5d5d5;color:#777;text-align:center;font-size:10px}
-@page{size:A4;margin:0}
-@media print{body{background:#fff}.page{width:auto;min-height:auto}}
-</style>
-</head>
-<body>
-<div class="page">
-
-<header class="header">
-    <img src="${esc(enderecoLogo)}" alt="Parque Clube">
-    <div class="header-text">
-        <div class="system">SISTEMA DE GESTÃO DO CONDOMÍNIO</div>
-        <div class="system-sub">Sistema de Chamados / Ordem de Serviço</div>
-    </div>
-</header>
-
-<div class="date-place">
-    Valparaíso de Goiás,
-    ${esc(dataExtenso(x.dataRegistro || ''))}.
-</div>
-
-<div class="recipient">
-    <strong>À Unidade ${esc(unidadeBloco)}</strong><br>
-    Condomínio Parque Clube
-</div>
-
-<div class="reference">
-    REF.: ${esc(tituloReferencia)}
-</div>
-
-<p>Prezado(a) Senhor(a),</p>
-
-<p>
-    Na qualidade de Administração do Condomínio Parque Clube, e em atenção
-    às normas estabelecidas no Regimento Interno, comunicamos formalmente
-    o registro de uma ocorrência relacionada à unidade
-    <strong>${esc(unidadeBloco)}</strong>.
-</p>
-
-<p>
-    A ocorrência refere-se a
-    <strong>${esc(infracao)}</strong>,
-    registrada no sistema sob o protocolo
-    <strong>${esc(x.protocolo)}</strong>
-    ${dataInfracao ? `, com data da infração em <strong>${esc(dataInfracao)}</strong>` : ''}.
-</p>
-
-<div class="info-box">
-    <div class="info-line">
-        <span class="label">Descrição da ocorrência:</span>
-        ${esc(descricao)}
-    </div>
-    <div class="info-line">
-        <span class="label">Base no Regimento:</span>
-        ${esc(base)}
-    </div>
-    ${observacoes ? `
-    <div class="info-line">
-        <span class="label">Observações:</span>
-        ${esc(observacoes)}
-    </div>` : ''}
-    <div class="info-line">
-        <span class="label">Data do registro:</span>
-        ${esc(dataRegistro || 'Não informada')}
-    </div>
-</div>
-
-<p>
-    Esta ${tipo === 'ADVERTÊNCIA' ? 'advertência' : 'notificação'} tem por finalidade
-    formalizar o registro administrativo da ocorrência e dar ciência ao
-    responsável pela unidade. Solicitamos especial atenção para que a
-    situação seja regularizada e para que as normas internas sejam
-    observadas, contribuindo para a segurança, a tranquilidade e a boa
-    convivência entre todos os moradores.
-</p>
-
-<p>
-    Em caso de reincidência, poderão ser adotadas as medidas previstas no
-    Regimento Interno do Condomínio, observados os procedimentos
-    administrativos aplicáveis.
-</p>
-
-<p>Atenciosamente,</p>
-
-<div class="signature">
-    <div class="signature-line">
-        ${esc(responsavel)}<br>
-        Administração do Condomínio Parque Clube
-    </div>
-    <div class="signature-line">
-        Ciente / assinatura do responsável pela unidade
-    </div>
-</div>
-
-<div class="footer">
-    Documento emitido pelo Sistema de Gestão do Condomínio.<br>
-    Protocolo administrativo: ${esc(x.protocolo)}
-</div>
-
-</div>
-
-<script>
-window.onload=function(){
-    setTimeout(function(){ window.print(); },300);
-};
-<\/script>
-</body>
-</html>`);
-
+        const esc = (v)=>String(v ?? '').replace(/[&<>\"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c]));
+        const w=window.open('', '_blank', 'width=900,height=800');
+        if(!w){ alert('O navegador bloqueou a janela de impressão. Permita pop-ups para este site.'); return; }
+        w.document.write(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>${esc(tipo)} - ${esc(x.protocolo)}</title><style>
+            *{box-sizing:border-box} body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:35px;color:#183447;background:#fff}
+            .cab{border-bottom:3px solid #176b35;padding-bottom:14px;margin-bottom:24px}.cab h1{margin:0;color:#176b35;font-size:22px}.cab h2{margin:6px 0 0;font-size:18px}.sub{color:#667;margin-top:5px;font-size:13px}
+            .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.item{border:1px solid #d9e1e6;border-radius:8px;padding:10px}.full{grid-column:1/-1}.lab{font-size:11px;color:#687680;font-weight:bold;margin-bottom:5px}.val{font-size:14px;font-weight:600;white-space:pre-wrap;word-break:break-word;min-height:18px}
+            .assin{margin-top:70px;display:grid;grid-template-columns:1fr 1fr;gap:60px;text-align:center}.linha{border-top:1px solid #333;padding-top:7px;font-size:12px}.rod{margin-top:30px;color:#777;font-size:11px;text-align:center}
+            @media print{body{padding:18mm}.no-print{display:none}}
+        </style></head><body>
+        <div class="cab"><h1>SISTEMA DE GESTÃO DO CONDOMÍNIO</h1><h2>${esc(tipo)}</h2><div class="sub">Protocolo ${esc(x.protocolo)}</div></div>
+        <div class="grid">
+          <div class="item"><div class="lab">Protocolo</div><div class="val">${esc(x.protocolo)}</div></div>
+          <div class="item"><div class="lab">Tipo</div><div class="val">${esc(x.tipo)}</div></div>
+          <div class="item"><div class="lab">Data do registro</div><div class="val">${esc(formatarData(x.dataRegistro))}</div></div>
+          <div class="item"><div class="lab">Unidade / Bloco</div><div class="val">${esc((x.unidade||'—')+' / '+(x.bloco||'—'))}</div></div>
+          <div class="item full"><div class="lab">Infração / Ocorrência</div><div class="val">${esc(x.infracao||'Não informado')}</div></div>
+          <div class="item"><div class="lab">Base no Regimento</div><div class="val">${esc(x.baseRegimento||'Não informado')}</div></div>
+          <div class="item"><div class="lab">Responsável</div><div class="val">${esc(x.responsavel||'Não informado')}</div></div>
+          <div class="item full"><div class="lab">Descrição</div><div class="val">${esc(x.descricao||'Não informado')}</div></div>
+          <div class="item full"><div class="lab">Observações</div><div class="val">${esc(x.observacoes||'Não informado')}</div></div>
+          <div class="item full"><div class="lab">Chamado relacionado</div><div class="val">${esc(x.protocoloChamado||'Não associado')}</div></div>
+        </div>
+        <div class="assin"><div class="linha">Responsável pela administração</div><div class="linha">Ciente / assinatura do responsável pela unidade</div></div>
+        <div class="rod">Documento emitido pelo Sistema de Gestão do Condomínio.</div>
+        <script>window.onload=()=>setTimeout(()=>window.print(),250);<\/script>
+        </body></html>`);
         w.document.close();
     }
     async function carregarMedidas(){
@@ -11718,9 +11899,27 @@ window.onload=function(){
             baseRegimento:document.getElementById('v13BaseRegimento').value.trim(),
             responsavel:document.getElementById('v13Responsavel').value.trim(),
             observacoes:document.getElementById('v13Observacoes').value.trim(),
-            protocoloChamado:document.getElementById('v13ProtocoloChamado').value
+            protocoloChamado:document.getElementById('v13ProtocoloChamado').value,
+            origem:document.getElementById('v13Origem').value,
+            categoria:document.getElementById('v13Categoria').value,
+            multaCotas:document.getElementById('v13MultaCotas').value,
+            valorCota:document.getElementById('v13ValorCota').value,
+            valorMulta:(()=>{
+                const c=Number(document.getElementById('v13MultaCotas').value||0);
+                const v=Number(document.getElementById('v13ValorCota').value||0);
+                return c>0&&v>0 ? (c*v).toFixed(2) : '';
+            })(),
+            prazoRecurso:document.getElementById('v13PrazoRecurso').value,
+            recursoApresentado:document.getElementById('v13RecursoApresentado').value,
+            dataRecurso:document.getElementById('v13DataRecurso').value,
+            justificativaRecurso:document.getElementById('v13JustificativaRecurso').value.trim(),
+            decisao:document.getElementById('v13Decisao').value,
+            dataDecisao:document.getElementById('v13DataDecisao').value,
+            responsaveisDecisao:document.getElementById('v13ResponsaveisDecisao').value.trim(),
+            justificativaDecisao:document.getElementById('v13JustificativaDecisao').value.trim()
         };
-        if(!payload.tipo||!payload.bloco||!payload.unidade||!payload.infracao||!payload.descricao){alert('Preencha os campos obrigatórios.');return;}
+        if(!payload.tipo||!payload.bloco||!payload.unidade||!payload.categoria||!payload.infracao||!payload.descricao){alert('Preencha os campos obrigatórios.');return;}
+        if(payload.tipo==='Notificação' && !payload.multaCotas){alert('Informe a quantidade de cotas da multa prevista para a Notificação.');return;}
         bot.disabled=true;bot.textContent='⏳ Registrando...';
         try{
             const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
@@ -11876,6 +12075,28 @@ window.onload=function(){
         if(c && c.dataOcorrencia){document.getElementById('v13DataOcorrencia').value=c.dataOcorrencia;}
         if(c && c.ocorrencia){const sel=document.getElementById('v13Infracao');const opt=[...sel.options].find(o=>o.textContent.toLowerCase().includes(String(c.ocorrencia).toLowerCase()));if(opt)sel.value=opt.value;}
     });
+    const categoriaV45=document.getElementById('v13Categoria');
+    const infracaoV45=document.getElementById('v13Infracao');
+    const tipoV45=document.getElementById('v13Tipo');
+    const recV45=document.getElementById('v13RecursoApresentado');
+    if(categoriaV45) categoriaV45.addEventListener('change',atualizarInfracoesV45);
+    if(infracaoV45) infracaoV45.addEventListener('change',atualizarBaseV45);
+    if(tipoV45) tipoV45.addEventListener('change',atualizarTipoAdministrativoV45);
+    ['v13MultaCotas','v13ValorCota'].forEach(id=>{
+        const el=document.getElementById(id);
+        if(el) el.addEventListener('input',calcularMultaV45);
+    });
+    if(recV45) recV45.addEventListener('change',atualizarRecursoV45);
+    document.getElementById('v13DataRegistro')?.addEventListener('change',atualizarRecursoV45);
+    document.getElementById('v13DataOcorrencia')?.addEventListener('change',()=>{
+        const data=document.getElementById('v13DataRegistro')?.value;
+        const campo=document.getElementById('v13PrazoRecurso');
+        if(campo && data && document.getElementById('v13Tipo')?.value==='Notificação'){
+            campo.value='7 dias úteis — até '+formatarData(calcularPrazoRecurso(data));
+        }
+    });
+    atualizarTipoAdministrativoV45();
+
 })();
 
 
