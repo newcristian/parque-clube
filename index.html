@@ -10742,6 +10742,7 @@ function inicializarDashboardV11(){
     const btnBuscarAdmin = document.getElementById("btnBuscarAdmin");
 
     function esconderTudoAdminV11(){
+    controlarVisaoGeralAoAbrirAdvertencias(false);
         if(search) { search.style.display = "none"; search.hidden = true; }
         if(report) { report.style.display = "none"; report.hidden = true; }
         if(adminV13) { adminV13.style.display = "none"; adminV13.hidden = true; }
@@ -10751,6 +10752,7 @@ function inicializarDashboardV11(){
     }
 
     function mostrarPesquisaAdminV11(){
+    controlarVisaoGeralAoAbrirAdvertencias(false);
     document.body.classList.remove('admin-v13-active');
     const adminV13=document.getElementById('adminConteudoAdministrativoV13');
     if(adminV13){adminV13.style.display='none';adminV13.hidden=true;}
@@ -10777,6 +10779,7 @@ function inicializarDashboardV11(){
     },500);
 }
 function mostrarRelatorioAdminV11(){
+    controlarVisaoGeralAoAbrirAdvertencias(false);
         document.body.classList.remove('admin-v13-active');
         const adminV13=document.getElementById('adminConteudoAdministrativoV13');
         if(adminV13){adminV13.style.display='none';adminV13.hidden=true;}
@@ -11241,6 +11244,16 @@ function mostrarRelatorioAdminV11(){
     if(btn) btn.addEventListener('click',atualizarDashboardAdministrativoV45);
 })();
 </script>
+
+<script>
+function controlarVisaoGeralAoAbrirAdvertencias(ocultar) {
+    const painel = document.getElementById('adminDashboardV45');
+    if (!painel) return;
+
+    painel.style.display = ocultar ? 'none' : '';
+}
+</script>
+
 <script id="administrativo-v13-js">
 
 (function(){
@@ -11271,6 +11284,7 @@ function mostrarRelatorioAdminV11(){
         return p.length===3 ? `${p[2]}/${p[1]}/${p[0]}` : v;
     }
     function mostrarAdmin(){
+    controlarVisaoGeralAoAbrirAdvertencias(true);
     document.body.classList.add('admin-v13-active');
     if(menu) menu.style.display='none';
     if(search){search.style.display='none';search.hidden=true;}
