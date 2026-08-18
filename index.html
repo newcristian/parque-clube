@@ -1907,57 +1907,13 @@ button:active{
     font-size:12px;
 }
 
-.consulta-timeline{
-    margin-top:14px;
-    padding:13px;
-    border:1px solid #d6e4da;
-    border-radius:12px;
-    background:#f8fbf9;
-}
-.consulta-timeline-title{
-    color:#17632d;
-    font-weight:800;
-    font-size:13px;
-    margin-bottom:10px;
-}
-.consulta-timeline-item{
-    position:relative;
-    display:grid;
-    grid-template-columns:30px 1fr;
-    gap:8px;
-    padding:7px 0;
-}
-.consulta-timeline-item:not(:last-child)::after{
-    content:"";
-    position:absolute;
-    left:14px;
-    top:31px;
-    bottom:-3px;
-    width:2px;
-    background:#cfe0d4;
-}
-.consulta-timeline-icon{
-    position:relative;
-    z-index:1;
-    width:28px;
-    height:28px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    border-radius:50%;
-    background:#fff;
-    border:1px solid #b9d9c2;
-    font-size:14px;
-}
-.consulta-timeline-text strong{
-    display:block;
-    color:#334155;
-    font-size:12px;
-}
-.consulta-timeline-text span{
-    color:#64748b;
-    font-size:10px;
-}
+
+
+
+
+
+
+
 
 @media(max-width:700px){
     .consulta-resumo-topo{
@@ -5063,11 +5019,6 @@ function fecharConsultaProtocolo() {
         resumo.style.display = "none";
     }
 
-    const timeline = document.getElementById("consultaTimeline");
-    if (timeline) {
-        timeline.style.display = "none";
-    }
-
     if (input) {
         input.value = "";
     }
@@ -5093,170 +5044,6 @@ function fecharConsultaProtocolo() {
 }
 
 
-function montarLinhaDoTempoConsulta(chamado) {
-
-    let timeline =
-        document.getElementById(
-            "consultaTimeline"
-        );
-
-    if (!timeline) {
-        const resultado =
-            document.getElementById(
-                "resultadoConsulta"
-            );
-
-        if (!resultado) return;
-
-        timeline =
-            document.createElement(
-                "div"
-            );
-
-        timeline.id =
-            "consultaTimeline";
-
-        timeline.className =
-            "consulta-timeline";
-
-        const botaoFinal =
-            resultado.querySelector(
-                ".consulta-final-acao"
-            );
-
-        if (botaoFinal) {
-            resultado.insertBefore(
-                timeline,
-                botaoFinal
-            );
-        } else {
-            resultado.appendChild(
-                timeline
-            );
-        }
-    }
-
-    const eventos = [];
-
-    if (chamado?.dataAbertura) {
-        eventos.push([
-            "📥",
-            "Recebido",
-            chamado.dataAbertura +
-            (chamado.horaAbertura
-                ? " às " + chamado.horaAbertura
-                : "")
-        ]);
-    }
-
-    if (chamado?.ultimaAtualizacao) {
-        eventos.push([
-            "🔄",
-            "Última atualização",
-            chamado.ultimaAtualizacao
-        ]);
-    }
-
-    if (chamado?.dataConclusao) {
-        eventos.push([
-            "✅",
-            "Concluído",
-            chamado.dataConclusao +
-            (chamado.horaConclusao
-                ? " às " + chamado.horaConclusao
-                : "")
-        ]);
-    }
-
-    const historicoArquivamento =
-        Array.isArray(
-            chamado?.historicoArquivamento
-        )
-            ? chamado.historicoArquivamento
-            : [];
-
-    historicoArquivamento.forEach(
-        function(evento) {
-            eventos.push([
-                evento.tipo === "REABERTO"
-                    ? "🔓"
-                    : "📦",
-                evento.tipo === "REABERTO"
-                    ? "Reaberto"
-                    : "Arquivado",
-                evento.dataHora || "-"
-            ]);
-        }
-    );
-
-    if (!eventos.length) {
-        timeline.style.display = "none";
-        return;
-    }
-
-    timeline.style.display = "block";
-
-    timeline.innerHTML =
-        '<div class="consulta-timeline-title">📍 Acompanhamento do chamado</div>' +
-        eventos.map(function(evento) {
-            return `
-                <div class="consulta-timeline-item">
-                    <div class="consulta-timeline-icon">${evento[0]}</div>
-                    <div class="consulta-timeline-text">
-                        <strong>${escapar(evento[1])}</strong>
-                        <span>${escapar(evento[2])}</span>
-                    </div>
-                </div>
-            `;
-        }).join("");
-
-}
-
-
-
-function obterObservacaoFinalConsulta(chamado) {
-
-    return (
-        chamado.observacaoFinal ||
-        chamado.solucao ||
-        chamado.resolucao ||
-        chamado.observacao ||
-        chamado.observacoes ||
-        ""
-    ).trim();
-
-}
-
-function atualizarSolucaoConsulta(chamado) {
-
-    const box =
-        document.getElementById(
-            "consultaSolucao"
-        );
-
-    const texto =
-        document.getElementById(
-            "consultaSolucaoTexto"
-        );
-
-    if (!box || !texto) return;
-
-    const observacao =
-        obterObservacaoFinalConsulta(
-            chamado
-        );
-
-    if (!observacao) {
-        box.style.display = "none";
-        texto.textContent = "";
-        return;
-    }
-
-    texto.textContent = observacao;
-    box.style.display = "block";
-
-}
-
 function montarMensagemCompartilharProtocolo(chamado) {
 
     const protocolo =
@@ -5278,15 +5065,33 @@ function montarMensagemCompartilharProtocolo(chamado) {
         chamado?.tipo ||
         "Não informado";
 
-    return (
-        "PARQUE CLUBE\n\n" +
+    const observacao =
+        chamado?.observacaoFinal ||
+        chamado?.solucao ||
+        chamado?.resolucao ||
+        chamado?.observacao ||
+        chamado?.observacoes ||
+        "";
+
+    let mensagem =
+        "🏢 PARQUE CLUBE\n\n" +
         "📋 PROTOCOLO DE CHAMADO\n\n" +
         "Protocolo: " + protocolo + "\n" +
         "Status: " + status + "\n" +
         "Local: " + local + "\n" +
-        "Ocorrência: " + ocorrencia + "\n\n" +
-        "Acompanhe pelo Sistema de Gestão do Condomínio."
-    );
+        "Ocorrência: " + ocorrencia;
+
+    if (observacao.trim()) {
+        mensagem +=
+            "\n\n✅ Solução / Observação:\n" +
+            observacao.trim();
+    }
+
+    mensagem +=
+        "\n\n🔎 Consulte e acompanhe pelo aplicativo:\n" +
+        "https://parque-clube.newcristian.workers.dev/";
+
+    return mensagem;
 
 }
 
@@ -5558,9 +5363,7 @@ function mostrarResultado(
             );
     }
 
-    montarLinhaDoTempoConsulta(
-        chamado
-    );
+    
 
     const protocoloHistorico =
         document.getElementById(
