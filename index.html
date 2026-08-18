@@ -11461,34 +11461,196 @@ function controlarVisaoGeralAoAbrirAdvertencias(ocultar) {
     function imprimirMedidaAdm13(){
         const x=adm13RegistroModalAtual;
         if(!x) return;
+
         const tipo = x.tipo === 'Notificação' ? 'NOTIFICAÇÃO' : 'ADVERTÊNCIA';
-        const esc = (v)=>String(v ?? '').replace(/[&<>\"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c]));
-        const w=window.open('', '_blank', 'width=900,height=800');
-        if(!w){ alert('O navegador bloqueou a janela de impressão. Permita pop-ups para este site.'); return; }
-        w.document.write(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>${esc(tipo)} - ${esc(x.protocolo)}</title><style>
-            *{box-sizing:border-box} body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:35px;color:#183447;background:#fff}
-            .cab{border-bottom:3px solid #176b35;padding-bottom:14px;margin-bottom:24px}.cab h1{margin:0;color:#176b35;font-size:22px}.cab h2{margin:6px 0 0;font-size:18px}.sub{color:#667;margin-top:5px;font-size:13px}
-            .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.item{border:1px solid #d9e1e6;border-radius:8px;padding:10px}.full{grid-column:1/-1}.lab{font-size:11px;color:#687680;font-weight:bold;margin-bottom:5px}.val{font-size:14px;font-weight:600;white-space:pre-wrap;word-break:break-word;min-height:18px}
-            .assin{margin-top:70px;display:grid;grid-template-columns:1fr 1fr;gap:60px;text-align:center}.linha{border-top:1px solid #333;padding-top:7px;font-size:12px}.rod{margin-top:30px;color:#777;font-size:11px;text-align:center}
-            @media print{body{padding:18mm}.no-print{display:none}}
-        </style></head><body>
-        <div class="cab"><h1>SISTEMA DE GESTÃO DO CONDOMÍNIO</h1><h2>${esc(tipo)}</h2><div class="sub">Protocolo ${esc(x.protocolo)}</div></div>
-        <div class="grid">
-          <div class="item"><div class="lab">Protocolo</div><div class="val">${esc(x.protocolo)}</div></div>
-          <div class="item"><div class="lab">Tipo</div><div class="val">${esc(x.tipo)}</div></div>
-          <div class="item"><div class="lab">Data do registro</div><div class="val">${esc(formatarData(x.dataRegistro))}</div></div>
-          <div class="item"><div class="lab">Unidade / Bloco</div><div class="val">${esc((x.unidade||'—')+' / '+(x.bloco||'—'))}</div></div>
-          <div class="item full"><div class="lab">Infração / Ocorrência</div><div class="val">${esc(x.infracao||'Não informado')}</div></div>
-          <div class="item"><div class="lab">Base no Regimento</div><div class="val">${esc(x.baseRegimento||'Não informado')}</div></div>
-          <div class="item"><div class="lab">Responsável</div><div class="val">${esc(x.responsavel||'Não informado')}</div></div>
-          <div class="item full"><div class="lab">Descrição</div><div class="val">${esc(x.descricao||'Não informado')}</div></div>
-          <div class="item full"><div class="lab">Observações</div><div class="val">${esc(x.observacoes||'Não informado')}</div></div>
-          <div class="item full"><div class="lab">Chamado relacionado</div><div class="val">${esc(x.protocoloChamado||'Não associado')}</div></div>
-        </div>
-        <div class="assin"><div class="linha">Responsável pela administração</div><div class="linha">Ciente / assinatura do responsável pela unidade</div></div>
-        <div class="rod">Documento emitido pelo Sistema de Gestão do Condomínio.</div>
-        <script>window.onload=()=>setTimeout(()=>window.print(),250);<\/script>
-        </body></html>`);
+
+        const esc = (v)=>String(v ?? '')
+            .replace(/&/g,'&amp;')
+            .replace(/</g,'&lt;')
+            .replace(/>/g,'&gt;')
+            .replace(/"/g,'&quot;')
+            .replace(/'/g,'&#39;');
+
+        const dataExtenso = (valor)=>{
+            if(!valor) return '';
+            const p=String(valor).split('-');
+            if(p.length!==3) return String(valor);
+
+            const meses=[
+                'janeiro','fevereiro','março','abril','maio','junho',
+                'julho','agosto','setembro','outubro','novembro','dezembro'
+            ];
+
+            const d=Number(p[2]);
+            const m=Number(p[1]);
+            const a=Number(p[0]);
+
+            return `${d} de ${meses[m-1] || p[1]} de ${a}`;
+        };
+
+        const dataRegistro = formatarData(x.dataRegistro || '');
+        const dataInfracao = formatarData(
+            x.dataOcorrencia || x.dataInfracao || x.dataFato || ''
+        );
+
+        const unidade = x.unidade || 'Não informada';
+        const bloco = x.bloco || 'Não informado';
+        const unidadeBloco = `${unidade} / ${bloco}`;
+        const infracao = x.infracao || 'infração às normas internas';
+        const descricao = x.descricao || 'Não foram informados detalhes adicionais.';
+        const base = x.baseRegimento || 'Regimento Interno do Condomínio';
+        const responsavel = x.responsavel || 'Administração';
+        const observacoes = x.observacoes || '';
+
+        const enderecoLogo = new URL(
+            'logo parqueclube.png',
+            window.location.href
+        ).href;
+
+        const tituloReferencia =
+            tipo === 'ADVERTÊNCIA'
+            ? 'ADVERTÊNCIA POR INFRAÇÃO ÀS NORMAS INTERNAS'
+            : 'NOTIFICAÇÃO POR INFRAÇÃO ÀS NORMAS INTERNAS';
+
+        const w=window.open('', '_blank', 'width=900,height=900');
+
+        if(!w){
+            alert('O navegador bloqueou a janela de impressão. Permita pop-ups para este site.');
+            return;
+        }
+
+        w.document.write(`<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>${esc(tipo)} - ${esc(x.protocolo)}</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#fff;color:#202020;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.55}
+.page{width:210mm;min-height:297mm;margin:0 auto;padding:18mm 20mm 16mm}
+.header{display:flex;align-items:center;gap:18px;border-bottom:3px solid #176b35;padding-bottom:12px;margin-bottom:20px}
+.header img{width:95px;max-height:70px;object-fit:contain}
+.header-text{flex:1}
+.system{color:#176b35;font-size:21px;font-weight:800;line-height:1.15}
+.system-sub{color:#52616b;font-size:11px;margin-top:4px}
+.date-place{text-align:right;margin-bottom:22px}
+.recipient{margin-bottom:18px}
+.reference{font-weight:800;font-size:16px;text-decoration:underline;margin:18px 0}
+p{margin:0 0 13px;text-align:justify}
+.info-box{border-left:4px solid #176b35;background:#f5f8f6;padding:12px 14px;margin:16px 0}
+.info-line{margin:4px 0}
+.label{font-weight:800}
+.signature{margin-top:55px;display:grid;grid-template-columns:1fr 1fr;gap:50px;text-align:center}
+.signature-line{border-top:1px solid #333;padding-top:7px;font-size:11px}
+.footer{margin-top:35px;padding-top:10px;border-top:1px solid #d5d5d5;color:#777;text-align:center;font-size:10px}
+@page{size:A4;margin:0}
+@media print{body{background:#fff}.page{width:auto;min-height:auto}}
+</style>
+</head>
+<body>
+<div class="page">
+
+<header class="header">
+    <img src="${esc(enderecoLogo)}" alt="Parque Clube">
+    <div class="header-text">
+        <div class="system">SISTEMA DE GESTÃO DO CONDOMÍNIO</div>
+        <div class="system-sub">Sistema de Chamados / Ordem de Serviço</div>
+    </div>
+</header>
+
+<div class="date-place">
+    Valparaíso de Goiás,
+    ${esc(dataExtenso(x.dataRegistro || ''))}.
+</div>
+
+<div class="recipient">
+    <strong>À Unidade ${esc(unidadeBloco)}</strong><br>
+    Condomínio Parque Clube
+</div>
+
+<div class="reference">
+    REF.: ${esc(tituloReferencia)}
+</div>
+
+<p>Prezado(a) Senhor(a),</p>
+
+<p>
+    Na qualidade de Administração do Condomínio Parque Clube, e em atenção
+    às normas estabelecidas no Regimento Interno, comunicamos formalmente
+    o registro de uma ocorrência relacionada à unidade
+    <strong>${esc(unidadeBloco)}</strong>.
+</p>
+
+<p>
+    A ocorrência refere-se a
+    <strong>${esc(infracao)}</strong>,
+    registrada no sistema sob o protocolo
+    <strong>${esc(x.protocolo)}</strong>
+    ${dataInfracao ? `, com data da infração em <strong>${esc(dataInfracao)}</strong>` : ''}.
+</p>
+
+<div class="info-box">
+    <div class="info-line">
+        <span class="label">Descrição da ocorrência:</span>
+        ${esc(descricao)}
+    </div>
+    <div class="info-line">
+        <span class="label">Base no Regimento:</span>
+        ${esc(base)}
+    </div>
+    ${observacoes ? `
+    <div class="info-line">
+        <span class="label">Observações:</span>
+        ${esc(observacoes)}
+    </div>` : ''}
+    <div class="info-line">
+        <span class="label">Data do registro:</span>
+        ${esc(dataRegistro || 'Não informada')}
+    </div>
+</div>
+
+<p>
+    Esta ${tipo === 'ADVERTÊNCIA' ? 'advertência' : 'notificação'} tem por finalidade
+    formalizar o registro administrativo da ocorrência e dar ciência ao
+    responsável pela unidade. Solicitamos especial atenção para que a
+    situação seja regularizada e para que as normas internas sejam
+    observadas, contribuindo para a segurança, a tranquilidade e a boa
+    convivência entre todos os moradores.
+</p>
+
+<p>
+    Em caso de reincidência, poderão ser adotadas as medidas previstas no
+    Regimento Interno do Condomínio, observados os procedimentos
+    administrativos aplicáveis.
+</p>
+
+<p>Atenciosamente,</p>
+
+<div class="signature">
+    <div class="signature-line">
+        ${esc(responsavel)}<br>
+        Administração do Condomínio Parque Clube
+    </div>
+    <div class="signature-line">
+        Ciente / assinatura do responsável pela unidade
+    </div>
+</div>
+
+<div class="footer">
+    Documento emitido pelo Sistema de Gestão do Condomínio.<br>
+    Protocolo administrativo: ${esc(x.protocolo)}
+</div>
+
+</div>
+
+<script>
+window.onload=function(){
+    setTimeout(function(){ window.print(); },300);
+};
+<\/script>
+</body>
+</html>`);
+
         w.document.close();
     }
     async function carregarMedidas(){
