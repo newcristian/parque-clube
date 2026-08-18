@@ -2107,6 +2107,7 @@ button:active{
 .admin-v45-refresh:disabled{opacity:.65;cursor:wait}
 @media(max-width:700px){.admin-v45-dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-v45-kpi strong{font-size:20px}}
 </style>
+
 </style>
 </head>
 
@@ -11146,6 +11147,7 @@ function mostrarRelatorioAdminV11(){
 </div>
 </div>
 <div class="admin-v13-modal-footer">
+
 <button class="admin-v13-btn blue" id="btnAbrirChamadoAdm13" style="display:none" type="button">🔎 Consultar chamado relacionado</button>
 <button class="admin-v13-btn green" id="btnImprimirAdm13Modal" type="button">🖨️ Imprimir</button>
 <button class="admin-v13-btn gray" id="btnFecharAdm13Modal2" type="button">Fechar</button>
@@ -11342,6 +11344,7 @@ function mostrarRelatorioAdminV11(){
         lista.innerHTML=`<table class="admin-v13-table"><thead><tr><th>Protocolo</th><th>Data do registro</th><th>Data da infração</th><th>Unidade</th><th>Tipo</th><th>Infração</th><th>Chamado</th><th>Ações</th></tr></thead><tbody>${regs.map(x=>`<tr>
             <td><span class="admin-v13-protocol">${esc(x.protocolo)}</span></td>
             <td>${esc(formatarData(x.dataRegistro))}</td>
+            <td>${esc(formatarData(x.dataOcorrencia || x.dataInfracao || x.dataFato || ''))}</td>
             <td>${esc(x.unidade)} / ${esc(x.bloco)}</td>
             <td><span class="admin-v13-badge ${x.tipo==='Advertência'?'adv':'not'}">${esc(x.tipo)}</span></td>
             <td>${esc(x.infracao)}<br><small>${esc(x.descricao||'')}</small></td>
@@ -11349,9 +11352,10 @@ function mostrarRelatorioAdminV11(){
             <td><button class="admin-v13-btn gray" type="button" data-v13-view="${esc(x.protocolo)}">👁️ Ver</button></td>
         </tr>`).join('')}</tbody></table>`;
         lista.querySelectorAll('[data-v13-view]').forEach(b=>b.addEventListener('click',()=>verRegistro(b.dataset.v13View)));
+
     }
 
-    let adm13RegistroModalAtual = null;
+    var adm13RegistroModalAtual = null;
     function verRegistro(protocolo){
         const x=medidas.find(m=>m.protocolo===protocolo); if(!x) return;
         const hist=medidas.filter(m=>m.bloco===x.bloco && m.unidade===x.unidade);
@@ -11363,7 +11367,7 @@ function mostrarRelatorioAdminV11(){
         document.getElementById('adm13ModalTitulo').textContent=tipo;
         set('adm13ModalProtocolo',x.protocolo);
         set('adm13ModalTipo',x.tipo);
-        set('adm13ModalData',formatarData(x.dataRegistro)); set('adm13ModalDataInfracao',formatarData(x.dataInfracao||x.dataFato||x.dataOcorrencia||''));
+        set('adm13ModalData',formatarData(x.dataRegistro)); set('adm13ModalDataInfracao',formatarData(x.dataOcorrencia||x.dataInfracao||x.dataFato||''));
         set('adm13ModalUnidade',`${x.unidade||'—'} / ${x.bloco||'—'}`);
         set('adm13ModalInfracao',x.infracao);
         set('adm13ModalBase',x.baseRegimento);
@@ -11629,6 +11633,7 @@ function mostrarRelatorioAdminV11(){
         document.getElementById('btnFecharAdm13Modal2')?.addEventListener('click',fecharModalAdm13);
         document.getElementById('btnAbrirChamadoAdm13')?.addEventListener('click',consultarChamadoRelacionadoAdm13);
         document.getElementById('btnImprimirAdm13Modal')?.addEventListener('click',imprimirMedidaAdm13);
+
         document.getElementById('adm13DetalhesModal')?.addEventListener('click',(e)=>{
             if(e.target.id==='adm13DetalhesModal') fecharModalAdm13();
         });
@@ -11650,6 +11655,8 @@ function mostrarRelatorioAdminV11(){
         if(c && c.ocorrencia){const sel=document.getElementById('v13Infracao');const opt=[...sel.options].find(o=>o.textContent.toLowerCase().includes(String(c.ocorrencia).toLowerCase()));if(opt)sel.value=opt.value;}
     });
 })();
+
+
 
 </script>
 
