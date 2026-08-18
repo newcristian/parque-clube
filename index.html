@@ -2040,6 +2040,57 @@ button:active{
     }
 }
 
+/* V4.5 — CORREÇÃO MOBILE DOS BOTÕES DA CONSULTA */
+.consulta-acoes-finais{
+    position:relative;
+    z-index:20;
+    pointer-events:auto;
+}
+
+.consulta-acoes-finais button,
+.consulta-acoes-finais .btn-compartilhar-protocolo,
+.consulta-acoes-finais .btn-fechar-consulta{
+    position:relative;
+    z-index:21;
+    pointer-events:auto !important;
+    touch-action:manipulation;
+    -webkit-tap-highlight-color:transparent;
+}
+
+@media (max-width:700px){
+    .consulta-acoes-finais{
+        display:flex;
+        flex-direction:column;
+        gap:10px;
+        width:100%;
+        position:relative;
+        z-index:20;
+    }
+
+    .consulta-acoes-finais button{
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        width:100%;
+        min-height:50px;
+        margin:0;
+        opacity:1 !important;
+        visibility:visible !important;
+        cursor:pointer;
+        pointer-events:auto !important;
+    }
+
+    .consulta-acoes-finais .btn-compartilhar-protocolo{
+        background:#1769aa !important;
+        color:#fff !important;
+    }
+
+    .consulta-acoes-finais .btn-fechar-consulta{
+        background:#17632d !important;
+        color:#fff !important;
+    }
+}
+
 </style>
 </head>
 
