@@ -2107,6 +2107,13 @@ button:active{
 .admin-v45-refresh:disabled{opacity:.65;cursor:wait}
 @media(max-width:700px){.admin-v45-dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-v45-kpi strong{font-size:20px}}
 </style>
+/* V4.5 — módulos administrativos independentes */
+body.admin-v13-active #adminConteudoPesquisaV11,
+body.admin-v13-active #editarChamado,
+body.admin-v13-active #adminConteudoRelatorioV11{
+    display:none !important;
+}
+
 </style>
 </head>
 
@@ -10709,9 +10716,41 @@ function inicializarDashboardV11(){
     }
 
     function mostrarPesquisaAdminV11(){
-        if(menu) menu.style.display = "none";
-        if(report) report.style.display = "none";
-        if(search) { search.style.display = "block"; search.hidden = false; }
+    document.body.classList.remove('admin-v13-active');
+
+    if(menu) menu.style.display='none';
+    if(report) report.style.display='none';
+
+    if(search){
+        search.style.display='block';
+        search.hidden=false;
+    }
+
+    if(voltar) voltar.style.display='flex';
+    if(titulo) titulo.textContent='🔎 Pesquisar chamados';
+
+    const localizarChamado =
+        document.getElementById('editarChamado');
+
+    if(localizarChamado){
+        localizarChamado.style.display='block';
+    }
+
+    const btnListar =
+        document.getElementById('btnListarTodos');
+
+    if(btnListar){
+        btnListar.click();
+    }
+
+    setTimeout(function(){
+        ['estatisticas','filtros','listaChamados']
+            .forEach(function(id){
+                const el=document.getElementById(id);
+                if(el) el.style.display='block';
+            });
+    },500);
+}
         if(voltar) voltar.style.display = "flex";
         if(titulo) titulo.textContent = "🔎 Pesquisar chamados";
 
@@ -10733,12 +10772,35 @@ function inicializarDashboardV11(){
     }
 
     function mostrarRelatorioAdminV11(){
-        if(menu) menu.style.display = "none";
-        if(search) search.style.display = "none";
-        if(voltar) voltar.style.display = "flex";
-        if(titulo) titulo.textContent = "📊 Gerar relatório";
+    document.body.classList.remove('admin-v13-active');
 
-        if(report) { report.style.display = "block"; report.hidden = false; }
+    if(menu) menu.style.display='none';
+    if(search) search.style.display='none';
+
+    if(voltar) voltar.style.display='flex';
+    if(titulo) titulo.textContent='📊 Gerar relatório';
+
+    if(report){
+        report.style.display='block';
+        report.hidden=false;
+    }
+
+    const btnListar =
+        document.getElementById('btnListarTodos');
+
+    if(btnListar){
+        btnListar.click();
+    }
+
+    setTimeout(function(){
+        if(typeof inicializarDashboardV11==='function'){
+            inicializarDashboardV11();
+        }
+        if(typeof renderDashboardV11==='function'){
+            renderDashboardV11();
+        }
+    },1100);
+}
 
         // The existing administrative loader is reused so the report uses
         // the same real protocol data as the search screen.
@@ -11222,12 +11284,38 @@ function inicializarDashboardV11(){
         return p.length===3 ? `${p[2]}/${p[1]}/${p[0]}` : v;
     }
     function mostrarAdmin(){
+    document.body.classList.add('admin-v13-active');
+
     if(menu) menu.style.display='none';
 
     if(search){
         search.style.display='none';
         search.hidden=true;
     }
+
+    if(report){
+        report.style.display='none';
+        report.hidden=true;
+    }
+
+    const localizarChamado =
+        document.getElementById('editarChamado');
+
+    if(localizarChamado){
+        localizarChamado.style.display='none';
+    }
+
+    if(admin){
+        admin.style.display='block';
+        admin.hidden=false;
+    }
+
+    if(voltar) voltar.style.display='flex';
+
+    if(titulo){
+        titulo.textContent='⚠️ Advertências / Notificações';
+    }
+}
 
     if(report){
         report.style.display='none';
@@ -11598,6 +11686,8 @@ function inicializarDashboardV11(){
     };
     if(btnMenu) btnMenu.addEventListener('click',abrir);
     document.getElementById('btnVoltarAdminMenu')?.addEventListener('click',()=>{
+    document.body.classList.remove('admin-v13-active');
+
     if(admin){
         admin.style.display='none';
         admin.hidden=true;
