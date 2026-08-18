@@ -1847,7 +1847,7 @@ button:active{
 <button
     type="button"
     class="btn-verde"
-    onclick="mostrarSecao('abrir')"
+    onclick="prepararNovoChamado()"
 >
 
     <span class="menu-label">📋 Abrir Chamado</span>
@@ -7669,6 +7669,68 @@ function consultarProtocoloRapido() {
     } else if (input) {
         input.focus();
     }
+}
+
+
+function prepararNovoChamado() {
+
+    const form = document.getElementById("formChamado");
+    const sucesso = document.getElementById("mensagemSucesso");
+    const erro = document.getElementById("mensagemErro");
+    const protocoloBox = document.getElementById("protocoloBox");
+    const homeStatus = document.getElementById("homeStatusRapido");
+    const numeroProtocolo = document.getElementById("numeroProtocolo");
+    const homeProtocolo = document.getElementById("homeStatusProtocolo");
+
+    // Limpa os campos do formulário sem apagar o registro já salvo no banco.
+    if (form) {
+        form.reset();
+    }
+
+    // Limpa mensagens e o protocolo exibido na tela.
+    if (sucesso) {
+        sucesso.style.display = "none";
+        sucesso.innerHTML = "";
+    }
+
+    if (erro) {
+        erro.style.display = "none";
+        erro.innerHTML = "";
+    }
+
+    if (protocoloBox) {
+        protocoloBox.style.display = "none";
+    }
+
+    if (numeroProtocolo) {
+        numeroProtocolo.textContent = "";
+    }
+
+    // Esconde o cartão de status rápido do chamado anterior.
+    if (homeStatus) {
+        homeStatus.style.display = "none";
+    }
+
+    if (homeProtocolo) {
+        homeProtocolo.textContent = "-";
+    }
+
+    // Se houver botão de envio desabilitado, devolve ao estado normal.
+    const botao = document.getElementById("btnEnviar");
+    if (botao) {
+        botao.disabled = false;
+        botao.textContent = "📋 Enviar Chamado";
+    }
+
+    // Volta para a tela de abertura limpa e para o topo.
+    if (typeof mostrarSecao === "function") {
+        mostrarSecao("abrir");
+    }
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
 }
 
 </script>
