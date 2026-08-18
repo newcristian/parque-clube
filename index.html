@@ -1799,6 +1799,200 @@ button:active{
 .home-rodape strong{display:block;color:#17632d;font-size:12px}
 @media(max-width:700px){.home-bloco-titulo{margin-top:10px}.home-status-rapido{padding:15px}}
 
+/* =====================================================
+   V4.5 — CONSULTAR PROTOCOLO MELHORADO
+===================================================== */
+
+.consulta-ajuda{
+    margin:-4px 0 12px;
+    padding:10px 12px;
+    border:1px solid #dbe7de;
+    border-radius:10px;
+    background:#f7faf8;
+    color:#64748b;
+    font-size:12px;
+    line-height:1.45;
+}
+.consulta-ajuda strong{
+    color:#17632d;
+}
+
+.consulta-busca-estado{
+    display:none;
+    margin:8px 0;
+    padding:9px 12px;
+    border-radius:9px;
+    text-align:center;
+    font-size:12px;
+    font-weight:700;
+}
+.consulta-busca-estado.consultando{
+    display:block;
+    background:#eef6fb;
+    color:#1769aa;
+    border:1px solid #c9dfef;
+}
+.consulta-busca-estado.sucesso{
+    display:block;
+    background:#eef9f1;
+    color:#17632d;
+    border:1px solid #c8dfcf;
+}
+.consulta-busca-estado.erro{
+    display:block;
+    background:#fff0f0;
+    color:#a11;
+    border:1px solid #e7caca;
+}
+
+.consulta-resumo{
+    display:none;
+    margin-top:14px;
+    padding:16px;
+    border:1px solid #cfe0d4;
+    border-radius:14px;
+    background:linear-gradient(180deg,#f4faf5,#fff);
+    box-shadow:0 5px 16px rgba(23,99,45,.06);
+}
+.consulta-resumo-topo{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:12px;
+}
+.consulta-resumo-label{
+    color:#64748b;
+    font-size:11px;
+    text-transform:uppercase;
+    font-weight:800;
+}
+.consulta-resumo-protocolo{
+    margin-top:3px;
+    color:#104a22;
+    font-size:18px;
+    font-weight:900;
+    letter-spacing:.2px;
+}
+.consulta-resumo-status{
+    min-width:125px;
+    padding:8px 11px;
+    border-radius:9px;
+    text-align:center;
+    font-size:12px;
+    font-weight:900;
+    border:1px solid #b9d9c2;
+    background:#eaf6ed;
+    color:#17632d;
+}
+.consulta-resumo-dados{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:8px;
+    margin-top:13px;
+}
+.consulta-resumo-item{
+    padding:9px 10px;
+    border-radius:9px;
+    background:#fff;
+    border:1px solid #e3ebe5;
+}
+.consulta-resumo-item span{
+    display:block;
+    color:#64748b;
+    font-size:10px;
+    margin-bottom:2px;
+}
+.consulta-resumo-item strong{
+    color:#334155;
+    font-size:12px;
+}
+
+.consulta-timeline{
+    margin-top:14px;
+    padding:13px;
+    border:1px solid #d6e4da;
+    border-radius:12px;
+    background:#f8fbf9;
+}
+.consulta-timeline-title{
+    color:#17632d;
+    font-weight:800;
+    font-size:13px;
+    margin-bottom:10px;
+}
+.consulta-timeline-item{
+    position:relative;
+    display:grid;
+    grid-template-columns:30px 1fr;
+    gap:8px;
+    padding:7px 0;
+}
+.consulta-timeline-item:not(:last-child)::after{
+    content:"";
+    position:absolute;
+    left:14px;
+    top:31px;
+    bottom:-3px;
+    width:2px;
+    background:#cfe0d4;
+}
+.consulta-timeline-icon{
+    position:relative;
+    z-index:1;
+    width:28px;
+    height:28px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    background:#fff;
+    border:1px solid #b9d9c2;
+    font-size:14px;
+}
+.consulta-timeline-text strong{
+    display:block;
+    color:#334155;
+    font-size:12px;
+}
+.consulta-timeline-text span{
+    color:#64748b;
+    font-size:10px;
+}
+
+@media(max-width:700px){
+    .consulta-resumo-topo{
+        flex-direction:column;
+    }
+    .consulta-resumo-status{
+        width:100%;
+        box-sizing:border-box;
+    }
+    .consulta-resumo-dados{
+        grid-template-columns:1fr;
+    }
+}
+
+.consulta-resumo-status.status-resolvido{
+    background:#eaf7ed;
+    border-color:#b7d9bf;
+    color:#17632d;
+}
+.consulta-resumo-status.status-andamento{
+    background:#edf6fc;
+    border-color:#c5ddec;
+    color:#1769aa;
+}
+.consulta-resumo-status.status-aberto{
+    background:#fff8df;
+    border-color:#e7d69a;
+    color:#7a5a00;
+}
+.consulta-resumo-status.status-cancelado{
+    background:#fff0f0;
+    border-color:#e2baba;
+    color:#a11;
+}
+
 </style>
 </head>
 
@@ -2542,6 +2736,12 @@ button:active{
     🔎 Consultar Protocolo
 
 </div>
+<div class="consulta-ajuda">
+    <strong>🔎 Consulte seu chamado</strong><br>
+    Digite o número do protocolo para acompanhar a situação da solicitação.
+    <br>Exemplo: <strong>PC-13-08-26-001</strong>
+</div>
+
 
 
 <div class="form-group">
@@ -2569,6 +2769,8 @@ button:active{
     🔎 Buscar Protocolo
 
 </button>
+<div id="consultaBuscaEstado" class="consulta-busca-estado"></div>
+
 
 
 <div
@@ -2576,6 +2778,28 @@ button:active{
     class="mensagem erro"
 ></div>
 
+
+
+<div id="consultaResumo" class="consulta-resumo">
+    <div class="consulta-resumo-topo">
+        <div>
+            <div class="consulta-resumo-label">Protocolo</div>
+            <div id="consultaResumoProtocolo" class="consulta-resumo-protocolo">-</div>
+        </div>
+        <div id="consultaResumoStatus" class="consulta-resumo-status">-</div>
+    </div>
+
+    <div class="consulta-resumo-dados">
+        <div class="consulta-resumo-item">
+            <span>📍 Local</span>
+            <strong id="consultaResumoLocal">-</strong>
+        </div>
+        <div class="consulta-resumo-item">
+            <span>🧹 Ocorrência</span>
+            <strong id="consultaResumoOcorrencia">-</strong>
+        </div>
+    </div>
+</div>
 
 <div
     id="resultadoConsulta"
@@ -4554,61 +4778,71 @@ document
         "click",
         async function () {
 
+            const input =
+                document.getElementById(
+                    "consultaProtocolo"
+                );
+
             const protocolo =
-                document
-                    .getElementById(
-                        "consultaProtocolo"
-                    )
-                    .value
-                    .trim()
-                    .toUpperCase();
+                normalizarProtocoloConsulta(
+                    input ? input.value : ""
+                );
 
-
-            const erro =
-                document
-                    .getElementById(
-                        "erroConsulta"
-                    );
-
-
-            erro.style.display =
-                "none";
-
-
-            if (!protocolo) {
-
-                erro.textContent =
-                    "Digite o número do protocolo.";
-
-                erro.style.display =
-                    "block";
-
-                return;
-
+            if (input) {
+                input.value = protocolo;
             }
 
+            const erro =
+                document.getElementById(
+                    "erroConsulta"
+                );
 
-            this.disabled =
-                true;
+            const resumo =
+                document.getElementById(
+                    "consultaResumo"
+                );
 
-            this.textContent =
-                "⏳ Consultando...";
+            if (erro) {
+                erro.style.display = "none";
+                erro.textContent = "";
+            }
 
+            if (resumo) {
+                resumo.style.display = "none";
+            }
+
+            if (!protocolo) {
+                atualizarEstadoBuscaConsulta(
+                    "erro",
+                    "⚠️ Digite o número do protocolo."
+                );
+
+                if (erro) {
+                    erro.textContent =
+                        "Digite o número do protocolo.";
+                    erro.style.display = "block";
+                }
+
+                return;
+            }
+
+            this.disabled = true;
+            this.textContent = "⏳ Consultando...";
+            atualizarEstadoBuscaConsulta(
+                "consultando",
+                "🔄 Consultando protocolo..."
+            );
 
             try {
 
-
                 const resposta =
                     await fetch(
-
                         API +
                         "?protocolo=" +
                         encodeURIComponent(
                             protocolo
                         )
-
                     );
-
 
                 const textoResposta =
                     await resposta.text();
@@ -4626,41 +4860,51 @@ document
                     );
                 }
 
-
                 if (
                     !resposta.ok ||
                     !dados.encontrado
                 ) {
-
                     throw new Error(
                         dados.erro ||
                         "Protocolo não encontrado."
                     );
-
                 }
-
 
                 mostrarResultado(
                     dados.chamado
                 );
 
-            }
+                preencherResumoConsulta(
+                    dados.chamado
+                );
 
-            catch (error) {
+                atualizarEstadoBuscaConsulta(
+                    "sucesso",
+                    "✅ Protocolo localizado com sucesso."
+                );
 
-                erro.textContent =
-                    error.message;
+            } catch (error) {
 
-                erro.style.display =
-                    "block";
+                if (resumo) {
+                    resumo.style.display = "none";
+                }
 
-            }
+                atualizarEstadoBuscaConsulta(
+                    "erro",
+                    "❌ " +
+                    (error.message ||
+                        "Não foi possível consultar o protocolo.")
+                );
 
-            finally {
+                if (erro) {
+                    erro.textContent =
+                        error.message;
+                    erro.style.display = "block";
+                }
 
-                this.disabled =
-                    false;
+            } finally {
 
+                this.disabled = false;
                 this.textContent =
                     "🔎 Buscar Protocolo";
 
@@ -4695,6 +4939,18 @@ function fecharConsultaProtocolo() {
         erro.textContent = "";
     }
 
+    atualizarEstadoBuscaConsulta("", "");
+
+    const resumo = document.getElementById("consultaResumo");
+    if (resumo) {
+        resumo.style.display = "none";
+    }
+
+    const timeline = document.getElementById("consultaTimeline");
+    if (timeline) {
+        timeline.style.display = "none";
+    }
+
     if (input) {
         input.value = "";
     }
@@ -4718,6 +4974,127 @@ function fecharConsultaProtocolo() {
     });
 
 }
+
+
+function montarLinhaDoTempoConsulta(chamado) {
+
+    let timeline =
+        document.getElementById(
+            "consultaTimeline"
+        );
+
+    if (!timeline) {
+        const resultado =
+            document.getElementById(
+                "resultadoConsulta"
+            );
+
+        if (!resultado) return;
+
+        timeline =
+            document.createElement(
+                "div"
+            );
+
+        timeline.id =
+            "consultaTimeline";
+
+        timeline.className =
+            "consulta-timeline";
+
+        const botaoFinal =
+            resultado.querySelector(
+                ".consulta-final-acao"
+            );
+
+        if (botaoFinal) {
+            resultado.insertBefore(
+                timeline,
+                botaoFinal
+            );
+        } else {
+            resultado.appendChild(
+                timeline
+            );
+        }
+    }
+
+    const eventos = [];
+
+    if (chamado?.dataAbertura) {
+        eventos.push([
+            "📥",
+            "Recebido",
+            chamado.dataAbertura +
+            (chamado.horaAbertura
+                ? " às " + chamado.horaAbertura
+                : "")
+        ]);
+    }
+
+    if (chamado?.ultimaAtualizacao) {
+        eventos.push([
+            "🔄",
+            "Última atualização",
+            chamado.ultimaAtualizacao
+        ]);
+    }
+
+    if (chamado?.dataConclusao) {
+        eventos.push([
+            "✅",
+            "Concluído",
+            chamado.dataConclusao +
+            (chamado.horaConclusao
+                ? " às " + chamado.horaConclusao
+                : "")
+        ]);
+    }
+
+    const historicoArquivamento =
+        Array.isArray(
+            chamado?.historicoArquivamento
+        )
+            ? chamado.historicoArquivamento
+            : [];
+
+    historicoArquivamento.forEach(
+        function(evento) {
+            eventos.push([
+                evento.tipo === "REABERTO"
+                    ? "🔓"
+                    : "📦",
+                evento.tipo === "REABERTO"
+                    ? "Reaberto"
+                    : "Arquivado",
+                evento.dataHora || "-"
+            ]);
+        }
+    );
+
+    if (!eventos.length) {
+        timeline.style.display = "none";
+        return;
+    }
+
+    timeline.style.display = "block";
+
+    timeline.innerHTML =
+        '<div class="consulta-timeline-title">📍 Acompanhamento do chamado</div>' +
+        eventos.map(function(evento) {
+            return `
+                <div class="consulta-timeline-item">
+                    <div class="consulta-timeline-icon">${evento[0]}</div>
+                    <div class="consulta-timeline-text">
+                        <strong>${escapar(evento[1])}</strong>
+                        <span>${escapar(evento[2])}</span>
+                    </div>
+                </div>
+            `;
+        }).join("");
+
+}
+
 
 function mostrarResultado(
     chamado
@@ -4870,6 +5247,51 @@ function mostrarResultado(
 
     atualizarHistoricoConsultaProtocolo(chamado);
 
+    // Status visual dinâmico no resumo.
+    const resumoStatus =
+        document.getElementById(
+            "consultaResumoStatus"
+        );
+
+    if (resumoStatus) {
+        const statusTexto =
+            String(
+                chamado.status ||
+                "Aberto"
+            ).trim();
+
+        resumoStatus.textContent =
+            statusTexto;
+
+        resumoStatus.className =
+            "consulta-resumo-status " +
+            (
+                statusTexto
+                    .toLowerCase()
+                    .includes("resolvido") ||
+                statusTexto
+                    .toLowerCase()
+                    .includes("concluído") ||
+                statusTexto
+                    .toLowerCase()
+                    .includes("concluido")
+                    ? "status-resolvido"
+                    : statusTexto
+                        .toLowerCase()
+                        .includes("andamento")
+                        ? "status-andamento"
+                        : statusTexto
+                            .toLowerCase()
+                            .includes("cancel")
+                            ? "status-cancelado"
+                            : "status-aberto"
+            );
+    }
+
+    montarLinhaDoTempoConsulta(
+        chamado
+    );
+
     const protocoloHistorico =
         document.getElementById(
             "historicoProtocoloNumero"
@@ -4879,6 +5301,13 @@ function mostrarResultado(
         protocoloHistorico.textContent =
             chamado.protocolo || "-";
     }
+
+    preencherResumoConsulta(chamado);
+
+    atualizarEstadoBuscaConsulta(
+        "sucesso",
+        "✅ Protocolo localizado com sucesso."
+    );
 
     resultado.style.display =
         "block";
@@ -7731,6 +8160,56 @@ function prepararNovoChamado() {
         top: 0,
         behavior: "smooth"
     });
+}
+
+
+function atualizarEstadoBuscaConsulta(tipo, texto) {
+    const el = document.getElementById("consultaBuscaEstado");
+    if (!el) return;
+
+    el.className = "consulta-busca-estado " + (tipo || "");
+    el.textContent = texto || "";
+}
+
+function normalizarProtocoloConsulta(valor) {
+    const v = String(valor || "").trim().toUpperCase();
+    if (!v) return "";
+
+    // Mantém protocolos já formatados.
+    if (/^PC-\d{2}-\d{2}-\d{2}-\d{3}$/.test(v)) {
+        return v;
+    }
+
+    // Aceita PC130826001 e transforma em PC-13-08-26-001.
+    const compacto = v.replace(/[^A-Z0-9]/g, "");
+    const m = compacto.match(/^PC(\d{2})(\d{2})(\d{2})(\d{3})$/);
+
+    if (m) {
+        return `PC-${m[1]}-${m[2]}-${m[3]}-${m[4]}`;
+    }
+
+    return v;
+}
+
+function preencherResumoConsulta(chamado) {
+    const resumo = document.getElementById("consultaResumo");
+    if (!resumo || !chamado) return;
+
+    const protocolo = chamado.protocolo || "-";
+    const status = chamado.status || "Não informado";
+
+    const textoLocal =
+        chamado.bloco
+            ? (chamado.bloco + (chamado.pavimentos ? " • " + chamado.pavimentos : ""))
+            : (chamado.local || "Não informado");
+
+    document.getElementById("consultaResumoProtocolo").textContent = protocolo;
+    document.getElementById("consultaResumoStatus").textContent = status;
+    document.getElementById("consultaResumoLocal").textContent = textoLocal;
+    document.getElementById("consultaResumoOcorrencia").textContent =
+        chamado.ocorrencia || chamado.tipo || "Não informado";
+
+    resumo.style.display = "block";
 }
 
 </script>
