@@ -2091,6 +2091,22 @@ button:active{
     }
 }
 
+
+<style id="admin-dashboard-v45-css">
+.admin-v45-dashboard{margin:0 0 14px;padding:14px;border:1px solid #d7e0e5;border-radius:12px;background:#f8fafb;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.admin-v45-dashboard-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.admin-v45-dashboard-title{font-size:17px;font-weight:800;color:#123b5d}
+.admin-v45-dashboard-sub{font-size:11px;color:#667780;margin-top:2px}
+.admin-v45-dashboard-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.admin-v45-kpi{padding:11px;border-radius:10px;background:#fff;border:1px solid #d7e0e5;text-align:center}
+.admin-v45-kpi strong{display:block;font-size:22px;color:#123b5d}
+.admin-v45-kpi span{display:block;font-size:10px;color:#60717b;font-weight:700;margin-top:2px}
+.admin-v45-alert{margin-top:10px;padding:10px 12px;border-radius:9px;border:1px solid #e5b74f;background:#fff7dc;color:#5e4600;font-size:12px;font-weight:800;display:none}
+.admin-v45-alert.ok{border-color:#b9d9c2;background:#eef8f0;color:#17632d}
+.admin-v45-refresh{border:0;border-radius:8px;padding:8px 11px;background:#1d6fae;color:#fff;font-weight:800;cursor:pointer}
+.admin-v45-refresh:disabled{opacity:.65;cursor:wait}
+@media(max-width:700px){.admin-v45-dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-v45-kpi strong{font-size:20px}}
+</style>
 </style>
 </head>
 
@@ -3034,6 +3050,23 @@ button:active{
     id="adminPainel"
 >
 
+
+<div class="admin-v45-dashboard" id="adminDashboardV45">
+  <div class="admin-v45-dashboard-head">
+    <div>
+      <div class="admin-v45-dashboard-title">📊 Visão Geral</div>
+      <div class="admin-v45-dashboard-sub">Resumo rápido da situação dos chamados do Parque Clube.</div>
+    </div>
+    <button type="button" class="admin-v45-refresh" id="btnAtualizarDashboardAdmV45">🔄 Atualizar</button>
+  </div>
+  <div class="admin-v45-dashboard-grid">
+    <div class="admin-v45-kpi"><strong id="admV45Abertos">0</strong><span>📋 Abertos</span></div>
+    <div class="admin-v45-kpi"><strong id="admV45Andamento">0</strong><span>🔄 Em andamento</span></div>
+    <div class="admin-v45-kpi"><strong id="admV45Resolvidos">0</strong><span>✅ Resolvidos</span></div>
+    <div class="admin-v45-kpi"><strong id="admV45Arquivados">0</strong><span>📦 Arquivados</span></div>
+  </div>
+  <div class="admin-v45-alert" id="admV45Alerta"></div>
+</div>
 
 <div class="admin-menu-v11" id="adminMenuV11">
     <button type="button" class="admin-menu-card" id="menuPesquisarAdmin">
@@ -5645,6 +5678,10 @@ document
 
                 painel.style.display =
                     "block";
+
+                if (typeof atualizarDashboardAdministrativoV45 === "function") {
+                    atualizarDashboardAdministrativoV45();
+                }
 
                 botao.textContent =
                     "✅ Acesso liberado";
@@ -11116,6 +11153,45 @@ function inicializarDashboardV11(){
 </div>
 </div>
 
+<script id="admin-dashboard-v45-js">
+(function(){
+    async function atualizarDashboardAdministrativoV45(){
+        if(!senhaAdministrativa){ return; }
+        const btn=document.getElementById('btnAtualizarDashboardAdmV45');
+        const alerta=document.getElementById('admV45Alerta');
+        if(btn){btn.disabled=true;btn.textContent='⏳ Atualizando...';}
+        try{
+            const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'list',adminPassword:senhaAdministrativa})});
+            const d=await r.json();
+            if(!r.ok || !d.sucesso) throw new Error(d.erro||'Não foi possível atualizar o painel.');
+            const s=d.estatisticas||{};
+            document.getElementById('admV45Abertos').textContent=Number(s.abertos||0);
+            document.getElementById('admV45Andamento').textContent=Number(s.andamento||0);
+            document.getElementById('admV45Resolvidos').textContent=Number(s.resolvidos||0);
+            document.getElementById('admV45Arquivados').textContent=Number(s.arquivados||0);
+            const pend=Number(s.abertos||0)+Number(s.andamento||0);
+            if(alerta){
+                alerta.style.display='block';
+                if(pend>0){
+                    alerta.classList.remove('ok');
+                    alerta.textContent='⚠️ ATENÇÃO: '+pend+' chamado(s) aguardam providência da Administração.';
+                }else{
+                    alerta.classList.add('ok');
+                    alerta.textContent='✅ Não há chamados abertos ou em andamento no momento.';
+                }
+            }
+        }catch(e){
+            if(alerta){alerta.style.display='block';alerta.classList.remove('ok');alerta.textContent='⚠️ Não foi possível atualizar a visão geral agora.';}
+            console.error('Dashboard administrativo V4.5:',e);
+        }finally{
+            if(btn){btn.disabled=false;btn.textContent='🔄 Atualizar';}
+        }
+    }
+    window.atualizarDashboardAdministrativoV45=atualizarDashboardAdministrativoV45;
+    const btn=document.getElementById('btnAtualizarDashboardAdmV45');
+    if(btn) btn.addEventListener('click',atualizarDashboardAdministrativoV45);
+})();
+</script>
 <script id="administrativo-v13-js">
 
 (function(){
