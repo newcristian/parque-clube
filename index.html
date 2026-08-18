@@ -4981,6 +4981,20 @@ document
 
 
 function fecharConsultaProtocolo() {
+
+    window.__chamadoConsultaAtual =
+        null;
+
+    const solucao =
+        document.getElementById(
+            "consultaSolucao"
+        );
+
+    if (solucao) {
+        solucao.style.display = "none";
+    }
+
+
     window.__chamadoConsultaAtual = null;
 
     const solucao =
@@ -5161,6 +5175,52 @@ async function compartilharProtocoloConsulta() {
         );
 
     }
+
+}
+
+
+function obterObservacaoFinalConsulta(chamado) {
+
+    return (
+        chamado?.observacaoFinal ||
+        chamado?.solucao ||
+        chamado?.resolucao ||
+        chamado?.observacao ||
+        chamado?.observacoes ||
+        ""
+    ).trim();
+
+}
+
+function atualizarSolucaoConsulta(chamado) {
+
+    const box =
+        document.getElementById(
+            "consultaSolucao"
+        );
+
+    const texto =
+        document.getElementById(
+            "consultaSolucaoTexto"
+        );
+
+    if (!box || !texto) {
+        return;
+    }
+
+    const observacao =
+        obterObservacaoFinalConsulta(
+            chamado
+        );
+
+    if (!observacao) {
+        box.style.display = "none";
+        texto.textContent = "";
+        return;
+    }
+
+    texto.textContent = observacao;
+    box.style.display = "block";
 
 }
 
