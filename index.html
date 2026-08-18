@@ -8131,6 +8131,34 @@ document
 
 
 /* =====================================================
+   V4.5 — ESTABILIDADE DOS BOTÕES DO PAINEL
+   Evita duplo clique / duplo disparo durante navegação e atualizações.
+===================================================== */
+(function estabilizarBotoesPainelV45(){
+    const ids=[
+        'btnListarTodos',
+        'btnChamadosAtivos',
+        'btnChamadosArquivados',
+        'btnArquivarTodosResolvidos',
+        'btnDesarquivarTodos'
+    ];
+
+    ids.forEach(function(id){
+        const botao=document.getElementById(id);
+        if(!botao || botao.dataset.v45Guard==='1') return;
+
+        botao.dataset.v45Guard='1';
+        botao.addEventListener('click',function(){
+            if(this.dataset.v45Busy==='1') return;
+            this.dataset.v45Busy='1';
+            setTimeout(()=>{
+                this.dataset.v45Busy='0';
+            },450);
+        },true);
+    });
+})();
+
+/* =====================================================
    V1.2 — DESARQUIVAR TODOS + FILTROS RÁPIDOS
    Inserido no final do script principal para não interferir
    no gerador de relatórios.
@@ -10691,6 +10719,7 @@ function inicializarDashboardV11(){
     const menu = document.getElementById("adminMenuV11");
     const search = document.getElementById("adminConteudoPesquisaV11");
     const report = document.getElementById("adminConteudoRelatorioV11");
+    const adminV13 = document.getElementById("adminConteudoAdministrativoV13");
     const voltar = document.getElementById("adminVoltarMenu");
     const titulo = document.getElementById("adminModoTitulo");
 
@@ -10705,12 +10734,16 @@ function inicializarDashboardV11(){
     function esconderTudoAdminV11(){
         if(search) { search.style.display = "none"; search.hidden = true; }
         if(report) { report.style.display = "none"; report.hidden = true; }
+        if(adminV13) { adminV13.style.display = "none"; adminV13.hidden = true; }
+        document.body.classList.remove("admin-v13-active");
         if(voltar) voltar.style.display = "none";
         if(menu) { menu.style.display = "grid"; menu.hidden = false; }
     }
 
     function mostrarPesquisaAdminV11(){
     document.body.classList.remove('admin-v13-active');
+    const adminV13=document.getElementById('adminConteudoAdministrativoV13');
+    if(adminV13){adminV13.style.display='none';adminV13.hidden=true;}
     if(menu) menu.style.display='none';
     if(report) report.style.display='none';
     if(search){search.style.display='block';search.hidden=false;}
@@ -10734,6 +10767,9 @@ function inicializarDashboardV11(){
     },500);
 }
 function mostrarRelatorioAdminV11(){
+        document.body.classList.remove('admin-v13-active');
+        const adminV13=document.getElementById('adminConteudoAdministrativoV13');
+        if(adminV13){adminV13.style.display='none';adminV13.hidden=true;}
         if(menu) menu.style.display = "none";
         if(search) search.style.display = "none";
         if(voltar) voltar.style.display = "flex";
@@ -11600,7 +11636,7 @@ function mostrarRelatorioAdminV11(){
     if(voltar) voltar.style.display='none';
     if(menu){menu.style.display='grid';menu.hidden=false;}
 });
-    if(btnMenu) btnMenu.addEventListener('click',mostrarAdmin); if(btnAtualizar) btnAtualizar.addEventListener('click',carregarMedidas);
+    if(btnAtualizar) btnAtualizar.addEventListener('click',carregarMedidas);
     if(form) form.addEventListener('submit',salvar);
     document.getElementById('btnNovaAdministrativaV13')?.addEventListener('click',()=>{document.getElementById('adminV13FormCard')?.scrollIntoView({behavior:'smooth'});limparForm();});
     document.getElementById('btnCancelarAdministrativoV13')?.addEventListener('click',limparForm);
