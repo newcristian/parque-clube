@@ -11040,7 +11040,7 @@ function mostrarRelatorioAdminV11(){
 </div>
 <div class="admin-v13-actions no-print">
 <button class="admin-v13-btn blue" id="btnAtualizarAdministrativoV13" type="button">🔄 Atualizar registros</button>
-<button class="admin-v13-btn gray" id="btnNovaAdministrativaV13" type="button">➕ Nova advertência/notificação</button>
+<button class="admin-v13-btn gray" id="btnNovaAdministrativaV13" type="button">➕ Nova advertência/notificação</button><button class="admin-v13-btn blue" id="btnConsultarProtocolosAdmV13" type="button">📋 Protocolos administrativos</button>
 </div>
 </div>
 <div class="admin-v13-kpis" id="v13Kpis" style="display:none">
@@ -11239,6 +11239,33 @@ function mostrarRelatorioAdminV11(){
 </div>
 </form>
 </div>
+<div class="admin-v13-card" id="adminV13ProtocolosCard" style="display:none;">
+<h3 style="margin:0 0 10px;color:#123b5d">📋 Consulta de Protocolos Administrativos</h3>
+<div class="admin-v13-hint" style="margin-bottom:10px">
+Consulte todos os protocolos de Advertências e Notificações gerados pelo sistema.
+</div>
+<div class="admin-v13-grid">
+<div class="full">
+<label class="admin-v13-label">🔎 Buscar protocolo, unidade ou infração</label>
+<input class="admin-v13-input" id="v13BuscaProtocoloAdm" type="text" placeholder="Ex.: ADM-2026-0004, 804, Xixi de cachorro">
+</div>
+<div>
+<label class="admin-v13-label">Tipo</label>
+<select class="admin-v13-select" id="v13FiltroTipoAdm">
+<option value="">Todos</option>
+<option value="Advertência">Advertências</option>
+<option value="Notificação">Notificações</option>
+</select>
+</div>
+<div class="admin-v13-actions no-print" style="align-items:end">
+<button class="admin-v13-btn blue" id="btnBuscarProtocolosAdmV13" type="button">🔎 Consultar</button>
+<button class="admin-v13-btn gray" id="btnLimparProtocolosAdmV13" type="button">Limpar</button>
+<button class="admin-v13-btn gray" id="btnFecharProtocolosAdmV13" type="button">↩️ Voltar</button>
+</div>
+</div>
+<div id="v13ProtocolosResumoAdm" style="margin-top:12px"></div>
+<div class="admin-v13-result" id="v13ProtocolosListaAdm" style="margin-top:10px"></div>
+</div>
 <div class="admin-v13-card">
 <h3 style="margin:0 0 12px;color:#123b5d">🔎 Histórico da unidade</h3>
 <div class="admin-v13-grid">
@@ -11429,6 +11456,8 @@ function controlarVisaoGeralAoAbrirAdvertencias(ocultar) {
     if(menu) menu.style.display='none';
     if(search){search.style.display='none';search.hidden=true;}
     if(report){report.style.display='none';report.hidden=true;}
+    const protocolosAdm=document.getElementById('adminV13ProtocolosCard');
+    if(protocolosAdm) protocolosAdm.style.display='none';
 
     const localizarChamado=document.getElementById('localizarChamadoAdmin');
     const editarChamado=document.getElementById('editarChamado');
@@ -12024,7 +12053,87 @@ async function carregarMedidas(){
         renderLista(regs);
     }
 
-    function relatorioUnidade(){
+    
+    function renderProtocolosAdministrativos(filtroTexto='', filtroTipo=''){
+        const lista=document.getElementById('v13ProtocolosListaAdm');
+        const resumo=document.getElementById('v13ProtocolosResumoAdm');
+        if(!lista) return;
+
+        const termo=String(filtroTexto||'').trim().toLowerCase();
+        const tipo=String(filtroTipo||'').trim();
+
+        const regs=medidas
+            .filter(x=>!tipo || String(x.tipo||'')===tipo)
+            .filter(x=>{
+                if(!termo) return true;
+                const base=[
+                    x.protocolo,
+                    x.unidade,
+                    x.bloco,
+                    x.tipo,
+                    x.infracao,
+                    x.descricao,
+                    x.protocoloChamado
+                ].map(v=>String(v||'').toLowerCase()).join(' ');
+                return base.includes(termo);
+            })
+            .slice()
+            .sort((a,b)=>String(b.dataRegistro||'').localeCompare(String(a.dataRegistro||'')) ||
+                         String(b.protocolo||'').localeCompare(String(a.protocolo||'')));
+
+        if(resumo){
+            resumo.innerHTML=`<div class="admin-v13-hint"><strong>${regs.length}</strong> protocolo(s) encontrado(s).</div>`;
+        }
+
+        if(!regs.length){
+            lista.innerHTML='<div style="padding:16px;text-align:center;color:#64737c">Nenhum protocolo administrativo encontrado.</div>';
+            return;
+        }
+
+        lista.innerHTML=`<table class="admin-v13-table">
+<thead><tr>
+<th>Protocolo</th>
+<th>Data do registro</th>
+<th>Data da infração</th>
+<th>Unidade / Bloco</th>
+<th>Tipo</th>
+<th>Infração</th>
+<th>Ação</th>
+</tr></thead>
+<tbody>${regs.map(x=>`
+<tr>
+<td><strong>${esc(x.protocolo||'—')}</strong></td>
+<td>${esc(formatarData(x.dataRegistro||''))}</td>
+<td>${esc(formatarData(x.dataOcorrencia||x.dataInfracao||x.dataFato||''))}</td>
+<td>${esc(x.unidade||'—')} / ${esc(x.bloco||'—')}</td>
+<td><span class="admin-v13-badge ${x.tipo==='Advertência'?'adv':'not'}">${esc(x.tipo||'—')}</span></td>
+<td>${esc(x.infracao||'—')}</td>
+<td><button class="admin-v13-btn gray" type="button" data-adm-protocol-view="${esc(x.protocolo)}">👁️ Ver</button></td>
+</tr>`).join('')}</tbody></table>`;
+
+        lista.querySelectorAll('[data-adm-protocol-view]').forEach(btn=>{
+            btn.addEventListener('click',()=>verRegistro(btn.dataset.admProtocolView));
+        });
+    }
+
+    function abrirConsultaProtocolosAdministrativos(){
+        const card=document.getElementById('adminV13ProtocolosCard');
+        if(!card) return;
+        card.style.display='block';
+        const busca=document.getElementById('v13BuscaProtocoloAdm');
+        const tipo=document.getElementById('v13FiltroTipoAdm');
+        if(busca) busca.value='';
+        if(tipo) tipo.value='';
+        renderProtocolosAdministrativos('','');
+        card.scrollIntoView({behavior:'smooth',block:'start'});
+    }
+
+    function fecharConsultaProtocolosAdministrativos(){
+        const card=document.getElementById('adminV13ProtocolosCard');
+        if(card) card.style.display='none';
+    }
+
+function relatorioUnidade(){
     const bloco=ultimaConsulta.bloco || document.getElementById('v13BuscaBloco').value;
     const unidade=ultimaConsulta.unidade || document.getElementById('v13BuscaUnidade').value.trim();
     if(!bloco||!unidade){
@@ -12210,6 +12319,28 @@ ${rows||'<tr><td colspan="5">Nenhum registro encontrado.</td></tr>'}
     if(btnAtualizar) btnAtualizar.addEventListener('click',carregarMedidas);
     if(form) form.addEventListener('submit',salvar);
     document.getElementById('btnNovaAdministrativaV13')?.addEventListener('click',()=>{document.getElementById('adminV13FormCard')?.scrollIntoView({behavior:'smooth'});limparForm();});
+    document.getElementById('btnConsultarProtocolosAdmV13')?.addEventListener('click',abrirConsultaProtocolosAdministrativos);
+    document.getElementById('btnBuscarProtocolosAdmV13')?.addEventListener('click',()=>{
+        renderProtocolosAdministrativos(
+            document.getElementById('v13BuscaProtocoloAdm')?.value||'',
+            document.getElementById('v13FiltroTipoAdm')?.value||''
+        );
+    });
+    document.getElementById('v13BuscaProtocoloAdm')?.addEventListener('keydown',e=>{
+        if(e.key==='Enter'){
+            e.preventDefault();
+            document.getElementById('btnBuscarProtocolosAdmV13')?.click();
+        }
+    });
+    document.getElementById('btnLimparProtocolosAdmV13')?.addEventListener('click',()=>{
+        const busca=document.getElementById('v13BuscaProtocoloAdm');
+        const tipo=document.getElementById('v13FiltroTipoAdm');
+        if(busca) busca.value='';
+        if(tipo) tipo.value='';
+        renderProtocolosAdministrativos('','');
+    });
+    document.getElementById('btnFecharProtocolosAdmV13')?.addEventListener('click',fecharConsultaProtocolosAdministrativos);
+
     document.getElementById('btnCancelarAdministrativoV13')?.addEventListener('click',limparForm);
     document.getElementById('btnConsultarHistoricoV13')?.addEventListener('click',()=>consultarHistorico());
     document.getElementById('btnLimparHistoricoV13')?.addEventListener('click',()=>{
