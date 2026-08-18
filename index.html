@@ -2043,6 +2043,47 @@ button:active{
     }
 }
 
+/* V4.5 — AÇÕES FINAIS DA CONSULTA */
+.consulta-acoes-finais{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-top:14px;
+}
+
+.consulta-acoes-finais .btn-compartilhar-protocolo,
+.consulta-acoes-finais .btn-fechar-consulta{
+    width:100%;
+    max-width:none;
+    min-height:46px;
+    margin:0;
+}
+
+/* Compartilhar: azul para diferenciar da ação de fechar */
+.consulta-acoes-finais .btn-compartilhar-protocolo{
+    background:#1769aa;
+    border:1px solid #1769aa;
+    color:#fff;
+}
+
+/* Fechar: mantém verde institucional */
+.consulta-acoes-finais .btn-fechar-consulta{
+    background:#17632d;
+    border:1px solid #17632d;
+    color:#fff;
+}
+
+.consulta-acoes-finais .btn-compartilhar-protocolo:hover,
+.consulta-acoes-finais .btn-fechar-consulta:hover{
+    filter:brightness(1.04);
+}
+
+@media(max-width:700px){
+    .consulta-acoes-finais{
+        grid-template-columns:1fr;
+    }
+}
+
 </style>
 </head>
 
@@ -2887,7 +2928,7 @@ button:active{
     <div id="consultaSolucaoTexto" class="consulta-solucao-text"></div>
 </div>
 
-<div class="consulta-compartilhar">
+<div class="consulta-acoes-finais">
     <button
         type="button"
         class="btn-compartilhar-protocolo"
@@ -2895,9 +2936,7 @@ button:active{
     >
         📤 Compartilhar protocolo
     </button>
-</div>
 
-<div class="consulta-final-acao">
     <button
         type="button"
         class="btn-fechar-consulta"
