@@ -763,6 +763,28 @@ input[readonly] {
         grid-template-columns:1fr;
     }
 }
+
+
+/* CSS V4.5 — Advertências / Notificações */
+.admin-v13-section-title{
+    font-weight:800;color:#123b5d;background:#f4f8fb;
+    border:1px solid #d7e3ea;border-radius:8px;padding:9px 11px;margin-bottom:10px
+}
+.admin-v13-penalty,.admin-v13-appeal,.admin-v13-decision{
+    border:1px solid #d7e3ea;border-radius:10px;padding:12px;
+    background:#fbfcfd
+}
+.admin-v13-penalty{border-left:4px solid #a56b00}
+.admin-v13-appeal{border-left:4px solid #315f8a}
+.admin-v13-decision{border-left:4px solid #176b35}
+.admin-v13-status{
+    display:inline-block;padding:4px 8px;border-radius:999px;font-weight:800;font-size:11px;
+    white-space:nowrap
+}
+.admin-v13-status.registrada{background:#e8eef2;color:#344b5a}
+.admin-v13-status.recurso{background:#fff0c2;color:#765400}
+.admin-v13-status.mantida{background:#f9d9d9;color:#8a2020}
+.admin-v13-status.cancelada{background:#d9f0df;color:#176b35}
 </style>
 </style>
 
@@ -2108,28 +2130,7 @@ button:active{
 @media(max-width:700px){.admin-v45-dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-v45-kpi strong{font-size:20px}}
 </style>
 
-
-.admin-v13-section-title{
-    font-weight:800;color:#123b5d;background:#f4f8fb;
-    border:1px solid #d7e3ea;border-radius:8px;padding:9px 11px;margin-bottom:10px
-}
-.admin-v13-penalty,.admin-v13-appeal,.admin-v13-decision{
-    border:1px solid #d7e3ea;border-radius:10px;padding:12px;
-    background:#fbfcfd
-}
-.admin-v13-penalty{border-left:4px solid #a56b00}
-.admin-v13-appeal{border-left:4px solid #315f8a}
-.admin-v13-decision{border-left:4px solid #176b35}
-.admin-v13-status{
-    display:inline-block;padding:4px 8px;border-radius:999px;font-weight:800;font-size:11px;
-    white-space:nowrap
-}
-.admin-v13-status.registrada{background:#e8eef2;color:#344b5a}
-.admin-v13-status.recurso{background:#fff0c2;color:#765400}
-.admin-v13-status.mantida{background:#f9d9d9;color:#8a2020}
-.admin-v13-status.cancelada{background:#d9f0df;color:#176b35}
-
-</style>
+</head>
 </head>
 
 
