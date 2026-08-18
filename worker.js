@@ -8,7 +8,7 @@ Secret: ADMIN_PASSWORD
 
 API OFICIAL: /api/protocolo
 
-ROTA ANTIGA MANTIDA TEMPORARIAMENTE: /.netlify/functions/protocolo
+A API oficial utiliza somente: /api/protocolo
 ============================================================ */
 
 /* ========================================================= RESPOSTA
@@ -1293,6 +1293,348 @@ async function excluirChamado( env, dados ) {
 
 }
 
+
+/* =========================================================
+   ADVERTÊNCIAS / NOTIFICAÇÕES — MÓDULO ADMINISTRATIVO
+   MIGRADO DA V4.4 TESTE PARA A MAIN OFICIAL
+   Protocolo: ADM-AAAA-0001
+========================================================= */
+
+function obterDBAdministrativo(env) {
+    if (!env || !env.DB) {
+        throw new Error(
+            "Binding D1 'DB' não encontrado neste Worker."
+        );
+    }
+
+    if (typeof env.DB.prepare !== "function") {
+        throw new Error(
+            "O binding 'DB' não é um banco D1 válido."
+        );
+    }
+
+    return env.DB;
+}
+
+async function garantirTabelasAdministrativas(env) {
+
+    const db = obterDBAdministrativo(env);
+
+    await db.prepare(`
+        CREATE TABLE IF NOT EXISTS contadores_administrativos (
+            ano INTEGER PRIMARY KEY,
+            numero INTEGER NOT NULL DEFAULT 0
+        )
+    `).run();
+
+    await db.prepare(`
+        CREATE TABLE IF NOT EXISTS advertencias_notificacoes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            protocolo TEXT NOT NULL UNIQUE,
+            tipo TEXT NOT NULL,
+            data_registro TEXT NOT NULL,
+            data_ocorrencia TEXT DEFAULT '',
+            bloco TEXT NOT NULL,
+            unidade TEXT NOT NULL,
+            infracao TEXT NOT NULL,
+            descricao TEXT DEFAULT '',
+            base_regimento TEXT DEFAULT '',
+            responsavel TEXT DEFAULT '',
+            observacoes TEXT DEFAULT '',
+            protocolo_chamado TEXT DEFAULT '',
+            status TEXT NOT NULL DEFAULT 'Registrada',
+            criado_em TEXT NOT NULL,
+            atualizado_em TEXT NOT NULL
+        )
+    `).run();
+
+    return true;
+}
+
+function converterMedidaAdministrativa(row) {
+    if (!row) return null;
+
+    return {
+        id: row.id,
+        protocolo: row.protocolo,
+        tipo: row.tipo,
+        dataRegistro: row.data_registro || "",
+        dataOcorrencia: row.data_ocorrencia || "",
+        bloco: row.bloco || "",
+        unidade: row.unidade || "",
+        infracao: row.infracao || "",
+        descricao: row.descricao || "",
+        baseRegimento: row.base_regimento || "",
+        responsavel: row.responsavel || "",
+        observacoes: row.observacoes || "",
+        protocoloChamado: row.protocolo_chamado || "",
+        status: row.status || "Registrada",
+        criadoEm: row.criado_em || "",
+        atualizadoEm: row.atualizado_em || ""
+    };
+}
+
+async function listarMedidasAdministrativas(env) {
+
+    const db = obterDBAdministrativo(env);
+
+    await garantirTabelasAdministrativas(env);
+
+    const resultado = await db.prepare(`
+        SELECT
+            id,
+            protocolo,
+            tipo,
+            data_registro,
+            data_ocorrencia,
+            bloco,
+            unidade,
+            infracao,
+            descricao,
+            base_regimento,
+            responsavel,
+            observacoes,
+            protocolo_chamado,
+            status,
+            criado_em,
+            atualizado_em
+        FROM advertencias_notificacoes
+        ORDER BY id DESC
+    `).all();
+
+    const registros =
+        Array.isArray(resultado?.results)
+            ? resultado.results
+            : [];
+
+    return registros
+        .map(converterMedidaAdministrativa)
+        .filter(Boolean);
+}
+
+async function gerarProtocoloAdministrativo(env) {
+
+    const db = obterDBAdministrativo(env);
+    const data = obterDataBrasilia();
+    const ano = Number(data.ano);
+
+    await db.prepare(`
+        INSERT INTO contadores_administrativos (ano, numero)
+        VALUES (?, 1)
+        ON CONFLICT(ano)
+        DO UPDATE SET numero = numero + 1
+    `).bind(ano).run();
+
+    const contador = await db.prepare(`
+        SELECT numero
+        FROM contadores_administrativos
+        WHERE ano = ?
+        LIMIT 1
+    `).bind(ano).first();
+
+    const numero = Number(contador?.numero || 0);
+
+    if (!numero) {
+        throw new Error(
+            "Não foi possível gerar o protocolo administrativo."
+        );
+    }
+
+    return `ADM-${ano}-${String(numero).padStart(4, "0")}`;
+}
+
+async function criarMedidaAdministrativa(env, dados) {
+
+    const db = obterDBAdministrativo(env);
+
+    await garantirTabelasAdministrativas(env);
+
+    const tiposPermitidos = [
+        "Advertência",
+        "Notificação"
+    ];
+
+    const blocosPermitidos = [
+        "1A","1B","1C","1D","1E",
+        "2A","2B","2C","2D","2E"
+    ];
+
+    const tipo =
+        String(dados.tipo || "").trim();
+
+    const bloco =
+        String(dados.bloco || "")
+            .trim()
+            .toUpperCase()
+            .replace(/^BLOCO\s+/, "");
+
+    const unidade =
+        String(dados.unidade || "").trim();
+
+    const infracao =
+        String(dados.infracao || "").trim();
+
+    const protocoloChamado =
+        String(dados.protocoloChamado || "")
+            .trim()
+            .toUpperCase();
+
+    if (!tiposPermitidos.includes(tipo)) {
+        return resposta({
+            sucesso: false,
+            erro: "Selecione Advertência ou Notificação."
+        }, 400);
+    }
+
+    if (!blocosPermitidos.includes(bloco)) {
+        return resposta({
+            sucesso: false,
+            erro: "Selecione um dos 10 blocos oficiais."
+        }, 400);
+    }
+
+    if (!unidade) {
+        return resposta({
+            sucesso: false,
+            erro: "Informe a unidade."
+        }, 400);
+    }
+
+    if (!infracao) {
+        return resposta({
+            sucesso: false,
+            erro: "Informe a infração/ocorrência."
+        }, 400);
+    }
+
+    let chamado = null;
+
+    if (protocoloChamado) {
+        chamado = await buscarChamado(env, protocoloChamado);
+
+        if (!chamado) {
+            return resposta({
+                sucesso: false,
+                erro:
+                    "O protocolo do chamado informado não foi encontrado."
+            }, 404);
+        }
+    }
+
+    const data = obterDataBrasilia();
+
+    const hoje =
+        `${data.ano}-${data.mes}-${data.dia}`;
+
+    const agora =
+        `${hoje} ${obterHoraBrasilia()}`;
+
+    const protocolo =
+        await gerarProtocoloAdministrativo(env);
+
+    await db.prepare(`
+        INSERT INTO advertencias_notificacoes (
+            protocolo,
+            tipo,
+            data_registro,
+            data_ocorrencia,
+            bloco,
+            unidade,
+            infracao,
+            descricao,
+            base_regimento,
+            responsavel,
+            observacoes,
+            protocolo_chamado,
+            status,
+            criado_em,
+            atualizado_em
+        )
+        VALUES (
+            ?, ?, ?, ?, ?, ?, ?, ?, ?,
+            ?, ?, ?, 'Registrada', ?, ?
+        )
+    `).bind(
+        protocolo,
+        tipo,
+        String(dados.dataRegistro || hoje),
+        String(dados.dataOcorrencia || hoje),
+        bloco,
+        unidade,
+        infracao,
+        String(dados.descricao || "").trim(),
+        String(dados.baseRegimento || "").trim(),
+        String(dados.responsavel || "").trim(),
+        String(dados.observacoes || "").trim(),
+        protocoloChamado,
+        agora,
+        agora
+    ).run();
+
+    const registro = await db.prepare(`
+        SELECT *
+        FROM advertencias_notificacoes
+        WHERE protocolo = ?
+        LIMIT 1
+    `).bind(protocolo).first();
+
+    return resposta({
+        sucesso: true,
+        medida:
+            converterMedidaAdministrativa(registro),
+        chamadoRelacionado:
+            chamado
+    });
+}
+
+async function excluirMedidaAdministrativa(env, dados) {
+
+    const db = obterDBAdministrativo(env);
+
+    await garantirTabelasAdministrativas(env);
+
+    const protocolo =
+        String(dados.protocolo || "")
+            .trim()
+            .toUpperCase();
+
+    if (!protocolo) {
+        return resposta({
+            sucesso: false,
+            erro:
+                "Informe o protocolo administrativo."
+        }, 400);
+    }
+
+    const existente = await db.prepare(`
+        SELECT id
+        FROM advertencias_notificacoes
+        WHERE protocolo = ?
+        LIMIT 1
+    `).bind(protocolo).first();
+
+    if (!existente) {
+        return resposta({
+            sucesso: false,
+            erro:
+                "Protocolo administrativo não encontrado."
+        }, 404);
+    }
+
+    await db.prepare(`
+        DELETE FROM advertencias_notificacoes
+        WHERE protocolo = ?
+    `).bind(protocolo).run();
+
+    return resposta({
+        sucesso: true,
+        protocolo,
+        mensagem:
+            "Registro administrativo excluído."
+    });
+}
+
+
 /* ========================================================= LOGIN
 ========================================================= */
 
@@ -1453,14 +1795,7 @@ export default {
              */
 
             const ehAPI =
-
-                pathname ===
-                    "/api/protocolo"
-
-                ||
-
-                pathname ===
-                    "/.netlify/functions/protocolo";
+                pathname === "/api/protocolo";
 
 
             /*
@@ -1670,6 +2005,116 @@ export default {
                     estatisticas:
                         resultado.estatisticas
                 });
+            }
+
+
+
+            /*
+             * =================================================
+             * ADVERTÊNCIAS / NOTIFICAÇÕES
+             * =================================================
+             */
+
+            if (dados.action === "listAdministrative") {
+
+                const autenticacao =
+                    verificarSenha(dados, env);
+
+                if (!autenticacao.ok) {
+                    return autenticacao.resposta;
+                }
+
+                try {
+
+                    const medidas =
+                        await listarMedidasAdministrativas(env);
+
+                    return resposta({
+                        sucesso: true,
+                        medidas
+                    });
+
+                } catch (erro) {
+
+                    console.error(
+                        "ERRO AO LISTAR ADVERTÊNCIAS/NOTIFICAÇÕES:",
+                        erro
+                    );
+
+                    return resposta({
+                        sucesso: false,
+                        erro:
+                            "Não foi possível acessar as Advertências/Notificações.",
+                        detalhe:
+                            erro?.message || String(erro)
+                    }, 500);
+                }
+            }
+
+            if (dados.action === "createAdministrative") {
+
+                const autenticacao =
+                    verificarSenha(dados, env);
+
+                if (!autenticacao.ok) {
+                    return autenticacao.resposta;
+                }
+
+                try {
+
+                    return await criarMedidaAdministrativa(
+                        env,
+                        dados
+                    );
+
+                } catch (erro) {
+
+                    console.error(
+                        "ERRO AO CRIAR ADVERTÊNCIA/NOTIFICAÇÃO:",
+                        erro
+                    );
+
+                    return resposta({
+                        sucesso: false,
+                        erro:
+                            "Não foi possível gravar a Advertência/Notificação.",
+                        detalhe:
+                            erro?.message || String(erro)
+                    }, 500);
+                }
+            }
+
+            if (dados.action === "deleteAdministrative") {
+
+                const autenticacao =
+                    verificarSenha(dados, env);
+
+                if (!autenticacao.ok) {
+                    return autenticacao.resposta;
+                }
+
+                try {
+
+                    return await excluirMedidaAdministrativa(
+                        env,
+                        dados
+                    );
+
+                } catch (erro) {
+
+                    console.error(
+                        "ERRO AO EXCLUIR ADVERTÊNCIA/NOTIFICAÇÃO:",
+                        erro
+                    );
+
+                    return resposta({
+                        sucesso: false,
+                        erro:
+                            "Não foi possível excluir o registro administrativo.",
+                        detalhe:
+                            erro?.message || String(erro)
+                    }, 500);
+                }
             }
 
 
