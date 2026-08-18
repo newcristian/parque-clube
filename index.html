@@ -1993,6 +1993,56 @@ button:active{
     color:#a11;
 }
 
+/* =====================================================
+   V4.5 — SOLUÇÃO FINAL + COMPARTILHAR PROTOCOLO
+===================================================== */
+
+.consulta-solucao{
+    display:none;
+    margin-top:14px;
+    padding:14px;
+    border:1px solid #cfe0d4;
+    border-left:4px solid #17632d;
+    border-radius:12px;
+    background:#f5faf6;
+}
+.consulta-solucao-title{
+    color:#17632d;
+    font-weight:800;
+    font-size:13px;
+    margin-bottom:6px;
+}
+.consulta-solucao-text{
+    color:#334155;
+    font-size:12px;
+    line-height:1.55;
+    white-space:pre-wrap;
+}
+.consulta-compartilhar{
+    margin-top:14px;
+    text-align:center;
+}
+.btn-compartilhar-protocolo{
+    width:100%;
+    max-width:360px;
+    min-height:46px;
+    border:0;
+    border-radius:10px;
+    background:#17632d;
+    color:#fff;
+    font-weight:800;
+    cursor:pointer;
+    box-shadow:0 4px 12px rgba(23,99,45,.13);
+}
+.btn-compartilhar-protocolo:hover{
+    filter:brightness(1.04);
+}
+@media(max-width:700px){
+    .btn-compartilhar-protocolo{
+        max-width:none;
+    }
+}
+
 </style>
 </head>
 
@@ -2829,6 +2879,22 @@ button:active{
     <div class="linha">📥 <strong>Recebido em:</strong> <span id="consultaRecebidoEm">-</span></div>
     <div class="linha">🔄 <strong>Última atualização:</strong> <span id="consultaAtualizadoEm">-</span></div>
     <div class="linha">✅ <strong>Concluído em:</strong> <span id="consultaConcluidoEm">-</span></div>
+</div>
+
+
+<div id="consultaSolucao" class="consulta-solucao">
+    <div class="consulta-solucao-title">✅ Solução / Observação da Administração</div>
+    <div id="consultaSolucaoTexto" class="consulta-solucao-text"></div>
+</div>
+
+<div class="consulta-compartilhar">
+    <button
+        type="button"
+        class="btn-compartilhar-protocolo"
+        onclick="compartilharProtocoloConsulta()"
+    >
+        📤 Compartilhar protocolo
+    </button>
 </div>
 
 <div class="consulta-final-acao">
@@ -4920,6 +4986,18 @@ document
 
 
 function fecharConsultaProtocolo() {
+    window.__chamadoConsultaAtual = null;
+
+    const solucao =
+        document.getElementById(
+            "consultaSolucao"
+        );
+
+    if (solucao) {
+        solucao.style.display = "none";
+    }
+
+
 
     const resultado =
         document.getElementById("resultadoConsulta");
@@ -5096,9 +5174,162 @@ function montarLinhaDoTempoConsulta(chamado) {
 }
 
 
+
+function obterObservacaoFinalConsulta(chamado) {
+
+    return (
+        chamado.observacaoFinal ||
+        chamado.solucao ||
+        chamado.resolucao ||
+        chamado.observacao ||
+        chamado.observacoes ||
+        ""
+    ).trim();
+
+}
+
+function atualizarSolucaoConsulta(chamado) {
+
+    const box =
+        document.getElementById(
+            "consultaSolucao"
+        );
+
+    const texto =
+        document.getElementById(
+            "consultaSolucaoTexto"
+        );
+
+    if (!box || !texto) return;
+
+    const observacao =
+        obterObservacaoFinalConsulta(
+            chamado
+        );
+
+    if (!observacao) {
+        box.style.display = "none";
+        texto.textContent = "";
+        return;
+    }
+
+    texto.textContent = observacao;
+    box.style.display = "block";
+
+}
+
+function montarMensagemCompartilharProtocolo(chamado) {
+
+    const protocolo =
+        chamado?.protocolo || "-";
+
+    const status =
+        chamado?.status || "Não informado";
+
+    const local =
+        chamado?.bloco
+            ? chamado.bloco +
+              (chamado.pavimentos
+                  ? " • " + chamado.pavimentos
+                  : "")
+            : (chamado?.local || "Não informado");
+
+    const ocorrencia =
+        chamado?.ocorrencia ||
+        chamado?.tipo ||
+        "Não informado";
+
+    return (
+        "PARQUE CLUBE\n\n" +
+        "📋 PROTOCOLO DE CHAMADO\n\n" +
+        "Protocolo: " + protocolo + "\n" +
+        "Status: " + status + "\n" +
+        "Local: " + local + "\n" +
+        "Ocorrência: " + ocorrencia + "\n\n" +
+        "Acompanhe pelo Sistema de Gestão do Condomínio."
+    );
+
+}
+
+async function compartilharProtocoloConsulta() {
+
+    const chamado =
+        window.__chamadoConsultaAtual;
+
+    if (!chamado) {
+        alert(
+            "Consulte um protocolo antes de compartilhar."
+        );
+        return;
+    }
+
+    const mensagem =
+        montarMensagemCompartilharProtocolo(
+            chamado
+        );
+
+    try {
+
+        if (
+            navigator.share &&
+            typeof navigator.share === "function"
+        ) {
+
+            await navigator.share({
+                title:
+                    "Protocolo " +
+                    (chamado.protocolo || ""),
+                text: mensagem
+            });
+
+            return;
+        }
+
+        if (
+            navigator.clipboard &&
+            navigator.clipboard.writeText
+        ) {
+
+            await navigator.clipboard.writeText(
+                mensagem
+            );
+
+            alert(
+                "📋 Dados do protocolo copiados. " +
+                "Agora você pode colar e compartilhar."
+            );
+
+            return;
+        }
+
+        alert(
+            mensagem
+        );
+
+    } catch (erro) {
+
+        if (erro?.name === "AbortError") {
+            return;
+        }
+
+        alert(
+            "Não foi possível compartilhar o protocolo."
+        );
+
+    }
+
+}
+
 function mostrarResultado(
     chamado
 ) {
+
+    window.__chamadoConsultaAtual =
+        chamado;
+
+    atualizarSolucaoConsulta(
+        chamado
+    );
 
 
     const resultado =
