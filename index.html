@@ -1421,7 +1421,7 @@ input[readonly] {
 .admin-v13-modal-footer button{width:auto!important;margin-top:0!important}
 @media(max-width:600px){.admin-v13-detail-grid{grid-template-columns:1fr}.admin-v13-detail.full{grid-column:auto}.admin-v13-modal{padding:10px}.admin-v13-modal-box{max-height:94vh}}
 
-@media(max-width:700px){.admin-v13-grid{grid-template-columns:1fr}.admin-v13-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-v13-table{font-size:11px;min-width:760px}.admin-v13-result{overflow:auto}}
+@media(max-width:700px){.admin-v13-grid{grid-template-columns:1fr}.admin-v13-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-v13-table{font-size:11px;min-width:900px}.admin-v13-result{overflow:auto}}
 @media print{.admin-v13-wrap .no-print{display:none!important}}
 
 
@@ -11111,6 +11111,7 @@ function mostrarRelatorioAdminV11(){
 <div class="admin-v13-detail-label">Data do registro</div>
 <div class="admin-v13-detail-value" id="adm13ModalData"></div>
 </div>
+<div class="admin-v13-detail"><div class="admin-v13-detail-label">Data da infração</div><div class="admin-v13-detail-value" id="adm13ModalDataInfracao"></div></div>
 <div class="admin-v13-detail">
 <div class="admin-v13-detail-label">Unidade / Bloco</div>
 <div class="admin-v13-detail-value" id="adm13ModalUnidade"></div>
@@ -11338,7 +11339,7 @@ function mostrarRelatorioAdminV11(){
             lista.innerHTML='<div style="padding:16px;text-align:center;color:#64737c">Nenhum registro administrativo encontrado para o filtro selecionado.</div>';
             return;
         }
-        lista.innerHTML=`<table class="admin-v13-table"><thead><tr><th>Protocolo</th><th>Data</th><th>Unidade</th><th>Tipo</th><th>Infração</th><th>Chamado</th><th>Ações</th></tr></thead><tbody>${regs.map(x=>`<tr>
+        lista.innerHTML=`<table class="admin-v13-table"><thead><tr><th>Protocolo</th><th>Data do registro</th><th>Data da infração</th><th>Unidade</th><th>Tipo</th><th>Infração</th><th>Chamado</th><th>Ações</th></tr></thead><tbody>${regs.map(x=>`<tr>
             <td><span class="admin-v13-protocol">${esc(x.protocolo)}</span></td>
             <td>${esc(formatarData(x.dataRegistro))}</td>
             <td>${esc(x.unidade)} / ${esc(x.bloco)}</td>
@@ -11362,7 +11363,7 @@ function mostrarRelatorioAdminV11(){
         document.getElementById('adm13ModalTitulo').textContent=tipo;
         set('adm13ModalProtocolo',x.protocolo);
         set('adm13ModalTipo',x.tipo);
-        set('adm13ModalData',formatarData(x.dataRegistro));
+        set('adm13ModalData',formatarData(x.dataRegistro)); set('adm13ModalDataInfracao',formatarData(x.dataInfracao||x.dataFato||x.dataOcorrencia||''));
         set('adm13ModalUnidade',`${x.unidade||'—'} / ${x.bloco||'—'}`);
         set('adm13ModalInfracao',x.infracao);
         set('adm13ModalBase',x.baseRegimento);
