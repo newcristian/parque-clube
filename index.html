@@ -5162,25 +5162,24 @@ function montarMensagemCompartilharProtocolo(chamado) {
         "";
 
     let mensagem =
-        "🏢 PARQUE CLUBE\n\n" +
-        "📋 PROTOCOLO DE CHAMADO\n\n" +
-        "Protocolo: " + protocolo + "\n" +
-        "Status: " + status + "\n" +
-        "Local: " + local + "\n" +
-        "Ocorrência: " + ocorrencia;
+        "🏢 *PARQUE CLUBE*\n\n" +
+        "📋 *PROTOCOLO DE CHAMADO*\n\n" +
+        "*Protocolo:* " + protocolo + "\n" +
+        "*Status:* " + status + "\n" +
+        "*Local:* " + local + "\n" +
+        "*Ocorrência:* " + ocorrencia;
 
     if (observacao.trim()) {
         mensagem +=
-            "\n\n✅ Solução / Observação:\n" +
+            "\n\n*✅ Solução / Observação:*\n" +
             observacao.trim();
     }
 
     mensagem +=
-        "\n\n🔎 Consulte e acompanhe pelo aplicativo:\n" +
+        "\n\n🔎 *Consulte e acompanhe pelo aplicativo:*\n" +
         "https://parque-clube.newcristian.workers.dev/";
 
     return mensagem;
-
 }
 
 async function compartilharProtocoloConsulta() {
