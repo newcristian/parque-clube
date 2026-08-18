@@ -4889,6 +4889,147 @@ document
 
             this.disabled = true;
             this.textContent = "⏳ Consultando...";
+
+            atualizarEstadoBuscaConsulta(
+                "consultando",
+                "🔄 Consultando protocolo..."
+            );
+
+            try {
+
+                const resposta =
+                    await fetch(
+                        API +
+                        "?protocolo=" +
+                        encodeURIComponent(
+                            protocolo
+                        )
+                    );
+
+                const texto =
+                    await resposta.text();
+
+                let dados = {};
+
+                try {
+                    dados =
+                        texto
+                            ? JSON.parse(texto)
+                            : {};
+                } catch (parseError) {
+                    throw new Error(
+                        "Resposta inválida do servidor."
+                    );
+                }
+
+                if (
+                    !resposta.ok ||
+                    !dados.encontrado
+                ) {
+                    throw new Error(
+                        dados.erro ||
+                        "Protocolo não encontrado."
+                    );
+                }
+
+                mostrarResultado(
+                    dados.chamado
+                );
+
+                window.__chamadoConsultaAtual =
+                    dados.chamado;
+
+                atualizarSolucaoConsulta(
+                    dados.chamado
+                );
+
+                preencherResumoConsulta(
+                    dados.chamado
+                );
+
+                atualizarEstadoBuscaConsulta(
+                    "sucesso",
+                    "✅ Protocolo localizado com sucesso."
+                );
+
+            } catch (error) {
+
+                if (resumo) {
+                    resumo.style.display = "none";
+                }
+
+                atualizarEstadoBuscaConsulta(
+                    "erro",
+                    "❌ " +
+                    (
+                        error.message ||
+                        "Não foi possível consultar o protocolo."
+                    )
+                );
+
+                if (erro) {
+                    erro.textContent =
+                        error.message ||
+                        "Não foi possível consultar o protocolo.";
+                    erro.style.display = "block";
+                }
+
+            } finally {
+
+                this.disabled = false;
+                this.textContent =
+                    "🔎 Buscar Protocolo";
+
+            }
+
+        }
+    );
+
+            const protocolo =
+                normalizarProtocoloConsulta(
+                    input ? input.value : ""
+                );
+
+            if (input) {
+                input.value = protocolo;
+            }
+
+            const erro =
+                document.getElementById(
+                    "erroConsulta"
+                );
+
+            const resumo =
+                document.getElementById(
+                    "consultaResumo"
+                );
+
+            if (erro) {
+                erro.style.display = "none";
+                erro.textContent = "";
+            }
+
+            if (resumo) {
+                resumo.style.display = "none";
+            }
+
+            if (!protocolo) {
+                atualizarEstadoBuscaConsulta(
+                    "erro",
+                    "⚠️ Digite o número do protocolo."
+                );
+
+                if (erro) {
+                    erro.textContent =
+                        "Digite o número do protocolo.";
+                    erro.style.display = "block";
+                }
+
+                return;
+            }
+
+            this.disabled = true;
+            this.textContent = "⏳ Consultando...";
             atualizarEstadoBuscaConsulta(
                 "consultando",
                 "🔄 Consultando protocolo..."
