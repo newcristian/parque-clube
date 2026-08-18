@@ -7777,7 +7777,7 @@ function gerarRelatorioHTMLV11(abrirJanela=true){
             const grande = (fim - inicio) > 180 ? 1 : 0;
 
             const caminho = items.length === 1
-                ? `M ${cx} ${cy-radius} A ${raio} ${raio} 0 1 1 ${cx-0.01} ${cy-radius} L ${cx} ${cy} Z`
+                ? `M ${cx} ${cy-raio} A ${raio} ${raio} 0 1 1 ${cx-0.01} ${cy-raio} L ${cx} ${cy} Z`
                 : `M ${cx} ${cy} L ${x1} ${y1} A ${raio} ${raio} 0 ${grande} 1 ${x2} ${y2} Z`;
 
             return `<path d="${caminho}" fill="${cores[i % cores.length]}" stroke="#fff" stroke-width="2">
