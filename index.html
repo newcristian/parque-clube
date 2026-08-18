@@ -1493,7 +1493,7 @@ h1{
 }
 
 .menu{
-    grid-template-columns:repeat(3,1fr);
+    grid-template-columns:repeat(3,minmax(0,1fr));
     gap:10px;
     padding:10px;
     background:linear-gradient(180deg,#f7faf8,#eef5f0);
@@ -1634,6 +1634,16 @@ button:active{
 
     .menu button .menu-help{
         display:none;
+    }
+
+    .menu .btn-admin-home{
+        grid-column:1 / -1;
+    }
+
+    .menu .btn-admin-home .menu-help{
+        display:block;
+        font-size:10px;
+        margin-top:4px;
     }
 
     /* No celular, Abrir Chamado e Consultar Protocolo ficam lado a lado.
@@ -1858,16 +1868,14 @@ button:active{
 </button>
 
 
-<div class="home-bloco-titulo" style="grid-column:1 / -1;">🔐 Área Administrativa</div>
-<div class="home-bloco-subtitulo" style="grid-column:1 / -1;">Acesso restrito à administração do Parque Clube.</div>
 <button
     type="button"
-    class="btn-azul"
+    class="btn-admin-home btn-azul"
     onclick="mostrarSecao('admin')"
 >
 
     <span class="menu-label">🔐 Área Administrativa</span>
-    <span class="menu-help">Gestão e relatórios</span>
+    <span class="menu-help">Acesso Restrito à Administração</span>
 
 </button>
 
