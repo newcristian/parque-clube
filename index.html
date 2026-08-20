@@ -3164,6 +3164,15 @@ button:active{
     🔄 Atualizar Lista de Chamados
 
 </button>
+<div id="pcAlertaSonoroWrap" style="display:inline-flex;align-items:center;gap:10px;margin:8px 0 8px 10px;padding:8px 12px;border:1px solid #d8d8d8;border-radius:10px;background:#fff;vertical-align:middle;">
+  <span id="pcAlertaSonoroIcone" aria-hidden="true">🔔</span>
+  <span style="font-weight:700;font-size:14px;">Som de novos chamados</span>
+  <button type="button" id="pcToggleAlertaSonoro" aria-pressed="false"
+    style="border:0;border-radius:18px;padding:7px 13px;font-weight:700;cursor:pointer;">
+    ⚪ OFF
+  </button>
+</div>
+
 
 <div class="admin-list-buttons-v11">
 
@@ -12916,6 +12925,152 @@ function mostrarPainelDetalhesChamadoV45() {
 
     /*
     ============================================================
+    ALERTA SONORO DE NOVOS CHAMADOS
+    - ON/OFF escolhido pelo administrador
+    - Preferência salva no navegador (localStorage)
+    - Não gera consultas extras ao Worker
+    - Só toca quando surgir protocolo novo
+    ============================================================
+    */
+
+    var PC_CHAVE_SOM = "parqueClubeSomNovosChamados";
+    var pcSomAtivado = false;
+    var pcPrimeiraLeituraConcluida = false;
+    var pcProtocolosConhecidos = {};
+
+    function pcLerPreferenciaSom() {
+        try {
+            return localStorage.getItem(PC_CHAVE_SOM) === "on";
+        } catch (e) {
+            return false;
+        }
+    }
+
+    function pcSalvarPreferenciaSom(ativo) {
+        try {
+            localStorage.setItem(PC_CHAVE_SOM, ativo ? "on" : "off");
+        } catch (e) {}
+    }
+
+    function pcAtualizarBotaoSom() {
+        var botao = document.getElementById("pcToggleAlertaSonoro");
+        var icone = document.getElementById("pcAlertaSonoroIcone");
+        if (!botao) return;
+
+        botao.setAttribute("aria-pressed", pcSomAtivado ? "true" : "false");
+
+        if (pcSomAtivado) {
+            botao.textContent = "🔘 ON";
+            botao.style.background = "#1f8f4e";
+            botao.style.color = "#fff";
+            if (icone) icone.textContent = "🔔";
+        } else {
+            botao.textContent = "⚪ OFF";
+            botao.style.background = "#ececec";
+            botao.style.color = "#333";
+            if (icone) icone.textContent = "🔇";
+        }
+    }
+
+    function pcConfigurarAlertaSonoro() {
+        pcSomAtivado = pcLerPreferenciaSom();
+        pcAtualizarBotaoSom();
+
+        var botao = document.getElementById("pcToggleAlertaSonoro");
+        if (!botao || botao.dataset.pcSomConfigurado === "1") return;
+
+        botao.dataset.pcSomConfigurado = "1";
+
+        /*
+         * Uma interação do administrador libera o áudio no navegador.
+         */
+        botao.addEventListener("click", function () {
+            pcSomAtivado = !pcSomAtivado;
+            pcSalvarPreferenciaSom(pcSomAtivado);
+            pcAtualizarBotaoSom();
+
+            if (pcSomAtivado) {
+                pcTocarSomNovoChamado();
+            }
+        });
+    }
+
+    function pcTocarSomNovoChamado() {
+        if (!pcSomAtivado) return;
+
+        try {
+            var AudioContextClass = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContextClass) return;
+
+            var ctx = new AudioContextClass();
+            var oscillator = ctx.createOscillator();
+            var gain = ctx.createGain();
+
+            oscillator.type = "sine";
+            oscillator.frequency.setValueAtTime(880, ctx.currentTime);
+
+            gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.12, ctx.currentTime + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.45);
+
+            oscillator.connect(gain);
+            gain.connect(ctx.destination);
+
+            oscillator.start();
+            oscillator.stop(ctx.currentTime + 0.46);
+
+            oscillator.addEventListener("ended", function () {
+                if (ctx && ctx.close) ctx.close();
+            });
+        } catch (erro) {
+            console.warn("Não foi possível tocar o alerta sonoro:", erro);
+        }
+    }
+
+    function pcObterProtocolos(lista) {
+        var mapa = {};
+        (Array.isArray(lista) ? lista : []).forEach(function (chamado) {
+            var chave = String(
+                chamado && (chamado.protocolo || chamado.id || chamado.createdAt || "")
+            ).trim();
+
+            if (chave) mapa[chave] = true;
+        });
+        return mapa;
+    }
+
+    function pcVerificarNovoChamado(listaNova) {
+        var novos = pcObterProtocolos(listaNova);
+
+        /*
+         * Na primeira leitura apenas registra os protocolos existentes.
+         * Assim, não toca para chamados antigos já presentes no sistema.
+         */
+        if (!pcPrimeiraLeituraConcluida) {
+            pcProtocolosConhecidos = novos;
+            pcPrimeiraLeituraConcluida = true;
+            return;
+        }
+
+        var existeNovo = false;
+
+        Object.keys(novos).forEach(function (protocolo) {
+            if (!pcProtocolosConhecidos[protocolo]) {
+                existeNovo = true;
+            }
+        });
+
+        pcProtocolosConhecidos = novos;
+
+        if (existeNovo) {
+            pcTocarSomNovoChamado();
+            console.log("Parque Clube: novo chamado detectado. Alerta sonoro acionado.");
+        }
+    }
+
+
+    /*
+    ============================================================
     PARQUE CLUBE — V4.13 FINAL
     ATUALIZAÇÃO INTELIGENTE DO PAINEL ADMINISTRATIVO
 
@@ -12946,7 +13101,7 @@ function mostrarPainelDetalhesChamadoV45() {
 
     function pcChamadoEmEdicao() {
         /*
-         * CORREÇÃO V4.13.2
+         * CORREÇÃO V4.14
          *
          * Na tela "Pesquisar chamados", o sistema mantém o container
          * #editarChamado visível mesmo quando nenhum chamado foi aberto.
@@ -13086,6 +13241,12 @@ function mostrarPainelDetalhesChamadoV45() {
                 novosAtivos,
                 novosArquivados
             );
+
+            /*
+             * Detecta novos protocolos usando a própria resposta da consulta.
+             * Não cria nenhuma chamada adicional ao Worker.
+             */
+            pcVerificarNovoChamado(novosAtivos);
 
             /*
              * O ponto principal:
@@ -13234,6 +13395,17 @@ function mostrarPainelDetalhesChamadoV45() {
 
     function pcInicializarV413Final() {
         pcIniciarMascaraWhatsapp();
+        pcConfigurarAlertaSonoro();
+
+        /*
+         * Registra os protocolos já carregados para evitar alerta
+         * para chamados antigos ao abrir a Área Administrativa.
+         */
+        if (typeof chamados !== "undefined") {
+            pcProtocolosConhecidos = pcObterProtocolos(chamados || []);
+            pcPrimeiraLeituraConcluida = true;
+        }
+
         pcIniciarAtualizacaoInteligente();
     }
 
