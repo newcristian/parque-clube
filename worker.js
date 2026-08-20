@@ -1,15 +1,15 @@
 /*
 ============================================================
- PARQUE CLUBE - CLOUDFLARE WORKER V4.6
+ PARQUE CLUBE - CLOUDFLARE WORKER V4.7
  Sistema de Chamados / Ordem de Serviço
 
  D1 Binding: DB
  Secret: ADMIN_PASSWORD
  API: /api/protocolo
 
- V4.6:
+ V4.7:
  - WhatsApp para retorno salvo no chamado
- - Resposta da Administração salva no chamado
+ - Observação da solução usada como resposta da Administração e no WhatsApp
  - Consulta/listagem devolve os dois campos
  - Preserva resposta anterior quando update não envia resposta
  - Mantém chamados, prioridade, arquivamento e módulo
@@ -100,7 +100,7 @@ async function garantirColuna(env, tabela, coluna, definicao) {
 }
 
 async function garantirEstruturaChamados(env) {
-  /* Estas duas colunas são a correção da V4.6 */
+  /* Estas duas colunas são a correção da V4.7 */
   await garantirColuna(env, "chamados", "whatsapp_retorno", "TEXT DEFAULT ''");
   await garantirColuna(env, "chamados", "resposta_administracao", "TEXT DEFAULT ''");
 
@@ -179,7 +179,7 @@ function converterChamado(row, arquivo = null) {
     criadoEm: row.criado_em || "",
     prioridade: row.prioridade || "Moderada",
 
-    /* V4.6 */
+    /* V4.7 */
     whatsappRetorno: row.whatsapp_retorno || "",
     respostaAdministracao: row.resposta_administracao || "",
 
@@ -419,16 +419,20 @@ async function atualizarChamado(env, dados) {
     : (chamadoAtual.prioridade || "Moderada");
 
   /*
-   * IMPORTANTE V4.6:
-   * Só altera a resposta quando o campo veio no JSON.
-   * Assim, uma atualização comum não apaga a resposta anterior.
+   * V4.7:
+   * A Observação da solução passou a ser a única resposta administrativa.
+   * Para manter compatibilidade com registros antigos, o campo
+   * resposta_administracao continua existindo no banco, mas recebe
+   * exatamente o mesmo texto de observacao_solucao.
    */
-  const possuiRespostaAdministracao =
-    Object.prototype.hasOwnProperty.call(dados, "respostaAdministracao");
+  const possuiObservacaoSolucao =
+    Object.prototype.hasOwnProperty.call(dados, "observacaoSolucao");
 
-  const respostaAdministracao = possuiRespostaAdministracao
-    ? String(dados.respostaAdministracao || "").trim()
-    : chamadoAtual.respostaAdministracao;
+  const observacaoSolucao = possuiObservacaoSolucao
+    ? String(dados.observacaoSolucao || "").trim()
+    : (chamadoAtual.observacaoSolucao || "");
+
+  const respostaAdministracao = observacaoSolucao;
 
   const ultimaAtualizacao = `${data.dia}/${data.mes}/${data.ano} ${hora}`;
 
@@ -449,9 +453,7 @@ async function atualizarChamado(env, dados) {
     dados.responsavel !== undefined
       ? String(dados.responsavel || "")
       : chamadoAtual.responsavel,
-    dados.observacaoSolucao !== undefined
-      ? String(dados.observacaoSolucao || "")
-      : chamadoAtual.observacaoSolucao,
+    observacaoSolucao,
     dataConclusao,
     horaConclusao,
     ultimaAtualizacao,
