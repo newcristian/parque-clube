@@ -3650,21 +3650,6 @@ button:active{
 
 </div>
 
-<div class="form-group">
-
-<label>
-
-    💬 Resposta da Administração:
-
-</label>
-
-<textarea
-    id="respostaAdmin"
-    placeholder="Digite aqui a resposta que será enviada ao solicitante..."
-></textarea>
-
-</div>
-
 <div
     id="whatsappRetornoInfo"
     style="display:none;margin:8px 0 14px;padding:10px 12px;border:1px solid #bbf7d0;background:#f0fdf4;border-radius:8px;color:#166534;"
@@ -7384,7 +7369,8 @@ function normalizarNumeroWhatsApp(numero) {
 
 function montarMensagemRespostaAdministracao(chamado) {
     const resposta =
-        document.getElementById("respostaAdmin")?.value?.trim() ||
+        document.getElementById("observacaoAdmin")?.value?.trim() ||
+        chamado?.observacaoSolucao ||
         chamado?.respostaAdministracao ||
         "";
 
@@ -7396,7 +7382,7 @@ function montarMensagemRespostaAdministracao(chamado) {
         "\n*Local:* " + (chamado?.bloco || "") +
         (chamado?.pavimentos ? "\n*Pavimento(s):* " + chamado.pavimentos : "") +
         "\n*Ocorrência:* " + (chamado?.ocorrencia || "") +
-        "\n\n💬 *Resposta da Administração:*\n" +
+        "\n\n📝 *Observação da solução:*\n" +
         resposta +
         "\n\n🔎 *Acompanhe pelo aplicativo:*\n" +
         "https://parque-clube.newcristian.workers.dev/"
@@ -7407,11 +7393,6 @@ function atualizarAreaRespostaWhatsApp(chamado) {
     const info = document.getElementById("whatsappRetornoInfo");
     const btn = document.getElementById("btnResponderWhatsAppAdmin");
     const numero = chamado?.whatsappRetorno || chamado?.whatsapp || chamado?.telefoneRetorno || "";
-
-    if (document.getElementById("respostaAdmin")) {
-        document.getElementById("respostaAdmin").value =
-            chamado?.respostaAdministracao || chamado?.respostaAdmin || "";
-    }
 
     if (info) {
         if (numero) {
@@ -7451,7 +7432,7 @@ async function responderChamadoPeloWhatsApp() {
         "";
 
     const numero = normalizarNumeroWhatsApp(numeroBruto);
-    const resposta = document.getElementById("respostaAdmin")?.value?.trim() || "";
+    const resposta = document.getElementById("observacaoAdmin")?.value?.trim() || "";
 
     if (!numero) {
         alert("Este chamado não possui WhatsApp para retorno.");
@@ -7459,8 +7440,8 @@ async function responderChamadoPeloWhatsApp() {
     }
 
     if (!resposta) {
-        alert("Digite a resposta da Administração antes de abrir o WhatsApp.");
-        document.getElementById("respostaAdmin")?.focus();
+        alert("Digite a Observação da solução antes de abrir o WhatsApp.");
+        document.getElementById("observacaoAdmin")?.focus();
         return;
     }
 
@@ -7482,8 +7463,7 @@ async function responderChamadoPeloWhatsApp() {
                 adminPassword: senhaAdministrativa,
                 status: document.getElementById("statusAdmin")?.value || chamado.status || "",
                 responsavel: document.getElementById("responsavelAdmin")?.value?.trim() || chamado.responsavel || "",
-                observacaoSolucao: document.getElementById("observacaoAdmin")?.value?.trim() || chamado.observacaoSolucao || "",
-                respostaAdministracao: resposta,
+                observacaoSolucao: resposta,
                 prioridade: document.getElementById("prioridadeAdmin")?.value || chamado.prioridade || ""
             })
         });
@@ -7498,16 +7478,18 @@ async function responderChamadoPeloWhatsApp() {
 
         const atualizado = retorno.chamado || {
             ...chamado,
+            observacaoSolucao: resposta,
             respostaAdministracao: resposta
         };
 
         const lista = typeof chamados !== "undefined" ? chamados : [];
         const i = lista.findIndex(x => x.protocolo === protocoloSelecionado);
-        if (i >= 0) lista[i] = {...lista[i], ...atualizado, respostaAdministracao: resposta};
+        if (i >= 0) lista[i] = {...lista[i], ...atualizado, observacaoSolucao: resposta, respostaAdministracao: resposta};
 
         const mensagem = montarMensagemRespostaAdministracao({
             ...chamado,
             ...atualizado,
+            observacaoSolucao: resposta,
             respostaAdministracao: resposta
         });
 
@@ -7647,14 +7629,6 @@ document
                                         document
                                             .getElementById(
                                                 "observacaoAdmin"
-                                            )
-                                            .value
-                                            .trim(),
-
-                                    respostaAdministracao:
-                                        document
-                                            .getElementById(
-                                                "respostaAdmin"
                                             )
                                             .value
                                             .trim(),
