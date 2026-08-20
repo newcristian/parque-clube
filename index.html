@@ -2294,7 +2294,10 @@ button:active{
     id="whatsappRetorno"
     type="tel"
     inputmode="numeric"
+    autocomplete="tel"
+    maxlength="15"
     placeholder="Ex.: (61) 99999-9999"
+    oninput="formatarTelefoneWhatsApp(this)"
 >
 
 <small style="display:block;margin-top:5px;color:#64748b;">
@@ -7359,6 +7362,39 @@ function reabrirChamadoV11(
 /* =====================================================
    RESPOSTA DA ADMINISTRAÇÃO PELO WHATSAPP
 ===================================================== */
+
+
+/* V4.10 — Máscara automática do telefone/WhatsApp.
+   Exibição: (61) 99999-9999
+   O envio continua usando apenas os números por meio da normalização existente. */
+function formatarTelefoneWhatsApp(campo) {
+    let valor = String(campo.value || "").replace(/\D/g, "");
+
+    // Limita a DDD + 9 dígitos.
+    valor = valor.slice(0, 11);
+
+    if (valor.length === 0) {
+        campo.value = "";
+        return;
+    }
+
+    if (valor.length <= 2) {
+        campo.value = "(" + valor;
+        return;
+    }
+
+    if (valor.length <= 7) {
+        campo.value =
+            "(" + valor.slice(0, 2) + ") " +
+            valor.slice(2);
+        return;
+    }
+
+    campo.value =
+        "(" + valor.slice(0, 2) + ") " +
+        valor.slice(2, 7) + "-" +
+        valor.slice(7);
+}
 
 function normalizarNumeroWhatsApp(numero) {
     let n = String(numero || "").replace(/\D/g, "");
