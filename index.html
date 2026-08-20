@@ -5035,6 +5035,83 @@ function prepararBotoesEnvio(
    CONSULTAR PROTOCOLO
 ===================================================== */
 
+/*
+   LINK DIRETO PARA PROTOCOLO
+   Exemplo:
+   https://seu-app/?protocolo=PC-20-08-26-020
+
+   Ao abrir o aplicativo:
+   1. lê o protocolo da URL;
+   2. abre a seção Consultar Protocolo;
+   3. preenche o campo;
+   4. executa a busca automaticamente.
+===================================================== */
+
+function abrirProtocoloPeloLink() {
+    try {
+        const parametros = new URLSearchParams(window.location.search || "");
+        const protocoloURL = normalizarProtocoloConsulta(
+            parametros.get("protocolo") || ""
+        );
+
+        if (!protocoloURL) return;
+
+        const input = document.getElementById("consultaProtocolo");
+        const btn = document.getElementById("btnConsultar");
+
+        if (!input || !btn) return;
+
+        /*
+         * Garante que o usuário veja a área correta do aplicativo.
+         */
+        try {
+            if (typeof mostrarSecao === "function") {
+                mostrarSecao("consultar");
+            }
+        } catch (erroSecao) {
+            console.warn(
+                "Não foi possível alternar automaticamente para a consulta:",
+                erroSecao
+            );
+        }
+
+        input.value = protocoloURL;
+
+        /*
+         * Pequeno atraso para concluir a troca de seção antes da busca.
+         */
+        setTimeout(function () {
+            btn.click();
+        }, 250);
+
+        /*
+         * Remove apenas o parâmetro da URL após a leitura.
+         * Isso evita uma nova consulta automática caso a página seja recarregada.
+         */
+        try {
+            const urlLimpa =
+                window.location.origin +
+                window.location.pathname +
+                window.location.hash;
+
+            window.history.replaceState(
+                {},
+                document.title,
+                urlLimpa
+            );
+        } catch (erroHistorico) {}
+
+    } catch (erro) {
+        console.warn(
+            "Não foi possível abrir o protocolo pelo link:",
+            erro
+        );
+    }
+}
+
+setTimeout(abrirProtocoloPeloLink, 500);
+
+
 document
     .getElementById(
         "btnConsultar"
@@ -7462,8 +7539,21 @@ function montarMensagemRespostaAdministracao(chamado) {
         dataHoraResposta +
         "\n\nAtenciosamente,\n" +
         "*Administração Parque Clube*" +
-        "\n\n" + emojiLupa + " *Acompanhe pelo aplicativo:*\n" +
-        "https://parque-clube.newcristian.workers.dev/"
+        /*
+         * Link direto para o protocolo:
+         * abre o próprio aplicativo e envia o número do protocolo
+         * pela URL para a tela "Consultar Protocolo".
+         */
+        "\n\n" + emojiLupa + " *Acompanhe seu chamado:*\n" +
+        (
+            (window.location && window.location.origin
+                ? window.location.origin
+                : "https://parque-clube.newcristian.workers.dev")
+            + "/?protocolo=" +
+            encodeURIComponent(
+                chamado?.protocolo || protocoloSelecionado || ""
+            )
+        )
     );
 }
 
@@ -12964,7 +13054,7 @@ function mostrarPainelDetalhesChamadoV45() {
 
     /*
     ============================================================
-    V4.16 — CONTROLE DA NOTIFICAÇÃO AUTOMÁTICA
+    V4.17 — CONTROLE DA NOTIFICAÇÃO AUTOMÁTICA
     - ON: abre automaticamente "Novo chamado recebido!"
     - OFF: não abre o modal automaticamente
     - O contador 🔔 Notificações continua registrando novos chamados
@@ -13062,7 +13152,7 @@ function mostrarPainelDetalhesChamadoV45() {
 
     /*
     ============================================================
-    V4.16 — NOTIFICAÇÕES DE NOVOS CHAMADOS
+    V4.17 — NOTIFICAÇÕES DE NOVOS CHAMADOS
     - Botão 🔔 Notificações
     - Contador de novos chamados não visualizados
     - Modal "Novo chamado recebido!"
