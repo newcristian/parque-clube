@@ -12945,13 +12945,18 @@ function mostrarPainelDetalhesChamadoV45() {
     }
 
     function pcChamadoEmEdicao() {
-        var editor = document.getElementById("editarChamado");
-        if (!editor) return false;
-
-        var estilo = window.getComputedStyle(editor);
-
-        return estilo.display !== "none" &&
-            estilo.visibility !== "hidden";
+        /*
+         * CORREÇÃO V4.13.2
+         *
+         * Na tela "Pesquisar chamados", o sistema mantém o container
+         * #editarChamado visível mesmo quando nenhum chamado foi aberto.
+         * A versão anterior interpretava isso como edição ativa e, por isso,
+         * a atualização automática era bloqueada o tempo todo.
+         *
+         * O indicador confiável de edição é o protocolo selecionado.
+         */
+        return typeof protocoloSelecionado !== "undefined" &&
+            String(protocoloSelecionado || "").trim() !== "";
     }
 
     function pcNormalizarValor(valor) {
@@ -13180,6 +13185,11 @@ function mostrarPainelDetalhesChamadoV45() {
         console.log(
             "Atualização inteligente ativada: verificação a cada 90 segundos."
         );
+
+        /*
+         * Não força atualização visual no início.
+         * A primeira verificação silenciosa ocorre após 90 segundos.
+         */
     }
 
     function pcIniciarMascaraWhatsapp() {
