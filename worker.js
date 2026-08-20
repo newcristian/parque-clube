@@ -1,6 +1,6 @@
 /*
 ============================================================
- PARQUE CLUBE - CLOUDFLARE WORKER V4.7
+ PARQUE CLUBE - CLOUDFLARE WORKER V4.9
  Sistema de Chamados / Ordem de Serviço
 
  D1 Binding: DB
@@ -10,6 +10,7 @@
  V4.7:
  - WhatsApp para retorno salvo no chamado
  - Observação da solução usada como resposta da Administração e no WhatsApp
+ - ultima_atualizacao usada como data/hora automática da resposta
  - Consulta/listagem devolve os dois campos
  - Preserva resposta anterior quando update não envia resposta
  - Mantém chamados, prioridade, arquivamento e módulo
