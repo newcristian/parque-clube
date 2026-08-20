@@ -763,6 +763,28 @@ input[readonly] {
         grid-template-columns:1fr;
     }
 }
+
+
+/* CSS V4.5 — Advertências / Notificações */
+.admin-v13-section-title{
+    font-weight:800;color:#123b5d;background:#f4f8fb;
+    border:1px solid #d7e3ea;border-radius:8px;padding:9px 11px;margin-bottom:10px
+}
+.admin-v13-penalty,.admin-v13-appeal,.admin-v13-decision{
+    border:1px solid #d7e3ea;border-radius:10px;padding:12px;
+    background:#fbfcfd
+}
+.admin-v13-penalty{border-left:4px solid #a56b00}
+.admin-v13-appeal{border-left:4px solid #315f8a}
+.admin-v13-decision{border-left:4px solid #176b35}
+.admin-v13-status{
+    display:inline-block;padding:4px 8px;border-radius:999px;font-weight:800;font-size:11px;
+    white-space:nowrap
+}
+.admin-v13-status.registrada{background:#e8eef2;color:#344b5a}
+.admin-v13-status.recurso{background:#fff0c2;color:#765400}
+.admin-v13-status.mantida{background:#f9d9d9;color:#8a2020}
+.admin-v13-status.cancelada{background:#d9f0df;color:#176b35}
 </style>
 </style>
 
@@ -1372,6 +1394,7 @@ input[readonly] {
 
 
 <style id="administrativo-v13-css">
+
 .admin-v13-wrap{padding:12px}
 .admin-v13-header{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
 .admin-v13-title{font-size:18px;font-weight:800;color:#123b5d}
@@ -1420,10 +1443,694 @@ input[readonly] {
 .admin-v13-modal-footer button{width:auto!important;margin-top:0!important}
 @media(max-width:600px){.admin-v13-detail-grid{grid-template-columns:1fr}.admin-v13-detail.full{grid-column:auto}.admin-v13-modal{padding:10px}.admin-v13-modal-box{max-height:94vh}}
 
-@media(max-width:700px){.admin-v13-grid{grid-template-columns:1fr}.admin-v13-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-v13-table{font-size:11px;min-width:760px}.admin-v13-result{overflow:auto}}
+@media(max-width:700px){.admin-v13-grid{grid-template-columns:1fr}.admin-v13-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-v13-table{font-size:11px;min-width:900px}.admin-v13-result{overflow:auto}}
 @media print{.admin-v13-wrap .no-print{display:none!important}}
+
+
+
+.v45-intro{
+    margin:-4px 0 14px;
+    padding:11px 13px;
+    border-radius:10px;
+    background:#f7faf8;
+    border:1px solid #e1ebe4;
+    color:#52606d;
+    font-size:12px;
+    line-height:1.45;
+}
+.v45-intro strong{
+    display:block;
+    color:#17632d;
+    font-size:13px;
+    margin-bottom:2px;
+}
+
+/* =====================================================
+   V4.5 — MELHORIA DE LAYOUT / EXPERIÊNCIA
+   Somente apresentação. Não altera API, banco ou regras.
+===================================================== */
+
+:root{
+    --pc-verde:#17632d;
+    --pc-verde-escuro:#104a22;
+    --pc-azul:#1769aa;
+    --pc-cinza:#64748b;
+    --pc-fundo:#f5f8f6;
+    --pc-borda:#dbe4de;
+    --pc-sombra:0 8px 24px rgba(16,74,34,.08);
+}
+
+body{
+    background:
+        radial-gradient(circle at top left, rgba(23,99,45,.10), transparent 32%),
+        linear-gradient(180deg,#eef5ef 0%,#f8faf9 48%,#ffffff 100%);
+    padding:12px;
+}
+
+.container{
+    max-width:760px;
+    padding:18px;
+    border:1px solid rgba(23,99,45,.08);
+    box-shadow:0 10px 35px rgba(0,0,0,.09);
+}
+
+.logo{
+    padding:4px 0 2px;
+}
+
+.logo img{
+    width:210px;
+    max-width:78%;
+}
+
+h1{
+    font-size:clamp(19px,4.5vw,25px);
+    letter-spacing:.2px;
+}
+
+.subtitle{
+    font-size:13px;
+    color:#64748b;
+    margin-bottom:14px;
+}
+
+.menu{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:10px;
+    padding:10px;
+    background:linear-gradient(180deg,#f7faf8,#eef5f0);
+    border:1px solid var(--pc-borda);
+    border-radius:16px;
+    position:sticky;
+    top:8px;
+    z-index:20;
+    box-shadow:0 5px 18px rgba(0,0,0,.06);
+}
+
+.menu button,
+.menu button:last-child{
+    grid-column:auto;
+    width:100%;
+    min-height:62px;
+    margin-top:0;
+    border-radius:12px;
+    padding:10px 8px;
+    box-shadow:0 3px 10px rgba(0,0,0,.08);
+    transition:transform .15s ease,box-shadow .15s ease,filter .15s ease;
+}
+
+.menu button:hover{
+    transform:translateY(-1px);
+    box-shadow:0 6px 14px rgba(0,0,0,.11);
+    filter:brightness(1.02);
+}
+
+.menu button:active{
+    transform:translateY(0);
+}
+
+.menu button .menu-label{
+    display:block;
+    font-size:14px;
+    line-height:1.2;
+}
+
+.menu button .menu-help{
+    display:block;
+    margin-top:4px;
+    font-size:10px;
+    font-weight:normal;
+    opacity:.88;
+}
+
+.section{
+    margin-top:16px;
+}
+
+.section-title{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    color:var(--pc-verde-escuro);
+    font-size:19px;
+    border-bottom:0;
+    padding:12px 14px;
+    margin-bottom:14px;
+    background:linear-gradient(90deg,#eef7f0,#ffffff);
+    border:1px solid var(--pc-borda);
+    border-left:4px solid var(--pc-verde);
+    border-radius:12px;
+}
+
+.form-group{
+    background:#fff;
+    border:1px solid #e5ebe7;
+    border-radius:12px;
+    padding:11px 12px;
+    margin-bottom:11px;
+    box-shadow:0 2px 8px rgba(0,0,0,.025);
+}
+
+.form-group:focus-within{
+    border-color:rgba(23,99,45,.42);
+    box-shadow:0 0 0 3px rgba(23,99,45,.07);
+}
+
+label{
+    color:#334155;
+    font-size:13px;
+}
+
+input,select,textarea{
+    border:1px solid #cfd9d2;
+    border-radius:9px;
+    min-height:44px;
+    background:#fff;
+}
+
+textarea{
+    min-height:100px;
+}
+
+button{
+    min-height:44px;
+    border-radius:10px;
+    transition:filter .15s ease,transform .15s ease;
+}
+
+button:hover{
+    filter:brightness(1.03);
+}
+
+button:active{
+    transform:scale(.99);
+}
+
+/* Blocos de informação e resultados */
+.card,
+.resultado,
+.painel,
+.dashboard-card{
+    border-radius:14px;
+}
+
+@media (max-width:700px){
+    body{padding:7px}
+    .container{
+        border-radius:14px;
+        padding:12px;
+    }
+
+    .menu{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        position:relative;
+        top:auto;
+        padding:8px;
+    }
+
+    .menu button,
+    .menu button:last-child{
+        min-height:54px;
+        font-size:13px;
+    }
+
+    .menu button .menu-help{
+        display:none;
+    }
+
+    .menu .btn-admin-home{
+        grid-column:1 / -1;
+    }
+
+    .menu .btn-admin-home .menu-help{
+        display:block;
+        font-size:10px;
+        margin-top:4px;
+    }
+
+    /* No celular, Abrir Chamado e Consultar Protocolo ficam lado a lado.
+       A Área Administrativa ocupa a linha seguinte. */
+    .menu button:nth-child(3){
+        grid-column:1 / -1;
+    }
+
+    .logo img{
+        width:180px;
+    }
+
+    .section-title{
+        font-size:17px;
+        padding:11px 12px;
+    }
+
+    .form-group{
+        padding:10px;
+    }
+
+    input,select,textarea{
+        font-size:16px; /* evita zoom automático no iPhone */
+    }
+}
+
+@media (min-width:701px){
+    .form-group{
+        padding:12px 14px;
+    }
+}
+
+
+/* =====================================================
+   V4.5 — PROTOCOLO DESTACADO NO HISTÓRICO
+===================================================== */
+
+.historico-cabecalho{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:10px 12px;
+    margin-bottom:4px;
+    background:#eaf5ed;
+    border-bottom:1px solid #cfe0d4;
+}
+
+.historico-cabecalho .titulo{
+    margin:0;
+    font-weight:700;
+    color:#17632d;
+}
+
+.historico-protocolo{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    white-space:nowrap;
+    padding:6px 10px;
+    border:1px solid #b8d2bf;
+    border-radius:8px;
+    background:#fff;
+    color:#334155;
+    font-size:12px;
+}
+
+.historico-protocolo strong{
+    color:#17632d;
+    font-size:14px;
+    letter-spacing:.2px;
+}
+
+@media (max-width:700px){
+    .historico-cabecalho{
+        align-items:flex-start;
+        flex-direction:column;
+        gap:7px;
+    }
+
+    .historico-protocolo{
+        width:100%;
+        justify-content:space-between;
+        box-sizing:border-box;
+    }
+}
+
+/* =====================================================
+   V4.5 — AÇÃO FINAL DA CONSULTA DE PROTOCOLO
+===================================================== */
+
+.consulta-final-acao{
+    margin-top:16px;
+    padding:12px 0 2px;
+    border-top:1px solid #dfe8e2;
+    text-align:center;
+}
+
+.btn-fechar-consulta{
+    width:100%;
+    max-width:360px;
+    min-height:46px;
+    border:1px solid #17632d;
+    background:#17632d;
+    color:#fff;
+    font-weight:700;
+    border-radius:10px;
+    cursor:pointer;
+    box-shadow:0 4px 12px rgba(23,99,45,.14);
+}
+
+.btn-fechar-consulta:hover{
+    background:#104a22;
+}
+
+.btn-fechar-consulta:active{
+    transform:scale(.99);
+}
+
+@media (max-width:700px){
+    .consulta-final-acao{
+        margin-top:14px;
+    }
+
+    .btn-fechar-consulta{
+        max-width:none;
+    }
+}
+
+/* V4.5 — MELHORIAS DA TELA INICIAL */
+.home-bloco-titulo{
+    margin:10px 0 6px;padding:9px 12px;border-radius:10px;
+    background:#f2f7f3;border:1px solid #dce8df;color:#17632d;
+    font-size:13px;font-weight:800;letter-spacing:.2px;
+    text-transform:uppercase;
+}
+.home-bloco-subtitulo{margin:-2px 0 10px;color:#64748b;font-size:12px;line-height:1.4}
+.home-status-rapido{
+    display:none;margin:16px 0;padding:18px;border:1px solid #b9d9c2;
+    border-radius:14px;background:linear-gradient(180deg,#f0faf3,#fff);
+    box-shadow:0 6px 18px rgba(23,99,45,.08);text-align:center;
+}
+.home-status-rapido .status-icone{font-size:27px;margin-bottom:5px}
+.home-status-rapido .status-titulo{color:#17632d;font-size:17px;font-weight:800}
+.home-status-rapido .status-texto{margin-top:4px;color:#52606d;font-size:12px}
+.home-status-rapido .status-protocolo{
+    display:inline-block;margin:10px 0 12px;padding:8px 14px;border-radius:9px;
+    background:#fff;border:1px solid #b9d9c2;color:#104a22;font-size:18px;
+    font-weight:900;letter-spacing:.4px;
+}
+.btn-status-rapido{width:100%;max-width:320px;min-height:44px;border:0;border-radius:10px;background:#17632d;color:#fff;font-weight:800;cursor:pointer}
+.home-rodape{margin:22px 0 4px;padding:14px 8px 4px;border-top:1px solid #dfe8e2;text-align:center;color:#64748b;font-size:11px;line-height:1.5}
+.home-rodape strong{display:block;color:#17632d;font-size:12px}
+@media(max-width:700px){.home-bloco-titulo{margin-top:10px}.home-status-rapido{padding:15px}}
+
+/* =====================================================
+   V4.5 — CONSULTAR PROTOCOLO MELHORADO
+===================================================== */
+
+.consulta-ajuda{
+    margin:-4px 0 12px;
+    padding:10px 12px;
+    border:1px solid #dbe7de;
+    border-radius:10px;
+    background:#f7faf8;
+    color:#64748b;
+    font-size:12px;
+    line-height:1.45;
+}
+.consulta-ajuda strong{
+    color:#17632d;
+}
+
+.consulta-busca-estado{
+    display:none;
+    margin:8px 0;
+    padding:9px 12px;
+    border-radius:9px;
+    text-align:center;
+    font-size:12px;
+    font-weight:700;
+}
+.consulta-busca-estado.consultando{
+    display:block;
+    background:#eef6fb;
+    color:#1769aa;
+    border:1px solid #c9dfef;
+}
+.consulta-busca-estado.sucesso{
+    display:block;
+    background:#eef9f1;
+    color:#17632d;
+    border:1px solid #c8dfcf;
+}
+.consulta-busca-estado.erro{
+    display:block;
+    background:#fff0f0;
+    color:#a11;
+    border:1px solid #e7caca;
+}
+
+.consulta-resumo{
+    display:none;
+    margin-top:14px;
+    padding:16px;
+    border:1px solid #cfe0d4;
+    border-radius:14px;
+    background:linear-gradient(180deg,#f4faf5,#fff);
+    box-shadow:0 5px 16px rgba(23,99,45,.06);
+}
+.consulta-resumo-topo{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:12px;
+}
+.consulta-resumo-label{
+    color:#64748b;
+    font-size:11px;
+    text-transform:uppercase;
+    font-weight:800;
+}
+.consulta-resumo-protocolo{
+    margin-top:3px;
+    color:#104a22;
+    font-size:18px;
+    font-weight:900;
+    letter-spacing:.2px;
+}
+.consulta-resumo-status{
+    min-width:125px;
+    padding:8px 11px;
+    border-radius:9px;
+    text-align:center;
+    font-size:12px;
+    font-weight:900;
+    border:1px solid #b9d9c2;
+    background:#eaf6ed;
+    color:#17632d;
+}
+.consulta-resumo-dados{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:8px;
+    margin-top:13px;
+}
+.consulta-resumo-item{
+    padding:9px 10px;
+    border-radius:9px;
+    background:#fff;
+    border:1px solid #e3ebe5;
+}
+.consulta-resumo-item span{
+    display:block;
+    color:#64748b;
+    font-size:10px;
+    margin-bottom:2px;
+}
+.consulta-resumo-item strong{
+    color:#334155;
+    font-size:12px;
+}
+
+
+
+
+
+
+
+
+
+@media(max-width:700px){
+    .consulta-resumo-topo{
+        flex-direction:column;
+    }
+    .consulta-resumo-status{
+        width:100%;
+        box-sizing:border-box;
+    }
+    .consulta-resumo-dados{
+        grid-template-columns:1fr;
+    }
+}
+
+.consulta-resumo-status.status-resolvido{
+    background:#eaf7ed;
+    border-color:#b7d9bf;
+    color:#17632d;
+}
+.consulta-resumo-status.status-andamento{
+    background:#edf6fc;
+    border-color:#c5ddec;
+    color:#1769aa;
+}
+.consulta-resumo-status.status-aberto{
+    background:#fff8df;
+    border-color:#e7d69a;
+    color:#7a5a00;
+}
+.consulta-resumo-status.status-cancelado{
+    background:#fff0f0;
+    border-color:#e2baba;
+    color:#a11;
+}
+
+/* =====================================================
+   V4.5 — SOLUÇÃO FINAL + COMPARTILHAR PROTOCOLO
+===================================================== */
+
+.consulta-solucao{
+    display:none;
+    margin-top:14px;
+    padding:14px;
+    border:1px solid #cfe0d4;
+    border-left:4px solid #17632d;
+    border-radius:12px;
+    background:#f5faf6;
+}
+.consulta-solucao-title{
+    color:#17632d;
+    font-weight:800;
+    font-size:13px;
+    margin-bottom:6px;
+}
+.consulta-solucao-text{
+    color:#334155;
+    font-size:12px;
+    line-height:1.55;
+    white-space:pre-wrap;
+}
+.consulta-compartilhar{
+    margin-top:14px;
+    text-align:center;
+}
+.btn-compartilhar-protocolo{
+    width:100%;
+    max-width:360px;
+    min-height:46px;
+    border:0;
+    border-radius:10px;
+    background:#17632d;
+    color:#fff;
+    font-weight:800;
+    cursor:pointer;
+    box-shadow:0 4px 12px rgba(23,99,45,.13);
+}
+.btn-compartilhar-protocolo:hover{
+    filter:brightness(1.04);
+}
+@media(max-width:700px){
+    .btn-compartilhar-protocolo{
+        max-width:none;
+    }
+}
+
+/* V4.5 — AÇÕES FINAIS DA CONSULTA */
+.consulta-acoes-finais{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-top:14px;
+}
+
+.consulta-acoes-finais .btn-compartilhar-protocolo,
+.consulta-acoes-finais .btn-fechar-consulta{
+    width:100%;
+    max-width:none;
+    min-height:46px;
+    margin:0;
+}
+
+/* Compartilhar: azul para diferenciar da ação de fechar */
+.consulta-acoes-finais .btn-compartilhar-protocolo{
+    background:#1769aa;
+    border:1px solid #1769aa;
+    color:#fff;
+}
+
+/* Fechar: mantém verde institucional */
+.consulta-acoes-finais .btn-fechar-consulta{
+    background:#17632d;
+    border:1px solid #17632d;
+    color:#fff;
+}
+
+.consulta-acoes-finais .btn-compartilhar-protocolo:hover,
+.consulta-acoes-finais .btn-fechar-consulta:hover{
+    filter:brightness(1.04);
+}
+
+@media(max-width:700px){
+    .consulta-acoes-finais{
+        grid-template-columns:1fr;
+    }
+}
+
+/* V4.5 — CORREÇÃO MOBILE DOS BOTÕES DA CONSULTA */
+.consulta-acoes-finais{
+    position:relative;
+    z-index:20;
+    pointer-events:auto;
+}
+
+.consulta-acoes-finais button,
+.consulta-acoes-finais .btn-compartilhar-protocolo,
+.consulta-acoes-finais .btn-fechar-consulta{
+    position:relative;
+    z-index:21;
+    pointer-events:auto !important;
+    touch-action:manipulation;
+    -webkit-tap-highlight-color:transparent;
+}
+
+@media (max-width:700px){
+    .consulta-acoes-finais{
+        display:flex;
+        flex-direction:column;
+        gap:10px;
+        width:100%;
+        position:relative;
+        z-index:20;
+    }
+
+    .consulta-acoes-finais button{
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        width:100%;
+        min-height:50px;
+        margin:0;
+        opacity:1 !important;
+        visibility:visible !important;
+        cursor:pointer;
+        pointer-events:auto !important;
+    }
+
+    .consulta-acoes-finais .btn-compartilhar-protocolo{
+        background:#1769aa !important;
+        color:#fff !important;
+    }
+
+    .consulta-acoes-finais .btn-fechar-consulta{
+        background:#17632d !important;
+        color:#fff !important;
+    }
+}
+
+
+<style id="admin-dashboard-v45-css">
+.admin-v45-dashboard{margin:0 0 14px;padding:14px;border:1px solid #d7e0e5;border-radius:12px;background:#f8fafb;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.admin-v45-dashboard-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.admin-v45-dashboard-title{font-size:17px;font-weight:800;color:#123b5d}
+.admin-v45-dashboard-sub{font-size:11px;color:#667780;margin-top:2px}
+.admin-v45-dashboard-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.admin-v45-kpi{padding:11px;border-radius:10px;background:#fff;border:1px solid #d7e0e5;text-align:center}
+.admin-v45-kpi strong{display:block;font-size:22px;color:#123b5d}
+.admin-v45-kpi span{display:block;font-size:10px;color:#60717b;font-weight:700;margin-top:2px}
+.admin-v45-alert{margin-top:10px;padding:10px 12px;border-radius:9px;border:1px solid #e5b74f;background:#fff7dc;color:#5e4600;font-size:12px;font-weight:800;display:none}
+.admin-v45-alert.ok{border-color:#b9d9c2;background:#eef8f0;color:#17632d}
+.admin-v45-refresh{border:0;border-radius:8px;padding:8px 11px;background:#1d6fae;color:#fff;font-weight:800;cursor:pointer}
+.admin-v45-refresh:disabled{opacity:.65;cursor:wait}
+@media(max-width:700px){.admin-v45-dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-v45-kpi strong{font-size:20px}}
 </style>
 
+</head>
 </head>
 
 
@@ -1434,7 +2141,7 @@ input[readonly] {
 
 
 <!-- =====================================================
-     CABEÇALHO
+     CABEÇALHO — V4.5 LAYOUT
 ===================================================== -->
 
 <div class="logo">
@@ -1471,10 +2178,11 @@ input[readonly] {
 <button
     type="button"
     class="btn-verde"
-    onclick="mostrarSecao('abrir')"
+    onclick="prepararNovoChamado()"
 >
 
-    📋 Abrir Chamado
+    <span class="menu-label">📋 Abrir Chamado</span>
+    <span class="menu-help">Registrar uma nova solicitação</span>
 
 </button>
 
@@ -1485,18 +2193,20 @@ input[readonly] {
     onclick="mostrarSecao('consultar')"
 >
 
-    🔎 Consultar Protocolo
+    <span class="menu-label">🔎 Consultar Protocolo</span>
+    <span class="menu-help">Acompanhar uma solicitação</span>
 
 </button>
 
 
 <button
     type="button"
-    class="btn-azul"
+    class="btn-admin-home btn-azul"
     onclick="mostrarSecao('admin')"
 >
 
-    🔐 Área Administrativa
+    <span class="menu-label">🔐 Área Administrativa</span>
+    <span class="menu-help">Acesso Restrito à Administração</span>
 
 </button>
 
@@ -1508,6 +2218,16 @@ input[readonly] {
      ABRIR CHAMADO
 ===================================================== -->
 
+
+<div id="homeStatusRapido" class="home-status-rapido">
+    <div class="status-icone">✅</div>
+    <div class="status-titulo">Chamado registrado!</div>
+    <div class="status-texto">Seu protocolo foi gerado com sucesso:</div>
+    <div id="homeStatusProtocolo" class="status-protocolo">-</div>
+    <button type="button" class="btn-status-rapido" onclick="consultarProtocoloRapido()">
+        🔎 Consultar chamado
+    </button>
+</div>
 <section
     id="secaoAbrir"
     class="section active"
@@ -1518,6 +2238,11 @@ input[readonly] {
 
     📋 Abertura de Chamado / OS
 
+</div>
+
+<div class="v45-intro">
+    <strong>Registre sua solicitação de forma rápida.</strong>
+    Preencha os dados abaixo e envie o chamado para gerar o protocolo.
 </div>
 
 
@@ -1554,6 +2279,27 @@ input[readonly] {
     placeholder="Digite seu nome"
     required
 >
+
+</div>
+
+<div class="form-group">
+
+<label>
+
+    📱 WhatsApp para retorno:
+
+</label>
+
+<input
+    id="whatsappRetorno"
+    type="tel"
+    inputmode="numeric"
+    placeholder="Ex.: (61) 99999-9999"
+>
+
+<small style="display:block;margin-top:5px;color:#64748b;">
+    Opcional. Informe para receber uma resposta da Administração pelo WhatsApp.
+</small>
 
 </div>
 
@@ -2148,6 +2894,12 @@ input[readonly] {
     🔎 Consultar Protocolo
 
 </div>
+<div class="consulta-ajuda">
+    <strong>🔎 Consulte seu chamado</strong><br>
+    Digite o número do protocolo para acompanhar a situação da solicitação.
+    <br>Exemplo: <strong>PC-13-08-26-001</strong>
+</div>
+
 
 
 <div class="form-group">
@@ -2175,6 +2927,8 @@ input[readonly] {
     🔎 Buscar Protocolo
 
 </button>
+<div id="consultaBuscaEstado" class="consulta-busca-estado"></div>
+
 
 
 <div
@@ -2182,6 +2936,28 @@ input[readonly] {
     class="mensagem erro"
 ></div>
 
+
+
+<div id="consultaResumo" class="consulta-resumo">
+    <div class="consulta-resumo-topo">
+        <div>
+            <div class="consulta-resumo-label">Protocolo</div>
+            <div id="consultaResumoProtocolo" class="consulta-resumo-protocolo">-</div>
+        </div>
+        <div id="consultaResumoStatus" class="consulta-resumo-status">-</div>
+    </div>
+
+    <div class="consulta-resumo-dados">
+        <div class="consulta-resumo-item">
+            <span>📍 Local</span>
+            <strong id="consultaResumoLocal">-</strong>
+        </div>
+        <div class="consulta-resumo-item">
+            <span>🧹 Ocorrência</span>
+            <strong id="consultaResumoOcorrencia">-</strong>
+        </div>
+    </div>
+</div>
 
 <div
     id="resultadoConsulta"
@@ -2201,10 +2977,40 @@ input[readonly] {
 ></div>
 
 <div id="historicoConsultaProtocolo" class="historico-consulta-protocolo" style="display:none;">
-    <div class="titulo">🕒 Histórico do Protocolo</div>
+    <div class="historico-cabecalho">
+        <div class="titulo">🕒 Histórico do Protocolo</div>
+        <div class="historico-protocolo">
+            <span>Protocolo:</span>
+            <strong id="historicoProtocoloNumero">-</strong>
+        </div>
+    </div>
     <div class="linha">📥 <strong>Recebido em:</strong> <span id="consultaRecebidoEm">-</span></div>
     <div class="linha">🔄 <strong>Última atualização:</strong> <span id="consultaAtualizadoEm">-</span></div>
     <div class="linha">✅ <strong>Concluído em:</strong> <span id="consultaConcluidoEm">-</span></div>
+</div>
+
+
+<div id="consultaSolucao" class="consulta-solucao">
+    <div class="consulta-solucao-title">✅ Solução / Observação da Administração</div>
+    <div id="consultaSolucaoTexto" class="consulta-solucao-text"></div>
+</div>
+
+<div class="consulta-acoes-finais">
+    <button
+        type="button"
+        class="btn-compartilhar-protocolo"
+        onclick="compartilharProtocoloConsulta()"
+    >
+        📤 Compartilhar protocolo
+    </button>
+
+    <button
+        type="button"
+        class="btn-fechar-consulta"
+        onclick="fecharConsultaProtocolo()"
+    >
+        ⬆️ Fechar consulta e voltar ao início
+    </button>
 </div>
 
 
@@ -2289,6 +3095,23 @@ input[readonly] {
 >
 
 
+<div class="admin-v45-dashboard" id="adminDashboardV45">
+  <div class="admin-v45-dashboard-head">
+    <div>
+      <div class="admin-v45-dashboard-title">📊 Visão Geral</div>
+      <div class="admin-v45-dashboard-sub">Resumo rápido da situação dos chamados do Parque Clube.</div>
+    </div>
+    <button type="button" class="admin-v45-refresh" id="btnAtualizarDashboardAdmV45">🔄 Atualizar</button>
+  </div>
+  <div class="admin-v45-dashboard-grid">
+    <div class="admin-v45-kpi"><strong id="admV45Abertos">0</strong><span>📋 Abertos</span></div>
+    <div class="admin-v45-kpi"><strong id="admV45Andamento">0</strong><span>🔄 Em andamento</span></div>
+    <div class="admin-v45-kpi"><strong id="admV45Resolvidos">0</strong><span>✅ Resolvidos</span></div>
+    <div class="admin-v45-kpi"><strong id="admV45Arquivados">0</strong><span>📦 Arquivados</span></div>
+  </div>
+  <div class="admin-v45-alert" id="admV45Alerta"></div>
+</div>
+
 <div class="admin-menu-v11" id="adminMenuV11">
     <button type="button" class="admin-menu-card" id="menuPesquisarAdmin">
         <div class="icon">🔎</div>
@@ -2302,11 +3125,12 @@ input[readonly] {
         <div class="desc">Acessar o painel, selecionar o período e gerar relatórios gerenciais em PDF.</div>
     </button>
 
-    <button type="button" class="admin-menu-card" id="menuAdministrativoV13">
-        <div class="icon">⚠️</div>
-        <div class="title">ADVERTÊNCIAS / NOTIFICAÇÕES</div>
-        <div class="desc">Registrar medidas administrativas, consultar histórico por unidade e acompanhar reincidências.</div>
-    </button>
+<button class="admin-menu-card" id="menuAdministrativoV13" type="button">
+<div class="icon">⚠️</div>
+<div class="title">ADVERTÊNCIAS / NOTIFICAÇÕES</div>
+<div class="desc">Registrar medidas administrativas, consultar histórico por unidade e acompanhar reincidências.</div>
+</button>
+
 </div>
 
 <div class="admin-submenu-v11" id="adminVoltarMenu" style="display:none;">
@@ -2636,145 +3460,6 @@ input[readonly] {
 </div>
 </div>
 
-
-<div id="adminConteudoAdministrativoV13" style="display:none;">
-<div class="admin-v13-wrap">
-
-<div class="admin-v13-header">
-    <div>
-        <div class="admin-v13-title">⚠️ Advertências / Notificações</div>
-        <div class="admin-v13-hint">Registro administrativo por unidade, com protocolo próprio e vínculo opcional a um chamado.</div>
-    </div>
-    <div class="admin-v13-actions no-print">
-        <button type="button" class="admin-v13-btn blue" id="btnAtualizarAdministrativoV13">🔄 Atualizar registros</button>
-        <button type="button" class="admin-v13-btn gray" id="btnNovaAdministrativaV13">➕ Nova advertência/notificação</button>
-    </div>
-</div>
-
-<div class="admin-v13-kpis" id="v13Kpis" style="display:none">
-    <div class="admin-v13-kpi active" role="button" tabindex="0" data-v13-kpi="todos" title="Mostrar todos os registros encontrados">
-        <strong id="v13TotalMedidas">0</strong><span>Total de registros</span>
-    </div>
-    <div class="admin-v13-kpi" role="button" tabindex="0" data-v13-kpi="advertencias" title="Mostrar somente Advertências">
-        <strong id="v13TotalAdvertencias">0</strong><span>Advertências</span>
-    </div>
-    <div class="admin-v13-kpi" role="button" tabindex="0" data-v13-kpi="notificacoes" title="Mostrar somente Notificações">
-        <strong id="v13TotalNotificacoes">0</strong><span>Notificações</span>
-    </div>
-    <div class="admin-v13-kpi" role="button" tabindex="0" data-v13-kpi="reincidencias" title="Mostrar registros envolvidos em reincidência">
-        <strong id="v13TotalReincidencias">0</strong><span>Unidades com reincidência</span>
-    </div>
-</div>
-<div id="v13FiltroAtivo" class="admin-v13-hint" style="display:none;margin:-4px 0 10px;font-weight:700"></div>
-
-<div class="admin-v13-card" id="adminV13FormCard">
-    <h3 style="margin:0 0 12px;color:#123b5d">📄 Novo registro administrativo</h3>
-    <form id="formAdministrativoV13">
-        <div class="admin-v13-grid">
-            <div>
-                <label class="admin-v13-label">Tipo de medida *</label>
-                <select id="v13Tipo" class="admin-v13-select" required>
-                    <option value="">Selecione...</option>
-                    <option value="Advertência">Advertência</option>
-                    <option value="Notificação">Notificação</option>
-                </select>
-            </div>
-            <div>
-                <label class="admin-v13-label">Data do registro *</label>
-                <input id="v13DataRegistro" class="admin-v13-input" type="date" required>
-            </div>
-            <div>
-                <label class="admin-v13-label">Data da ocorrência</label>
-                <input id="v13DataOcorrencia" class="admin-v13-input" type="date">
-            </div>
-            <div>
-                <label class="admin-v13-label">Chamado relacionado (opcional)</label>
-                <select id="v13ProtocoloChamado" class="admin-v13-select">
-                    <option value="">— Sem chamado associado —</option>
-                </select>
-                <div class="admin-v13-hint">O protocolo do chamado fica vinculado ao registro administrativo.</div>
-            </div>
-            <div>
-                <label class="admin-v13-label">Bloco *</label>
-                <select id="v13Bloco" class="admin-v13-select" required>
-                    <option value="">Selecione...</option>
-                    <option>1A</option><option>1B</option><option>1C</option><option>1D</option><option>1E</option>
-                    <option>2A</option><option>2B</option><option>2C</option><option>2D</option><option>2E</option>
-                </select>
-            </div>
-            <div>
-                <label class="admin-v13-label">Unidade *</label>
-                <input id="v13Unidade" class="admin-v13-input" type="text" inputmode="numeric" maxlength="8" placeholder="Ex.: 804" required>
-            </div>
-            <div>
-                <label class="admin-v13-label">Infração / ocorrência *</label>
-                <select id="v13Infracao" class="admin-v13-select" required>
-                    <option value="">Selecione...</option>
-                    <option>Barulho / perturbação do sossego</option>
-                    <option>Xixi de cachorro</option>
-                    <option>Fumar em área comum</option>
-                    <option>Reforma fora do horário permitido</option>
-                    <option>Uso inadequado de área comum</option>
-                    <option>Descarte irregular de resíduos</option>
-                    <option>Outros</option>
-                </select>
-            </div>
-            <div>
-                <label class="admin-v13-label">Responsável pelo registro</label>
-                <input id="v13Responsavel" class="admin-v13-input" type="text" placeholder="Nome do subsíndico/administrador">
-            </div>
-            <div class="full">
-                <label class="admin-v13-label">Base no Regimento Interno</label>
-                <input id="v13BaseRegimento" class="admin-v13-input" type="text" placeholder="Ex.: Art. 23, §2º — Perturbação do sossego">
-            </div>
-            <div class="full">
-                <label class="admin-v13-label">Descrição detalhada *</label>
-                <textarea id="v13Descricao" class="admin-v13-textarea" required placeholder="Descreva a ocorrência e a circunstância registrada."></textarea>
-            </div>
-            <div class="full">
-                <label class="admin-v13-label">Observações</label>
-                <textarea id="v13Observacoes" class="admin-v13-textarea" style="min-height:65px" placeholder="Informações administrativas adicionais."></textarea>
-            </div>
-        </div>
-        <div class="admin-v13-actions no-print" style="margin-top:12px">
-            <button type="submit" class="admin-v13-btn green" id="btnSalvarAdministrativoV13">💾 Registrar medida</button>
-            <button type="button" class="admin-v13-btn gray" id="btnCancelarAdministrativoV13">Cancelar</button>
-        </div>
-    </form>
-</div>
-
-<div class="admin-v13-card">
-    <h3 style="margin:0 0 12px;color:#123b5d">🔎 Histórico da unidade</h3>
-    <div class="admin-v13-grid">
-        <div>
-            <label class="admin-v13-label">Bloco</label>
-            <select id="v13BuscaBloco" class="admin-v13-select">
-                <option value="">Todos</option>
-                <option>1A</option><option>1B</option><option>1C</option><option>1D</option><option>1E</option>
-                <option>2A</option><option>2B</option><option>2C</option><option>2D</option><option>2E</option>
-            </select>
-        </div>
-        <div>
-            <label class="admin-v13-label">Unidade</label>
-            <input id="v13BuscaUnidade" class="admin-v13-input" type="text" placeholder="Ex.: 804">
-        </div>
-        <div class="full admin-v13-actions no-print">
-            <button type="button" class="admin-v13-btn blue" id="btnConsultarHistoricoV13">🔎 Consultar histórico</button>
-            <button type="button" class="admin-v13-btn gray" id="btnLimparHistoricoV13">Limpar</button>
-            <button type="button" class="admin-v13-btn green" id="btnRelatorioUnidadeV13">📄 Relatório da unidade</button>
-        </div>
-    </div>
-    <div id="v13HistoricoResumo" style="margin-top:12px"></div>
-</div>
-
-<div class="admin-v13-card">
-    <h3 style="margin:0 0 10px;color:#123b5d">📋 Registros administrativos</h3>
-    <div id="v13ListaMedidas" class="admin-v13-result">Carregando...</div>
-</div>
-
-</div>
-</div>
-
 <div id="adminConteudoRelatorioV11" style="display:none;">
 <div class="admin-box dashboard-v11" id="dashboardV11" style="display:none">
 <div class="admin-titulo">📊 PAINEL ADMINISTRATIVO</div>
@@ -2822,7 +3507,7 @@ input[readonly] {
      LOCALIZAR
 ===================================================== -->
 
-<div class="admin-box">
+<div class="admin-box" id="localizarChamadoAdmin" style="display:none;">
 
 
 <div class="admin-titulo">
@@ -2869,7 +3554,7 @@ input[readonly] {
 <div
     id="editarChamado"
     class="admin-box"
->
+ style="display:none;">
 <div id="historicoHorariosAdmin" class="historico-destaque">
     <div class="historico-destaque-titulo">🕒 Histórico do Protocolo</div>
 
@@ -2962,6 +3647,39 @@ input[readonly] {
     id="observacaoAdmin"
     placeholder="Informe o que foi realizado..."
 ></textarea>
+
+</div>
+
+<div class="form-group">
+
+<label>
+
+    💬 Resposta da Administração:
+
+</label>
+
+<textarea
+    id="respostaAdmin"
+    placeholder="Digite aqui a resposta que será enviada ao solicitante..."
+></textarea>
+
+</div>
+
+<div
+    id="whatsappRetornoInfo"
+    style="display:none;margin:8px 0 14px;padding:10px 12px;border:1px solid #bbf7d0;background:#f0fdf4;border-radius:8px;color:#166534;"
+></div>
+
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
+
+<button
+    type="button"
+    id="btnResponderWhatsAppAdmin"
+    class="btn-verde"
+    style="flex:1;min-width:220px;"
+>
+    📲 Responder pelo WhatsApp
+</button>
 
 </div>
 
@@ -3687,6 +4405,14 @@ document
                             .value
                             .trim(),
 
+                    whatsappRetorno:
+                        document
+                            .getElementById(
+                                "whatsappRetorno"
+                            )
+                            .value
+                            .trim(),
+
                     cargo:
                         document
                             .getElementById(
@@ -3862,6 +4588,9 @@ document
 
                 sucesso.style.display =
                     "block";
+        mostrarStatusRapidoAposCadastro(
+            resultado.protocolo
+        );
 
 
                 dataHoraRegistroWhatsApp =
@@ -4279,78 +5008,94 @@ document
         "click",
         async function () {
 
-            const protocolo =
-                document
-                    .getElementById(
-                        "consultaProtocolo"
-                    )
-                    .value
-                    .trim()
-                    .toUpperCase();
+            const input =
+                document.getElementById(
+                    "consultaProtocolo"
+                );
 
+            const protocolo =
+                normalizarProtocoloConsulta(
+                    input ? input.value : ""
+                );
+
+            if (input) {
+                input.value = protocolo;
+            }
 
             const erro =
-                document
-                    .getElementById(
-                        "erroConsulta"
-                    );
+                document.getElementById(
+                    "erroConsulta"
+                );
 
+            const resumo =
+                document.getElementById(
+                    "consultaResumo"
+                );
 
-            erro.style.display =
-                "none";
+            if (erro) {
+                erro.style.display = "none";
+                erro.textContent = "";
+            }
 
+            if (resumo) {
+                resumo.style.display = "none";
+            }
 
             if (!protocolo) {
 
-                erro.textContent =
-                    "Digite o número do protocolo.";
+                atualizarEstadoBuscaConsulta(
+                    "erro",
+                    "⚠️ Digite o número do protocolo."
+                );
 
-                erro.style.display =
-                    "block";
+                if (erro) {
+                    erro.textContent =
+                        "Digite o número do protocolo.";
+                    erro.style.display = "block";
+                }
 
                 return;
-
             }
 
-
-            this.disabled =
-                true;
-
+            this.disabled = true;
             this.textContent =
                 "⏳ Consultando...";
 
+            atualizarEstadoBuscaConsulta(
+                "consultando",
+                "🔄 Consultando protocolo..."
+            );
 
             try {
 
-
                 const resposta =
                     await fetch(
-
                         API +
                         "?protocolo=" +
                         encodeURIComponent(
                             protocolo
                         )
-
                     );
 
-
-                const textoResposta =
+                const texto =
                     await resposta.text();
 
                 let dados = {};
 
                 try {
-                    dados =
-                        textoResposta
-                            ? JSON.parse(textoResposta)
-                            : {};
-                } catch {
-                    throw new Error(
-                        "O servidor respondeu sem JSON válido."
-                    );
-                }
 
+                    dados =
+                        texto
+                            ? JSON.parse(texto)
+                            : {};
+
+                } catch {
+
+                    throw new Error(
+                        "Resposta inválida do servidor."
+                    );
+
+                }
 
                 if (
                     !resposta.ok ||
@@ -4364,27 +5109,55 @@ document
 
                 }
 
+                window.__chamadoConsultaAtual =
+                    dados.chamado;
 
                 mostrarResultado(
                     dados.chamado
                 );
 
-            }
+                preencherResumoConsulta(
+                    dados.chamado
+                );
 
-            catch (error) {
+                atualizarSolucaoConsulta(
+                    dados.chamado
+                );
 
-                erro.textContent =
-                    error.message;
+                atualizarEstadoBuscaConsulta(
+                    "sucesso",
+                    "✅ Protocolo localizado com sucesso."
+                );
 
-                erro.style.display =
-                    "block";
+            } catch (error) {
 
-            }
+                if (resumo) {
+                    resumo.style.display = "none";
+                }
 
-            finally {
+                atualizarEstadoBuscaConsulta(
+                    "erro",
+                    "❌ " +
+                    (
+                        error.message ||
+                        "Não foi possível consultar o protocolo."
+                    )
+                );
 
-                this.disabled =
-                    false;
+                if (erro) {
+
+                    erro.textContent =
+                        error.message ||
+                        "Não foi possível consultar o protocolo.";
+
+                    erro.style.display =
+                        "block";
+
+                }
+
+            } finally {
+
+                this.disabled = false;
 
                 this.textContent =
                     "🔎 Buscar Protocolo";
@@ -4394,14 +5167,264 @@ document
         }
     );
 
-
 /* =====================================================
    MOSTRAR RESULTADO
 ===================================================== */
 
+
+function fecharConsultaProtocolo() {
+
+    window.__chamadoConsultaAtual =
+        null;
+
+    const resultado =
+        document.getElementById(
+            "resultadoConsulta"
+        );
+
+    const erro =
+        document.getElementById(
+            "erroConsulta"
+        );
+
+    const input =
+        document.getElementById(
+            "consultaProtocolo"
+        );
+
+    const resumo =
+        document.getElementById(
+            "consultaResumo"
+        );
+
+    const solucao =
+        document.getElementById(
+            "consultaSolucao"
+        );
+
+    if (resultado) {
+        resultado.style.display = "none";
+    }
+
+    if (erro) {
+        erro.style.display = "none";
+        erro.textContent = "";
+    }
+
+    if (resumo) {
+        resumo.style.display = "none";
+    }
+
+    if (solucao) {
+        solucao.style.display = "none";
+    }
+
+    atualizarEstadoBuscaConsulta(
+        "",
+        ""
+    );
+
+    if (input) {
+        input.value = "";
+    }
+
+    const protocoloHistorico =
+        document.getElementById(
+            "historicoProtocoloNumero"
+        );
+
+    if (protocoloHistorico) {
+        protocoloHistorico.textContent =
+            "-";
+    }
+
+    if (typeof mostrarSecao === "function") {
+        mostrarSecao("inicio");
+    }
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+
+}
+
+
+function montarMensagemCompartilharProtocolo(chamado) {
+
+    const protocolo =
+        chamado?.protocolo || "-";
+
+    const status =
+        chamado?.status || "Não informado";
+
+    const local =
+        chamado?.bloco
+            ? chamado.bloco +
+              (chamado.pavimentos
+                  ? " • " + chamado.pavimentos
+                  : "")
+            : (chamado?.local || "Não informado");
+
+    const ocorrencia =
+        chamado?.ocorrencia ||
+        chamado?.tipo ||
+        "Não informado";
+
+    const observacao =
+        chamado?.observacaoFinal ||
+        chamado?.solucao ||
+        chamado?.resolucao ||
+        chamado?.observacao ||
+        chamado?.observacoes ||
+        "";
+
+    let mensagem =
+        "🏢 *PARQUE CLUBE*\n\n" +
+        "📋 *PROTOCOLO DE CHAMADO*\n\n" +
+        "*Protocolo:* " + protocolo + "\n" +
+        "*Status:* " + status + "\n" +
+        "*Local:* " + local + "\n" +
+        "*Ocorrência:* " + ocorrencia;
+
+    if (observacao.trim()) {
+        mensagem +=
+            "\n\n*✅ Solução / Observação:*\n" +
+            observacao.trim();
+    }
+
+    mensagem +=
+        "\n\n🔎 *Consulte e acompanhe pelo aplicativo:*\n" +
+        "https://parque-clube.newcristian.workers.dev/";
+
+    return mensagem;
+}
+
+async function compartilharProtocoloConsulta() {
+
+    const chamado =
+        window.__chamadoConsultaAtual;
+
+    if (!chamado) {
+        alert(
+            "Consulte um protocolo antes de compartilhar."
+        );
+        return;
+    }
+
+    const mensagem =
+        montarMensagemCompartilharProtocolo(
+            chamado
+        );
+
+    try {
+
+        if (
+            navigator.share &&
+            typeof navigator.share === "function"
+        ) {
+
+            await navigator.share({
+                title:
+                    "Protocolo " +
+                    (chamado.protocolo || ""),
+                text: mensagem
+            });
+
+            return;
+        }
+
+        if (
+            navigator.clipboard &&
+            navigator.clipboard.writeText
+        ) {
+
+            await navigator.clipboard.writeText(
+                mensagem
+            );
+
+            alert(
+                "📋 Dados do protocolo copiados. " +
+                "Agora você pode colar e compartilhar."
+            );
+
+            return;
+        }
+
+        alert(
+            mensagem
+        );
+
+    } catch (erro) {
+
+        if (erro?.name === "AbortError") {
+            return;
+        }
+
+        alert(
+            "Não foi possível compartilhar o protocolo."
+        );
+
+    }
+
+}
+
+
+function obterObservacaoFinalConsulta(chamado) {
+
+    return (
+        chamado?.observacaoFinal ||
+        chamado?.solucao ||
+        chamado?.resolucao ||
+        chamado?.observacao ||
+        chamado?.observacoes ||
+        ""
+    ).trim();
+
+}
+
+function atualizarSolucaoConsulta(chamado) {
+
+    const box =
+        document.getElementById(
+            "consultaSolucao"
+        );
+
+    const texto =
+        document.getElementById(
+            "consultaSolucaoTexto"
+        );
+
+    if (!box || !texto) {
+        return;
+    }
+
+    const observacao =
+        obterObservacaoFinalConsulta(
+            chamado
+        );
+
+    if (!observacao) {
+        box.style.display = "none";
+        texto.textContent = "";
+        return;
+    }
+
+    texto.textContent = observacao;
+    box.style.display = "block";
+
+}
+
 function mostrarResultado(
     chamado
 ) {
+
+    window.__chamadoConsultaAtual =
+        chamado;
+
+    atualizarSolucaoConsulta(
+        chamado
+    );
 
 
     const resultado =
@@ -4550,6 +5573,66 @@ function mostrarResultado(
 
     atualizarHistoricoConsultaProtocolo(chamado);
 
+    // Status visual dinâmico no resumo.
+    const resumoStatus =
+        document.getElementById(
+            "consultaResumoStatus"
+        );
+
+    if (resumoStatus) {
+        const statusTexto =
+            String(
+                chamado.status ||
+                "Aberto"
+            ).trim();
+
+        resumoStatus.textContent =
+            statusTexto;
+
+        resumoStatus.className =
+            "consulta-resumo-status " +
+            (
+                statusTexto
+                    .toLowerCase()
+                    .includes("resolvido") ||
+                statusTexto
+                    .toLowerCase()
+                    .includes("concluído") ||
+                statusTexto
+                    .toLowerCase()
+                    .includes("concluido")
+                    ? "status-resolvido"
+                    : statusTexto
+                        .toLowerCase()
+                        .includes("andamento")
+                        ? "status-andamento"
+                        : statusTexto
+                            .toLowerCase()
+                            .includes("cancel")
+                            ? "status-cancelado"
+                            : "status-aberto"
+            );
+    }
+
+    
+
+    const protocoloHistorico =
+        document.getElementById(
+            "historicoProtocoloNumero"
+        );
+
+    if (protocoloHistorico) {
+        protocoloHistorico.textContent =
+            chamado.protocolo || "-";
+    }
+
+    preencherResumoConsulta(chamado);
+
+    atualizarEstadoBuscaConsulta(
+        "sucesso",
+        "✅ Protocolo localizado com sucesso."
+    );
+
     resultado.style.display =
         "block";
 
@@ -4680,6 +5763,10 @@ document
 
                 painel.style.display =
                     "block";
+
+                if (typeof atualizarDashboardAdministrativoV45 === "function") {
+                    atualizarDashboardAdministrativoV45();
+                }
 
                 botao.textContent =
                     "✅ Acesso liberado";
@@ -5378,21 +6465,6 @@ function criarCard(
 
             </button>
 
-            <button
-                type="button"
-                class="btn-cinza"
-                style="margin-top:8px;"
-                onclick="
-                    abrirAdministrativoParaChamado(
-                        '${encodeURIComponent(
-                            chamado.protocolo
-                        )}'
-                    )
-                "
-            >
-                ⚠️ Gerar Advertência / Notificação
-            </button>
-
 
         </div>
 
@@ -5441,6 +6513,7 @@ document
 function selecionarChamado(
     protocoloCodificado
 ) {
+    mostrarPainelDetalhesChamadoV45();
 
 
     const protocolo =
@@ -5812,6 +6885,8 @@ function mostrarEdicao(
         .value =
         chamado.observacaoSolucao ||
         "";
+
+    atualizarAreaRespostaWhatsApp(chamado);
 
 
     const historicoAdmin =
@@ -6295,6 +7370,187 @@ function reabrirChamadoV11(
 }
 
 
+
+/* =====================================================
+   RESPOSTA DA ADMINISTRAÇÃO PELO WHATSAPP
+===================================================== */
+
+function normalizarNumeroWhatsApp(numero) {
+    let n = String(numero || "").replace(/\D/g, "");
+    if (!n) return "";
+    if (n.length === 10 || n.length === 11) n = "55" + n;
+    return n;
+}
+
+function montarMensagemRespostaAdministracao(chamado) {
+    const resposta =
+        document.getElementById("respostaAdmin")?.value?.trim() ||
+        chamado?.respostaAdministracao ||
+        "";
+
+    return (
+        "🏢 *PARQUE CLUBE*\n\n" +
+        "📋 *ATUALIZAÇÃO DO CHAMADO*\n\n" +
+        "*Protocolo:* " + (chamado?.protocolo || protocoloSelecionado || "") +
+        "\n*Status:* " + (document.getElementById("statusAdmin")?.value || chamado?.status || "") +
+        "\n*Local:* " + (chamado?.bloco || "") +
+        (chamado?.pavimentos ? "\n*Pavimento(s):* " + chamado.pavimentos : "") +
+        "\n*Ocorrência:* " + (chamado?.ocorrencia || "") +
+        "\n\n💬 *Resposta da Administração:*\n" +
+        resposta +
+        "\n\n🔎 *Acompanhe pelo aplicativo:*\n" +
+        "https://parque-clube.newcristian.workers.dev/"
+    );
+}
+
+function atualizarAreaRespostaWhatsApp(chamado) {
+    const info = document.getElementById("whatsappRetornoInfo");
+    const btn = document.getElementById("btnResponderWhatsAppAdmin");
+    const numero = chamado?.whatsappRetorno || chamado?.whatsapp || chamado?.telefoneRetorno || "";
+
+    if (document.getElementById("respostaAdmin")) {
+        document.getElementById("respostaAdmin").value =
+            chamado?.respostaAdministracao || chamado?.respostaAdmin || "";
+    }
+
+    if (info) {
+        if (numero) {
+            info.style.display = "block";
+            info.innerHTML = "📱 <strong>WhatsApp para retorno:</strong> " + escapar(String(numero));
+        } else {
+            info.style.display = "block";
+            info.innerHTML = "⚠️ Este chamado não possui número de WhatsApp para retorno.";
+        }
+    }
+
+    if (btn) btn.disabled = !numero;
+}
+
+async function responderChamadoPeloWhatsApp() {
+    if (!senhaAdministrativa) {
+        alert("Faça o login administrativo.");
+        return;
+    }
+
+    if (!protocoloSelecionado) {
+        alert("Nenhum protocolo selecionado.");
+        return;
+    }
+
+    const chamado =
+        (typeof chamados !== "undefined" ? chamados : [])
+            .find(x => x.protocolo === protocoloSelecionado) ||
+        (typeof chamadosArquivadosV11 !== "undefined" ? chamadosArquivadosV11 : [])
+            .find(x => x.protocolo === protocoloSelecionado) ||
+        {};
+
+    const numeroBruto =
+        chamado.whatsappRetorno ||
+        chamado.whatsapp ||
+        chamado.telefoneRetorno ||
+        "";
+
+    const numero = normalizarNumeroWhatsApp(numeroBruto);
+    const resposta = document.getElementById("respostaAdmin")?.value?.trim() || "";
+
+    if (!numero) {
+        alert("Este chamado não possui WhatsApp para retorno.");
+        return;
+    }
+
+    if (!resposta) {
+        alert("Digite a resposta da Administração antes de abrir o WhatsApp.");
+        document.getElementById("respostaAdmin")?.focus();
+        return;
+    }
+
+    const btn = document.getElementById("btnResponderWhatsAppAdmin");
+    const textoOriginal = btn?.textContent || "";
+
+    try {
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = "⏳ Salvando resposta...";
+        }
+
+        const respostaServidor = await fetch(API, {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify({
+                action: "update",
+                protocolo: protocoloSelecionado,
+                adminPassword: senhaAdministrativa,
+                status: document.getElementById("statusAdmin")?.value || chamado.status || "",
+                responsavel: document.getElementById("responsavelAdmin")?.value?.trim() || chamado.responsavel || "",
+                observacaoSolucao: document.getElementById("observacaoAdmin")?.value?.trim() || chamado.observacaoSolucao || "",
+                respostaAdministracao: resposta,
+                prioridade: document.getElementById("prioridadeAdmin")?.value || chamado.prioridade || ""
+            })
+        });
+
+        const texto = await respostaServidor.text();
+        let retorno = {};
+        try { retorno = texto ? JSON.parse(texto) : {}; } catch(e) {}
+
+        if (!respostaServidor.ok || retorno.sucesso === false) {
+            throw new Error(retorno.erro || "Não foi possível salvar a resposta.");
+        }
+
+        const atualizado = retorno.chamado || {
+            ...chamado,
+            respostaAdministracao: resposta
+        };
+
+        const lista = typeof chamados !== "undefined" ? chamados : [];
+        const i = lista.findIndex(x => x.protocolo === protocoloSelecionado);
+        if (i >= 0) lista[i] = {...lista[i], ...atualizado, respostaAdministracao: resposta};
+
+        const mensagem = montarMensagemRespostaAdministracao({
+            ...chamado,
+            ...atualizado,
+            respostaAdministracao: resposta
+        });
+
+        if (btn) btn.textContent = "📲 Abrindo WhatsApp...";
+        window.open(
+            "https://wa.me/" + numero + "?text=" + encodeURIComponent(mensagem),
+            "_blank"
+        );
+
+        const resultado = document.getElementById("resultadoAtualizacao");
+        if (resultado) {
+            resultado.className = "mensagem sucesso";
+            resultado.style.display = "block";
+            resultado.innerHTML =
+                "✅ Resposta salva no chamado.<br><br>" +
+                "📲 O WhatsApp foi aberto para o número informado pelo solicitante.";
+        }
+    } catch (erro) {
+        alert(erro.message || "Não foi possível responder pelo WhatsApp.");
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = textoOriginal || "📲 Responder pelo WhatsApp";
+        }
+    }
+}
+
+document.getElementById("btnResponderWhatsAppAdmin")
+    ?.addEventListener("click", responderChamadoPeloWhatsApp);
+
+const _editarChamadoObs = document.getElementById("editarChamado");
+if (_editarChamadoObs && typeof MutationObserver !== "undefined") {
+    new MutationObserver(() => {
+        if (_editarChamadoObs.style.display !== "none" && protocoloSelecionado) {
+            const c =
+                (typeof chamados !== "undefined" ? chamados : []).find(x => x.protocolo === protocoloSelecionado) ||
+                (typeof chamadosArquivadosV11 !== "undefined" ? chamadosArquivadosV11 : []).find(x => x.protocolo === protocoloSelecionado);
+            if (c) atualizarAreaRespostaWhatsApp(c);
+        }
+    }).observe(_editarChamadoObs, {attributes:true, attributeFilter:["style"]});
+}
+
+
 /* =====================================================
    ATUALIZAR CHAMADO
 ===================================================== */
@@ -6391,6 +7647,14 @@ document
                                         document
                                             .getElementById(
                                                 "observacaoAdmin"
+                                            )
+                                            .value
+                                            .trim(),
+
+                                    respostaAdministracao:
+                                        document
+                                            .getElementById(
+                                                "respostaAdmin"
                                             )
                                             .value
                                             .trim(),
@@ -7143,6 +8407,34 @@ document
 
 
 /* =====================================================
+   V4.5 — ESTABILIDADE DOS BOTÕES DO PAINEL
+   Evita duplo clique / duplo disparo durante navegação e atualizações.
+===================================================== */
+(function estabilizarBotoesPainelV45(){
+    const ids=[
+        'btnListarTodos',
+        'btnChamadosAtivos',
+        'btnChamadosArquivados',
+        'btnArquivarTodosResolvidos',
+        'btnDesarquivarTodos'
+    ];
+
+    ids.forEach(function(id){
+        const botao=document.getElementById(id);
+        if(!botao || botao.dataset.v45Guard==='1') return;
+
+        botao.dataset.v45Guard='1';
+        botao.addEventListener('click',function(){
+            if(this.dataset.v45Busy==='1') return;
+            this.dataset.v45Busy='1';
+            setTimeout(()=>{
+                this.dataset.v45Busy='0';
+            },450);
+        },true);
+    });
+})();
+
+/* =====================================================
    V1.2 — DESARQUIVAR TODOS + FILTROS RÁPIDOS
    Inserido no final do script principal para não interferir
    no gerador de relatórios.
@@ -7278,6 +8570,7 @@ async function desarquivarTodosV12() {
 }
 
 function aplicarFiltroRapidoV12(valor, elemento) {
+    ocultarPainelDetalhesChamadoV45();
     document.querySelectorAll(".stat-filtro-v12").forEach(function(el) {
         el.classList.remove("ativo");
     });
@@ -7286,6 +8579,8 @@ function aplicarFiltroRapidoV12(valor, elemento) {
     const lista = document.getElementById("listaChamados");
     const listaArquivados = document.getElementById("listaChamadosArquivados");
     const filtroStatus = document.getElementById("filtroStatus");
+    const pesquisaChamado = document.getElementById("pesquisaChamado");
+    const filtroPrioridade = document.getElementById("filtroPrioridade");
 
     if (valor === "__ARQUIVADOS__") {
         if (lista) lista.style.display = "none";
@@ -7307,6 +8602,12 @@ function aplicarFiltroRapidoV12(valor, elemento) {
     if (at) at.classList.add("ativo");
     if (ab) ab.classList.remove("ativo");
     if (filtroStatus) filtroStatus.value = valor;
+
+    /* Ao usar os cartões de status, começar uma consulta limpa.
+       Assim "Em andamento: 2" realmente mostra os 2 chamados. */
+    if (pesquisaChamado) pesquisaChamado.value = "";
+    if (filtroPrioridade) filtroPrioridade.value = "";
+
     mostrarChamados();
 }
 
@@ -7327,6 +8628,147 @@ function aplicarFiltroRapidoV12(valor, elemento) {
         });
     });
 })();
+
+function mostrarStatusRapidoAposCadastro(protocolo) {
+    const card = document.getElementById("homeStatusRapido");
+    const campo = document.getElementById("homeStatusProtocolo");
+    if (!card || !campo || !protocolo) return;
+    campo.textContent = protocolo;
+    card.style.display = "block";
+}
+
+function consultarProtocoloRapido() {
+    const protocolo = document.getElementById("homeStatusProtocolo")?.textContent?.trim();
+    if (!protocolo || protocolo === "-") return;
+
+    if (typeof mostrarSecao === "function") {
+        mostrarSecao("consultar");
+    }
+
+    const input = document.getElementById("consultaProtocolo");
+    if (input) input.value = protocolo;
+
+    if (typeof consultarProtocolo === "function") {
+        consultarProtocolo();
+    } else if (typeof localizarProtocolo === "function") {
+        localizarProtocolo();
+    } else if (input) {
+        input.focus();
+    }
+}
+
+
+function prepararNovoChamado() {
+
+    const form = document.getElementById("formChamado");
+    const sucesso = document.getElementById("mensagemSucesso");
+    const erro = document.getElementById("mensagemErro");
+    const protocoloBox = document.getElementById("protocoloBox");
+    const homeStatus = document.getElementById("homeStatusRapido");
+    const numeroProtocolo = document.getElementById("numeroProtocolo");
+    const homeProtocolo = document.getElementById("homeStatusProtocolo");
+
+    // Limpa os campos do formulário sem apagar o registro já salvo no banco.
+    if (form) {
+        form.reset();
+    }
+
+    // Limpa mensagens e o protocolo exibido na tela.
+    if (sucesso) {
+        sucesso.style.display = "none";
+        sucesso.innerHTML = "";
+    }
+
+    if (erro) {
+        erro.style.display = "none";
+        erro.innerHTML = "";
+    }
+
+    if (protocoloBox) {
+        protocoloBox.style.display = "none";
+    }
+
+    if (numeroProtocolo) {
+        numeroProtocolo.textContent = "";
+    }
+
+    // Esconde o cartão de status rápido do chamado anterior.
+    if (homeStatus) {
+        homeStatus.style.display = "none";
+    }
+
+    if (homeProtocolo) {
+        homeProtocolo.textContent = "-";
+    }
+
+    // Se houver botão de envio desabilitado, devolve ao estado normal.
+    const botao = document.getElementById("btnEnviar");
+    if (botao) {
+        botao.disabled = false;
+        botao.textContent = "📋 Enviar Chamado";
+    }
+
+    // Volta para a tela de abertura limpa e para o topo.
+    if (typeof mostrarSecao === "function") {
+        mostrarSecao("abrir");
+    }
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+}
+
+
+function atualizarEstadoBuscaConsulta(tipo, texto) {
+    const el = document.getElementById("consultaBuscaEstado");
+    if (!el) return;
+
+    el.className = "consulta-busca-estado " + (tipo || "");
+    el.textContent = texto || "";
+}
+
+function normalizarProtocoloConsulta(valor) {
+    const v = String(valor || "").trim().toUpperCase();
+    if (!v) return "";
+
+    // Mantém protocolos já formatados.
+    if (/^PC-\d{2}-\d{2}-\d{2}-\d{3}$/.test(v)) {
+        return v;
+    }
+
+    // Aceita PC130826001 e transforma em PC-13-08-26-001.
+    const compacto = v.replace(/[^A-Z0-9]/g, "");
+    const m = compacto.match(/^PC(\d{2})(\d{2})(\d{2})(\d{3})$/);
+
+    if (m) {
+        return `PC-${m[1]}-${m[2]}-${m[3]}-${m[4]}`;
+    }
+
+    return v;
+}
+
+function preencherResumoConsulta(chamado) {
+    const resumo = document.getElementById("consultaResumo");
+    if (!resumo || !chamado) return;
+
+    const protocolo = chamado.protocolo || "-";
+    const status = chamado.status || "Não informado";
+
+    const textoLocal =
+        chamado.bloco
+            ? (chamado.bloco + (chamado.pavimentos ? " • " + chamado.pavimentos : ""))
+            : (chamado.local || "Não informado");
+
+    document.getElementById("consultaResumoProtocolo").textContent = protocolo;
+    document.getElementById("consultaResumoStatus").textContent = status;
+    document.getElementById("consultaResumoLocal").textContent = textoLocal;
+    document.getElementById("consultaResumoOcorrencia").textContent =
+        chamado.ocorrencia || chamado.tipo || "Não informado";
+
+    resumo.style.display = "block";
+}
+
 </script>
 
 
@@ -7477,19 +8919,8 @@ function renderDashboardV11(){
     const escopoEl=document.getElementById("dashboardEscopo");
     const escopo=escopoEl ? escopoEl.value : "condominio";
 
-    // Normaliza o nome do bloco para aceitar os dois formatos usados no sistema:
-    // "2D" e "Bloco 2D".
-    const normalizarBlocoDashboardV11=(valor)=>{
-        return String(valor||"")
-            .trim()
-            .toUpperCase()
-            .replace(/^BLOCO\s+/, "");
-    };
-
     const porEscopo=(c)=>{
-        if(escopo==="condominio") return true;
-        return normalizarBlocoDashboardV11(c.bloco) ===
-               normalizarBlocoDashboardV11(escopo);
+        return escopo==="condominio" || String(c.bloco||"").trim()===escopo;
     };
 
     const chamadosEscopo=dadosRelatorioV11.filter(porEscopo);
@@ -9455,9 +10886,6 @@ td:nth-child(2),td:nth-child(3){
 </footer>
 
 </div>
-
-
-
 </body>
 </html>`;
 
@@ -9476,11 +10904,10 @@ td:nth-child(2),td:nth-child(3){
 
 
 let janelaRelatorioPDFV11 = null;
-let urlRelatorioPDFV11 = null;
 
 function gerarPDFV11(){
-    // Abre a janela imediatamente, ainda dentro do clique do usuário,
-    // para evitar bloqueio de pop-up.
+    // Open/reuse the report window immediately, while this function is still
+    // directly inside the user's click event. This prevents popup blockers.
     let w = janelaRelatorioPDFV11;
 
     if(!w || w.closed){
@@ -9493,129 +10920,60 @@ function gerarPDFV11(){
         return;
     }
 
-    // Tela provisória enquanto o relatório é montado.
-    try{
-        w.document.open();
-        w.document.write(`
-            <!DOCTYPE html>
-            <html lang="pt-BR">
-            <head>
-                <meta charset="UTF-8">
-                <title>Gerando relatório...</title>
-            </head>
-            <body style="font-family:Arial;text-align:center;padding:50px;color:#123b5d">
-                <h2>📊 Preparando relatório...</h2>
-                <p>Aguarde um momento.</p>
-            </body>
-            </html>
-        `);
-        w.document.close();
-    }catch(e){
-        console.error("Erro ao preparar a janela do relatório:",e);
-    }
+    // Show immediate feedback while the report is being assembled.
+    w.document.open();
+    w.document.write(`
+        <!DOCTYPE html>
+        <html lang="pt-BR">
+        <head>
+            <meta charset="UTF-8">
+            <title>Gerando relatório...</title>
+        </head>
+        <body style="font-family:Arial;text-align:center;padding:50px;color:#123b5d">
+            <h2>📊 Preparando relatório...</h2>
+            <p>Aguarde um momento.</p>
+        </body>
+        </html>
+    `);
+    w.document.close();
 
     try{
-        // Atualiza os dados do dashboard com os filtros atualmente selecionados.
         renderDashboardV11();
 
-        // Monta o HTML completo do relatório sem abrir outra janela.
         const htmlRel = gerarRelatorioHTMLV11(false);
 
         if(!htmlRel){
-            alert("Não foi possível montar o relatório.");
+            w.close();
             return;
         }
 
-        // Em vez de document.write() na janela final, usa um Blob URL.
-        // Isso evita problemas de carregamento/execução da impressão em
-        // páginas geradas dinamicamente.
-        const blob = new Blob([htmlRel], {type:"text/html;charset=utf-8"});
-        const url = URL.createObjectURL(blob);
+        w.document.open();
+        w.document.write(htmlRel);
+        w.document.close();
+        w.focus();
 
-        // Libera a URL anterior, se houver.
-        if(urlRelatorioPDFV11){
-            try{ URL.revokeObjectURL(urlRelatorioPDFV11); }catch(e){}
-        }
-        urlRelatorioPDFV11 = url;
-
-        let impressaoIniciada = false;
-
-        const abrirImpressao = function(){
-            if(impressaoIniciada) return;
-            impressaoIniciada = true;
+        // Native print dialog -> user chooses "Salvar como PDF".
+        setTimeout(function(){
             try{
                 w.focus();
                 w.print();
             }catch(e){
                 console.error("Erro ao abrir impressão do relatório:",e);
-                alert("O relatório foi aberto, mas a impressão automática não pôde ser iniciada. Use Ctrl+P ou o menu Imprimir.");
+                alert("O relatório foi aberto, mas o diálogo de impressão não pôde ser aberto automaticamente. Use Ctrl+P ou o menu Imprimir do navegador.");
             }
-        };
-
-        // Aguarda o carregamento completo do documento, incluindo imagens/logo,
-        // antes de chamar print().
-        w.onload = function(){
-            const aguardarImagens = function(){
-                const imagens = Array.from(w.document.images || []);
-                if(!imagens.length){
-                    setTimeout(abrirImpressao, 250);
-                    return;
-                }
-
-                let pendentes = imagens.filter(img => !img.complete);
-                if(!pendentes.length){
-                    setTimeout(abrirImpressao, 250);
-                    return;
-                }
-
-                let restante = pendentes.length;
-                const pronto = function(){
-                    restante--;
-                    if(restante <= 0) setTimeout(abrirImpressao, 250);
-                };
-                pendentes.forEach(img => {
-                    img.addEventListener("load", pronto, {once:true});
-                    img.addEventListener("error", pronto, {once:true});
-                });
-            };
-            aguardarImagens();
-        };
-
-        // Navega a janela já autorizada para o relatório final.
-        w.location.href = url;
-        w.focus();
-
-        // Fallback para navegadores que não disparem onload como esperado.
-        setTimeout(function(){
-            if(!impressaoIniciada) abrirImpressao();
-        }, 1800);
-
-        // Não revoga imediatamente: o navegador precisa manter o Blob disponível
-        // durante a impressão.
-        setTimeout(function(){
-            if(urlRelatorioPDFV11 === url){
-                try{ URL.revokeObjectURL(url); }catch(e){}
-                urlRelatorioPDFV11 = null;
-            }
-        }, 60000);
+        }, 700);
 
     }catch(e){
         console.error("Erro ao gerar relatório:",e);
-        try{
-            w.document.open();
-            w.document.write(`
-                <!DOCTYPE html>
-                <html lang="pt-BR">
-                <head><meta charset="UTF-8"><title>Erro</title></head>
-                <body style="font-family:Arial;padding:30px">
-                    <h2>Não foi possível gerar o relatório.</h2>
-                    <p>Atualize a página e tente novamente.</p>
-                </body>
-                </html>
-            `);
-            w.document.close();
-        }catch(_e){}
-        alert("Ocorreu um erro ao montar o relatório. A página principal foi preservada. Tente novamente.");
+        w.document.open();
+        w.document.write(`
+            <div style="font-family:Arial;padding:30px">
+                <h2>Não foi possível gerar o relatório.</h2>
+                <p>Atualize a página e tente novamente.</p>
+            </div>
+        `);
+        w.document.close();
+        alert("Ocorreu um erro ao montar o relatório. A página foi preservada. Tente novamente.");
     }
 }
 
@@ -9646,6 +11004,7 @@ function inicializarDashboardV11(){
     const menu = document.getElementById("adminMenuV11");
     const search = document.getElementById("adminConteudoPesquisaV11");
     const report = document.getElementById("adminConteudoRelatorioV11");
+    const adminV13 = document.getElementById("adminConteudoAdministrativoV13");
     const voltar = document.getElementById("adminVoltarMenu");
     const titulo = document.getElementById("adminModoTitulo");
 
@@ -9658,37 +11017,47 @@ function inicializarDashboardV11(){
     const btnBuscarAdmin = document.getElementById("btnBuscarAdmin");
 
     function esconderTudoAdminV11(){
+    controlarVisaoGeralAoAbrirAdvertencias(false);
         if(search) { search.style.display = "none"; search.hidden = true; }
         if(report) { report.style.display = "none"; report.hidden = true; }
+        if(adminV13) { adminV13.style.display = "none"; adminV13.hidden = true; }
+        document.body.classList.remove("admin-v13-active");
         if(voltar) voltar.style.display = "none";
         if(menu) { menu.style.display = "grid"; menu.hidden = false; }
     }
 
     function mostrarPesquisaAdminV11(){
-        if(menu) menu.style.display = "none";
-        if(report) report.style.display = "none";
-        if(search) { search.style.display = "block"; search.hidden = false; }
-        if(voltar) voltar.style.display = "flex";
-        if(titulo) titulo.textContent = "🔎 Pesquisar chamados";
+    controlarVisaoGeralAoAbrirAdvertencias(false);
+    document.body.classList.remove('admin-v13-active');
+    const adminV13=document.getElementById('adminConteudoAdministrativoV13');
+    if(adminV13){adminV13.style.display='none';adminV13.hidden=true;}
+    if(menu) menu.style.display='none';
+    if(report) report.style.display='none';
+    if(search){search.style.display='block';search.hidden=false;}
 
-        // The existing V1.0 search/list functions remain responsible for loading data.
-        const btnListar = document.getElementById("btnListarTodos");
-        if(btnListar){
-            btnListar.style.display = "block";
-            btnListar.click();
-        }
+    const localizarChamado=document.getElementById('localizarChamadoAdmin');
+    const editarChamado=document.getElementById('editarChamado');
+    if(localizarChamado) localizarChamado.style.display='block';
+    if(editarChamado) editarChamado.style.display='block';
 
-        // Reveal the existing search/filter/list controls after the load handler has run.
-        setTimeout(function(){
-            const ids = ["estatisticas","filtros","listaChamados"];
-            ids.forEach(function(id){
-                const el = document.getElementById(id);
-                if(el) el.style.display = id === "listaChamados" ? "block" : "block";
-            });
-        }, 500);
-    }
+    if(voltar) voltar.style.display='flex';
+    if(titulo) titulo.textContent='🔎 Pesquisar chamados';
 
-    function mostrarRelatorioAdminV11(){
+    const btnListar=document.getElementById('btnListarTodos');
+    if(btnListar){btnListar.style.display='block';btnListar.click();}
+
+    setTimeout(function(){
+        ['estatisticas','filtros','listaChamados'].forEach(function(id){
+            const el=document.getElementById(id);
+            if(el) el.style.display='block';
+        });
+    },500);
+}
+function mostrarRelatorioAdminV11(){
+    controlarVisaoGeralAoAbrirAdvertencias(false);
+        document.body.classList.remove('admin-v13-active');
+        const adminV13=document.getElementById('adminConteudoAdministrativoV13');
+        if(adminV13){adminV13.style.display='none';adminV13.hidden=true;}
         if(menu) menu.style.display = "none";
         if(search) search.style.display = "none";
         if(voltar) voltar.style.display = "flex";
@@ -9913,7 +11282,419 @@ function inicializarDashboardV11(){
 })();
 </script>
 
+
+
+<div id="adminConteudoAdministrativoV13" style="display:none;">
+<div class="admin-v13-wrap">
+<div class="admin-v13-header">
+<div>
+<div class="admin-v13-title">⚠️ Advertências / Notificações</div>
+<div class="admin-v13-hint">Registro administrativo por unidade, com protocolo próprio e vínculo opcional a um chamado.</div>
+</div>
+<div class="admin-v13-actions no-print">
+<button class="admin-v13-btn blue" id="btnAtualizarAdministrativoV13" type="button">🔄 Atualizar registros</button>
+<button class="admin-v13-btn gray" id="btnNovaAdministrativaV13" type="button">➕ Nova advertência/notificação</button><button class="admin-v13-btn blue" id="btnConsultarProtocolosAdmV13" type="button">📋 Protocolos administrativos</button>
+</div>
+</div>
+<div class="admin-v13-kpis" id="v13Kpis" style="display:none">
+<div class="admin-v13-kpi active" data-v13-kpi="todos" role="button" tabindex="0" title="Mostrar todos os registros encontrados">
+<strong id="v13TotalMedidas">0</strong><span>Total de registros</span>
+</div>
+<div class="admin-v13-kpi" data-v13-kpi="advertencias" role="button" tabindex="0" title="Mostrar somente Advertências">
+<strong id="v13TotalAdvertencias">0</strong><span>Advertências</span>
+</div>
+<div class="admin-v13-kpi" data-v13-kpi="notificacoes" role="button" tabindex="0" title="Mostrar somente Notificações">
+<strong id="v13TotalNotificacoes">0</strong><span>Notificações</span>
+</div>
+<div class="admin-v13-kpi" data-v13-kpi="reincidencias" role="button" tabindex="0" title="Mostrar registros envolvidos em reincidência">
+<strong id="v13TotalReincidencias">0</strong><span>Unidades com reincidência</span>
+</div>
+<div class="admin-v13-kpi" data-v13-kpi="recursos" role="button" tabindex="0" title="Mostrar notificações com recurso pendente">
+<strong id="v13TotalRecursos">0</strong><span>Recursos pendentes</span>
+</div>
+</div>
+<div class="admin-v13-hint" id="v13FiltroAtivo" style="display:none;margin:-4px 0 10px;font-weight:700"></div>
+<div class="admin-v13-card" id="adminV13FormCard">
+<h3 style="margin:0 0 12px;color:#123b5d">📄 Novo registro administrativo</h3>
+<form id="formAdministrativoV13">
+<div class="admin-v13-grid">
+
+<div>
+<label class="admin-v13-label">Tipo de medida *</label>
+<select class="admin-v13-select" id="v13Tipo" required>
+<option value="">Selecione...</option>
+<option value="Advertência">🟡 Advertência — sem multa</option>
+<option value="Notificação">🔴 Notificação — com multa</option>
+</select>
+</div>
+
+<div>
+<label class="admin-v13-label">Data do registro *</label>
+<input class="admin-v13-input" id="v13DataRegistro" required type="date"/>
+</div>
+
+<div>
+<label class="admin-v13-label">Data da infração *</label>
+<input class="admin-v13-input" id="v13DataOcorrencia" required type="date"/>
+</div>
+
+<div>
+<label class="admin-v13-label">Origem da ocorrência</label>
+<select class="admin-v13-select" id="v13Origem">
+<option>Administração</option>
+<option>Subsíndico</option>
+<option>Morador</option>
+<option>Funcionário</option>
+<option>CFTV</option>
+<option>Outro</option>
+</select>
+</div>
+
+<div>
+<label class="admin-v13-label">Bloco *</label>
+<select class="admin-v13-select" id="v13Bloco" required>
+<option value="">Selecione...</option>
+<option>1A</option><option>1B</option><option>1C</option><option>1D</option><option>1E</option>
+<option>2A</option><option>2B</option><option>2C</option><option>2D</option><option>2E</option>
+</select>
+</div>
+
+<div>
+<label class="admin-v13-label">Unidade *</label>
+<input class="admin-v13-input" id="v13Unidade" inputmode="numeric" maxlength="8" placeholder="Ex.: 804" required type="text"/>
+</div>
+
+<div>
+<label class="admin-v13-label">Categoria da infração *</label>
+<select class="admin-v13-select" id="v13Categoria" required>
+<option value="">Selecione...</option>
+<option value="Animais domésticos">🐶 Animais domésticos</option>
+<option value="Churrasqueira / Salão de festas">🎉 Churrasqueira / Salão de festas</option>
+<option value="Piscina">🏊 Piscina</option>
+<option value="Playground">🛝 Playground</option>
+<option value="Garagem">🚗 Garagem</option>
+<option value="Mudanças / Entregas / Obras">📦 Mudanças / Entregas / Obras</option>
+<option value="Quadra">🏀 Quadra</option>
+<option value="Elevadores">🛗 Elevadores</option>
+<option value="Ruídos / Sossego">🔊 Ruídos / Sossego</option>
+<option value="Proibições gerais">🚫 Proibições gerais</option>
+<option value="Acesso ao condomínio">🔐 Acesso ao condomínio</option>
+</select>
+</div>
+
+<div>
+<label class="admin-v13-label">Infração / ocorrência *</label>
+<select class="admin-v13-select" id="v13Infracao" required>
+<option value="">Selecione a categoria primeiro...</option>
+</select>
+</div>
+
+<div>
+<label class="admin-v13-label">Artigo / fundamento</label>
+<input class="admin-v13-input" id="v13BaseRegimento" readonly placeholder="Preenchido conforme a infração"/>
+</div>
+
+<div>
+<label class="admin-v13-label">Responsável pelo registro</label>
+<input class="admin-v13-input" id="v13Responsavel" placeholder="Nome do subsíndico/administrador" type="text"/>
+</div>
+
+<div class="full">
+<label class="admin-v13-label">Chamado relacionado (opcional)</label>
+<select class="admin-v13-select" id="v13ProtocoloChamado">
+<option value="">— Sem chamado associado —</option>
+</select>
+</div>
+
+<div class="full">
+<label class="admin-v13-label">Descrição detalhada *</label>
+<textarea class="admin-v13-textarea" id="v13Descricao" placeholder="Descreva objetivamente a ocorrência, local e circunstâncias." required></textarea>
+</div>
+
+<div class="full">
+<label class="admin-v13-label">Observações administrativas</label>
+<textarea class="admin-v13-textarea" id="v13Observacoes" placeholder="Informações administrativas adicionais." style="min-height:65px"></textarea>
+</div>
+
+<div class="full admin-v13-penalty" id="v13NotificacaoArea" style="display:none">
+<div class="admin-v13-section-title">💰 Penalidade da Notificação</div>
+<div class="admin-v13-grid">
+<div>
+<label class="admin-v13-label">Multa prevista (cotas)</label>
+<input class="admin-v13-input" id="v13MultaCotas" inputmode="decimal" min="0" step="0.01" type="number" placeholder="Ex.: 1"/>
+</div>
+<div>
+<label class="admin-v13-label">Valor da cota (R$)</label>
+<input class="admin-v13-input" id="v13ValorCota" inputmode="decimal" min="0" step="0.01" type="number" placeholder="Ex.: 330,00"/>
+</div>
+<div>
+<label class="admin-v13-label">Valor da multa (R$)</label>
+<input class="admin-v13-input" id="v13ValorMulta" readonly type="text" placeholder="Calculado automaticamente"/>
+</div>
+<div>
+<label class="admin-v13-label">Prazo para recurso</label>
+<input class="admin-v13-input" id="v13PrazoRecurso" readonly value="7 dias úteis"/>
+</div>
+</div>
+</div>
+
+<div class="full admin-v13-appeal" id="v13RecursoArea" style="display:none">
+<div class="admin-v13-section-title">⚖️ Recurso administrativo</div>
+<div class="admin-v13-grid">
+<div>
+<label class="admin-v13-label">Recurso apresentado?</label>
+<select class="admin-v13-select" id="v13RecursoApresentado">
+<option value="Não">Não</option>
+<option value="Sim">Sim</option>
+</select>
+</div>
+<div>
+<label class="admin-v13-label">Data do recurso</label>
+<input class="admin-v13-input" id="v13DataRecurso" type="date"/>
+</div>
+<div class="full">
+<label class="admin-v13-label">Justificativa do recurso</label>
+<textarea class="admin-v13-textarea" id="v13JustificativaRecurso" style="min-height:80px" placeholder="Registre a argumentação apresentada pelo morador."></textarea>
+</div>
+</div>
+</div>
+
+<div class="full admin-v13-decision" id="v13DecisaoArea" style="display:none">
+<div class="admin-v13-section-title">🏛️ Análise — Síndico e Conselho</div>
+<div class="admin-v13-grid">
+<div>
+<label class="admin-v13-label">Decisão</label>
+<select class="admin-v13-select" id="v13Decisao">
+<option value="">Aguardando análise</option>
+<option value="Recurso acolhido">🟢 Recurso acolhido — multa cancelada</option>
+<option value="Recurso indeferido">🔴 Recurso indeferido — multa mantida</option>
+</select>
+</div>
+<div>
+<label class="admin-v13-label">Data da decisão</label>
+<input class="admin-v13-input" id="v13DataDecisao" type="date"/>
+</div>
+<div>
+<label class="admin-v13-label">Responsáveis pela decisão</label>
+<input class="admin-v13-input" id="v13ResponsaveisDecisao" placeholder="Síndico / Conselheiros"/>
+</div>
+<div class="full">
+<label class="admin-v13-label">Justificativa da decisão</label>
+<textarea class="admin-v13-textarea" id="v13JustificativaDecisao" style="min-height:80px" placeholder="Fundamente a decisão administrativa."></textarea>
+</div>
+</div>
+</div>
+
+</div>
+<div class="admin-v13-actions no-print" style="margin-top:12px">
+<button class="admin-v13-btn green" id="btnSalvarAdministrativoV13" type="submit">💾 Registrar medida</button>
+<button class="admin-v13-btn gray" id="btnCancelarAdministrativoV13" type="button">Cancelar</button>
+</div>
+</form>
+</div>
+<div class="admin-v13-card" id="adminV13ProtocolosCard" style="display:none;">
+<h3 style="margin:0 0 10px;color:#123b5d">📋 Consulta de Protocolos Administrativos</h3>
+<div class="admin-v13-hint" style="margin-bottom:10px">
+Consulte todos os protocolos de Advertências e Notificações gerados pelo sistema.
+</div>
+<div class="admin-v13-grid">
+<div class="full">
+<label class="admin-v13-label">🔎 Buscar protocolo, unidade ou infração</label>
+<input class="admin-v13-input" id="v13BuscaProtocoloAdm" type="text" placeholder="Ex.: ADM-2026-0004, 804, Xixi de cachorro">
+</div>
+<div>
+<label class="admin-v13-label">Tipo</label>
+<select class="admin-v13-select" id="v13FiltroTipoAdm">
+<option value="">Todos</option>
+<option value="Advertência">Advertências</option>
+<option value="Notificação">Notificações</option>
+</select>
+</div>
+<div class="admin-v13-actions no-print" style="align-items:end">
+<button class="admin-v13-btn blue" id="btnBuscarProtocolosAdmV13" type="button">🔎 Consultar</button><button class="admin-v13-btn green" id="btnImprimirProtocolosAdmV13" type="button">🖨️ Imprimir protocolos</button>
+<button class="admin-v13-btn gray" id="btnLimparProtocolosAdmV13" type="button">Limpar</button>
+<button class="admin-v13-btn gray" id="btnFecharProtocolosAdmV13" type="button">↩️ Voltar</button>
+</div>
+<div class="full no-print" style="margin-top:4px">
+<label class="admin-v13-label">📅 Período para impressão dos protocolos</label>
+<select class="admin-v13-select" id="v13PeriodoImpressaoAdm">
+<option value="hoje">Hoje</option>
+<option value="mes">Este mês</option>
+<option value="mes_anterior">Mês anterior</option>
+<option value="periodo">Período personalizado</option>
+</select>
+</div>
+<div class="admin-v13-grid full no-print" id="v13PeriodoPersonalizadoAdm" style="display:none;margin-top:4px">
+<div>
+<label class="admin-v13-label">Data inicial</label>
+<input class="admin-v13-input" id="v13DataInicialImpressaoAdm" type="date">
+</div>
+<div>
+<label class="admin-v13-label">Data final</label>
+<input class="admin-v13-input" id="v13DataFinalImpressaoAdm" type="date">
+</div>
+</div>
+</div>
+<div id="v13ProtocolosResumoAdm" style="margin-top:12px"></div>
+<div class="admin-v13-result" id="v13ProtocolosListaAdm" style="margin-top:10px"></div>
+</div>
+<div class="admin-v13-card">
+<h3 style="margin:0 0 12px;color:#123b5d">🔎 Histórico da unidade</h3>
+<div class="admin-v13-grid">
+<div>
+<label class="admin-v13-label">Bloco</label>
+<select class="admin-v13-select" id="v13BuscaBloco">
+<option value="">Todos</option>
+<option>1A</option><option>1B</option><option>1C</option><option>1D</option><option>1E</option>
+<option>2A</option><option>2B</option><option>2C</option><option>2D</option><option>2E</option>
+</select>
+</div>
+<div>
+<label class="admin-v13-label">Unidade</label>
+<input class="admin-v13-input" id="v13BuscaUnidade" placeholder="Ex.: 804" type="text"/>
+</div>
+<div class="full admin-v13-actions no-print">
+<button class="admin-v13-btn blue" id="btnConsultarHistoricoV13" type="button">🔎 Consultar histórico</button>
+<button class="admin-v13-btn gray" id="btnLimparHistoricoV13" type="button">Limpar</button>
+<button class="admin-v13-btn green" id="btnRelatorioUnidadeV13" type="button">📄 Relatório da unidade</button>
+</div>
+</div>
+<div id="v13HistoricoResumo" style="margin-top:12px"></div>
+</div>
+<div class="admin-v13-card">
+<h3 style="margin:0 0 10px;color:#123b5d">📋 Registros administrativos</h3>
+<div class="admin-v13-result" id="v13ListaMedidas">Carregando...</div>
+</div>
+</div>
+</div>
+
+<div aria-hidden="true" class="admin-v13-modal" id="adm13DetalhesModal">
+<div aria-labelledby="adm13ModalTitulo" aria-modal="true" class="admin-v13-modal-box" role="dialog">
+<div class="admin-v13-modal-head">
+<div class="admin-v13-modal-title" id="adm13ModalTitulo">⚠️ Detalhes da Advertência</div>
+<button aria-label="Fechar" class="admin-v13-modal-close" id="btnFecharAdm13Modal" type="button">×</button>
+</div>
+<div class="admin-v13-modal-body">
+<div class="admin-v13-detail-grid">
+<div class="admin-v13-detail">
+<div class="admin-v13-detail-label">Protocolo</div>
+<div class="admin-v13-detail-value" id="adm13ModalProtocolo"></div>
+</div>
+<div class="admin-v13-detail">
+<div class="admin-v13-detail-label">Tipo</div>
+<div class="admin-v13-detail-value" id="adm13ModalTipo"></div>
+</div>
+<div class="admin-v13-detail">
+<div class="admin-v13-detail-label">Data do registro</div>
+<div class="admin-v13-detail-value" id="adm13ModalData"></div>
+</div>
+<div class="admin-v13-detail"><div class="admin-v13-detail-label">Data da infração</div><div class="admin-v13-detail-value" id="adm13ModalDataInfracao"></div></div>
+<div class="admin-v13-detail">
+<div class="admin-v13-detail-label">Unidade / Bloco</div>
+<div class="admin-v13-detail-value" id="adm13ModalUnidade"></div>
+</div>
+<div class="admin-v13-detail full">
+<div class="admin-v13-detail-label">Infração / Ocorrência</div>
+<div class="admin-v13-detail-value" id="adm13ModalInfracao"></div>
+</div>
+<div class="admin-v13-detail">
+<div class="admin-v13-detail-label">Base no Regimento</div>
+<div class="admin-v13-detail-value" id="adm13ModalBase"></div>
+</div>
+<div class="admin-v13-detail">
+<div class="admin-v13-detail-label">Responsável</div>
+<div class="admin-v13-detail-value" id="adm13ModalResponsavel"></div>
+</div>
+<div class="admin-v13-detail full">
+<div class="admin-v13-detail-label">Descrição</div>
+<div class="admin-v13-detail-value" id="adm13ModalDescricao"></div>
+</div>
+<div class="admin-v13-detail full">
+<div class="admin-v13-detail-label">Observações</div>
+<div class="admin-v13-detail-value" id="adm13ModalObservacoes"></div>
+</div>
+<div class="admin-v13-detail full">
+<div class="admin-v13-detail-label">🔗 Chamado relacionado</div>
+<div class="admin-v13-detail-value" id="adm13ModalChamado"></div>
+</div>
+<div class="admin-v13-detail full">
+<div class="admin-v13-detail-label">💰 Penalidade</div>
+<div class="admin-v13-detail-value" id="adm13ModalPenalidade"></div>
+</div>
+<div class="admin-v13-detail full">
+<div class="admin-v13-detail-label">⚖️ Recurso</div>
+<div class="admin-v13-detail-value" id="adm13ModalRecurso"></div>
+</div>
+<div class="admin-v13-detail full">
+<div class="admin-v13-detail-label">🏛️ Decisão</div>
+<div class="admin-v13-detail-value" id="adm13ModalDecisao"></div>
+</div>
+<div class="admin-v13-detail full">
+<div class="admin-v13-detail-label">Histórico da unidade</div>
+<div class="admin-v13-detail-value" id="adm13ModalHistorico"></div>
+</div>
+</div>
+<div class="admin-v13-modal-footer">
+
+<button class="admin-v13-btn blue" id="btnAbrirChamadoAdm13" style="display:none" type="button">🔎 Consultar chamado relacionado</button>
+<button class="admin-v13-btn green" id="btnImprimirAdm13Modal" type="button">🖨️ Imprimir</button>
+<button class="admin-v13-btn gray" id="btnFecharAdm13Modal2" type="button">Fechar</button>
+</div>
+</div>
+</div>
+</div>
+
+<script id="admin-dashboard-v45-js">
+(function(){
+    async function atualizarDashboardAdministrativoV45(){
+        if(!senhaAdministrativa){ return; }
+        const btn=document.getElementById('btnAtualizarDashboardAdmV45');
+        const alerta=document.getElementById('admV45Alerta');
+        if(btn){btn.disabled=true;btn.textContent='⏳ Atualizando...';}
+        try{
+            const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'list',adminPassword:senhaAdministrativa})});
+            const d=await r.json();
+            if(!r.ok || !d.sucesso) throw new Error(d.erro||'Não foi possível atualizar o painel.');
+            const s=d.estatisticas||{};
+            document.getElementById('admV45Abertos').textContent=Number(s.abertos||0);
+            document.getElementById('admV45Andamento').textContent=Number(s.andamento||0);
+            document.getElementById('admV45Resolvidos').textContent=Number(s.resolvidos||0);
+            document.getElementById('admV45Arquivados').textContent=Number(s.arquivados||0);
+            const pend=Number(s.abertos||0)+Number(s.andamento||0);
+            if(alerta){
+                alerta.style.display='block';
+                if(pend>0){
+                    alerta.classList.remove('ok');
+                    alerta.textContent='⚠️ ATENÇÃO: '+pend+' chamado(s) aguardam providência da Administração.';
+                }else{
+                    alerta.classList.add('ok');
+                    alerta.textContent='✅ Não há chamados abertos ou em andamento no momento.';
+                }
+            }
+        }catch(e){
+            if(alerta){alerta.style.display='block';alerta.classList.remove('ok');alerta.textContent='⚠️ Não foi possível atualizar a visão geral agora.';}
+            console.error('Dashboard administrativo V4.5:',e);
+        }finally{
+            if(btn){btn.disabled=false;btn.textContent='🔄 Atualizar';}
+        }
+    }
+    window.atualizarDashboardAdministrativoV45=atualizarDashboardAdministrativoV45;
+    const btn=document.getElementById('btnAtualizarDashboardAdmV45');
+    if(btn) btn.addEventListener('click',atualizarDashboardAdministrativoV45);
+})();
+</script>
+
+<script>
+function controlarVisaoGeralAoAbrirAdvertencias(ocultar) {
+    const painel = document.getElementById('adminDashboardV45');
+    if (!painel) return;
+
+    painel.style.display = ocultar ? 'none' : '';
+}
+</script>
+
 <script id="administrativo-v13-js">
+
 (function(){
     const menu = document.getElementById('adminMenuV11');
     const search = document.getElementById('adminConteudoPesquisaV11');
@@ -9942,13 +11723,28 @@ function inicializarDashboardV11(){
         return p.length===3 ? `${p[2]}/${p[1]}/${p[0]}` : v;
     }
     function mostrarAdmin(){
-        if(menu) menu.style.display='none';
-        if(search) search.style.display='none';
-        if(report) report.style.display='none';
-        if(admin) admin.style.display='block';
-        if(voltar) voltar.style.display='flex';
-        if(titulo) titulo.textContent='⚠️ Advertências / Notificações';
-    }
+    controlarVisaoGeralAoAbrirAdvertencias(true);
+    document.body.classList.add('admin-v13-active');
+    if(menu) menu.style.display='none';
+    if(search){search.style.display='none';search.hidden=true;}
+    if(report){report.style.display='none';report.hidden=true;}
+    const protocolosAdm=document.getElementById('adminV13ProtocolosCard');
+    if(protocolosAdm) protocolosAdm.style.display='none';
+
+    const localizarChamado=document.getElementById('localizarChamadoAdmin');
+    const editarChamado=document.getElementById('editarChamado');
+
+    if(localizarChamado) localizarChamado.style.display='none';
+    if(editarChamado) editarChamado.style.display='none';
+
+    if(admin){admin.style.display='block';admin.hidden=false;}
+    if(voltar) voltar.style.display='flex';
+    if(titulo) titulo.textContent='⚠️ Advertências / Notificações';
+
+    preencherDatas();
+    carregarChamadosSelect();
+    carregarMedidas();
+}
     function preencherDatas(){
         const h=hojeLocal();
         const a=document.getElementById('v13DataRegistro');
@@ -9996,11 +11792,16 @@ function inicializarDashboardV11(){
         const adv=base.filter(x=>x.tipo==='Advertência').length;
         const not=base.filter(x=>x.tipo==='Notificação').length;
         const reinc=Object.values(calcularReincidencias(base)).filter(n=>n>1).length;
+        const recursos=base.filter(x=>{
+            const m=obterMetaAdministrativa(x);
+            return x.tipo==='Notificação' && m.recursoApresentado==='Sim' && !m.decisao;
+        }).length;
 
         document.getElementById('v13TotalMedidas').textContent=base.length;
         document.getElementById('v13TotalAdvertencias').textContent=adv;
         document.getElementById('v13TotalNotificacoes').textContent=not;
         document.getElementById('v13TotalReincidencias').textContent=reinc;
+        const recEl=document.getElementById('v13TotalRecursos'); if(recEl) recEl.textContent=recursos;
 
         const kpis=document.getElementById('v13Kpis');
         if(kpis) kpis.style.display=base.length || registrosDaPesquisaAtual.length ? 'grid' : 'none';
@@ -10015,7 +11816,8 @@ function inicializarDashboardV11(){
             todos:'Todos os registros',
             advertencias:'Somente Advertências',
             notificacoes:'Somente Notificações',
-            reincidencias:'Registros envolvidos em reincidência'
+            reincidencias:'Registros envolvidos em reincidência',
+            recursos:'Notificações com recurso pendente'
         };
         const aviso=document.getElementById('v13FiltroAtivo');
         if(aviso){
@@ -10031,6 +11833,10 @@ function inicializarDashboardV11(){
         if(filtro==='advertencias') regs=regs.filter(x=>x.tipo==='Advertência');
         if(filtro==='notificacoes') regs=regs.filter(x=>x.tipo==='Notificação');
         if(filtro==='reincidencias') regs=registrosReincidentes(regs);
+        if(filtro==='recursos') regs=regs.filter(x=>{
+            const m=obterMetaAdministrativa(x);
+            return x.tipo==='Notificação' && m.recursoApresentado==='Sim' && !m.decisao;
+        });
         renderLista(regs);
         atualizarKpis(registrosDaPesquisaAtual);
     }
@@ -10040,25 +11846,216 @@ function inicializarDashboardV11(){
         return Object.entries(mapa).filter(([,n])=>n>1).map(([i,n])=>`${i} (${n} registros)`);
     }
 
+
+    function obterMetaAdministrativa(x){
+        // Compatibility layer: until the Worker is upgraded, the new fields
+        // can be supplied by a future API without breaking old records.
+        return {
+            multaCotas:x.multaCotas ?? '',
+            valorCota:x.valorCota ?? '',
+            valorMulta:x.valorMulta ?? '',
+            recursoApresentado:x.recursoApresentado ?? 'Não',
+            dataRecurso:x.dataRecurso ?? '',
+            justificativaRecurso:x.justificativaRecurso ?? '',
+            decisao:x.decisao ?? '',
+            dataDecisao:x.dataDecisao ?? '',
+            responsaveisDecisao:x.responsaveisDecisao ?? '',
+            justificativaDecisao:x.justificativaDecisao ?? '',
+            origem:x.origem ?? 'Administração',
+            categoria:x.categoria ?? ''
+        };
+    }
+
+    function formatarMoeda(v){
+        const n=Number(v);
+        if(!Number.isFinite(n)) return String(v||'');
+        return n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+    }
+
+    function statusAdministrativo(meta){
+        if(meta.decisao==='Recurso acolhido'){
+            return {texto:'🟢 Cancelada',classe:'cancelada'};
+        }
+        if(meta.decisao==='Recurso indeferido'){
+            return {texto:'🔴 Multa mantida',classe:'mantida'};
+        }
+        if(meta.recursoApresentado==='Sim'){
+            return {texto:'⚖️ Recurso pendente',classe:'recurso'};
+        }
+        return {texto:'🟡 Registrada',classe:'registrada'};
+    }
+
+    function calcularPrazoRecurso(data){
+        if(!data) return '';
+        const d=new Date(data+'T12:00:00');
+        let uteis=0;
+        while(uteis<7){
+            d.setDate(d.getDate()+1);
+            const dia=d.getDay();
+            if(dia!==0 && dia!==6) uteis++;
+        }
+        return d.toISOString().slice(0,10);
+    }
+
+    const infracoesRegimentoV45={
+        "Animais domésticos":[
+            ["Animal que comprometa a tranquilidade, higiene ou segurança","Art. 1º"],
+            ["Animal em desacordo com as regras do condomínio","Art. 1º"],
+            ["Excrementos em jardim/área comum","Art. 1º"],
+            ["Circulação de animal em área comum em desacordo","Art. 1º"],
+            ["Entrada de animal em área de lazer proibida","Art. 1º"]
+        ],
+        "Churrasqueira / Salão de festas":[
+            ["Uso do espaço sem reserva","Arts. 2º e 3º"],
+            ["Excesso de convidados","Arts. 2º e 3º"],
+            ["Uso fora do horário permitido","Arts. 2º e 3º"],
+            ["Som/perturbação em desacordo com as regras","Arts. 2º e 3º"],
+            ["Danos ou falta de limpeza após o evento","Arts. 2º e 3º"]
+        ],
+        "Piscina":[
+            ["Uso fora do horário permitido","Art. 4º"],
+            ["Criança desacompanhada em situação proibida","Art. 4º"],
+            ["Traje inadequado","Art. 4º"],
+            ["Uso inadequado da área ou mobiliário","Art. 4º"],
+            ["Entrada com objetos/bebidas proibidos","Art. 4º"]
+        ],
+        "Playground":[
+            ["Uso inadequado dos brinquedos","Art. 5º"],
+            ["Criança desacompanhada em desacordo com a regra","Art. 5º"],
+            ["Danos aos brinquedos","Art. 5º"],
+            ["Consumo de bebida/cigarro em local proibido","Art. 5º"]
+        ],
+        "Garagem":[
+            ["Estacionar fora dos limites da vaga","Art. 6º"],
+            ["Veículo não cadastrado/autorizado","Art. 6º"],
+            ["Exceder 20 km/h","Art. 6º"],
+            ["Circular na contramão","Art. 6º"],
+            ["Mecânica/lanternagem/pintura na garagem","Art. 6º"],
+            ["Uso irregular da vaga","Art. 6º"]
+        ],
+        "Mudanças / Entregas / Obras":[
+            ["Mudança fora do horário","Arts. 7º e 8º"],
+            ["Entrega fora do horário","Arts. 7º e 8º"],
+            ["Falta de agendamento","Arts. 7º e 8º"],
+            ["Obra fora do horário permitido","Art. 8º"],
+            ["Obra em domingo/feriado","Art. 8º"]
+        ],
+        "Quadra":[
+            ["Uso fora do horário","Art. 9º"],
+            ["Excesso de visitantes","Art. 9º"],
+            ["Torneio sem autorização","Art. 9º"],
+            ["Xingamentos/gritaria/perturbação","Art. 9º"]
+        ],
+        "Elevadores":[
+            ["Excesso de carga","Art. 10º"],
+            ["Gritaria/algazarra","Art. 10º"],
+            ["Uso indevido dos comandos","Art. 10º"],
+            ["Mudança fora do horário","Art. 10º"],
+            ["Sujar elevador ou rol","Art. 10º"]
+        ],
+        "Ruídos / Sossego":[
+            ["Som automotivo em área comum","Arts. 11 e 12"],
+            ["Ruído perturbando o sossego","Arts. 11 e 12"],
+            ["Caixa de som após 22h","Art. 12"],
+            ["Gritaria nos corredores/áreas comuns","Arts. 12 e 13"],
+            ["Reincidência de perturbação do sossego","Art. 14"]
+        ],
+        "Proibições gerais":[
+            ["Descarte irregular de lixo/detritos","Art. 15"],
+            ["Fumo em área proibida","Art. 15"],
+            ["Bebida alcoólica em área proibida","Art. 15"],
+            ["Desacato/agressão/desrespeito à Administração","Art. 15"],
+            ["Veículo abandonado","Art. 15"],
+            ["Drogas ilícitas","Art. 15"],
+            ["Ato que viole a privacidade de terceiros","Art. 15"]
+        ],
+        "Acesso ao condomínio":[
+            ["Cadastro de morador desatualizado","Arts. 16 e 17"],
+            ["Veículo sem TAG cadastrada","Art. 17"],
+            ["Troca de veículo sem atualização da TAG","Art. 17"],
+            ["Uso da TAG em desacordo com as regras","Art. 17"]
+        ]
+    };
+
+    function atualizarInfracoesV45(){
+        const cat=document.getElementById('v13Categoria');
+        const inf=document.getElementById('v13Infracao');
+        const base=document.getElementById('v13BaseRegimento');
+        if(!cat||!inf) return;
+        const lista=cat.value ? (infracoesRegimentoV45[cat.value]||[]) : [];
+        inf.innerHTML='<option value="">Selecione...</option>'+lista.map(([nome,art])=>`<option value="${esc(nome)}" data-artigo="${esc(art)}">${esc(nome)}</option>`).join('');
+        if(base) base.value='';
+    }
+
+    function atualizarBaseV45(){
+        const inf=document.getElementById('v13Infracao');
+        const opt=inf?.selectedOptions?.[0];
+        const base=document.getElementById('v13BaseRegimento');
+        if(base) base.value=opt?.dataset?.artigo||'';
+    }
+
+    function atualizarTipoAdministrativoV45(){
+        const tipo=document.getElementById('v13Tipo')?.value;
+        const notificacao=tipo==='Notificação';
+        ['v13NotificacaoArea','v13RecursoArea','v13DecisaoArea'].forEach(id=>{
+            const el=document.getElementById(id);
+            if(el) el.style.display=notificacao?'block':'none';
+        });
+        if(!notificacao){
+            ['v13MultaCotas','v13ValorCota','v13ValorMulta','v13DataRecurso','v13JustificativaRecurso','v13DataDecisao','v13ResponsaveisDecisao','v13JustificativaDecisao'].forEach(id=>{
+                const el=document.getElementById(id); if(el) el.value='';
+            });
+            const r=document.getElementById('v13RecursoApresentado'); if(r) r.value='Não';
+            const d=document.getElementById('v13Decisao'); if(d) d.value='';
+        }
+        calcularMultaV45();
+    }
+
+    function calcularMultaV45(){
+        const c=Number(document.getElementById('v13MultaCotas')?.value||0);
+        const v=Number(document.getElementById('v13ValorCota')?.value||0);
+        const out=document.getElementById('v13ValorMulta');
+        if(out) out.value=(c>0&&v>0)?`R$ ${formatarMoeda(c*v)}`:'';
+    }
+
+    function atualizarRecursoV45(){
+        const sim=document.getElementById('v13RecursoApresentado')?.value==='Sim';
+        const area=document.getElementById('v13DecisaoArea');
+        if(area) area.style.display=sim?'block':'none';
+        if(sim){
+            const data=document.getElementById('v13DataRegistro')?.value;
+            const campo=document.getElementById('v13PrazoRecurso');
+            if(campo && data){
+                campo.value='7 dias úteis — até '+formatarData(calcularPrazoRecurso(data));
+            }
+        }
+    }
+
     function renderLista(regs=medidas){
         if(!lista) return;
         if(!regs.length){
             lista.innerHTML='<div style="padding:16px;text-align:center;color:#64737c">Nenhum registro administrativo encontrado para o filtro selecionado.</div>';
             return;
         }
-        lista.innerHTML=`<table class="admin-v13-table"><thead><tr><th>Protocolo</th><th>Data</th><th>Unidade</th><th>Tipo</th><th>Infração</th><th>Chamado</th><th>Ações</th></tr></thead><tbody>${regs.map(x=>`<tr>
+        lista.innerHTML=`<table class="admin-v13-table"><thead><tr><th>Protocolo</th><th>Data do registro</th><th>Data da infração</th><th>Unidade</th><th>Tipo</th><th>Infração</th><th>Multa</th><th>Status</th><th>Ações</th></tr></thead><tbody>${regs.map(x=>{
+            const meta=obterMetaAdministrativa(x);
+            return `<tr>
             <td><span class="admin-v13-protocol">${esc(x.protocolo)}</span></td>
             <td>${esc(formatarData(x.dataRegistro))}</td>
+            <td>${esc(formatarData(x.dataOcorrencia || x.dataInfracao || x.dataFato || ''))}</td>
             <td>${esc(x.unidade)} / ${esc(x.bloco)}</td>
             <td><span class="admin-v13-badge ${x.tipo==='Advertência'?'adv':'not'}">${esc(x.tipo)}</span></td>
             <td>${esc(x.infracao)}<br><small>${esc(x.descricao||'')}</small></td>
-            <td>${x.protocoloChamado?`<span class="admin-v13-protocol">${esc(x.protocoloChamado)}</span>`:'—'}</td>
+            <td>${x.tipo==='Notificação' && meta.valorMulta ? `R$ ${esc(formatarMoeda(meta.valorMulta))}` : '—'}</td>
+            <td>${esc(statusAdministrativo(meta).texto)}</td>
             <td><button class="admin-v13-btn gray" type="button" data-v13-view="${esc(x.protocolo)}">👁️ Ver</button></td>
-        </tr>`).join('')}</tbody></table>`;
+        </tr>`;
+        }).join('')}</tbody></table>`;
         lista.querySelectorAll('[data-v13-view]').forEach(b=>b.addEventListener('click',()=>verRegistro(b.dataset.v13View)));
+
     }
 
-    let adm13RegistroModalAtual = null;
+    var adm13RegistroModalAtual = null;
     function verRegistro(protocolo){
         const x=medidas.find(m=>m.protocolo===protocolo); if(!x) return;
         const hist=medidas.filter(m=>m.bloco===x.bloco && m.unidade===x.unidade);
@@ -10070,7 +12067,7 @@ function inicializarDashboardV11(){
         document.getElementById('adm13ModalTitulo').textContent=tipo;
         set('adm13ModalProtocolo',x.protocolo);
         set('adm13ModalTipo',x.tipo);
-        set('adm13ModalData',formatarData(x.dataRegistro));
+        set('adm13ModalData',formatarData(x.dataRegistro)); set('adm13ModalDataInfracao',formatarData(x.dataOcorrencia||x.dataInfracao||x.dataFato||''));
         set('adm13ModalUnidade',`${x.unidade||'—'} / ${x.bloco||'—'}`);
         set('adm13ModalInfracao',x.infracao);
         set('adm13ModalBase',x.baseRegimento);
@@ -10078,6 +12075,11 @@ function inicializarDashboardV11(){
         set('adm13ModalDescricao',x.descricao);
         set('adm13ModalObservacoes',x.observacoes);
         set('adm13ModalChamado',x.protocoloChamado||'Não associado');
+        const meta=obterMetaAdministrativa(x);
+        const st=statusAdministrativo(meta);
+        set('adm13ModalPenalidade',x.tipo==='Notificação' ? `${meta.multaCotas||'—'} cota(s)${meta.valorMulta?` · R$ ${formatarMoeda(meta.valorMulta)}`:''} · ${st.texto}` : 'Advertência — sem multa');
+        set('adm13ModalRecurso',x.tipo==='Notificação' ? `${meta.recursoApresentado==='Sim'?'Apresentado':'Não apresentado'}${meta.dataRecurso?' em '+formatarData(meta.dataRecurso):''}${meta.justificativaRecurso?' · '+meta.justificativaRecurso:''}` : 'Não se aplica');
+        set('adm13ModalDecisao',x.tipo==='Notificação' ? (meta.decisao ? `${meta.decisao}${meta.dataDecisao?' em '+formatarData(meta.dataDecisao):''}${meta.responsaveisDecisao?' · '+meta.responsaveisDecisao:''}` : 'Aguardando análise') : 'Não se aplica');
         set('adm13ModalHistorico',`${hist.length} registro(s) nesta unidade · ${rec} registro(s) da mesma infração.`);
         const btnChamado=document.getElementById('btnAbrirChamadoAdm13');
         if(btnChamado){
@@ -10102,39 +12104,99 @@ function inicializarDashboardV11(){
     }
 
     function imprimirMedidaAdm13(){
-        const x=adm13RegistroModalAtual;
-        if(!x) return;
-        const tipo = x.tipo === 'Notificação' ? 'NOTIFICAÇÃO' : 'ADVERTÊNCIA';
-        const esc = (v)=>String(v ?? '').replace(/[&<>\"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c]));
-        const w=window.open('', '_blank', 'width=900,height=800');
-        if(!w){ alert('O navegador bloqueou a janela de impressão. Permita pop-ups para este site.'); return; }
-        w.document.write(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>${esc(tipo)} - ${esc(x.protocolo)}</title><style>
-            *{box-sizing:border-box} body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:35px;color:#183447;background:#fff}
-            .cab{border-bottom:3px solid #176b35;padding-bottom:14px;margin-bottom:24px}.cab h1{margin:0;color:#176b35;font-size:22px}.cab h2{margin:6px 0 0;font-size:18px}.sub{color:#667;margin-top:5px;font-size:13px}
-            .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.item{border:1px solid #d9e1e6;border-radius:8px;padding:10px}.full{grid-column:1/-1}.lab{font-size:11px;color:#687680;font-weight:bold;margin-bottom:5px}.val{font-size:14px;font-weight:600;white-space:pre-wrap;word-break:break-word;min-height:18px}
-            .assin{margin-top:70px;display:grid;grid-template-columns:1fr 1fr;gap:60px;text-align:center}.linha{border-top:1px solid #333;padding-top:7px;font-size:12px}.rod{margin-top:30px;color:#777;font-size:11px;text-align:center}
-            @media print{body{padding:18mm}.no-print{display:none}}
-        </style></head><body>
-        <div class="cab"><h1>SISTEMA DE GESTÃO DO CONDOMÍNIO</h1><h2>${esc(tipo)}</h2><div class="sub">Protocolo ${esc(x.protocolo)}</div></div>
-        <div class="grid">
-          <div class="item"><div class="lab">Protocolo</div><div class="val">${esc(x.protocolo)}</div></div>
-          <div class="item"><div class="lab">Tipo</div><div class="val">${esc(x.tipo)}</div></div>
-          <div class="item"><div class="lab">Data do registro</div><div class="val">${esc(formatarData(x.dataRegistro))}</div></div>
-          <div class="item"><div class="lab">Unidade / Bloco</div><div class="val">${esc((x.unidade||'—')+' / '+(x.bloco||'—'))}</div></div>
-          <div class="item full"><div class="lab">Infração / Ocorrência</div><div class="val">${esc(x.infracao||'Não informado')}</div></div>
-          <div class="item"><div class="lab">Base no Regimento</div><div class="val">${esc(x.baseRegimento||'Não informado')}</div></div>
-          <div class="item"><div class="lab">Responsável</div><div class="val">${esc(x.responsavel||'Não informado')}</div></div>
-          <div class="item full"><div class="lab">Descrição</div><div class="val">${esc(x.descricao||'Não informado')}</div></div>
-          <div class="item full"><div class="lab">Observações</div><div class="val">${esc(x.observacoes||'Não informado')}</div></div>
-          <div class="item full"><div class="lab">Chamado relacionado</div><div class="val">${esc(x.protocoloChamado||'Não associado')}</div></div>
-        </div>
-        <div class="assin"><div class="linha">Responsável pela administração</div><div class="linha">Ciente / assinatura do responsável pela unidade</div></div>
-        <div class="rod">Documento emitido pelo Sistema de Gestão do Condomínio.</div>
-        <script>window.onload=()=>setTimeout(()=>window.print(),250);<\/script>
-        </body></html>`);
-        w.document.close();
+    const x=adm13RegistroModalAtual;
+    if(!x) return;
+
+    const esc=(v)=>String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    const tipo=String(x.tipo||'Advertência');
+    const notificacao=tipo.toLowerCase()==='notificação';
+    const titulo=notificacao?'NOTIFICAÇÃO POR INFRAÇÃO ÀS NORMAS INTERNAS':'ADVERTÊNCIA POR INFRAÇÃO ÀS NORMAS INTERNAS';
+    const meses=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+
+    function dataExtenso(v){
+        if(!v)return '';
+        const p=String(v).split('-');
+        return p.length===3?`${Number(p[2])} de ${meses[Number(p[1])-1]||p[1]} de ${p[0]}`:formatarData(v);
     }
-    async function carregarMedidas(){
+
+    const dataRegistro=formatarData(x.dataRegistro||'');
+    const dataInfracao=formatarData(x.dataOcorrencia||x.dataInfracao||x.dataFato||'');
+    const unidade=String(x.unidade||'Não informada');
+    const bloco=String(x.bloco||'Não informado');
+    const responsavel=String(x.responsavel||'Administração');
+    const cotas=Number(x.multaCotas||0);
+    const valorCota=Number(x.valorCota||0);
+    const valorMulta=Number(x.valorMulta||0);
+
+    const logoData=new URL('logo parqueclube.png',window.location.href).href;
+    const qrData='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAM0AAADNAQAAAAAzx8nEAAACjElEQVR4nO2YMY7kNhBFX7UEUI6oG1AXGcmR7+Ncg9a4B/AxfJQVe07hjH2CpSKzAam/g/YCDrzOlgsYrkSAKuDHL/6q+jTxlbifvpaB/24qmlknex26K3Cf+mMwMxsqwzBJQBMZt9fB/7K55KS9LhsoZoKLGTApMeVGbmUO5TvUS/0c9OCY3Fv/rc/6p2ifH8s9BoTtBx1DfRgoSnIxE9zD70iZ4KS9dlFkZsAMH7cldFdm7mZtbcFOkor6XyPqm8gISFKqrxTcw0tP6Y4QgLOqFgVF7UEPv4QyMlNGv1NGmrowWkbeMVAyvFP3x8mlbvQ/D7/XZUO6pDLlc2LKUKY8B6y2UlDUDiNNAr8EoElu9UttGA9miuUZ9+RFO2WSal/R1UsAoUx5xj38RYX6bKxeKlNu5KQFJu1g9dl4+AW3+kuSMgGYcTFTu5lfgcJ2H+4WlDC1gZe+qdtFW9gkg0Zoe32XrNk701vdvnFiyu83rd6MK03qPjKUK3Pt0XaF0LHtMPoloH6+dVC5KCjmsxTzHNxKk8ok6TliKt8N32L2GbaffKYrW0/p/Lc4619TL/0xFPVNgu3VnibJcuWinPi47bduhJu/6JL0qW9SN273uj4Frf6SFDMw5Tno4XfK6Ct30RbLR4t9bna7ehe7cmsD8PZb5X0j6pKeO9eU/1o/XKw/U2Ju5GJuUjFd5FZmMFUW7InR7xT1c+jgGLaz2qBPtWcKWgEnKWF5Dm71e3AxV/ewJonYH4NW37KdbwtFwX0HnxJczGdJ+ctPq83GFxhSKiYlSQsu1vewz9gW3INj6NiUykt9D4tXYoTQXbdLuv/IMXUf9V97VsCtXno2LbzkVirvovb/g+Tf4k9GGKk1eOEOZAAAAABJRU5ErkJggg==';
+
+    const w=window.open('','_blank','width=900,height=1000');
+    if(!w){alert('O navegador bloqueou a janela de impressão. Permita pop-ups para este site.');return;}
+
+    w.document.write(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<title>${esc(tipo)} - ${esc(x.protocolo)}</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;padding:0;background:#fff}
+body{color:#222;font-family:"Times New Roman",Times,serif;font-size:13.5px;line-height:1.45}
+.page{position:relative;width:210mm;min-height:297mm;margin:0 auto;padding:12mm 18mm 22mm}
+.header{display:flex;align-items:center;gap:13px;padding-bottom:5px;border-bottom:2px solid #222}
+.header-logo{width:92px;height:58px;object-fit:contain}
+.header-text{flex:1;text-align:center;padding-right:92px}
+.header-title{font-size:20px;font-weight:700;text-transform:uppercase;line-height:1.05}
+.header-sub{font-size:10.5px;line-height:1.25;margin-top:3px}.header-phone{font-size:10.5px}
+.date-place{text-align:right;margin:14px 0 22px}.recipient{margin-left:7%;margin-bottom:18px;line-height:1.4}
+.reference{font-size:15px;font-weight:700;text-decoration:underline;text-transform:uppercase;margin:15px 0 22px 7%}
+p{margin:0 7% 13px;text-align:justify}
+.info{margin:12px 7% 16px;padding:8px 10px;border-left:3px solid #176b35}
+.info-row{margin:3px 0}.label{font-weight:700}.regimento{margin:10px 7% 15px;text-align:center}
+.regimento-title{font-weight:700;text-transform:uppercase;text-decoration:underline;margin-bottom:7px}
+.penalty{margin:15px 7%;padding:10px 12px;border:1px solid #777}
+.signature{margin:55px 7% 0;display:grid;grid-template-columns:1fr 1fr;gap:45px;text-align:center}
+.signature-line{border-top:1px solid #222;padding-top:5px;font-size:10.5px}
+.qrbox{position:absolute;right:18mm;bottom:13mm;width:31mm;text-align:center;font-family:Arial,Helvetica,sans-serif;color:#555;font-size:6.5px;line-height:1.15}
+.qrbox img{display:block;width:24mm;height:24mm;margin:0 auto 2mm}
+.qrprotocol{font-weight:700;font-size:6.5px;word-break:break-all}
+.footer{position:absolute;left:18mm;bottom:9mm;font-family:Arial,Helvetica,sans-serif;font-size:8px;letter-spacing:.4px;color:#555;text-transform:uppercase}
+@page{size:A4;margin:0}@media print{.page{width:auto;min-height:297mm;margin:0}}
+</style></head><body><div class="page">
+<header class="header"><img class="header-logo" src="${logoData}" alt="Parque Clube"><div class="header-text">
+<div class="header-title">CONDOMÍNIO PARQUE CLUBE</div>
+<div class="header-sub">Conjunto Residencial 05 - CR 05 Fazenda Santa Maria</div>
+<div class="header-sub">Valparaíso de Goiás – GO&nbsp;&nbsp; CEP: 72.872-600</div>
+<div class="header-phone">Telefone: 3054 – 8464</div>
+</div></header>
+<div class="date-place">Valparaíso de Goiás, ${esc(dataExtenso(x.dataRegistro||''))}.</div>
+<div class="recipient"><strong>Ilmo. (A) Sr (A). ${esc(responsavel)}</strong><br>Da Unid. ${esc(unidade)} - ${esc(bloco)} do Conjunto Residencial Parque Clube.</div>
+<div class="reference">REF.: ${esc(titulo)}</div>
+<p>Prezado (a) Senhor (a),</p>
+<p>Na qualidade de Administração do Condomínio Parque Clube, atendendo às obrigações estabelecidas, temos a missão de comunicar formalmente o descumprimento das normas deste residencial, conforme registro administrativo.</p>
+<div class="info">
+<div class="info-row"><span class="label">Protocolo:</span> ${esc(x.protocolo)}</div>
+<div class="info-row"><span class="label">Data do registro:</span> ${esc(dataRegistro||'Não informada')}</div>
+<div class="info-row"><span class="label">Data da infração:</span> ${esc(dataInfracao||'Não informada')}</div>
+<div class="info-row"><span class="label">Infração / ocorrência:</span> ${esc(x.infracao||'Não informada')}</div>
+</div>
+<p><strong>Descrição da ocorrência:</strong><br>${esc(x.descricao||'Não informado.')}</p>
+${x.observacoes?`<p><strong>Observações:</strong><br>${esc(x.observacoes)}</p>`:''}
+<div class="regimento"><div class="regimento-title">Previsto em:</div><div><strong>${esc(x.baseRegimento||'Não informada')}</strong></div></div>
+${notificacao?`<div class="penalty"><strong>PENALIDADE ADMINISTRATIVA</strong><br>${cotas?`Multa prevista: ${esc(cotas)} cota(s) condominial(is).<br>`:''}${valorCota?`Valor da cota: R$ ${valorCota.toFixed(2).replace('.',',')}<br>`:''}${valorMulta?`<strong>Valor da multa: R$ ${valorMulta.toFixed(2).replace('.',',')}</strong><br>`:''}Prazo para recurso administrativo: <strong>7 dias úteis</strong>.</div>`:''}
+<p>${notificacao?'Solicitamos sua atenção para o cumprimento das normas internas. Caso entenda necessário, poderá apresentar recurso administrativo dentro do prazo previsto.':'Solicitamos sua atenção para evitar reincidências e novos descumprimentos das normas, preservando os interesses de todos e as melhores condições de habitabilidade para toda a comunidade do condomínio.'}</p>
+<p>Atenciosamente,</p>
+<div class="signature"><div class="signature-line">${esc(responsavel)}<br>Administração do Condomínio</div><div class="signature-line">Ciente / assinatura do responsável pela unidade</div></div>
+
+<div class="qrbox">
+<img src="${qrData}" alt="QR Code">
+<div>Consulte pelo aplicativo</div>
+<div class="qrprotocol">${esc(x.protocolo)}</div>
+</div>
+<div class="footer">REGIMENTO INTERNO</div>
+</div><script>window.onload=function(){setTimeout(function(){window.print();},300);};<\/script>
+</body></html>`);
+    w.document.close();
+}
+
+async function carregarMedidas(){
         if(!senhaAdministrativa){alert('Faça o login administrativo primeiro.');return;}
         if(btnAtualizar){btnAtualizar.disabled=true;btnAtualizar.textContent='⏳ Atualizando...';}
         try{
@@ -10154,7 +12216,7 @@ function inicializarDashboardV11(){
             renderLista([]);
             carregarChamadosSelect();
         }catch(e){
-            console.error('V1.3 - erro ao listar Advertências/Notificações:', e);
+            console.error('Erro ao listar Advertências/Notificações:', e);
             alert(e.message||'Erro ao carregar registros administrativos.');
         }
         finally{if(btnAtualizar){btnAtualizar.disabled=false;btnAtualizar.textContent='🔄 Atualizar registros';}}
@@ -10199,9 +12261,27 @@ function inicializarDashboardV11(){
             baseRegimento:document.getElementById('v13BaseRegimento').value.trim(),
             responsavel:document.getElementById('v13Responsavel').value.trim(),
             observacoes:document.getElementById('v13Observacoes').value.trim(),
-            protocoloChamado:document.getElementById('v13ProtocoloChamado').value
+            protocoloChamado:document.getElementById('v13ProtocoloChamado').value,
+            origem:document.getElementById('v13Origem').value,
+            categoria:document.getElementById('v13Categoria').value,
+            multaCotas:document.getElementById('v13MultaCotas').value,
+            valorCota:document.getElementById('v13ValorCota').value,
+            valorMulta:(()=>{
+                const c=Number(document.getElementById('v13MultaCotas').value||0);
+                const v=Number(document.getElementById('v13ValorCota').value||0);
+                return c>0&&v>0 ? (c*v).toFixed(2) : '';
+            })(),
+            prazoRecurso:document.getElementById('v13PrazoRecurso').value,
+            recursoApresentado:document.getElementById('v13RecursoApresentado').value,
+            dataRecurso:document.getElementById('v13DataRecurso').value,
+            justificativaRecurso:document.getElementById('v13JustificativaRecurso').value.trim(),
+            decisao:document.getElementById('v13Decisao').value,
+            dataDecisao:document.getElementById('v13DataDecisao').value,
+            responsaveisDecisao:document.getElementById('v13ResponsaveisDecisao').value.trim(),
+            justificativaDecisao:document.getElementById('v13JustificativaDecisao').value.trim()
         };
-        if(!payload.tipo||!payload.bloco||!payload.unidade||!payload.infracao||!payload.descricao){alert('Preencha os campos obrigatórios.');return;}
+        if(!payload.tipo||!payload.bloco||!payload.unidade||!payload.categoria||!payload.infracao||!payload.descricao){alert('Preencha os campos obrigatórios.');return;}
+        if(payload.tipo==='Notificação' && !payload.multaCotas){alert('Informe a quantidade de cotas da multa prevista para a Notificação.');return;}
         bot.disabled=true;bot.textContent='⏳ Registrando...';
         try{
             const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
@@ -10245,16 +12325,386 @@ function inicializarDashboardV11(){
         renderLista(regs);
     }
 
-    function relatorioUnidade(){
-        const bloco=ultimaConsulta.bloco || document.getElementById('v13BuscaBloco').value;
-        const unidade=ultimaConsulta.unidade || document.getElementById('v13BuscaUnidade').value.trim();
-        if(!bloco||!unidade){alert('Consulte primeiro o bloco e a unidade.');return;}
-        const regs=medidas.filter(x=>x.bloco===bloco&&x.unidade===unidade);
-        const w=window.open('','_blank');
-        if(!w){alert('O navegador bloqueou a nova janela. Permita pop-ups para gerar o relatório.');return;}
-        const rows=regs.map(x=>`<tr><td>${esc(x.dataRegistro)}</td><td>${esc(x.protocolo)}</td><td>${esc(x.tipo)}</td><td>${esc(x.infracao)}</td><td>${esc(x.protocoloChamado||'—')}</td></tr>`).join('');
-        w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Histórico ${esc(unidade)}/${esc(bloco)}</title><style>body{font-family:Arial,sans-serif;color:#18313f;margin:30px}h1{color:#123b5d}table{width:100%;border-collapse:collapse}th{background:#123b5d;color:#fff;text-align:left;padding:8px}td{border:1px solid #ccd7dc;padding:7px;font-size:12px}.box{border:1px solid #d6e0e5;border-radius:8px;padding:12px;margin:12px 0} @media print{button{display:none}}</style></head><body><img src="${location.origin}/logo parqueclube.png" style="max-width:180px"><h1>Histórico de Advertências / Notificações</h1><div class="box"><strong>Unidade:</strong> ${esc(unidade)} &nbsp; <strong>Bloco:</strong> ${esc(bloco)}<br><strong>Total de registros:</strong> ${regs.length}</div><table><thead><tr><th>Data</th><th>Protocolo</th><th>Tipo</th><th>Infração</th><th>Chamado relacionado</th></tr></thead><tbody>${rows||'<tr><td colspan="5">Nenhum registro encontrado.</td></tr>'}</tbody></table><div class="box"><strong>Observação:</strong> documento destinado ao acompanhamento administrativo da unidade.</div><button onclick="window.print()">🖨️ Imprimir / Salvar PDF</button></body></html>`);w.document.close();setTimeout(()=>w.print(),500);
+    
+    
+    function imprimirProtocolosAdministrativos(){
+        const texto=document.getElementById('v13BuscaProtocoloAdm')?.value||'';
+        const tipo=document.getElementById('v13FiltroTipoAdm')?.value||'';
+        const periodo=document.getElementById('v13PeriodoImpressaoAdm')?.value||'hoje';
+        const termo=String(texto).trim().toLowerCase();
+
+        const agora=new Date();
+        const pad=n=>String(n).padStart(2,'0');
+        const isoLocal=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+
+        let inicio='', fim='', descricaoPeriodo='Hoje';
+
+        if(periodo==='hoje'){
+            inicio=isoLocal(agora);
+            fim=inicio;
+            descricaoPeriodo='Hoje';
+        }else if(periodo==='mes'){
+            inicio=`${agora.getFullYear()}-${pad(agora.getMonth()+1)}-01`;
+            fim=isoLocal(new Date(agora.getFullYear(),agora.getMonth()+1,0));
+            descricaoPeriodo='Este mês';
+        }else if(periodo==='mes_anterior'){
+            const primeiroMesAnterior=new Date(agora.getFullYear(),agora.getMonth()-1,1);
+            inicio=isoLocal(primeiroMesAnterior);
+            fim=isoLocal(new Date(agora.getFullYear(),agora.getMonth(),0));
+            descricaoPeriodo='Mês anterior';
+        }else{
+            inicio=document.getElementById('v13DataInicialImpressaoAdm')?.value||'';
+            fim=document.getElementById('v13DataFinalImpressaoAdm')?.value||'';
+            descricaoPeriodo=(inicio&&fim)?`${formatarData(inicio)} a ${formatarData(fim)}`:'Período personalizado';
+            if(!inicio||!fim){
+                alert('Informe a data inicial e a data final para gerar o relatório.');
+                return;
+            }
+            if(inicio>fim){
+                alert('A data inicial não pode ser posterior à data final.');
+                return;
+            }
+        }
+
+        const regs=medidas
+            .filter(x=>{
+                const d=String(x.dataRegistro||'').slice(0,10);
+                return d && d>=inicio && d<=fim;
+            })
+            .filter(x=>!tipo || String(x.tipo||'')===tipo)
+            .filter(x=>{
+                if(!termo) return true;
+                const base=[
+                    x.protocolo,x.unidade,x.bloco,x.tipo,
+                    x.infracao,x.descricao,x.protocoloChamado
+                ].map(v=>String(v||'').toLowerCase()).join(' ');
+                return base.includes(termo);
+            })
+            .slice()
+            .sort((a,b)=>String(b.dataRegistro||'').localeCompare(String(a.dataRegistro||'')) ||
+                         String(b.protocolo||'').localeCompare(String(a.protocolo||'')));
+
+        const esc=(v)=>String(v??'')
+            .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+            .replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+            .replace(/'/g,'&#39;');
+
+        const emissao=agora.toLocaleDateString('pt-BR')+' às '+
+            agora.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+
+        const rows=regs.map(x=>`
+        <tr>
+          <td><strong>${esc(x.protocolo||'—')}</strong></td>
+          <td>${esc(formatarData(x.dataRegistro||''))}</td>
+          <td>${esc(formatarData(x.dataOcorrencia||x.dataInfracao||x.dataFato||''))}</td>
+          <td>${esc(x.unidade||'—')} / ${esc(x.bloco||'—')}</td>
+          <td>${esc(x.tipo||'—')}</td>
+          <td>${esc(x.infracao||'—')}</td>
+        </tr>`).join('');
+
+        const w=window.open('','_blank','width=1100,height=900');
+        if(!w){
+            alert('O navegador bloqueou a janela de impressão. Permita pop-ups para este site.');
+            return;
+        }
+
+        w.document.write(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<title>RELATÓRIO DE PROTOCOLOS ADMINISTRATIVOS - Parque Clube</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:#fff}
+body{font-family:Arial,Helvetica,sans-serif;color:#18313f;font-size:11px}
+.page{width:210mm;min-height:297mm;margin:0 auto;padding:12mm 14mm 16mm}
+.header{display:flex;align-items:center;gap:13px;padding-bottom:6px;border-bottom:2px solid #222}
+.header-logo{width:92px;height:58px;object-fit:contain}
+.header-text{flex:1;text-align:center;padding-right:92px}
+.header-title{font-family:"Times New Roman",Times,serif;font-size:20px;font-weight:700;line-height:1.05}
+.header-sub{font-family:"Times New Roman",Times,serif;font-size:10.5px;line-height:1.25;margin-top:3px}
+.header-phone{font-family:"Times New Roman",Times,serif;font-size:10.5px}
+.title{text-align:center;font-size:18px;color:#123b5d;margin:20px 0 12px;font-weight:800;text-transform:uppercase}
+.meta{border:1px solid #d6e0e5;border-radius:7px;padding:9px;margin-bottom:10px}
+.meta strong{color:#123b5d}
+.emissao{text-align:right;font-size:9px;color:#555;margin-top:6px}
+table{width:100%;border-collapse:collapse;table-layout:fixed;margin-top:12px}
+th{background:#123b5d;color:#fff;text-align:left;padding:7px 6px;font-size:10px}
+td{border:1px solid #ccd7dc;padding:6px;font-size:9.5px;vertical-align:top;word-wrap:break-word}
+th:nth-child(1){width:18%}
+th:nth-child(2){width:13%}
+th:nth-child(3){width:13%}
+th:nth-child(4){width:18%}
+th:nth-child(5){width:13%}
+th:nth-child(6){width:25%}
+.note{margin-top:12px;border:1px solid #d6e0e5;border-radius:7px;padding:8px;color:#555;font-size:9px}
+.footer{margin-top:24px;border-top:1px solid #d6e0e5;padding-top:7px;font-size:8px;color:#666;display:flex;justify-content:space-between}
+.no-print{margin-top:15px;padding:8px 14px}
+@page{size:A4;margin:0}
+@media print{.page{width:auto;min-height:297mm;margin:0}.no-print{display:none!important}}
+</style></head><body><div class="page">
+
+<header class="header">
+<img class="header-logo" src="${location.origin}/logo parqueclube.png" alt="Parque Clube">
+<div class="header-text">
+<div class="header-title">CONDOMÍNIO PARQUE CLUBE</div>
+<div class="header-sub">Conjunto Residencial 05 - CR 05 Fazenda Santa Maria</div>
+<div class="header-sub">Valparaíso de Goiás – GO&nbsp;&nbsp; CEP: 72.872-600</div>
+<div class="header-phone">Telefone: 3054 – 8464</div>
+</div>
+</header>
+
+<div class="title">RELATÓRIO DE PROTOCOLOS ADMINISTRATIVOS</div>
+
+<div class="meta">
+<strong>Período:</strong> ${esc(descricaoPeriodo)}
+&nbsp;&nbsp;&nbsp;
+<strong>Total de protocolos:</strong> ${regs.length}
+${tipo?`&nbsp;&nbsp;&nbsp;<strong>Tipo:</strong> ${esc(tipo)}`:''}
+${termo?`<br><strong>Filtro:</strong> ${esc(texto)}`:''}
+<div class="emissao"><strong>Data e hora de emissão:</strong> ${esc(emissao)}</div>
+</div>
+
+<table>
+<thead><tr>
+<th>Protocolo</th>
+<th>Data do registro</th>
+<th>Data da infração</th>
+<th>Unidade / Bloco</th>
+<th>Tipo</th>
+<th>Descrição da infração</th>
+</tr></thead>
+<tbody>
+${rows||'<tr><td colspan="6" style="text-align:center;padding:14px">Nenhum protocolo encontrado para o período selecionado.</td></tr>'}
+</tbody></table>
+
+<div class="note">
+<strong>Observação:</strong> relatório dos protocolos administrativos registrados no Sistema de Gestão do Condomínio Parque Clube.
+</div>
+
+<div class="footer">
+<span>Sistema de Gestão do Condomínio</span>
+<span>Relatório de Protocolos Administrativos</span>
+</div>
+
+<button class="no-print" onclick="window.print()">🖨️ Imprimir / Salvar PDF</button>
+</div></body></html>`);
+
+        w.document.close();
+        setTimeout(()=>w.print(),500);
     }
+
+function renderProtocolosAdministrativos(filtroTexto='', filtroTipo=''){
+        const lista=document.getElementById('v13ProtocolosListaAdm');
+        const resumo=document.getElementById('v13ProtocolosResumoAdm');
+        if(!lista) return;
+
+        const termo=String(filtroTexto||'').trim().toLowerCase();
+        const tipo=String(filtroTipo||'').trim();
+
+        const regs=medidas
+            .filter(x=>!tipo || String(x.tipo||'')===tipo)
+            .filter(x=>{
+                if(!termo) return true;
+                const base=[
+                    x.protocolo,
+                    x.unidade,
+                    x.bloco,
+                    x.tipo,
+                    x.infracao,
+                    x.descricao,
+                    x.protocoloChamado
+                ].map(v=>String(v||'').toLowerCase()).join(' ');
+                return base.includes(termo);
+            })
+            .slice()
+            .sort((a,b)=>String(b.dataRegistro||'').localeCompare(String(a.dataRegistro||'')) ||
+                         String(b.protocolo||'').localeCompare(String(a.protocolo||'')));
+
+        if(resumo){
+            resumo.innerHTML=`<div class="admin-v13-hint"><strong>${regs.length}</strong> protocolo(s) encontrado(s).</div>`;
+        }
+
+        if(!regs.length){
+            lista.innerHTML='<div style="padding:16px;text-align:center;color:#64737c">Nenhum protocolo administrativo encontrado.</div>';
+            return;
+        }
+
+        lista.innerHTML=`<table class="admin-v13-table">
+<thead><tr>
+<th>Protocolo</th>
+<th>Data do registro</th>
+<th>Data da infração</th>
+<th>Unidade / Bloco</th>
+<th>Tipo</th>
+<th>Infração</th>
+<th>Ação</th>
+</tr></thead>
+<tbody>${regs.map(x=>`
+<tr>
+<td><strong>${esc(x.protocolo||'—')}</strong></td>
+<td>${esc(formatarData(x.dataRegistro||''))}</td>
+<td>${esc(formatarData(x.dataOcorrencia||x.dataInfracao||x.dataFato||''))}</td>
+<td>${esc(x.unidade||'—')} / ${esc(x.bloco||'—')}</td>
+<td><span class="admin-v13-badge ${x.tipo==='Advertência'?'adv':'not'}">${esc(x.tipo||'—')}</span></td>
+<td>${esc(x.infracao||'—')}</td>
+<td><button class="admin-v13-btn gray" type="button" data-adm-protocol-view="${esc(x.protocolo)}">👁️ Ver</button></td>
+</tr>`).join('')}</tbody></table>`;
+
+        lista.querySelectorAll('[data-adm-protocol-view]').forEach(btn=>{
+            btn.addEventListener('click',()=>verRegistro(btn.dataset.admProtocolView));
+        });
+    }
+
+    function abrirConsultaProtocolosAdministrativos(){
+        const card=document.getElementById('adminV13ProtocolosCard');
+        if(!card) return;
+        card.style.display='block';
+        const busca=document.getElementById('v13BuscaProtocoloAdm');
+        const tipo=document.getElementById('v13FiltroTipoAdm');
+        if(busca) busca.value='';
+        if(tipo) tipo.value='';
+        renderProtocolosAdministrativos('','');
+        card.scrollIntoView({behavior:'smooth',block:'start'});
+    }
+
+    function fecharConsultaProtocolosAdministrativos(){
+        const card=document.getElementById('adminV13ProtocolosCard');
+        if(card) card.style.display='none';
+    }
+
+function relatorioUnidade(){
+    const bloco=ultimaConsulta.bloco || document.getElementById('v13BuscaBloco').value;
+    const unidade=ultimaConsulta.unidade || document.getElementById('v13BuscaUnidade').value.trim();
+    if(!bloco||!unidade){
+        alert('Consulte primeiro o bloco e a unidade.');
+        return;
+    }
+
+    const regs=medidas.filter(x=>x.bloco===bloco&&x.unidade===unidade);
+    const w=window.open('','_blank','width=1000,height=900');
+    if(!w){
+        alert('O navegador bloqueou a nova janela. Permita pop-ups para gerar o relatório.');
+        return;
+    }
+
+    const esc=(v)=>String(v??'')
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+        .replace(/'/g,'&#39;');
+
+    function dataHoraEmissao(){
+        const agora=new Date();
+        const data=agora.toLocaleDateString('pt-BR');
+        const hora=agora.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+        return `${data} às ${hora}`;
+    }
+
+    function dataRegistro(x){
+        return x.dataRegistro ? formatarData(x.dataRegistro) : '—';
+    }
+
+    function dataInfracao(x){
+        const v=x.dataOcorrencia||x.dataInfracao||x.dataFato||'';
+        return v ? formatarData(v) : '—';
+    }
+
+    const rows=regs.map(x=>`
+        <tr>
+            <td>${esc(dataRegistro(x))}</td>
+            <td>${esc(dataInfracao(x))}</td>
+            <td><span class="tipo ${String(x.tipo||'').toLowerCase()==='notificação'?'notificacao':'advertencia'}">${esc(x.tipo||'—')}</span></td>
+            <td>${esc(x.infracao||'—')}${x.descricao?`<div class="descricao">${esc(x.descricao)}</div>`:''}</td>
+            <td><strong>${esc(x.protocolo||'—')}</strong></td>
+        </tr>`).join('');
+
+    const emissao=dataHoraEmissao();
+
+    w.document.write(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<title>Histórico de Advertências / Notificações - ${esc(unidade)}/${esc(bloco)}</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:#fff}
+body{font-family:Arial,Helvetica,sans-serif;color:#18313f;font-size:12px}
+.page{width:210mm;min-height:297mm;margin:0 auto;padding:12mm 14mm 16mm}
+.header{display:flex;align-items:center;gap:13px;padding-bottom:6px;border-bottom:2px solid #222}
+.header-logo{width:92px;height:58px;object-fit:contain}
+.header-text{flex:1;text-align:center;padding-right:92px}
+.header-title{font-family:"Times New Roman",Times,serif;font-size:20px;font-weight:700;line-height:1.05}
+.header-sub{font-family:"Times New Roman",Times,serif;font-size:10.5px;line-height:1.25;margin-top:3px}
+.header-phone{font-family:"Times New Roman",Times,serif;font-size:10.5px}
+.title{font-size:20px;color:#123b5d;margin:22px 0 12px;font-weight:700}
+.meta{border:1px solid #d6e0e5;border-radius:7px;padding:10px;margin-bottom:10px}
+.meta strong{color:#123b5d}
+.emissao{text-align:right;font-size:10px;color:#555;margin-top:4px}
+table{width:100%;border-collapse:collapse;table-layout:fixed;margin-top:14px}
+th{background:#123b5d;color:#fff;text-align:left;padding:8px 7px;font-size:11px}
+td{border:1px solid #ccd7dc;padding:7px;font-size:10.5px;vertical-align:top;word-wrap:break-word}
+th:nth-child(1){width:14%}
+th:nth-child(2){width:14%}
+th:nth-child(3){width:14%}
+th:nth-child(4){width:38%}
+th:nth-child(5){width:20%}
+.tipo{font-weight:700}
+.tipo.notificacao{color:#b42318}
+.tipo.advertencia{color:#9a6700}
+.descricao{margin-top:4px;color:#555;font-size:9.5px;line-height:1.3}
+.observacao{border:1px solid #d6e0e5;border-radius:7px;padding:10px;margin-top:14px}
+.footer{margin-top:30px;border-top:1px solid #d6e0e5;padding-top:8px;font-size:8.5px;color:#666;display:flex;justify-content:space-between}
+@page{size:A4;margin:0}
+@media print{
+    .page{width:auto;min-height:297mm;margin:0}
+    button{display:none!important}
+}
+</style></head><body><div class="page">
+
+<header class="header">
+<img class="header-logo" src="${location.origin}/logo parqueclube.png" alt="Parque Clube">
+<div class="header-text">
+<div class="header-title">CONDOMÍNIO PARQUE CLUBE</div>
+<div class="header-sub">Conjunto Residencial 05 - CR 05 Fazenda Santa Maria</div>
+<div class="header-sub">Valparaíso de Goiás – GO&nbsp;&nbsp; CEP: 72.872-600</div>
+<div class="header-phone">Telefone: 3054 – 8464</div>
+</div>
+</header>
+
+<div class="title">Histórico de Advertências / Notificações</div>
+
+<div class="meta">
+<strong>Unidade:</strong> ${esc(unidade)}
+&nbsp;&nbsp;&nbsp;
+<strong>Bloco:</strong> ${esc(bloco)}
+<br>
+<strong>Total de registros:</strong> ${regs.length}
+<div class="emissao"><strong>Documento emitido em:</strong> ${esc(emissao)}</div>
+</div>
+
+<table>
+<thead><tr>
+<th>Data do registro</th>
+<th>Data da infração</th>
+<th>Tipo</th>
+<th>Descrição da infração</th>
+<th>Protocolo</th>
+</tr></thead>
+<tbody>
+${rows||'<tr><td colspan="5">Nenhum registro encontrado.</td></tr>'}
+</tbody>
+</table>
+
+<div class="observacao">
+<strong>Observação:</strong> documento destinado ao acompanhamento administrativo da unidade.
+</div>
+
+<div class="footer">
+<span>Sistema de Gestão do Condomínio</span>
+<span>Documento administrativo • Histórico da unidade</span>
+</div>
+
+<button onclick="window.print()" style="margin-top:16px;padding:9px 16px">🖨️ Imprimir / Salvar PDF</button>
+
+</div></body></html>`);
+
+    w.document.close();
+    setTimeout(()=>w.print(),500);
+}
     async function abrir(){
         mostrarAdmin();
         preencherDatas();
@@ -10262,7 +12712,7 @@ function inicializarDashboardV11(){
         try{
             await garantirChamadosCarregados();
         }catch(e){
-            console.warn('V1.3 TESTE: chamados não disponíveis no D1 de teste. O cadastro administrativo continuará funcionando sem vínculo de chamado.', e);
+            console.warn('Aviso: chamados relacionados não estão disponíveis no D1 oficial. O cadastro administrativo continuará funcionando sem vínculo de chamado.', e);
             chamados = [];
             chamadosArquivadosV11 = [];
             carregarChamadosSelect();
@@ -10292,10 +12742,49 @@ function inicializarDashboardV11(){
         carregarMedidas();
     };
     if(btnMenu) btnMenu.addEventListener('click',abrir);
-    document.getElementById('btnVoltarAdminMenu')?.addEventListener('click',()=>{ if(admin) admin.style.display='none'; });
+    document.getElementById('btnVoltarAdminMenu')?.addEventListener('click',()=>{
+    if(admin){admin.style.display='none';admin.hidden=true;}
+    const localizarChamado=document.getElementById('localizarChamadoAdmin');
+    const editarChamado=document.getElementById('editarChamado');
+    if(localizarChamado) localizarChamado.style.display='none';
+    if(editarChamado) editarChamado.style.display='none';
+    if(search){search.style.display='none';search.hidden=true;}
+    if(report){report.style.display='none';report.hidden=true;}
+    if(voltar) voltar.style.display='none';
+    if(menu){menu.style.display='grid';menu.hidden=false;}
+});
     if(btnAtualizar) btnAtualizar.addEventListener('click',carregarMedidas);
     if(form) form.addEventListener('submit',salvar);
     document.getElementById('btnNovaAdministrativaV13')?.addEventListener('click',()=>{document.getElementById('adminV13FormCard')?.scrollIntoView({behavior:'smooth'});limparForm();});
+    document.getElementById('btnConsultarProtocolosAdmV13')?.addEventListener('click',abrirConsultaProtocolosAdministrativos);
+        document.getElementById('btnImprimirProtocolosAdmV13')?.addEventListener('click',imprimirProtocolosAdministrativos);
+    document.getElementById('v13PeriodoImpressaoAdm')?.addEventListener('change',()=>{
+        const v=document.getElementById('v13PeriodoImpressaoAdm')?.value;
+        const box=document.getElementById('v13PeriodoPersonalizadoAdm');
+        if(box) box.style.display=v==='periodo'?'grid':'none';
+    });
+
+document.getElementById('btnBuscarProtocolosAdmV13')?.addEventListener('click',()=>{
+        renderProtocolosAdministrativos(
+            document.getElementById('v13BuscaProtocoloAdm')?.value||'',
+            document.getElementById('v13FiltroTipoAdm')?.value||''
+        );
+    });
+    document.getElementById('v13BuscaProtocoloAdm')?.addEventListener('keydown',e=>{
+        if(e.key==='Enter'){
+            e.preventDefault();
+            document.getElementById('btnBuscarProtocolosAdmV13')?.click();
+        }
+    });
+    document.getElementById('btnLimparProtocolosAdmV13')?.addEventListener('click',()=>{
+        const busca=document.getElementById('v13BuscaProtocoloAdm');
+        const tipo=document.getElementById('v13FiltroTipoAdm');
+        if(busca) busca.value='';
+        if(tipo) tipo.value='';
+        renderProtocolosAdministrativos('','');
+    });
+    document.getElementById('btnFecharProtocolosAdmV13')?.addEventListener('click',fecharConsultaProtocolosAdministrativos);
+
     document.getElementById('btnCancelarAdministrativoV13')?.addEventListener('click',limparForm);
     document.getElementById('btnConsultarHistoricoV13')?.addEventListener('click',()=>consultarHistorico());
     document.getElementById('btnLimparHistoricoV13')?.addEventListener('click',()=>{
@@ -10326,6 +12815,7 @@ function inicializarDashboardV11(){
         document.getElementById('btnFecharAdm13Modal2')?.addEventListener('click',fecharModalAdm13);
         document.getElementById('btnAbrirChamadoAdm13')?.addEventListener('click',consultarChamadoRelacionadoAdm13);
         document.getElementById('btnImprimirAdm13Modal')?.addEventListener('click',imprimirMedidaAdm13);
+
         document.getElementById('adm13DetalhesModal')?.addEventListener('click',(e)=>{
             if(e.target.id==='adm13DetalhesModal') fecharModalAdm13();
         });
@@ -10346,71 +12836,64 @@ function inicializarDashboardV11(){
         if(c && c.dataOcorrencia){document.getElementById('v13DataOcorrencia').value=c.dataOcorrencia;}
         if(c && c.ocorrencia){const sel=document.getElementById('v13Infracao');const opt=[...sel.options].find(o=>o.textContent.toLowerCase().includes(String(c.ocorrencia).toLowerCase()));if(opt)sel.value=opt.value;}
     });
+    const categoriaV45=document.getElementById('v13Categoria');
+    const infracaoV45=document.getElementById('v13Infracao');
+    const tipoV45=document.getElementById('v13Tipo');
+    const recV45=document.getElementById('v13RecursoApresentado');
+    if(categoriaV45) categoriaV45.addEventListener('change',atualizarInfracoesV45);
+    if(infracaoV45) infracaoV45.addEventListener('change',atualizarBaseV45);
+    if(tipoV45) tipoV45.addEventListener('change',atualizarTipoAdministrativoV45);
+    ['v13MultaCotas','v13ValorCota'].forEach(id=>{
+        const el=document.getElementById(id);
+        if(el) el.addEventListener('input',calcularMultaV45);
+    });
+    if(recV45) recV45.addEventListener('change',atualizarRecursoV45);
+    document.getElementById('v13DataRegistro')?.addEventListener('change',atualizarRecursoV45);
+    document.getElementById('v13DataOcorrencia')?.addEventListener('change',()=>{
+        const data=document.getElementById('v13DataRegistro')?.value;
+        const campo=document.getElementById('v13PrazoRecurso');
+        if(campo && data && document.getElementById('v13Tipo')?.value==='Notificação'){
+            campo.value='7 dias úteis — até '+formatarData(calcularPrazoRecurso(data));
+        }
+    });
+    atualizarTipoAdministrativoV45();
+
+
+    if(btnMenu){
+        btnMenu.addEventListener('click',function(e){
+            e.preventDefault();
+            e.stopPropagation();
+            mostrarAdmin();
+        });
+    }
 })();
+
+
+
+
+function ocultarPainelDetalhesChamadoV45() {
+    ["localizarChamadoAdmin","editarChamado"].forEach(function(id){
+        const el=document.getElementById(id);
+        if(el) el.style.display="none";
+    });
+    const historico=document.getElementById("historicoChamado");
+    if(historico) historico.style.display="none";
+}
+
+function mostrarPainelDetalhesChamadoV45() {
+    ["localizarChamadoAdmin","editarChamado"].forEach(function(id){
+        const el=document.getElementById(id);
+        if(el) el.style.display="block";
+    });
+}
+
 </script>
 
-<div id="adm13DetalhesModal" class="admin-v13-modal" aria-hidden="true">
-    <div class="admin-v13-modal-box" role="dialog" aria-modal="true" aria-labelledby="adm13ModalTitulo">
-        <div class="admin-v13-modal-head">
-            <div id="adm13ModalTitulo" class="admin-v13-modal-title">⚠️ Detalhes da Advertência</div>
-            <button type="button" id="btnFecharAdm13Modal" class="admin-v13-modal-close" aria-label="Fechar">×</button>
-        </div>
-        <div class="admin-v13-modal-body">
-            <div class="admin-v13-detail-grid">
-                <div class="admin-v13-detail">
-                    <div class="admin-v13-detail-label">Protocolo</div>
-                    <div id="adm13ModalProtocolo" class="admin-v13-detail-value"></div>
-                </div>
-                <div class="admin-v13-detail">
-                    <div class="admin-v13-detail-label">Tipo</div>
-                    <div id="adm13ModalTipo" class="admin-v13-detail-value"></div>
-                </div>
-                <div class="admin-v13-detail">
-                    <div class="admin-v13-detail-label">Data do registro</div>
-                    <div id="adm13ModalData" class="admin-v13-detail-value"></div>
-                </div>
-                <div class="admin-v13-detail">
-                    <div class="admin-v13-detail-label">Unidade / Bloco</div>
-                    <div id="adm13ModalUnidade" class="admin-v13-detail-value"></div>
-                </div>
-                <div class="admin-v13-detail full">
-                    <div class="admin-v13-detail-label">Infração / Ocorrência</div>
-                    <div id="adm13ModalInfracao" class="admin-v13-detail-value"></div>
-                </div>
-                <div class="admin-v13-detail">
-                    <div class="admin-v13-detail-label">Base no Regimento</div>
-                    <div id="adm13ModalBase" class="admin-v13-detail-value"></div>
-                </div>
-                <div class="admin-v13-detail">
-                    <div class="admin-v13-detail-label">Responsável</div>
-                    <div id="adm13ModalResponsavel" class="admin-v13-detail-value"></div>
-                </div>
-                <div class="admin-v13-detail full">
-                    <div class="admin-v13-detail-label">Descrição</div>
-                    <div id="adm13ModalDescricao" class="admin-v13-detail-value"></div>
-                </div>
-                <div class="admin-v13-detail full">
-                    <div class="admin-v13-detail-label">Observações</div>
-                    <div id="adm13ModalObservacoes" class="admin-v13-detail-value"></div>
-                </div>
-                <div class="admin-v13-detail full">
-                    <div class="admin-v13-detail-label">🔗 Chamado relacionado</div>
-                    <div id="adm13ModalChamado" class="admin-v13-detail-value"></div>
-                </div>
-                <div class="admin-v13-detail full">
-                    <div class="admin-v13-detail-label">Histórico da unidade</div>
-                    <div id="adm13ModalHistorico" class="admin-v13-detail-value"></div>
-                </div>
-            </div>
-            <div class="admin-v13-modal-footer">
-                <button type="button" id="btnAbrirChamadoAdm13" class="admin-v13-btn blue" style="display:none">🔎 Consultar chamado relacionado</button>
-                <button type="button" id="btnImprimirAdm13Modal" class="admin-v13-btn green">🖨️ Imprimir</button>
-                <button type="button" id="btnFecharAdm13Modal2" class="admin-v13-btn gray">Fechar</button>
-            </div>
-        </div>
-    </div>
+<div class="home-rodape">
+    <strong>PARQUE CLUBE</strong>
+    Sistema de Gestão de Chamados<br>
+    Versão 4.5
 </div>
-
 </body>
 
 </html>
