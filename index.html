@@ -2294,8 +2294,6 @@ button:active{
     id="whatsappRetorno"
     type="tel"
     inputmode="numeric"
-    autocomplete="tel"
-    maxlength="15"
     placeholder="Ex.: (61) 99999-9999"
 >
 
@@ -7394,11 +7392,11 @@ function montarMensagemRespostaAdministracao(chamado) {
     }
 
     // Emojis em Unicode para evitar caracteres corrompidos no WhatsApp.
-    const emojiPredio = String.fromCharCode(0xD83C, 0xDFE2);
-    const emojiPrancheta = String.fromCharCode(0xD83D, 0xDCCB);
-    const emojiDocumento = String.fromCharCode(0xD83D, 0xDCDD);
-    const emojiRelogio = String.fromCharCode(0xD83D, 0xDD52);
-    const emojiLupa = String.fromCharCode(0xD83D, 0xDD0E);
+    const emojiPredio = "\uD83C\uDFE2";
+    const emojiPrancheta = "\uD83D\uDCCB";
+    const emojiDocumento = "\uD83D\uDCDD";
+    const emojiRelogio = "\uD83D\uDD52";
+    const emojiLupa = "\uD83D\uDD0E";
 
     return (
         emojiPredio + " *PARQUE CLUBE*\n\n" +
@@ -10896,43 +10894,45 @@ td:nth-child(2),td:nth-child(3){
 
 </div>
 
-<script id="mascara-whatsapp-v410">
+<script id="mascara-telefone-whatsapp-v4103">
 (function () {
-    function formatarTelefoneWhatsApp(campo) {
-        let valor = String(campo.value || "").replace(/\D/g, "").slice(0, 11);
+    function aplicarMascaraTelefone(campo) {
+        var numeros = String(campo.value || "").replace(/\D/g, "").slice(0, 11);
 
-        if (!valor) {
+        if (!numeros) {
             campo.value = "";
-        } else if (valor.length <= 2) {
-            campo.value = "(" + valor;
-        } else if (valor.length <= 7) {
-            campo.value = "(" + valor.slice(0, 2) + ") " + valor.slice(2);
+        } else if (numeros.length <= 2) {
+            campo.value = "(" + numeros;
+        } else if (numeros.length <= 7) {
+            campo.value = "(" + numeros.slice(0, 2) + ") " + numeros.slice(2);
         } else {
             campo.value =
-                "(" + valor.slice(0, 2) + ") " +
-                valor.slice(2, 7) + "-" +
-                valor.slice(7, 11);
+                "(" + numeros.slice(0, 2) + ") " +
+                numeros.slice(2, 7) + "-" +
+                numeros.slice(7, 11);
         }
     }
 
-    function ativarMascara() {
-        const campo = document.getElementById("whatsappRetorno");
-        if (!campo || campo.dataset.mascaraWhatsappAtiva === "1") return;
+    function iniciarMascara() {
+        var campo = document.getElementById("whatsappRetorno");
+        if (!campo || campo.dataset.mascaraTelefone === "ativa") return;
 
-        campo.dataset.mascaraWhatsappAtiva = "1";
+        campo.dataset.mascaraTelefone = "ativa";
+        campo.setAttribute("maxlength", "15");
+        campo.setAttribute("inputmode", "numeric");
+        campo.setAttribute("autocomplete", "tel");
+
         campo.addEventListener("input", function () {
-            formatarTelefoneWhatsApp(campo);
+            aplicarMascaraTelefone(campo);
         });
 
-        if (campo.value) {
-            formatarTelefoneWhatsApp(campo);
-        }
+        if (campo.value) aplicarMascaraTelefone(campo);
     }
 
     if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", ativarMascara);
+        document.addEventListener("DOMContentLoaded", iniciarMascara);
     } else {
-        ativarMascara();
+        iniciarMascara();
     }
 })();
 </script>
