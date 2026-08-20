@@ -2297,7 +2297,6 @@ button:active{
     autocomplete="tel"
     maxlength="15"
     placeholder="Ex.: (61) 99999-9999"
-    oninput="formatarTelefoneWhatsApp(this)"
 >
 
 <small style="display:block;margin-top:5px;color:#64748b;">
@@ -7363,39 +7362,6 @@ function reabrirChamadoV11(
    RESPOSTA DA ADMINISTRAÇÃO PELO WHATSAPP
 ===================================================== */
 
-
-/* V4.10 — Máscara automática do telefone/WhatsApp.
-   Exibição: (61) 99999-9999
-   O envio continua usando apenas os números por meio da normalização existente. */
-function formatarTelefoneWhatsApp(campo) {
-    let valor = String(campo.value || "").replace(/\D/g, "");
-
-    // Limita a DDD + 9 dígitos.
-    valor = valor.slice(0, 11);
-
-    if (valor.length === 0) {
-        campo.value = "";
-        return;
-    }
-
-    if (valor.length <= 2) {
-        campo.value = "(" + valor;
-        return;
-    }
-
-    if (valor.length <= 7) {
-        campo.value =
-            "(" + valor.slice(0, 2) + ") " +
-            valor.slice(2);
-        return;
-    }
-
-    campo.value =
-        "(" + valor.slice(0, 2) + ") " +
-        valor.slice(2, 7) + "-" +
-        valor.slice(7);
-}
-
 function normalizarNumeroWhatsApp(numero) {
     let n = String(numero || "").replace(/\D/g, "");
     if (!n) return "";
@@ -7428,11 +7394,11 @@ function montarMensagemRespostaAdministracao(chamado) {
     }
 
     // Emojis em Unicode para evitar caracteres corrompidos no WhatsApp.
-    const emojiPredio = "\u{1F3E2}";
-    const emojiPrancheta = "\u{1F4CB}";
-    const emojiDocumento = "\u{1F4DD}";
-    const emojiRelogio = "\u{1F552}";
-    const emojiLupa = "\u{1F50E}";
+    const emojiPredio = String.fromCharCode(0xD83C, 0xDFE2);
+    const emojiPrancheta = String.fromCharCode(0xD83D, 0xDCCB);
+    const emojiDocumento = String.fromCharCode(0xD83D, 0xDCDD);
+    const emojiRelogio = String.fromCharCode(0xD83D, 0xDD52);
+    const emojiLupa = String.fromCharCode(0xD83D, 0xDD0E);
 
     return (
         emojiPredio + " *PARQUE CLUBE*\n\n" +
@@ -10929,6 +10895,48 @@ td:nth-child(2),td:nth-child(3){
 </footer>
 
 </div>
+
+<script id="mascara-whatsapp-v410">
+(function () {
+    function formatarTelefoneWhatsApp(campo) {
+        let valor = String(campo.value || "").replace(/\D/g, "").slice(0, 11);
+
+        if (!valor) {
+            campo.value = "";
+        } else if (valor.length <= 2) {
+            campo.value = "(" + valor;
+        } else if (valor.length <= 7) {
+            campo.value = "(" + valor.slice(0, 2) + ") " + valor.slice(2);
+        } else {
+            campo.value =
+                "(" + valor.slice(0, 2) + ") " +
+                valor.slice(2, 7) + "-" +
+                valor.slice(7, 11);
+        }
+    }
+
+    function ativarMascara() {
+        const campo = document.getElementById("whatsappRetorno");
+        if (!campo || campo.dataset.mascaraWhatsappAtiva === "1") return;
+
+        campo.dataset.mascaraWhatsappAtiva = "1";
+        campo.addEventListener("input", function () {
+            formatarTelefoneWhatsApp(campo);
+        });
+
+        if (campo.value) {
+            formatarTelefoneWhatsApp(campo);
+        }
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", ativarMascara);
+    } else {
+        ativarMascara();
+    }
+})();
+</script>
+
 </body>
 </html>`;
 
