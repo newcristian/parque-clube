@@ -12939,9 +12939,34 @@ function mostrarPainelDetalhesChamadoV45() {
         if (campo.value) formatar();
     }
 
-    /* Atualização automática segura.
-       Usa o mesmo botão e a mesma função de listagem já existentes no sistema.
-       Não cria uma segunda consulta manual ao Worker com variáveis diferentes. */
+    /* =====================================================
+       V4.13 — ATUALIZAÇÃO INTELIGENTE DA ÁREA ADMINISTRATIVA
+       - Verificação a cada 1 minuto e 30 segundos (90.000 ms)
+       - Continua funcionando mesmo com a aba em segundo plano
+       - Só redesenha/atualiza a lista quando houver alteração
+       - Usa uma assinatura dos chamados para comparar o estado atual
+       - Não interfere quando um chamado está sendo editado
+    ===================================================== */
+
+    function assinaturaChamadosParqueClube(lista) {
+        return JSON.stringify(
+            (lista || []).map(function (c) {
+                return [
+                    c.id || "",
+                    c.protocolo || "",
+                    c.status || "",
+                    c.ultimaAtualizacao || "",
+                    c.dataRegistro || "",
+                    c.observacaoSolucao || "",
+                    c.arquivado ? 1 : 0
+                ];
+            })
+        );
+    }
+
+    var ultimaAssinaturaChamadosParqueClube = null;
+    var consultaAutomaticaEmAndamentoParqueClube = false;
+
     function painelPesquisaEstaAberto() {
         var painel = document.getElementById("adminConteudoPesquisaV11");
         if (!painel) return false;
@@ -12952,36 +12977,102 @@ function mostrarPainelDetalhesChamadoV45() {
                estilo.visibility !== "hidden";
     }
 
-    function iniciarAtualizacaoAutomatica() {
+    function chamadoEstaSendoEditado() {
+        var editor = document.getElementById("editarChamado");
+        if (!editor) return false;
+
+        var estilo = window.getComputedStyle(editor);
+        return estilo.display !== "none" &&
+               estilo.visibility !== "hidden";
+    }
+
+    async function verificarAlteracoesChamadosAutomaticamente() {
+        if (consultaAutomaticaEmAndamentoParqueClube) return;
+        if (!painelPesquisaEstaAberto()) return;
+        if (chamadoEstaSendoEditado()) return;
+
+        var botao = document.getElementById("btnListarTodos");
+        if (!botao || botao.disabled) return;
+
+        consultaAutomaticaEmAndamentoParqueClube = true;
+
+        try {
+            /*
+             * Usa a rotina já existente para consultar o Worker.
+             * Capturamos o estado antes e depois da atualização.
+             */
+            var antes = assinaturaChamadosParqueClube(
+                typeof chamados !== "undefined" ? chamados : []
+            );
+
+            botao.click();
+
+            /*
+             * A rotina existente é assíncrona. Aguarda um pequeno intervalo
+             * para a resposta do Worker e compara o estado resultante.
+             */
+            setTimeout(function () {
+                try {
+                    var depois = assinaturaChamadosParqueClube(
+                        typeof chamados !== "undefined" ? chamados : []
+                    );
+
+                    if (ultimaAssinaturaChamadosParqueClube === null) {
+                        ultimaAssinaturaChamadosParqueClube = depois;
+                    } else if (depois !== ultimaAssinaturaChamadosParqueClube) {
+                        ultimaAssinaturaChamadosParqueClube = depois;
+
+                        console.log(
+                            "Alteração detectada no banco. Lista administrativa atualizada."
+                        );
+
+                        if (typeof mostrarChamados === "function") {
+                            mostrarChamados();
+                        }
+
+                        if (typeof atualizarEstatisticas === "function") {
+                            atualizarEstatisticas();
+                        }
+                    }
+
+                    /* Se não houve alteração, não faz nova renderização. */
+                } finally {
+                    consultaAutomaticaEmAndamentoParqueClube = false;
+                }
+            }, 1800);
+
+        } catch (erro) {
+            consultaAutomaticaEmAndamentoParqueClube = false;
+            console.warn(
+                "Verificação automática de alterações:",
+                erro
+            );
+        }
+    }
+
+    function iniciarAtualizacaoAutomaticaInteligente() {
+        /*
+         * A primeira assinatura é criada com os dados atuais, evitando
+         * uma atualização visual desnecessária na primeira verificação.
+         */
+        ultimaAssinaturaChamadosParqueClube =
+            assinaturaChamadosParqueClube(
+                typeof chamados !== "undefined" ? chamados : []
+            );
+
         if (window.__pcAutoRefreshTimer) {
             clearInterval(window.__pcAutoRefreshTimer);
         }
 
-        window.__pcAutoRefreshTimer = setInterval(function () {
-            if (document.hidden) return;
-            if (!painelPesquisaEstaAberto()) return;
-
-            var editor = document.getElementById("editarChamado");
-            if (editor && window.getComputedStyle(editor).display !== "none") {
-                return;
-            }
-
-            var botao = document.getElementById("btnListarTodos");
-            if (!botao || botao.disabled) return;
-
-            botao.click();
-        }, 60000);
+        window.__pcAutoRefreshTimer = setInterval(
+            verificarAlteracoesChamadosAutomaticamente,
+            90000
+        );
     }
 
     function iniciar() {
         ativarMascaraTelefone();
-        iniciarAtualizacaoAutomatica();
-    }
-
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", iniciar);
-    } else {
-        iniciar();
+        iniciarAtualizacaoAutomaticaInteligente();
     }
 })();
 </script>
