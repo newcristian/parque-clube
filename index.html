@@ -7374,17 +7374,45 @@ function montarMensagemRespostaAdministracao(chamado) {
         chamado?.respostaAdministracao ||
         "";
 
+    // Data/hora da resposta: usa o registro do sistema quando disponível.
+    let dataHoraResposta =
+        chamado?.ultimaAtualizacao ||
+        chamado?.dataRespostaAdministracao ||
+        "";
+
+    if (!dataHoraResposta) {
+        const agora = new Date();
+        dataHoraResposta =
+            agora.toLocaleDateString("pt-BR") +
+            " às " +
+            agora.toLocaleTimeString("pt-BR", {
+                hour: "2-digit",
+                minute: "2-digit"
+            });
+    }
+
+    // Emojis em Unicode para evitar caracteres corrompidos no WhatsApp.
+    const emojiPredio = "\u{1F3E2}";
+    const emojiPrancheta = "\u{1F4CB}";
+    const emojiDocumento = "\u{1F4DD}";
+    const emojiRelogio = "\u{1F552}";
+    const emojiLupa = "\u{1F50E}";
+
     return (
-        "🏢 *PARQUE CLUBE*\n\n" +
-        "📋 *ATUALIZAÇÃO DO CHAMADO*\n\n" +
+        emojiPredio + " *PARQUE CLUBE*\n\n" +
+        emojiPrancheta + " *ATUALIZAÇÃO DO CHAMADO*\n\n" +
         "*Protocolo:* " + (chamado?.protocolo || protocoloSelecionado || "") +
         "\n*Status:* " + (document.getElementById("statusAdmin")?.value || chamado?.status || "") +
         "\n*Local:* " + (chamado?.bloco || "") +
         (chamado?.pavimentos ? "\n*Pavimento(s):* " + chamado.pavimentos : "") +
         "\n*Ocorrência:* " + (chamado?.ocorrencia || "") +
-        "\n\n📝 *Observação da solução:*\n" +
+        "\n\n" + emojiDocumento + " *Observação da solução:*\n" +
         resposta +
-        "\n\n🔎 *Acompanhe pelo aplicativo:*\n" +
+        "\n\n" + emojiRelogio + " *Resposta enviada em:* " +
+        dataHoraResposta +
+        "\n\nAtenciosamente,\n" +
+        "*Administração Parque Clube*" +
+        "\n\n" + emojiLupa + " *Acompanhe pelo aplicativo:*\n" +
         "https://parque-clube.newcristian.workers.dev/"
     );
 }
@@ -7490,7 +7518,12 @@ async function responderChamadoPeloWhatsApp() {
             ...chamado,
             ...atualizado,
             observacaoSolucao: resposta,
-            respostaAdministracao: resposta
+            respostaAdministracao: resposta,
+            ultimaAtualizacao:
+                atualizado?.ultimaAtualizacao ||
+                retorno?.chamado?.ultimaAtualizacao ||
+                chamado?.ultimaAtualizacao ||
+                ""
         });
 
         if (btn) btn.textContent = "📲 Abrindo WhatsApp...";
