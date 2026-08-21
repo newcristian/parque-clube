@@ -7689,6 +7689,13 @@ async function responderChamadoPeloWhatsApp() {
         });
 
         if (btn) btn.textContent = "📲 Abrindo WhatsApp...";
+
+        /*
+         * TESTE DE DIAGNÓSTICO:
+         * mostra a mensagem exatamente como ela existe no navegador
+         * antes de qualquer envio para o WhatsApp.
+         */
+        alert("TESTE WHATSAPP — A mensagem abaixo será enviada:\n\n" + mensagem);
         /*
          * Codificação UTF-8 manual para o WhatsApp.
          * Os emojis são montados por códigos percentuais UTF-8, evitando
@@ -13084,7 +13091,7 @@ function mostrarPainelDetalhesChamadoV45() {
 
     /*
     ============================================================
-    V4.22 — CONTROLE DA NOTIFICAÇÃO AUTOMÁTICA
+    V4.23 — CONTROLE DA NOTIFICAÇÃO AUTOMÁTICA
     - ON: abre automaticamente "Novo chamado recebido!"
     - OFF: não abre o modal automaticamente
     - O contador 🔔 Notificações continua registrando novos chamados
@@ -13182,7 +13189,7 @@ function mostrarPainelDetalhesChamadoV45() {
 
     /*
     ============================================================
-    V4.22 — NOTIFICAÇÕES DE NOVOS CHAMADOS
+    V4.23 — NOTIFICAÇÕES DE NOVOS CHAMADOS
     - Botão 🔔 Notificações
     - Contador de novos chamados não visualizados
     - Modal "Novo chamado recebido!"
