@@ -7501,7 +7501,10 @@ function montarMensagemRespostaAdministracao(chamado) {
         chamado?.respostaAdministracao ||
         "";
 
-    const protocolo = chamado?.protocolo || protocoloSelecionado || "";
+    const protocolo =
+        chamado?.protocolo ||
+        protocoloSelecionado ||
+        "";
 
     const status =
         document.getElementById("statusAdmin")?.value ||
@@ -7535,39 +7538,30 @@ function montarMensagemRespostaAdministracao(chamado) {
         encodeURIComponent(protocolo);
 
     /*
-     * Emojis por escapes Unicode JavaScript.
-     * O arquivo contém apenas caracteres ASCII neste trecho; o navegador
-     * converte os escapes para emojis reais antes de enviar ao WhatsApp.
+     * IMPORTANTE:
+     * Nesta função não existe nenhum emoji e nenhum caractere Unicode
+     * especial. São usados apenas marcadores ASCII.
      */
-    const predio = "\uD83C\uDFE2";          // 🏢
-    const prancheta = "\uD83D\uDCCB";       // 📋
-    const circuloAzul = "\uD83D\uDD35";     // 🔵
-    const localEmoji = "\uD83D\uDCCD";      // 📍
-    const ferramenta = "\uD83D\uDEE0\uFE0F";// 🛠️
-    const documento = "\uD83D\uDCDD";       // 📝
-    const relogio = "\uD83D\uDD52";         // 🕒
-    const carta = "\u2709\uFE0F";            // ✉️
-    const lupa = "\uD83D\uDD0E";            // 🔎
-
     return [
-        predio + " *PARQUE CLUBE*",
+        "@@PC_PREDIO@@ *PARQUE CLUBE*",
         "",
-        prancheta + " *ATUALIZAÇÃO DO CHAMADO*",
+        "@@PC_PRANCHETA@@ *ATUALIZAÇÃO DO CHAMADO*",
         "",
         "• *Protocolo:* " + protocolo,
-        "• " + circuloAzul + " *Status:* " + status,
-        "• " + localEmoji + " *Local:* " + (chamado?.bloco || chamado?.local || ""),
-        "• " + ferramenta + " *Ocorrência:* " + (chamado?.ocorrencia || chamado?.tipoOcorrencia || ""),
+        "• @@PC_STATUS@@ *Status:* " + status,
+        "• @@PC_LOCAL@@ *Local:* " + (chamado?.bloco || chamado?.local || ""),
+        "• @@PC_OCORRENCIA@@ *Ocorrência:* " +
+            (chamado?.ocorrencia || chamado?.tipoOcorrencia || ""),
         "",
-        documento + " *Observação da solução:*",
+        "@@PC_OBSERVACAO@@ *Observação da solução:*",
         resposta,
         "",
-        relogio + " *Resposta enviada em:* " + dataHoraResposta,
+        "@@PC_RELOGIO@@ *Resposta enviada em:* " + dataHoraResposta,
         "",
-        carta + " Atenciosamente,",
+        "@@PC_CARTA@@ Atenciosamente,",
         "*Administração Parque Clube*",
         "",
-        lupa + " *Acompanhe seu chamado:*",
+        "@@PC_LUPA@@ *Acompanhe seu chamado:*",
         linkProtocolo
     ].join("\n");
 }
@@ -7687,7 +7681,37 @@ async function responderChamadoPeloWhatsApp() {
          * Os emojis são montados por códigos percentuais UTF-8, evitando
          * qualquer conversão do navegador/editor para o caractere �.
          */
-        const mensagemCodificada = encodeURIComponent(String(mensagem));
+        /*
+         * A mensagem é codificada primeiro.
+         * Somente DEPOIS os marcadores ASCII são substituídos pelos bytes
+         * UTF-8 percentuais exatos dos emojis.
+         * Não existe uma segunda codificação.
+         */
+        let mensagemCodificada = encodeURIComponent(String(mensagem));
+
+        const emojisUTF8 = {
+            PREDIO: "%F0%9F%8F%A2",
+            PRANCHETA: "%F0%9F%93%8B",
+            STATUS: "%F0%9F%94%B5",
+            LOCAL: "%F0%9F%93%8D",
+            OCORRENCIA: "%F0%9F%9B%A0%EF%B8%8F",
+            OBSERVACAO: "%F0%9F%93%9D",
+            RELOGIO: "%F0%9F%95%92",
+            CARTA: "%E2%9C%89%EF%B8%8F",
+            LUPA: "%F0%9F%94%8E"
+        };
+
+        mensagemCodificada = mensagemCodificada
+            .replace(/%40%40PC_PREDIO%40%40/g, emojisUTF8.PREDIO)
+            .replace(/%40%40PC_PRANCHETA%40%40/g, emojisUTF8.PRANCHETA)
+            .replace(/%40%40PC_STATUS%40%40/g, emojisUTF8.STATUS)
+            .replace(/%40%40PC_LOCAL%40%40/g, emojisUTF8.LOCAL)
+            .replace(/%40%40PC_OCORRENCIA%40%40/g, emojisUTF8.OCORRENCIA)
+            .replace(/%40%40PC_OBSERVACAO%40%40/g, emojisUTF8.OBSERVACAO)
+            .replace(/%40%40PC_RELOGIO%40%40/g, emojisUTF8.RELOGIO)
+            .replace(/%40%40PC_CARTA%40%40/g, emojisUTF8.CARTA)
+            .replace(/%40%40PC_LUPA%40%40/g, emojisUTF8.LUPA);
+
         const urlWhatsApp =
             "https://wa.me/" +
             numero +
@@ -13078,7 +13102,7 @@ function mostrarPainelDetalhesChamadoV45() {
 
     /*
     ============================================================
-    V4.21 — CONTROLE DA NOTIFICAÇÃO AUTOMÁTICA
+    V4.24 — CONTROLE DA NOTIFICAÇÃO AUTOMÁTICA
     - ON: abre automaticamente "Novo chamado recebido!"
     - OFF: não abre o modal automaticamente
     - O contador 🔔 Notificações continua registrando novos chamados
@@ -13176,7 +13200,7 @@ function mostrarPainelDetalhesChamadoV45() {
 
     /*
     ============================================================
-    V4.21 — NOTIFICAÇÕES DE NOVOS CHAMADOS
+    V4.24 — NOTIFICAÇÕES DE NOVOS CHAMADOS
     - Botão 🔔 Notificações
     - Contador de novos chamados não visualizados
     - Modal "Novo chamado recebido!"
