@@ -7501,7 +7501,6 @@ function montarMensagemRespostaAdministracao(chamado) {
         chamado?.respostaAdministracao ||
         "";
 
-    // Data/hora da resposta: usa o registro do sistema quando disponível.
     let dataHoraResposta =
         chamado?.ultimaAtualizacao ||
         chamado?.dataRespostaAdministracao ||
@@ -7511,50 +7510,76 @@ function montarMensagemRespostaAdministracao(chamado) {
         const agora = new Date();
         dataHoraResposta =
             agora.toLocaleDateString("pt-BR") +
-            " às " +
+            " " +
             agora.toLocaleTimeString("pt-BR", {
                 hour: "2-digit",
-                minute: "2-digit"
+                minute: "2-digit",
+                second: "2-digit"
             });
     }
 
-    // Emojis em Unicode para evitar caracteres corrompidos no WhatsApp.
-    const emojiPredio = "\u{1F3E2}";
-    const emojiPrancheta = "\u{1F4CB}";
-    const emojiDocumento = "\u{1F4DD}";
-    const emojiRelogio = "🕒";
-    const emojiLupa = "🔎";
+    /*
+     * Emojis criados pelo código Unicode no momento da execução.
+     * Assim, o arquivo HTML não depende de caracteres emoji gravados
+     * diretamente no editor e evita corrupção de codificação.
+     */
+    const emoji = {
+        predio: String.fromCodePoint(0x1F3E2),       // 🏢
+        prancheta: String.fromCodePoint(0x1F4CB),    // 📋
+        status: String.fromCodePoint(0x1F535),       // 🔵
+        local: String.fromCodePoint(0x1F4CD),        // 📍
+        ferramenta: String.fromCodePoint(0x1F6E0),   // 🛠
+        documento: String.fromCodePoint(0x1F4DD),    // 📝
+        relogio: String.fromCodePoint(0x1F552),      // 🕒
+        carta: String.fromCodePoint(0x2709),         // ✉
+        lupa: String.fromCodePoint(0x1F50E)          // 🔎
+    };
 
-    return (
-        emojiPredio + " *PARQUE CLUBE*\n\n" +
-        emojiPrancheta + " *ATUALIZAÇÃO DO CHAMADO*\n\n" +
-        "*Protocolo:* " + (chamado?.protocolo || protocoloSelecionado || "") +
-        "\n*Status:* " + (document.getElementById("statusAdmin")?.value || chamado?.status || "") +
-        "\n*Local:* " + (chamado?.bloco || "") +
-        (chamado?.pavimentos ? "\n*Pavimento(s):* " + chamado.pavimentos : "") +
-        "\n*Ocorrência:* " + (chamado?.ocorrencia || "") +
-        "\n\n" + emojiDocumento + " *Observação da solução:*\n" +
-        resposta +
-        "\n\n" + emojiRelogio + " *Resposta enviada em:* " +
-        dataHoraResposta +
-        "\n\nAtenciosamente,\n" +
-        "*Administração Parque Clube*" +
-        /*
-         * Link direto para o protocolo:
-         * abre o próprio aplicativo e envia o número do protocolo
-         * pela URL para a tela "Consultar Protocolo".
-         */
-        "\n\n" + emojiLupa + " *Acompanhe seu chamado:*\n" +
-        (
-            (window.location && window.location.origin
-                ? window.location.origin
-                : "https://parque-clube.newcristian.workers.dev")
-            + "/?protocolo=" +
-            encodeURIComponent(
-                chamado?.protocolo || protocoloSelecionado || ""
-            )
-        )
-    );
+    const protocolo =
+        chamado?.protocolo || protocoloSelecionado || "";
+
+    const status =
+        document.getElementById("statusAdmin")?.value ||
+        chamado?.status || "";
+
+    const enderecoBase =
+        (window.location && window.location.origin)
+            ? window.location.origin
+            : "https://parque-clube.newcristian.workers.dev";
+
+    const linkProtocolo =
+        enderecoBase +
+        "/?protocolo=" +
+        encodeURIComponent(protocolo);
+
+    return [
+        emoji.predio + " *PARQUE CLUBE*",
+        "",
+        emoji.prancheta + " *ATUALIZAÇÃO DO CHAMADO*",
+        "",
+        "• *Protocolo:* " + protocolo,
+        "• " + emoji.status + " *Status:* " + status,
+        "• " + emoji.local + " *Local:* " + (chamado?.bloco || ""),
+        chamado?.pavimentos
+            ? "• 🏢 *Pavimento(s):* " + chamado.pavimentos
+            : "",
+        "• " + emoji.ferramenta + " *Ocorrência:* " +
+            (chamado?.ocorrencia || ""),
+        "",
+        emoji.documento + " *Observação da solução:*",
+        resposta,
+        "",
+        emoji.relogio + " *Resposta enviada em:* " +
+            dataHoraResposta,
+        "",
+        emoji.carta + " Atenciosamente,",
+        "*Administração Parque Clube*",
+        "",
+        emoji.lupa + " *Acompanhe seu chamado:*",
+        linkProtocolo
+    ].filter(function(linha) {
+        return linha !== "";
+    }).join("\n");
 }
 
 function atualizarAreaRespostaWhatsApp(chamado) {
@@ -7667,10 +7692,13 @@ async function responderChamadoPeloWhatsApp() {
         });
 
         if (btn) btn.textContent = "📲 Abrindo WhatsApp...";
-        window.open(
-            "https://wa.me/" + numero + "?text=" + encodeURIComponent(mensagem),
-            "_blank"
-        );
+        const urlWhatsApp =
+            "https://wa.me/" +
+            numero +
+            "?text=" +
+            encodeURIComponent(String(mensagem));
+
+        window.open(urlWhatsApp, "_blank");
 
         const resultado = document.getElementById("resultadoAtualizacao");
         if (resultado) {
@@ -13054,7 +13082,7 @@ function mostrarPainelDetalhesChamadoV45() {
 
     /*
     ============================================================
-    V4.18 — CONTROLE DA NOTIFICAÇÃO AUTOMÁTICA
+    V4.19 — CONTROLE DA NOTIFICAÇÃO AUTOMÁTICA
     - ON: abre automaticamente "Novo chamado recebido!"
     - OFF: não abre o modal automaticamente
     - O contador 🔔 Notificações continua registrando novos chamados
@@ -13152,7 +13180,7 @@ function mostrarPainelDetalhesChamadoV45() {
 
     /*
     ============================================================
-    V4.18 — NOTIFICAÇÕES DE NOVOS CHAMADOS
+    V4.19 — NOTIFICAÇÕES DE NOVOS CHAMADOS
     - Botão 🔔 Notificações
     - Contador de novos chamados não visualizados
     - Modal "Novo chamado recebido!"
