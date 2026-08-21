@@ -2282,6 +2282,29 @@ button:active{
 
 </div>
 
+<div class="form-group">
+
+<label>
+
+    📱 WhatsApp para retorno:
+
+</label>
+
+<input
+    id="whatsappRetorno"
+    type="tel"
+    inputmode="numeric"
+    autocomplete="tel"
+    maxlength="15"
+    placeholder="Ex.: (61) 99999-9999"
+>
+
+<small style="display:block;margin-top:5px;color:#64748b;">
+    Opcional. Informe para receber uma resposta da Administração pelo WhatsApp.
+</small>
+
+</div>
+
 
 <div class="form-group">
 
@@ -3141,6 +3164,54 @@ button:active{
     🔄 Atualizar Lista de Chamados
 
 </button>
+<div id="pcAlertaSonoroWrap" style="display:inline-flex;align-items:center;gap:10px;margin:8px 0 8px 10px;padding:8px 12px;border:1px solid #d8d8d8;border-radius:10px;background:#fff;vertical-align:middle;">
+  <span id="pcAlertaSonoroIcone" aria-hidden="true">🔔</span>
+  <span style="font-weight:700;font-size:14px;">Som de novos chamados</span>
+  <button type="button" id="pcToggleAlertaSonoro" aria-pressed="false"
+    style="border:0;border-radius:18px;padding:7px 13px;font-weight:700;cursor:pointer;">
+    ⚪ OFF
+  </button>
+</div>
+<div id="pcNotificacoesWrap" style="display:inline-flex;align-items:center;gap:8px;margin:8px 0 8px 10px;position:relative;vertical-align:middle;">
+  <button type="button" id="pcBotaoNotificacoes" title="Notificações"
+    style="position:relative;border:1px solid #d8d8d8;background:#fff;border-radius:10px;padding:9px 13px;font-weight:700;cursor:pointer;">
+    🔔 Notificações
+    <span id="pcContadorNotificacoes" style="display:none;position:absolute;top:-8px;right:-8px;min-width:20px;height:20px;line-height:20px;text-align:center;border-radius:50%;background:#d93025;color:#fff;font-size:12px;font-weight:700;"></span>
+  </button>
+  <div id="pcNotificacaoAutoWrap" style="display:inline-flex;align-items:center;gap:7px;margin-left:6px;padding:8px 10px;border:1px solid #d8d8d8;border-radius:10px;background:#fff;">
+    <span id="pcNotificacaoAutoIcone" aria-hidden="true">🆕</span>
+    <span style="font-weight:700;font-size:14px;">Notificação automática</span>
+    <button type="button" id="pcToggleNotificacaoAuto" aria-pressed="true"
+      style="border:0;border-radius:18px;padding:7px 13px;font-weight:700;cursor:pointer;">
+      🔘 ON
+    </button>
+  </div>
+
+</div>
+
+<div id="pcModalNovoChamado" role="dialog" aria-modal="true" aria-labelledby="pcTituloNovoChamado"
+  style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.48);align-items:center;justify-content:center;padding:20px;">
+  <div style="width:min(520px,96vw);max-height:90vh;overflow:auto;background:#fff;border-radius:16px;box-shadow:0 15px 50px rgba(0,0,0,.25);padding:24px;position:relative;">
+    <button type="button" id="pcFecharModalNovoChamado" aria-label="Fechar"
+      style="position:absolute;right:14px;top:12px;border:0;background:transparent;font-size:28px;cursor:pointer;">×</button>
+    <div style="font-size:38px;margin-bottom:8px;">🆕</div>
+    <h2 id="pcTituloNovoChamado" style="margin:0 35px 8px 0;">Novo chamado recebido!</h2>
+    <p style="margin:0 0 16px;color:#555;">Um novo chamado foi registrado no sistema.</p>
+    <div id="pcConteudoNovoChamado" style="background:#f6f7f8;border-radius:10px;padding:14px;line-height:1.55;"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:18px;flex-wrap:wrap;">
+      <button type="button" id="pcVerNovoChamado"
+        style="border:0;border-radius:9px;padding:10px 15px;font-weight:700;cursor:pointer;background:#1769aa;color:#fff;">
+        👁️ Ver chamado
+      </button>
+      <button type="button" id="pcOkNovoChamado"
+        style="border:1px solid #ccc;border-radius:9px;padding:10px 15px;font-weight:700;cursor:pointer;background:#fff;">
+        OK
+      </button>
+    </div>
+  </div>
+</div>
+
+
 
 <div class="admin-list-buttons-v11">
 
@@ -3626,6 +3697,24 @@ button:active{
     id="observacaoAdmin"
     placeholder="Informe o que foi realizado..."
 ></textarea>
+
+</div>
+
+<div
+    id="whatsappRetornoInfo"
+    style="display:none;margin:8px 0 14px;padding:10px 12px;border:1px solid #bbf7d0;background:#f0fdf4;border-radius:8px;color:#166534;"
+></div>
+
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
+
+<button
+    type="button"
+    id="btnResponderWhatsAppAdmin"
+    class="btn-verde"
+    style="flex:1;min-width:220px;"
+>
+    📲 Responder pelo WhatsApp
+</button>
 
 </div>
 
@@ -4351,6 +4440,14 @@ document
                             .value
                             .trim(),
 
+                    whatsappRetorno:
+                        document
+                            .getElementById(
+                                "whatsappRetorno"
+                            )
+                            .value
+                            .trim(),
+
                     cargo:
                         document
                             .getElementById(
@@ -4937,6 +5034,83 @@ function prepararBotoesEnvio(
 /* =====================================================
    CONSULTAR PROTOCOLO
 ===================================================== */
+
+/*
+   LINK DIRETO PARA PROTOCOLO
+   Exemplo:
+   https://seu-app/?protocolo=PC-20-08-26-020
+
+   Ao abrir o aplicativo:
+   1. lê o protocolo da URL;
+   2. abre a seção Consultar Protocolo;
+   3. preenche o campo;
+   4. executa a busca automaticamente.
+===================================================== */
+
+function abrirProtocoloPeloLink() {
+    try {
+        const parametros = new URLSearchParams(window.location.search || "");
+        const protocoloURL = normalizarProtocoloConsulta(
+            parametros.get("protocolo") || ""
+        );
+
+        if (!protocoloURL) return;
+
+        const input = document.getElementById("consultaProtocolo");
+        const btn = document.getElementById("btnConsultar");
+
+        if (!input || !btn) return;
+
+        /*
+         * Garante que o usuário veja a área correta do aplicativo.
+         */
+        try {
+            if (typeof mostrarSecao === "function") {
+                mostrarSecao("consultar");
+            }
+        } catch (erroSecao) {
+            console.warn(
+                "Não foi possível alternar automaticamente para a consulta:",
+                erroSecao
+            );
+        }
+
+        input.value = protocoloURL;
+
+        /*
+         * Pequeno atraso para concluir a troca de seção antes da busca.
+         */
+        setTimeout(function () {
+            btn.click();
+        }, 250);
+
+        /*
+         * Remove apenas o parâmetro da URL após a leitura.
+         * Isso evita uma nova consulta automática caso a página seja recarregada.
+         */
+        try {
+            const urlLimpa =
+                window.location.origin +
+                window.location.pathname +
+                window.location.hash;
+
+            window.history.replaceState(
+                {},
+                document.title,
+                urlLimpa
+            );
+        } catch (erroHistorico) {}
+
+    } catch (erro) {
+        console.warn(
+            "Não foi possível abrir o protocolo pelo link:",
+            erro
+        );
+    }
+}
+
+setTimeout(abrirProtocoloPeloLink, 500);
+
 
 document
     .getElementById(
@@ -6824,6 +6998,8 @@ function mostrarEdicao(
         chamado.observacaoSolucao ||
         "";
 
+    atualizarAreaRespostaWhatsApp(chamado);
+
 
     const historicoAdmin =
         document.getElementById(
@@ -7303,6 +7479,230 @@ function reabrirChamadoV11(
             protocoloCodificado
         )
     );
+}
+
+
+
+/* =====================================================
+   RESPOSTA DA ADMINISTRAÇÃO PELO WHATSAPP
+===================================================== */
+
+function normalizarNumeroWhatsApp(numero) {
+    let n = String(numero || "").replace(/\D/g, "");
+    if (!n) return "";
+    if (n.length === 10 || n.length === 11) n = "55" + n;
+    return n;
+}
+
+function montarMensagemRespostaAdministracao(chamado) {
+    const resposta =
+        document.getElementById("observacaoAdmin")?.value?.trim() ||
+        chamado?.observacaoSolucao ||
+        chamado?.respostaAdministracao ||
+        "";
+
+    // Data/hora da resposta: usa o registro do sistema quando disponível.
+    let dataHoraResposta =
+        chamado?.ultimaAtualizacao ||
+        chamado?.dataRespostaAdministracao ||
+        "";
+
+    if (!dataHoraResposta) {
+        const agora = new Date();
+        dataHoraResposta =
+            agora.toLocaleDateString("pt-BR") +
+            " às " +
+            agora.toLocaleTimeString("pt-BR", {
+                hour: "2-digit",
+                minute: "2-digit"
+            });
+    }
+
+    // Emojis em Unicode para evitar caracteres corrompidos no WhatsApp.
+    const emojiPredio = "\u{1F3E2}";
+    const emojiPrancheta = "\u{1F4CB}";
+    const emojiDocumento = "\u{1F4DD}";
+    const emojiRelogio = "\u{1F552}";
+    const emojiLupa = "\u{1F50E}";
+
+    return (
+        emojiPredio + " *PARQUE CLUBE*\n\n" +
+        emojiPrancheta + " *ATUALIZAÇÃO DO CHAMADO*\n\n" +
+        "*Protocolo:* " + (chamado?.protocolo || protocoloSelecionado || "") +
+        "\n*Status:* " + (document.getElementById("statusAdmin")?.value || chamado?.status || "") +
+        "\n*Local:* " + (chamado?.bloco || "") +
+        (chamado?.pavimentos ? "\n*Pavimento(s):* " + chamado.pavimentos : "") +
+        "\n*Ocorrência:* " + (chamado?.ocorrencia || "") +
+        "\n\n" + emojiDocumento + " *Observação da solução:*\n" +
+        resposta +
+        "\n\n" + emojiRelogio + " *Resposta enviada em:* " +
+        dataHoraResposta +
+        "\n\nAtenciosamente,\n" +
+        "*Administração Parque Clube*" +
+        /*
+         * Link direto para o protocolo:
+         * abre o próprio aplicativo e envia o número do protocolo
+         * pela URL para a tela "Consultar Protocolo".
+         */
+        "\n\n" + emojiLupa + " *Acompanhe seu chamado:*\n" +
+        (
+            (window.location && window.location.origin
+                ? window.location.origin
+                : "https://parque-clube.newcristian.workers.dev")
+            + "/?protocolo=" +
+            encodeURIComponent(
+                chamado?.protocolo || protocoloSelecionado || ""
+            )
+        )
+    );
+}
+
+function atualizarAreaRespostaWhatsApp(chamado) {
+    const info = document.getElementById("whatsappRetornoInfo");
+    const btn = document.getElementById("btnResponderWhatsAppAdmin");
+    const numero = chamado?.whatsappRetorno || chamado?.whatsapp || chamado?.telefoneRetorno || "";
+
+    if (info) {
+        if (numero) {
+            info.style.display = "block";
+            info.innerHTML = "📱 <strong>WhatsApp para retorno:</strong> " + escapar(String(numero));
+        } else {
+            info.style.display = "block";
+            info.innerHTML = "⚠️ Este chamado não possui número de WhatsApp para retorno.";
+        }
+    }
+
+    if (btn) btn.disabled = !numero;
+}
+
+async function responderChamadoPeloWhatsApp() {
+    if (!senhaAdministrativa) {
+        alert("Faça o login administrativo.");
+        return;
+    }
+
+    if (!protocoloSelecionado) {
+        alert("Nenhum protocolo selecionado.");
+        return;
+    }
+
+    const chamado =
+        (typeof chamados !== "undefined" ? chamados : [])
+            .find(x => x.protocolo === protocoloSelecionado) ||
+        (typeof chamadosArquivadosV11 !== "undefined" ? chamadosArquivadosV11 : [])
+            .find(x => x.protocolo === protocoloSelecionado) ||
+        {};
+
+    const numeroBruto =
+        chamado.whatsappRetorno ||
+        chamado.whatsapp ||
+        chamado.telefoneRetorno ||
+        "";
+
+    const numero = normalizarNumeroWhatsApp(numeroBruto);
+    const resposta = document.getElementById("observacaoAdmin")?.value?.trim() || "";
+
+    if (!numero) {
+        alert("Este chamado não possui WhatsApp para retorno.");
+        return;
+    }
+
+    if (!resposta) {
+        alert("Digite a Observação da solução antes de abrir o WhatsApp.");
+        document.getElementById("observacaoAdmin")?.focus();
+        return;
+    }
+
+    const btn = document.getElementById("btnResponderWhatsAppAdmin");
+    const textoOriginal = btn?.textContent || "";
+
+    try {
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = "⏳ Salvando resposta...";
+        }
+
+        const respostaServidor = await fetch(API, {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify({
+                action: "update",
+                protocolo: protocoloSelecionado,
+                adminPassword: senhaAdministrativa,
+                status: document.getElementById("statusAdmin")?.value || chamado.status || "",
+                responsavel: document.getElementById("responsavelAdmin")?.value?.trim() || chamado.responsavel || "",
+                observacaoSolucao: resposta,
+                prioridade: document.getElementById("prioridadeAdmin")?.value || chamado.prioridade || ""
+            })
+        });
+
+        const texto = await respostaServidor.text();
+        let retorno = {};
+        try { retorno = texto ? JSON.parse(texto) : {}; } catch(e) {}
+
+        if (!respostaServidor.ok || retorno.sucesso === false) {
+            throw new Error(retorno.erro || "Não foi possível salvar a resposta.");
+        }
+
+        const atualizado = retorno.chamado || {
+            ...chamado,
+            observacaoSolucao: resposta,
+            respostaAdministracao: resposta
+        };
+
+        const lista = typeof chamados !== "undefined" ? chamados : [];
+        const i = lista.findIndex(x => x.protocolo === protocoloSelecionado);
+        if (i >= 0) lista[i] = {...lista[i], ...atualizado, observacaoSolucao: resposta, respostaAdministracao: resposta};
+
+        const mensagem = montarMensagemRespostaAdministracao({
+            ...chamado,
+            ...atualizado,
+            observacaoSolucao: resposta,
+            respostaAdministracao: resposta,
+            ultimaAtualizacao:
+                atualizado?.ultimaAtualizacao ||
+                retorno?.chamado?.ultimaAtualizacao ||
+                chamado?.ultimaAtualizacao ||
+                ""
+        });
+
+        if (btn) btn.textContent = "📲 Abrindo WhatsApp...";
+        window.open(
+            "https://wa.me/" + numero + "?text=" + encodeURIComponent(mensagem),
+            "_blank"
+        );
+
+        const resultado = document.getElementById("resultadoAtualizacao");
+        if (resultado) {
+            resultado.className = "mensagem sucesso";
+            resultado.style.display = "block";
+            resultado.innerHTML =
+                "✅ Resposta salva no chamado.<br><br>" +
+                "📲 O WhatsApp foi aberto para o número informado pelo solicitante.";
+        }
+    } catch (erro) {
+        alert(erro.message || "Não foi possível responder pelo WhatsApp.");
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = textoOriginal || "📲 Responder pelo WhatsApp";
+        }
+    }
+}
+
+document.getElementById("btnResponderWhatsAppAdmin")
+    ?.addEventListener("click", responderChamadoPeloWhatsApp);
+
+const _editarChamadoObs = document.getElementById("editarChamado");
+if (_editarChamadoObs && typeof MutationObserver !== "undefined") {
+    new MutationObserver(() => {
+        if (_editarChamadoObs.style.display !== "none" && protocoloSelecionado) {
+            const c =
+                (typeof chamados !== "undefined" ? chamados : []).find(x => x.protocolo === protocoloSelecionado) ||
+                (typeof chamadosArquivadosV11 !== "undefined" ? chamadosArquivadosV11 : []).find(x => x.protocolo === protocoloSelecionado);
+            if (c) atualizarAreaRespostaWhatsApp(c);
+        }
+    }).observe(_editarChamadoObs, {attributes:true, attributeFilter:["style"]});
 }
 
 
@@ -10633,6 +11033,9 @@ td:nth-child(2),td:nth-child(3){
 </footer>
 
 </div>
+
+
+
 </body>
 </html>`;
 
@@ -12641,6 +13044,770 @@ function mostrarPainelDetalhesChamadoV45() {
     Sistema de Gestão de Chamados<br>
     Versão 4.5
 </div>
+
+
+
+
+<script id="pc-atualizacao-inteligente-final-v413">
+(function () {
+    "use strict";
+
+    /*
+    ============================================================
+    V4.17 — CONTROLE DA NOTIFICAÇÃO AUTOMÁTICA
+    - ON: abre automaticamente "Novo chamado recebido!"
+    - OFF: não abre o modal automaticamente
+    - O contador 🔔 Notificações continua registrando novos chamados
+    - Preferência salva no navegador
+    ============================================================
+    */
+
+    var PC_CHAVE_NOTIFICACAO_AUTO =
+        "parqueClubeNotificacaoAutomatica";
+
+    var pcNotificacaoAutomaticaAtivada = true;
+
+    function pcLerPreferenciaNotificacaoAutomatica() {
+        try {
+            var valor = localStorage.getItem(
+                PC_CHAVE_NOTIFICACAO_AUTO
+            );
+
+            /*
+             * Por padrão, fica ativado.
+             */
+            return valor !== "off";
+        } catch (e) {
+            return true;
+        }
+    }
+
+    function pcSalvarPreferenciaNotificacaoAutomatica(ativo) {
+        try {
+            localStorage.setItem(
+                PC_CHAVE_NOTIFICACAO_AUTO,
+                ativo ? "on" : "off"
+            );
+        } catch (e) {}
+    }
+
+    function pcAtualizarBotaoNotificacaoAutomatica() {
+        var botao = document.getElementById(
+            "pcToggleNotificacaoAuto"
+        );
+
+        var icone = document.getElementById(
+            "pcNotificacaoAutoIcone"
+        );
+
+        if (!botao) return;
+
+        botao.setAttribute(
+            "aria-pressed",
+            pcNotificacaoAutomaticaAtivada ? "true" : "false"
+        );
+
+        if (pcNotificacaoAutomaticaAtivada) {
+            botao.textContent = "🔘 ON";
+            botao.style.background = "#1f8f4e";
+            botao.style.color = "#fff";
+            if (icone) icone.textContent = "🆕";
+        } else {
+            botao.textContent = "⚪ OFF";
+            botao.style.background = "#ececec";
+            botao.style.color = "#333";
+            if (icone) icone.textContent = "🔕";
+        }
+    }
+
+    function pcConfigurarControleNotificacaoAutomatica() {
+        pcNotificacaoAutomaticaAtivada =
+            pcLerPreferenciaNotificacaoAutomatica();
+
+        pcAtualizarBotaoNotificacaoAutomatica();
+
+        var botao = document.getElementById(
+            "pcToggleNotificacaoAuto"
+        );
+
+        if (!botao ||
+            botao.dataset.pcNotificacaoConfigurada === "1") {
+            return;
+        }
+
+        botao.dataset.pcNotificacaoConfigurada = "1";
+
+        botao.addEventListener("click", function () {
+            pcNotificacaoAutomaticaAtivada =
+                !pcNotificacaoAutomaticaAtivada;
+
+            pcSalvarPreferenciaNotificacaoAutomatica(
+                pcNotificacaoAutomaticaAtivada
+            );
+
+            pcAtualizarBotaoNotificacaoAutomatica();
+        });
+    }
+
+
+    /*
+    ============================================================
+    V4.17 — NOTIFICAÇÕES DE NOVOS CHAMADOS
+    - Botão 🔔 Notificações
+    - Contador de novos chamados não visualizados
+    - Modal "Novo chamado recebido!"
+    - Aproveita a mesma consulta de 90 segundos
+    - Não gera chamadas extras ao Worker
+    ============================================================
+    */
+
+    var pcNotificacoesNovosChamados = [];
+    var pcUltimoNovoChamado = null;
+
+    function pcEscaparHtml(valor) {
+        return String(valor == null ? "" : valor)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    function pcAtualizarBotaoNotificacoes() {
+        var contador = document.getElementById("pcContadorNotificacoes");
+        if (!contador) return;
+
+        var total = pcNotificacoesNovosChamados.length;
+        contador.textContent = total > 99 ? "99+" : String(total);
+        contador.style.display = total > 0 ? "inline-block" : "none";
+    }
+
+    function pcFecharModalNovoChamado() {
+        var modal = document.getElementById("pcModalNovoChamado");
+        if (modal) modal.style.display = "none";
+    }
+
+    function pcMostrarNovoChamado(chamado) {
+        if (!chamado) return;
+
+        pcUltimoNovoChamado = chamado;
+
+        var protocolo = chamado.protocolo || chamado.id || "Não informado";
+        var tipo = chamado.tipoOcorrencia || chamado.tipo || chamado.categoria || "Chamado";
+        var bloco = chamado.bloco || chamado.unidadeBloco || "";
+        var unidade = chamado.unidade || chamado.apartamento || "";
+        var descricao = chamado.descricao || chamado.relato || chamado.mensagem || "";
+
+        var conteudo = document.getElementById("pcConteudoNovoChamado");
+        if (conteudo) {
+            conteudo.innerHTML =
+                "<strong>Protocolo:</strong> " + pcEscaparHtml(protocolo) + "<br>" +
+                "<strong>Tipo:</strong> " + pcEscaparHtml(tipo) + "<br>" +
+                (bloco ? "<strong>Bloco:</strong> " + pcEscaparHtml(bloco) + "<br>" : "") +
+                (unidade ? "<strong>Unidade:</strong> " + pcEscaparHtml(unidade) + "<br>" : "") +
+                (descricao ? "<strong>Descrição:</strong><br>" + pcEscaparHtml(descricao) : "");
+        }
+
+        var modal = document.getElementById("pcModalNovoChamado");
+        if (modal) modal.style.display = "flex";
+    }
+
+    function pcRegistrarNovasNotificacoes(listaNova) {
+        var novosMapa = pcObterProtocolos(listaNova);
+        var lista = Array.isArray(listaNova) ? listaNova : [];
+        var encontrouNovo = false;
+        var primeiroNovo = null;
+
+        if (!pcPrimeiraLeituraConcluida) {
+            pcProtocolosConhecidos = novosMapa;
+            pcPrimeiraLeituraConcluida = true;
+            return;
+        }
+
+        lista.forEach(function (chamado) {
+            var chave = String(
+                chamado && (chamado.protocolo || chamado.id || chamado.createdAt || "")
+            ).trim();
+
+            if (chave && !pcProtocolosConhecidos[chave]) {
+                encontrouNovo = true;
+                pcNotificacoesNovosChamados.push(chamado);
+                if (!primeiroNovo) primeiroNovo = chamado;
+            }
+        });
+
+        pcProtocolosConhecidos = novosMapa;
+        pcAtualizarBotaoNotificacoes();
+
+        if (encontrouNovo) {
+            pcTocarSomNovoChamado();
+
+            /*
+             * A tela automática respeita a escolha do administrador.
+             * O novo chamado continua registrado no botão Notificações
+             * mesmo quando a abertura automática está desligada.
+             */
+            if (pcNotificacaoAutomaticaAtivada) {
+                pcMostrarNovoChamado(primeiroNovo);
+            }
+
+            console.log(
+                "Parque Clube: novo chamado detectado e registrado nas notificações."
+            );
+        }
+    }
+
+    function pcAbrirCentralNotificacoes() {
+        if (!pcNotificacoesNovosChamados.length) {
+            alert("🔔 Não há novas notificações.");
+            return;
+        }
+
+        pcMostrarNovoChamado(
+            pcNotificacoesNovosChamados[
+                pcNotificacoesNovosChamados.length - 1
+            ]
+        );
+    }
+
+    function pcConfigurarNotificacoes() {
+        var botao = document.getElementById("pcBotaoNotificacoes");
+        var fechar = document.getElementById("pcFecharModalNovoChamado");
+        var ok = document.getElementById("pcOkNovoChamado");
+        var ver = document.getElementById("pcVerNovoChamado");
+        var modal = document.getElementById("pcModalNovoChamado");
+
+        if (botao && botao.dataset.pcConfigurado !== "1") {
+            botao.dataset.pcConfigurado = "1";
+            botao.addEventListener("click", pcAbrirCentralNotificacoes);
+        }
+
+        if (fechar) fechar.addEventListener("click", pcFecharModalNovoChamado);
+        if (ok) ok.addEventListener("click", pcFecharModalNovoChamado);
+
+        if (modal) {
+            modal.addEventListener("click", function (evento) {
+                if (evento.target === modal) pcFecharModalNovoChamado();
+            });
+        }
+
+        if (ver) {
+            ver.addEventListener("click", function () {
+                pcFecharModalNovoChamado();
+
+                /*
+                 * Atualiza a lista normalmente e deixa o novo chamado
+                 * disponível na área administrativa sem alterar a lógica existente.
+                 */
+                if (typeof mostrarChamados === "function") {
+                    mostrarChamados();
+                }
+            });
+        }
+
+        pcAtualizarBotaoNotificacoes();
+    }
+
+
+    /*
+    ============================================================
+    ALERTA SONORO DE NOVOS CHAMADOS
+    - ON/OFF escolhido pelo administrador
+    - Preferência salva no navegador (localStorage)
+    - Não gera consultas extras ao Worker
+    - Só toca quando surgir protocolo novo
+    ============================================================
+    */
+
+    var PC_CHAVE_SOM = "parqueClubeSomNovosChamados";
+    var pcSomAtivado = false;
+    var pcPrimeiraLeituraConcluida = false;
+    var pcProtocolosConhecidos = {};
+
+    function pcLerPreferenciaSom() {
+        try {
+            return localStorage.getItem(PC_CHAVE_SOM) === "on";
+        } catch (e) {
+            return false;
+        }
+    }
+
+    function pcSalvarPreferenciaSom(ativo) {
+        try {
+            localStorage.setItem(PC_CHAVE_SOM, ativo ? "on" : "off");
+        } catch (e) {}
+    }
+
+    function pcAtualizarBotaoSom() {
+        var botao = document.getElementById("pcToggleAlertaSonoro");
+        var icone = document.getElementById("pcAlertaSonoroIcone");
+        if (!botao) return;
+
+        botao.setAttribute("aria-pressed", pcSomAtivado ? "true" : "false");
+
+        if (pcSomAtivado) {
+            botao.textContent = "🔘 ON";
+            botao.style.background = "#1f8f4e";
+            botao.style.color = "#fff";
+            if (icone) icone.textContent = "🔔";
+        } else {
+            botao.textContent = "⚪ OFF";
+            botao.style.background = "#ececec";
+            botao.style.color = "#333";
+            if (icone) icone.textContent = "🔇";
+        }
+    }
+
+    function pcConfigurarAlertaSonoro() {
+        pcSomAtivado = pcLerPreferenciaSom();
+        pcAtualizarBotaoSom();
+
+        var botao = document.getElementById("pcToggleAlertaSonoro");
+        if (!botao || botao.dataset.pcSomConfigurado === "1") return;
+
+        botao.dataset.pcSomConfigurado = "1";
+
+        /*
+         * Uma interação do administrador libera o áudio no navegador.
+         */
+        botao.addEventListener("click", function () {
+            pcSomAtivado = !pcSomAtivado;
+            pcSalvarPreferenciaSom(pcSomAtivado);
+            pcAtualizarBotaoSom();
+
+            if (pcSomAtivado) {
+                pcTocarSomNovoChamado();
+            }
+        });
+    }
+
+    function pcTocarSomNovoChamado() {
+        if (!pcSomAtivado) return;
+
+        try {
+            var AudioContextClass = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContextClass) return;
+
+            var ctx = new AudioContextClass();
+            var oscillator = ctx.createOscillator();
+            var gain = ctx.createGain();
+
+            oscillator.type = "sine";
+            oscillator.frequency.setValueAtTime(880, ctx.currentTime);
+
+            gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.12, ctx.currentTime + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.45);
+
+            oscillator.connect(gain);
+            gain.connect(ctx.destination);
+
+            oscillator.start();
+            oscillator.stop(ctx.currentTime + 0.46);
+
+            oscillator.addEventListener("ended", function () {
+                if (ctx && ctx.close) ctx.close();
+            });
+        } catch (erro) {
+            console.warn("Não foi possível tocar o alerta sonoro:", erro);
+        }
+    }
+
+    function pcObterProtocolos(lista) {
+        var mapa = {};
+        (Array.isArray(lista) ? lista : []).forEach(function (chamado) {
+            var chave = String(
+                chamado && (chamado.protocolo || chamado.id || chamado.createdAt || "")
+            ).trim();
+
+            if (chave) mapa[chave] = true;
+        });
+        return mapa;
+    }
+
+    function pcVerificarNovoChamado(listaNova) {
+        var novos = pcObterProtocolos(listaNova);
+
+        /*
+         * Na primeira leitura apenas registra os protocolos existentes.
+         * Assim, não toca para chamados antigos já presentes no sistema.
+         */
+        if (!pcPrimeiraLeituraConcluida) {
+            pcProtocolosConhecidos = novos;
+            pcPrimeiraLeituraConcluida = true;
+            return;
+        }
+
+        var existeNovo = false;
+
+        Object.keys(novos).forEach(function (protocolo) {
+            if (!pcProtocolosConhecidos[protocolo]) {
+                existeNovo = true;
+            }
+        });
+
+        pcProtocolosConhecidos = novos;
+
+        if (existeNovo) {
+            pcTocarSomNovoChamado();
+            console.log("Parque Clube: novo chamado detectado. Alerta sonoro acionado.");
+        }
+    }
+
+
+    /*
+    ============================================================
+    PARQUE CLUBE — V4.13 FINAL
+    ATUALIZAÇÃO INTELIGENTE DO PAINEL ADMINISTRATIVO
+
+    • Consulta o Worker a cada 90 segundos
+    • Continua programada mesmo com a aba em segundo plano
+    • NÃO redesenha a lista se os dados forem iguais
+    • Só atualiza visualmente quando houver alteração no banco
+    • Não interfere se houver chamado em edição
+    • Não interfere em atualização manual em andamento
+    • Não exige alteração no Worker ou no banco D1
+    ============================================================
+    */
+
+    var PC_INTERVALO_ATUALIZACAO = 90000;
+    var pcTimerAtualizacao = null;
+    var pcConsultaEmAndamento = false;
+
+    function pcPainelPesquisaAberto() {
+        var painel = document.getElementById("adminConteudoPesquisaV11");
+        if (!painel) return false;
+
+        var estilo = window.getComputedStyle(painel);
+
+        return !painel.hidden &&
+            estilo.display !== "none" &&
+            estilo.visibility !== "hidden";
+    }
+
+    function pcChamadoEmEdicao() {
+        /*
+         * CORREÇÃO V4.14
+         *
+         * Na tela "Pesquisar chamados", o sistema mantém o container
+         * #editarChamado visível mesmo quando nenhum chamado foi aberto.
+         * A versão anterior interpretava isso como edição ativa e, por isso,
+         * a atualização automática era bloqueada o tempo todo.
+         *
+         * O indicador confiável de edição é o protocolo selecionado.
+         */
+        return typeof protocoloSelecionado !== "undefined" &&
+            String(protocoloSelecionado || "").trim() !== "";
+    }
+
+    function pcNormalizarValor(valor) {
+        if (valor === null || valor === undefined) return "";
+
+        if (Array.isArray(valor)) {
+            return valor.map(pcNormalizarValor);
+        }
+
+        if (typeof valor === "object") {
+            var objetoOrdenado = {};
+            Object.keys(valor)
+                .sort()
+                .forEach(function (chave) {
+                    objetoOrdenado[chave] =
+                        pcNormalizarValor(valor[chave]);
+                });
+            return objetoOrdenado;
+        }
+
+        return valor;
+    }
+
+    function pcAssinaturaLista(lista) {
+        var copia = Array.isArray(lista) ? lista.slice() : [];
+
+        copia.sort(function (a, b) {
+            var chaveA = String(
+                (a && (a.protocolo || a.id || a.createdAt)) || ""
+            );
+
+            var chaveB = String(
+                (b && (b.protocolo || b.id || b.createdAt)) || ""
+            );
+
+            return chaveA.localeCompare(chaveB);
+        });
+
+        return JSON.stringify(pcNormalizarValor(copia));
+    }
+
+    function pcAssinaturaBanco(ativos, arquivados) {
+        return JSON.stringify({
+            ativos: pcAssinaturaLista(ativos),
+            arquivados: pcAssinaturaLista(arquivados)
+        });
+    }
+
+    async function pcVerificarAlteracoesNoBanco() {
+        if (pcConsultaEmAndamento) return;
+
+        if (!pcPainelPesquisaAberto()) return;
+
+        if (pcChamadoEmEdicao()) return;
+
+        if (typeof senhaAdministrativa === "undefined" ||
+            !senhaAdministrativa) {
+            return;
+        }
+
+        var botaoManual = document.getElementById("btnListarTodos");
+
+        /*
+         * Se a atualização manual já está em andamento,
+         * aguardamos o próximo ciclo.
+         */
+        if (botaoManual && botaoManual.disabled) {
+            return;
+        }
+
+        if (typeof API === "undefined" || !API) {
+            console.warn(
+                "Atualização automática: endereço da API não encontrado."
+            );
+            return;
+        }
+
+        pcConsultaEmAndamento = true;
+
+        try {
+            var resposta = await fetch(API, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    action: "list",
+                    adminPassword: senhaAdministrativa
+                })
+            });
+
+            var texto = await resposta.text();
+            var dados = {};
+
+            try {
+                dados = texto ? JSON.parse(texto) : {};
+            } catch (erroJson) {
+                throw new Error(
+                    "O Worker respondeu com dados inválidos."
+                );
+            }
+
+            if (!resposta.ok) {
+                throw new Error(
+                    dados.erro || "Erro ao verificar alterações."
+                );
+            }
+
+            var novosAtivos = Array.isArray(dados.chamados)
+                ? dados.chamados
+                : [];
+
+            var novosArquivados = Array.isArray(
+                dados.chamadosArquivados
+            )
+                ? dados.chamadosArquivados
+                : [];
+
+            var assinaturaAtual = pcAssinaturaBanco(
+                typeof chamados !== "undefined" ? chamados : [],
+                typeof chamadosArquivadosV11 !== "undefined"
+                    ? chamadosArquivadosV11
+                    : []
+            );
+
+            var novaAssinatura = pcAssinaturaBanco(
+                novosAtivos,
+                novosArquivados
+            );
+
+            /*
+             * Detecta novos protocolos usando a própria resposta da consulta.
+             * Não cria nenhuma chamada adicional ao Worker.
+             */
+            pcRegistrarNovasNotificacoes(novosAtivos);
+
+            /*
+             * O ponto principal:
+             * se nada mudou no banco, não mexe na interface.
+             */
+            if (assinaturaAtual === novaAssinatura) {
+                console.log(
+                    "Parque Clube: nenhuma alteração. Lista preservada."
+                );
+                return;
+            }
+
+            /*
+             * Houve alteração: atualiza os dados globais
+             * e somente agora redesenha o painel.
+             */
+            chamados = novosAtivos;
+            chamadosArquivadosV11 = novosArquivados;
+            chamadosHistoricoV11 = [
+                ...novosAtivos,
+                ...novosArquivados
+            ];
+
+            var totalArquivados = document.getElementById(
+                "totalArquivados"
+            );
+
+            if (totalArquivados) {
+                totalArquivados.textContent =
+                    novosArquivados.length;
+            }
+
+            if (typeof atualizarEstatisticas === "function") {
+                atualizarEstatisticas();
+            }
+
+            var estatisticas = document.getElementById(
+                "estatisticas"
+            );
+
+            if (estatisticas) {
+                estatisticas.style.display = "block";
+            }
+
+            var filtros = document.getElementById("filtros");
+
+            if (filtros) {
+                filtros.style.display = "block";
+            }
+
+            /*
+             * Respeita a pesquisa e os filtros que já estão
+             * selecionados pelo administrador.
+             */
+            if (typeof mostrarChamados === "function") {
+                mostrarChamados();
+            }
+
+            if (typeof renderizarChamadosArquivadosV11 === "function") {
+                renderizarChamadosArquivadosV11();
+            }
+
+            if (typeof inicializarDashboardV11 === "function") {
+                inicializarDashboardV11();
+            }
+
+            console.log(
+                "Parque Clube: alteração detectada. Painel atualizado."
+            );
+
+        } catch (erro) {
+            /*
+             * Erro silencioso na atualização automática:
+             * não substitui a tela nem quebra o sistema.
+             */
+            console.warn(
+                "Atualização automática Parque Clube:",
+                erro
+            );
+        } finally {
+            pcConsultaEmAndamento = false;
+        }
+    }
+
+    function pcIniciarAtualizacaoInteligente() {
+        if (pcTimerAtualizacao) {
+            clearInterval(pcTimerAtualizacao);
+        }
+
+        pcTimerAtualizacao = setInterval(
+            pcVerificarAlteracoesNoBanco,
+            PC_INTERVALO_ATUALIZACAO
+        );
+
+        window.__pcAutoRefreshTimer = pcTimerAtualizacao;
+
+        console.log(
+            "Atualização inteligente ativada: verificação a cada 90 segundos."
+        );
+
+        /*
+         * Não força atualização visual no início.
+         * A primeira verificação silenciosa ocorre após 90 segundos.
+         */
+    }
+
+    function pcIniciarMascaraWhatsapp() {
+        var campo = document.getElementById("whatsappRetorno");
+
+        if (!campo || campo.dataset.mascaraParqueClube === "1") {
+            return;
+        }
+
+        campo.dataset.mascaraParqueClube = "1";
+        campo.maxLength = 15;
+        campo.inputMode = "numeric";
+        campo.autocomplete = "tel";
+
+        function formatarTelefone() {
+            var numeros = String(campo.value || "")
+                .replace(/\D/g, "")
+                .slice(0, 11);
+
+            if (!numeros) {
+                campo.value = "";
+            } else if (numeros.length <= 2) {
+                campo.value = "(" + numeros;
+            } else if (numeros.length <= 7) {
+                campo.value =
+                    "(" + numeros.slice(0, 2) + ") " +
+                    numeros.slice(2);
+            } else {
+                campo.value =
+                    "(" + numeros.slice(0, 2) + ") " +
+                    numeros.slice(2, 7) + "-" +
+                    numeros.slice(7);
+            }
+        }
+
+        campo.addEventListener("input", formatarTelefone);
+
+        if (campo.value) {
+            formatarTelefone();
+        }
+    }
+
+    function pcInicializarV413Final() {
+        pcIniciarMascaraWhatsapp();
+        pcConfigurarAlertaSonoro();
+        pcConfigurarControleNotificacaoAutomatica();
+        pcConfigurarNotificacoes();
+
+        /*
+         * Registra os protocolos já carregados para evitar alerta
+         * para chamados antigos ao abrir a Área Administrativa.
+         */
+        if (typeof chamados !== "undefined") {
+            pcProtocolosConhecidos = pcObterProtocolos(chamados || []);
+            pcPrimeiraLeituraConcluida = true;
+        }
+
+        pcIniciarAtualizacaoInteligente();
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener(
+            "DOMContentLoaded",
+            pcInicializarV413Final
+        );
+    } else {
+        pcInicializarV413Final();
+    }
+})();
+</script>
+
 </body>
 
 </html>
