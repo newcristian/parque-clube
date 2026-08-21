@@ -1,1010 +1,13843 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<meta
+    name="theme-color"
+    content="#17632d"
+>
+
+<title>Chamados - Parque Clube</title>
+
+<style>
+
+/* =====================================================
+   CONFIGURAÇÃO GERAL
+===================================================== */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+
+    background:
+        linear-gradient(
+            135deg,
+            #eef5ef,
+            #ffffff
+        );
+
+    min-height: 100vh;
+
+    padding: 15px;
+
+    color: #222;
+}
+
+.container {
+
+    width: 100%;
+
+    max-width: 620px;
+
+    margin: auto;
+
+    background: white;
+
+    border-radius: 18px;
+
+    padding: 20px;
+
+    box-shadow:
+        0 5px 25px
+        rgba(0,0,0,.12);
+}
+
+
+/* =====================================================
+   CABEÇALHO
+===================================================== */
+
+.logo {
+
+    text-align: center;
+
+    margin-bottom: 5px;
+}
+
+.logo img {
+
+    width: 230px;
+
+    max-width: 85%;
+
+    height: auto;
+}
+
+h1 {
+
+    text-align: center;
+
+    color: #17632d;
+
+    font-size: 23px;
+
+    margin-top: 5px;
+}
+
+.subtitle {
+
+    text-align: center;
+
+    color: #777;
+
+    font-size: 14px;
+
+    margin-top: 5px;
+
+    margin-bottom: 20px;
+}
+
+
+/* =====================================================
+   MENU
+===================================================== */
+
+.menu {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 8px;
+
+    margin-bottom: 20px;
+}
+
+.menu button:last-child {
+
+    grid-column:
+        1 / -1;
+
+    width: 50%;
+}
+
+
+/* =====================================================
+   BOTÕES
+===================================================== */
+
+button {
+
+    width: 100%;
+
+    border: none;
+
+    border-radius: 8px;
+
+    padding: 13px;
+
+    font-size: 15px;
+
+    font-weight: bold;
+
+    color: white;
+
+    cursor: pointer;
+
+    margin-top: 7px;
+}
+
+button:disabled {
+
+    opacity: .6;
+
+    cursor: not-allowed;
+}
+
+.btn-verde {
+
+    background: #17632d;
+}
+
+.btn-azul {
+
+    background: #1769aa;
+}
+
+.btn-cinza {
+
+    background: #666;
+}
+
+.btn-vermelho {
+
+    background: #b42318;
+}
+
+.btn-whatsapp {
+
+    background: #20c863;
+}
+
+
+/* =====================================================
+   SEÇÕES
+===================================================== */
+
+.section {
+
+    display: none;
+}
+
+.section.active {
+
+    display: block;
+}
+
+.section-title {
+
+    color: #17632d;
+
+    font-size: 20px;
+
+    font-weight: bold;
+
+    border-bottom:
+        2px solid #ddd;
+
+    padding-bottom: 9px;
+
+    margin-bottom: 18px;
+}
+
+
+/* =====================================================
+   FORMULÁRIO
+===================================================== */
+
+.form-group {
+
+    margin-bottom: 14px;
+}
+
+label {
+
+    display: block;
+
+    font-size: 14px;
+
+    font-weight: bold;
+
+    margin-bottom: 5px;
+}
+
+input,
+select,
+textarea {
+
+    width: 100%;
+
+    border:
+        1px solid #ccc;
+
+    border-radius: 8px;
+
+    padding: 11px;
+
+    font-size: 15px;
+
+    background: #fff;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+
+    outline: none;
+
+    border-color: #17632d;
+
+    box-shadow:
+        0 0 0 2px
+        rgba(23,99,45,.12);
+}
+
+textarea {
+
+    min-height: 110px;
+
+    resize: vertical;
+}
+
+input[readonly] {
+
+    background: #f1f1f1;
+
+    font-weight: bold;
+}
+
+
+/* =====================================================
+   MENSAGENS
+===================================================== */
+
+.mensagem {
+
+    display: none;
+
+    padding: 12px;
+
+    margin-top: 12px;
+
+    border-radius: 8px;
+
+    text-align: center;
+
+    font-weight: bold;
+
+    font-size: 14px;
+}
+
+.mensagem.sucesso {
+
+    background: #d9f3df;
+
+    color: #17632d;
+}
+
+.mensagem.erro {
+
+    background: #f8d7da;
+
+    color: #721c24;
+}
+
+
+/* =====================================================
+   PROTOCOLO
+===================================================== */
+
+.protocolo-box {
+
+    display: none;
+
+    margin-top: 18px;
+
+    padding: 18px;
+
+    text-align: center;
+
+    border:
+        2px solid #17632d;
+
+    border-radius: 12px;
+
+    background: #f0f8f2;
+}
+
+.protocolo-numero {
+
+    font-size: 25px;
+
+    font-weight: bold;
+
+    color: #17632d;
+
+    margin: 8px 0 12px;
+}
+
+
+/* =====================================================
+   CONSULTA
+===================================================== */
+
+.resultado {
+
+    display: none;
+
+    margin-top: 18px;
+
+    border:
+        1px solid #ddd;
+
+    border-radius: 10px;
+
+    overflow: hidden;
+}
+
+.resultado-titulo {
+
+    background: #17632d;
+
+    color: white;
+
+    padding: 13px;
+
+    text-align: center;
+
+    font-weight: bold;
+}
+
+.resultado-corpo {
+
+    padding: 15px;
+}
+
+.resultado-item {
+
+    border-bottom:
+        1px solid #eee;
+
+    padding: 9px 0;
+
+    font-size: 14px;
+
+    line-height: 1.45;
+}
+
+.resultado-item:last-child {
+
+    border-bottom: none;
+}
+
+.resultado-item strong {
+
+    display: block;
+
+    color: #555;
+
+    margin-bottom: 3px;
+}
+
+
+/* =====================================================
+   ADMINISTRAÇÃO
+===================================================== */
+
+.admin-box {
+
+    background: #f7f7f7;
+
+    border:
+        1px solid #ddd;
+
+    border-radius: 12px;
+
+    padding: 15px;
+
+    margin-bottom: 15px;
+}
+
+.admin-titulo {
+
+    color: #17632d;
+
+    font-size: 18px;
+
+    font-weight: bold;
+
+    margin-bottom: 12px;
+}
+
+
 /*
-============================================================
- PARQUE CLUBE - CLOUDFLARE WORKER V4.9
- Sistema de Chamados / Ordem de Serviço
-
- D1 Binding: DB
- Secret: ADMIN_PASSWORD
- API: /api/protocolo
-
- V4.7:
- - WhatsApp para retorno salvo no chamado
- - Observação da solução usada como resposta da Administração e no WhatsApp
- - ultima_atualizacao usada como data/hora automática da resposta
- - Consulta/listagem devolve os dois campos
- - Preserva resposta anterior quando update não envia resposta
- - Mantém chamados, prioridade, arquivamento e módulo
-   Advertências / Notificações
-============================================================
+   O PAINEL FICA ESCONDIDO ATÉ A SENHA
+   SER INFORMADA.
 */
 
-function resposta(dados, status = 200) {
-  return new Response(JSON.stringify(dados), {
-    status,
-    headers: {
-      "Content-Type": "application/json; charset=UTF-8",
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type"
+#adminPainel {
+
+    display: none;
+}
+
+
+/* =====================================================
+   ESTATÍSTICAS
+===================================================== */
+
+.stats {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 8px;
+
+    margin-top: 15px;
+}
+
+.stat {
+
+    border-radius: 9px;
+
+    padding: 12px;
+
+    text-align: center;
+}
+
+.stat strong {
+
+    display: block;
+
+    font-size: 13px;
+}
+
+.stat span {
+
+    display: block;
+
+    font-size: 23px;
+
+    font-weight: bold;
+
+    margin-top: 3px;
+}
+
+
+/* =====================================================
+   FILTROS
+===================================================== */
+
+#filtros {
+
+    margin-top: 15px;
+}
+
+
+/* =====================================================
+   CARDS DOS CHAMADOS
+===================================================== */
+
+.card {
+
+    background: white;
+
+    border:
+        1px solid #ddd;
+
+    border-radius: 10px;
+
+    padding: 13px;
+
+    margin-top: 10px;
+
+    box-shadow:
+        0 2px 7px
+        rgba(0,0,0,.06);
+}
+
+.card-protocolo {
+
+    color: #17632d;
+
+    font-size: 17px;
+
+    font-weight: bold;
+
+    margin-bottom: 7px;
+}
+
+.card-info {
+
+    font-size: 14px;
+
+    line-height: 1.55;
+}
+
+
+/* =====================================================
+   STATUS
+===================================================== */
+
+.status {
+
+    display: inline-block;
+
+    padding: 6px 11px;
+
+    border-radius: 20px;
+
+    font-size: 13px;
+
+    font-weight: bold;
+
+    margin-top: 8px;
+}
+
+.status-aberto {
+
+    background: #fff3cd;
+
+    color: #856404;
+}
+
+.status-andamento {
+
+    background: #cfe8ff;
+
+    color: #075985;
+}
+
+.status-resolvido {
+
+    background: #d9f3df;
+
+    color: #17632d;
+}
+
+.status-cancelado {
+
+    background: #f8d7da;
+
+    color: #721c24;
+}
+
+
+/* =====================================================
+   EDIÇÃO ADMINISTRATIVA
+===================================================== */
+
+#editarChamado {
+
+    display: none;
+}
+
+
+/* =====================================================
+   RESPONSIVO
+===================================================== */
+
+@media(max-width:600px) {
+
+    .container {
+
+        padding: 16px;
     }
-  });
+
+    .menu {
+
+        grid-template-columns:
+            1fr 1fr;
+    }
+
+    .menu button:last-child {
+
+        width: 100%;
+    }
+
+    h1 {
+
+        font-size: 21px;
+    }
+
 }
 
-function obterDataBrasilia() {
-  const partes = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "America/Sao_Paulo",
-    year: "numeric", month: "2-digit", day: "2-digit"
-  }).formatToParts(new Date());
 
-  return {
-    ano: partes.find(p => p.type === "year").value,
-    mes: partes.find(p => p.type === "month").value,
-    dia: partes.find(p => p.type === "day").value
-  };
+/* =====================================================
+   SELEÇÃO DE MÚLTIPLOS ANDARES
+===================================================== */
+
+.pavimentos-box {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background: #fafafa;
 }
 
-function obterHoraBrasilia() {
-  return new Intl.DateTimeFormat("pt-BR", {
-    timeZone: "America/Sao_Paulo",
-    hour: "2-digit", minute: "2-digit", second: "2-digit",
-    hour12: false
-  }).format(new Date());
+.pavimento-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    font-weight: normal;
 }
 
-function dataHoraBrasilia() {
-  const d = obterDataBrasilia();
-  return `${d.dia}/${d.mes}/${d.ano} ${obterHoraBrasilia()}`;
+.pavimento-option input {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    flex: 0 0 auto;
 }
 
-function verificarSenha(dados, env) {
-  const senhaAdmin = String(env.ADMIN_PASSWORD || "").trim();
-  const senhaInformada = String(dados.adminPassword || "").trim();
+.pavimento-option span {
+    font-size: 14px;
+}
 
-  if (!senhaAdmin) {
-    return {
-      ok: false,
-      resposta: resposta({
-        sucesso: false,
-        erro: "A senha administrativa não está configurada no Cloudflare."
-      }, 500)
+@media (max-width: 480px) {
+    .pavimentos-box {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* =====================================================
+   BOTÃO DE E-MAIL
+===================================================== */
+
+.btn-email {
+    width: 100%;
+    margin-top: 10px;
+    padding: 13px;
+    border: none;
+    border-radius: 8px;
+    background: #1976d2;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-email:hover {
+    opacity: 0.92;
+}
+
+
+<style id="arquivamento-v11-style">
+.btn-atualizar-v11{background:#59636d !important;color:#fff !important;}
+.btn-ativos-v11{background:#17632d !important;color:#fff !important;}
+.btn-arquivar-todos-v11{background:#8a5a00 !important;color:#fff !important;}
+.btn-atualizar-v11:hover,.btn-ativos-v11:hover,.btn-arquivar-todos-v11:hover{filter:brightness(.94);}
+.admin-list-buttons-v11{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    margin:10px 0;
+}
+.admin-list-buttons-v11 button{
+    margin-top:0;
+}
+.admin-list-buttons-v11 .ativo{
+    font-weight:800;
+    box-shadow:0 0 0 2px rgba(23,99,45,.18) inset;
+}
+.card-arquivado-v11{
+    border:1px solid #cfd8df;
+    background:#fafafa;
+    border-radius:10px;
+    padding:14px;
+    margin:10px 0;
+}
+.tag-arquivado-v11{
+    display:inline-block;
+    background:#e8edf1;
+    color:#52616b;
+    border-radius:14px;
+    padding:4px 9px;
+    font-size:12px;
+    font-weight:800;
+    margin:7px 0;
+}
+.btn-reabrir-v11{
+    background:#17632d;
+    color:#fff;
+    border:0;
+    padding:10px 14px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:700;
+    width:100%;
+    margin-top:8px;
+}
+@media(max-width:650px){
+    .admin-list-buttons-v11{
+        grid-template-columns:1fr;
+    }
+}
+
+
+/* CSS V4.5 — Advertências / Notificações */
+.admin-v13-section-title{
+    font-weight:800;color:#123b5d;background:#f4f8fb;
+    border:1px solid #d7e3ea;border-radius:8px;padding:9px 11px;margin-bottom:10px
+}
+.admin-v13-penalty,.admin-v13-appeal,.admin-v13-decision{
+    border:1px solid #d7e3ea;border-radius:10px;padding:12px;
+    background:#fbfcfd
+}
+.admin-v13-penalty{border-left:4px solid #a56b00}
+.admin-v13-appeal{border-left:4px solid #315f8a}
+.admin-v13-decision{border-left:4px solid #176b35}
+.admin-v13-status{
+    display:inline-block;padding:4px 8px;border-radius:999px;font-weight:800;font-size:11px;
+    white-space:nowrap
+}
+.admin-v13-status.registrada{background:#e8eef2;color:#344b5a}
+.admin-v13-status.recurso{background:#fff0c2;color:#765400}
+.admin-v13-status.mantida{background:#f9d9d9;color:#8a2020}
+.admin-v13-status.cancelada{background:#d9f0df;color:#176b35}
+</style>
+</style>
+
+
+<style>
+.historico-destaque {
+    margin: 14px 0;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: #eef7ff;
+    border: 1px solid #c9e4fb;
+}
+.historico-destaque-titulo {
+    font-weight: 700;
+    margin-bottom: 9px;
+    color: #123b5d;
+}
+.historico-destaque-linha {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(0,0,0,.06);
+}
+.historico-destaque-linha:last-child {
+    border-bottom: 0;
+}
+.historico-destaque-label {
+    font-weight: 600;
+}
+.historico-destaque-valor {
+    font-weight: 700;
+    text-align: right;
+}
+</style>
+
+<style>
+.historico-consulta-protocolo{margin-top:14px;padding:12px 14px;border-radius:10px;background:#f1f7f3;border:1px solid #c9dfcf}
+.historico-consulta-protocolo .titulo{font-weight:700;color:#176b35;margin-bottom:8px}
+.historico-consulta-protocolo .linha{padding:5px 0;border-bottom:1px solid rgba(0,0,0,.06)}
+.historico-consulta-protocolo .linha:last-child{border-bottom:0}
+</style>
+<style id="dashboard-v11-css">
+.dashboard-v11{margin:18px 0;padding:16px;border-radius:16px;background:linear-gradient(180deg,#f8fbfd 0%,#fff 100%);border:1px solid #dce7ee;box-shadow:0 7px 24px rgba(18,59,93,.07)}
+.dashboard-v11 .dashboard-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.dashboard-v11 .dashboard-toolbar button{flex:1;min-width:145px}
+.dashboard-v11 .dashboard-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:13px}
+.dashboard-v11 .dashboard-card{background:#fff;border:1px solid #dfe7ec;border-radius:12px;padding:13px;text-align:center}
+.dashboard-v11 .dashboard-card strong{display:block;font-size:12px;color:#68747d;margin-bottom:4px}
+.dashboard-v11 .dashboard-card span{font-size:26px;font-weight:800;color:#123b5d}
+.dashboard-v11 .dashboard-section{margin-top:14px;padding:14px;border:1px solid #e0e7eb;border-radius:12px;background:#fff}
+.dashboard-v11 .dashboard-section h3{color:#17632d;font-size:16px;margin:0 0 10px}
+.dashboard-v11 .dashboard-bars{display:flex;flex-direction:column;gap:8px}
+.dashboard-v11 .dashboard-bar-row{display:grid;grid-template-columns:minmax(105px,1fr) 2fr 42px;align-items:center;gap:8px;font-size:13px}
+.dashboard-v11 .dashboard-bar-track{height:11px;background:#edf1f3;border-radius:99px;overflow:hidden}
+.dashboard-v11 .dashboard-bar-fill{height:100%;background:#17632d;border-radius:99px}
+.dashboard-v11 .dashboard-status-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.dashboard-v11 .dashboard-mini{padding:11px;border-radius:10px;text-align:center;font-weight:700}
+.dashboard-v11 .dashboard-mini span{display:block;font-size:23px;margin-top:3px}
+.dashboard-v11 .dashboard-empty{padding:16px;text-align:center;color:#777;background:#f7f7f7;border-radius:10px}
+@media(max-width:700px){.dashboard-v11 .dashboard-grid{grid-template-columns:repeat(2,1fr)}.dashboard-v11 .dashboard-status-grid{grid-template-columns:repeat(2,1fr)}.dashboard-v11 .dashboard-bar-row{grid-template-columns:95px 1fr 34px}}
+</style>
+
+<style id="admin-menu-v11">
+
+/* ===== MENU PRINCIPAL DA ÁREA ADMINISTRATIVA ===== */
+.admin-menu-v11{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:10px;
+    align-items:stretch;
+}
+.admin-menu-card{
+    min-height:126px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+    text-align:center;
+    padding:14px 12px 13px;
+}
+.admin-menu-card .icon{
+    width:100%;
+    min-height:42px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:31px;
+    line-height:1;
+    margin:0 0 7px;
+}
+.admin-menu-card .title{
+    width:100%;
+    text-align:center;
+    text-transform:uppercase;
+    font-weight:800;
+    font-size:15px;
+    line-height:1.15;
+    color:#123b5d;
+}
+.admin-menu-card .desc{
+    width:100%;
+    margin-top:6px;
+    text-align:center;
+    font-size:10.5px;
+    line-height:1.35;
+    color:#65737d;
+}
+@media(max-width:620px){
+    .admin-menu-v11{grid-template-columns:1fr;}
+}
+
+.admin-menu-v11{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:14px;
+    margin:16px 0;
+}
+.admin-menu-card{
+    border:1px solid #dbe5ea;
+    border-radius:15px;
+    padding:18px;
+    background:#fff;
+    box-shadow:0 6px 20px rgba(18,59,93,.06);
+    cursor:pointer;
+    transition:.15s ease;
+    text-align:left;
+}
+.admin-menu-card:hover{
+    transform:translateY(-1px);
+    box-shadow:0 9px 25px rgba(18,59,93,.10);
+}
+.admin-menu-card .icon{
+    font-size:30px;
+    margin-bottom:8px;
+}
+.admin-menu-card .title{
+    font-size:17px;
+    font-weight:800;
+    color:#123b5d;
+}
+.admin-menu-card .desc{
+    margin-top:5px;
+    font-size:12px;
+    color:#687680;
+    line-height:1.45;
+}
+.admin-submenu-v11{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+    margin:12px 0;
+    padding:10px 12px;
+    border:1px solid #dce7ee;
+    border-radius:11px;
+    background:#f8fbfd;
+}
+.admin-submenu-v11 .titulo{
+    font-weight:800;
+    color:#123b5d;
+}
+@media(max-width:650px){
+    .admin-menu-v11{grid-template-columns:1fr}
+}
+</style>
+
+
+<style id="admin-menu-hide-v11">
+#adminPainel #adminConteudoPesquisaV11,
+#adminPainel #adminConteudoRelatorioV11{display:none}
+</style>
+
+
+<style id="layout-responsivo-v12">
+
+/* =========================================================
+   V1.2 — LAYOUT RESPONSIVO
+   COMPUTADOR = ÁREA AMPLA
+   TABLET = ÁREA INTERMEDIÁRIA
+   CELULAR = LAYOUT VERTICAL
+========================================================= */
+
+/* ---------- COMPUTADOR ---------- */
+@media (min-width: 1000px) {
+
+    body {
+        padding: 18px;
+    }
+
+    /* O aplicativo ocupa praticamente toda a largura disponível */
+    body > .container {
+        width: 100%;
+        max-width: 1500px;
+        padding: 28px 32px;
+        border-radius: 20px;
+    }
+
+    /* Cabeçalho */
+    .logo img {
+        width: 210px;
+    }
+
+    h1 {
+        font-size: 28px;
+    }
+
+    .subtitle {
+        font-size: 15px;
+    }
+
+    /* Menu principal */
+    .menu {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+    }
+
+    .menu button:last-child {
+        width: 100%;
+        grid-column: auto;
+    }
+
+    /* Formulário de abertura */
+    #formChamado {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        column-gap: 20px;
+        row-gap: 0;
+    }
+
+    #formChamado .form-group {
+        min-width: 0;
+    }
+
+    /* Campos que precisam ocupar a largura inteira */
+    #formChamado .form-group:has(#protocolo),
+    #formChamado .form-group:has(#detalhes),
+    #formChamado .form-group:has(#btnEnviar),
+    #formChamado #areaExecucaoContainer,
+    #formChamado #dataOcorrenciaContainer,
+    #formChamado #intervaloCamera {
+        grid-column: 1 / -1;
+    }
+
+    /* Campo de execução fica em linha própria quando aparecer */
+    #areaExecucaoContainer {
+        width: 100%;
+    }
+
+    /* Painéis */
+    .admin-box {
+        padding: 20px;
+    }
+
+    .stats {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+    }
+
+    .admin-list-buttons-v11 {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .admin-list-buttons-v11 button {
+        width: 100%;
+    }
+
+    /* Menu administrativo */
+    .admin-menu-v11 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .admin-menu-card {
+        min-height: 145px;
+    }
+
+    /* Dashboard */
+    .dashboard-v11 .dashboard-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+    }
+
+    .dashboard-v11 .dashboard-status-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    /* Filtros e resultados administrativos */
+    #filtros {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+        align-items: end;
+    }
+
+    #filtros .form-group {
+        margin-bottom: 0;
+    }
+
+    /* Cards dos chamados */
+    #listaChamados {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+        align-items: start;
+    }
+
+    #listaChamados .card {
+        margin-top: 0;
+        height: 100%;
+    }
+
+    /* Histórico e resultados podem usar toda a largura */
+    .resultado,
+    .historico-consulta-protocolo,
+    #editarChamado {
+        width: 100%;
+    }
+
+    /* Relatório visual continua com largura controlada */
+    .report {
+        max-width: 1100px;
+    }
+}
+
+
+/* ---------- TABLET ---------- */
+@media (min-width: 600px) and (max-width: 999px) {
+
+    body > .container {
+        width: 96%;
+        max-width: 900px;
+        padding: 22px;
+    }
+
+    .menu {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .menu button:last-child {
+        width: 100%;
+        grid-column: auto;
+    }
+
+    #formChamado {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        column-gap: 14px;
+    }
+
+    #formChamado .form-group:has(#protocolo),
+    #formChamado .form-group:has(#detalhes),
+    #formChamado .form-group:has(#btnEnviar),
+    #formChamado #areaExecucaoContainer,
+    #formChamado #dataOcorrenciaContainer,
+    #formChamado #intervaloCamera {
+        grid-column: 1 / -1;
+    }
+
+    .stats {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .admin-menu-v11 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .admin-list-buttons-v11 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    #listaChamados {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    #listaChamados .card {
+        margin-top: 0;
+    }
+}
+
+
+/* ---------- CELULAR ---------- */
+@media (max-width: 599px) {
+
+    /* Mantém a experiência mobile que já aprovamos */
+    body {
+        padding: 10px;
+    }
+
+    body > .container {
+        width: 100%;
+        max-width: 620px;
+        padding: 16px;
+    }
+
+    .menu {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .menu button:last-child {
+        grid-column: 1 / -1;
+        width: 100%;
+    }
+
+    #formChamado {
+        display: block;
+    }
+
+    #listaChamados {
+        display: block;
+    }
+
+    .stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .admin-list-buttons-v11 {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-menu-v11 {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-v11 .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .dashboard-v11 .dashboard-status-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+</style>
+
+
+<style id="area-multipla-v12">
+.area-multi-wrapper{position:relative;width:100%}
+.area-multi-button{
+    width:100%; min-height:42px; padding:9px 12px;
+    border:1px solid #cbd5e1; border-radius:7px;
+    background:#fff; color:#374151; text-align:left;
+    cursor:pointer; font:inherit;
+}
+.area-multi-button span{float:right}
+.area-multi-options{
+    position:absolute; z-index:2000; left:0; right:0;
+    max-height:360px; overflow-y:auto; margin-top:5px;
+    padding:7px; background:#fff; border:1px solid #cbd5e1;
+    border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,.16);
+}
+.area-multi-option{
+    display:flex; align-items:center; gap:9px;
+    padding:8px 7px; border-radius:6px; cursor:pointer;
+}
+.area-multi-option:hover{background:#f1f5f9}
+.area-multi-option input{width:17px;height:17px;margin:0}
+.area-multi-group{margin:4px 0;border-top:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb;padding:4px 0}
+.area-multi-title{padding:5px 7px;font-size:12px;font-weight:700;color:#64748b;text-transform:uppercase}
+.area-multi-footer{border-top:1px solid #e5e7eb;padding:7px 3px 2px;text-align:right}
+#limparAreasExecucao{border:0;border-radius:6px;padding:7px 10px;background:#64748b;color:#fff;cursor:pointer}
+@media(max-width:599px){
+    .area-multi-options{position:relative;max-height:330px}
+}
+</style>
+
+
+<style id="area-execucao-estilo-blocos">
+/* Área/Local da Execução usa exatamente o mesmo padrão visual dos andares. */
+#areaExecucaoOptions.pavimentos-box {
+    width: 100%;
+}
+
+@media (min-width: 600px) {
+    #areaExecucaoOptions.pavimentos-box {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 480px) {
+    #areaExecucaoOptions.pavimentos-box {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+
+<style id="data-servicos-v12">
+/* Data obrigatória para serviços de Dedetização e Limpeza caixa d'água */
+#dataOcorrenciaContainer[data-servico-especial="true"] {
+    border-left: 4px solid #17632d;
+    padding-left: 10px;
+    background: #f4faf5;
+    border-radius: 6px;
+}
+</style>
+
+
+<style id="v12-final-acoes">
+.stat-filtro-v12{cursor:pointer;user-select:none;transition:transform .15s ease,box-shadow .15s ease,outline .15s ease;}
+.stat-filtro-v12:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.12);}
+.stat-filtro-v12:focus{outline:3px solid rgba(18,59,93,.25);outline-offset:2px;}
+.stat-filtro-v12.ativo{outline:3px solid #123b5d;outline-offset:2px;transform:translateY(-1px);}
+.btn-desarquivar-todos-v12{width:100%;margin-top:10px;padding:11px 16px;border:0;border-radius:8px;cursor:pointer;background:#123b5d;color:#fff;font-weight:700;}
+.btn-desarquivar-todos-v12:hover{filter:brightness(1.08);}
+.btn-desarquivar-todos-v12:disabled{opacity:.65;cursor:wait;}
+</style>
+
+<style id="areas-impressao-v12">
+/* =========================================================
+   V1.2 — CHAMADOS POR ÁREA
+   Gráfico horizontal compacto, próprio para A4.
+========================================================= */
+.area-horizontal-chart{
+    width:100%;
+    box-sizing:border-box;
+    border:1px solid #dce4e9;
+    border-radius:10px;
+    padding:10px 12px;
+    background:#fff;
+    overflow:hidden;
+}
+
+.area-row{
+    display:grid;
+    grid-template-columns:145px minmax(0,1fr) 34px 48px;
+    align-items:center;
+    gap:7px;
+    min-height:24px;
+    margin:2px 0;
+    font-size:10px;
+}
+
+.area-row-label{
+    min-width:0;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    color:#33434d;
+    font-weight:700;
+}
+
+.area-row-track{
+    height:11px;
+    min-width:0;
+    background:#edf2f5;
+    border-radius:99px;
+    overflow:hidden;
+}
+
+.area-row-fill{
+    height:100%;
+    background:#1d78b5;
+    border-radius:99px;
+}
+
+.area-row-value{
+    text-align:right;
+    font-weight:800;
+    color:#123b5d;
+}
+
+.area-row-percent{
+    text-align:right;
+    color:#5f6e77;
+    font-weight:700;
+}
+
+@media print{
+    .area-horizontal-chart{
+        width:100% !important;
+        max-width:100% !important;
+        overflow:visible !important;
+        box-sizing:border-box !important;
+        padding:8px 10px !important;
+    }
+
+    .area-row{
+        grid-template-columns:125px minmax(0,1fr) 30px 44px;
+        min-height:21px;
+        gap:6px;
+        font-size:9px;
+        margin:1px 0;
+    }
+
+    .area-row-track{
+        height:9px;
+    }
+
+    .area-row-fill{
+        -webkit-print-color-adjust:exact !important;
+        print-color-adjust:exact !important;
+    }
+}
+
+@media(max-width:650px){
+    .area-row{
+        grid-template-columns:105px minmax(0,1fr) 28px 43px;
+        font-size:9px;
+    }
+}
+</style>
+
+
+<style id="administrativo-v13-css">
+
+.admin-v13-wrap{padding:12px}
+.admin-v13-header{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.admin-v13-title{font-size:18px;font-weight:800;color:#123b5d}
+.admin-v13-actions{display:flex;gap:8px;flex-wrap:wrap}
+.admin-v13-card{background:#fff;border:1px solid #d7e0e5;border-radius:10px;padding:14px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.admin-v13-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.admin-v13-grid .full{grid-column:1/-1}
+.admin-v13-label{display:block;font-size:12px;font-weight:700;color:#24404f;margin-bottom:4px}
+.admin-v13-input,.admin-v13-select,.admin-v13-textarea{width:100%;box-sizing:border-box;border:1px solid #c9d3d9;border-radius:7px;padding:9px;font:inherit;background:#fff}
+.admin-v13-textarea{min-height:90px;resize:vertical}
+.admin-v13-hint{font-size:11px;color:#667780;margin-top:4px}
+.admin-v13-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:12px}
+.admin-v13-kpi{border:1px solid #d7e0e5;border-radius:9px;padding:10px;background:#f7fafb;text-align:center;cursor:pointer;transition:.15s ease;user-select:none}
+.admin-v13-kpi:hover{transform:translateY(-1px);border-color:#176b35;box-shadow:0 2px 7px rgba(0,0,0,.08)}
+.admin-v13-kpi strong{display:block;font-size:20px;color:#123b5d}
+.admin-v13-kpi span{font-size:11px;color:#60717b}
+.admin-v13-kpi.active{background:#176b35;border-color:#176b35}
+.admin-v13-kpi.active strong,.admin-v13-kpi.active span{color:#fff}
+.admin-v13-kpi.disabled{cursor:default;opacity:.65}
+.admin-v13-kpi.disabled:hover{transform:none;border-color:#d7e0e5;box-shadow:none}
+.admin-v13-alert{border:1px solid #e5b74f;background:#fff7dc;border-radius:8px;padding:10px;color:#5e4600;font-size:13px;font-weight:700;margin:8px 0}
+.admin-v13-table{width:100%;border-collapse:collapse;font-size:12px}
+.admin-v13-table th{background:#123b5d;color:#fff;text-align:left;padding:8px}
+.admin-v13-table td{border:1px solid #d8e0e4;padding:7px;vertical-align:top}
+.admin-v13-table tr:nth-child(even){background:#f8fafb}
+.admin-v13-badge{display:inline-block;border-radius:20px;padding:3px 8px;font-weight:700;font-size:11px}
+.admin-v13-badge.adv{background:#fff0d6;color:#8a4b00}.admin-v13-badge.not{background:#fde1e5;color:#8a1f2c}
+.admin-v13-btn{border:0;border-radius:7px;padding:9px 12px;cursor:pointer;font-weight:700}
+.admin-v13-btn.green{background:#176b35;color:#fff}.admin-v13-btn.blue{background:#1d6fae;color:#fff}.admin-v13-btn.gray{background:#6b6b6b;color:#fff}.admin-v13-btn.red{background:#a8202c;color:#fff}
+.admin-v13-btn:disabled{opacity:.6;cursor:wait}
+.admin-v13-result{max-height:360px;overflow:auto}
+.admin-v13-protocol{font-family:monospace;font-weight:800;color:#123b5d}
+.admin-v13-modal{display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.55);align-items:center;justify-content:center;padding:18px;box-sizing:border-box}
+.admin-v13-modal.open{display:flex}
+.admin-v13-modal-box{width:min(680px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,.25);border:1px solid #d7e0e5}
+.admin-v13-modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#176b35;color:#fff;padding:14px 16px;border-radius:14px 14px 0 0}
+.admin-v13-modal-title{font-size:17px;font-weight:800}
+.admin-v13-modal-close{width:auto!important;margin:0!important;background:transparent!important;color:#fff!important;border:0!important;font-size:25px!important;padding:0 4px!important;line-height:1;cursor:pointer}
+.admin-v13-modal-body{padding:16px}
+.admin-v13-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.admin-v13-detail{border:1px solid #e0e6ea;border-radius:9px;padding:10px;background:#f8fafb}
+.admin-v13-detail.full{grid-column:1/-1}
+.admin-v13-detail-label{font-size:11px;color:#687680;font-weight:700;margin-bottom:4px}
+.admin-v13-detail-value{font-size:14px;color:#16364a;font-weight:600;white-space:pre-wrap;word-break:break-word}
+.admin-v13-modal-footer{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:14px}
+.admin-v13-modal-footer button{width:auto!important;margin-top:0!important}
+@media(max-width:600px){.admin-v13-detail-grid{grid-template-columns:1fr}.admin-v13-detail.full{grid-column:auto}.admin-v13-modal{padding:10px}.admin-v13-modal-box{max-height:94vh}}
+
+@media(max-width:700px){.admin-v13-grid{grid-template-columns:1fr}.admin-v13-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-v13-table{font-size:11px;min-width:900px}.admin-v13-result{overflow:auto}}
+@media print{.admin-v13-wrap .no-print{display:none!important}}
+
+
+
+.v45-intro{
+    margin:-4px 0 14px;
+    padding:11px 13px;
+    border-radius:10px;
+    background:#f7faf8;
+    border:1px solid #e1ebe4;
+    color:#52606d;
+    font-size:12px;
+    line-height:1.45;
+}
+.v45-intro strong{
+    display:block;
+    color:#17632d;
+    font-size:13px;
+    margin-bottom:2px;
+}
+
+/* =====================================================
+   V4.5 — MELHORIA DE LAYOUT / EXPERIÊNCIA
+   Somente apresentação. Não altera API, banco ou regras.
+===================================================== */
+
+:root{
+    --pc-verde:#17632d;
+    --pc-verde-escuro:#104a22;
+    --pc-azul:#1769aa;
+    --pc-cinza:#64748b;
+    --pc-fundo:#f5f8f6;
+    --pc-borda:#dbe4de;
+    --pc-sombra:0 8px 24px rgba(16,74,34,.08);
+}
+
+body{
+    background:
+        radial-gradient(circle at top left, rgba(23,99,45,.10), transparent 32%),
+        linear-gradient(180deg,#eef5ef 0%,#f8faf9 48%,#ffffff 100%);
+    padding:12px;
+}
+
+.container{
+    max-width:760px;
+    padding:18px;
+    border:1px solid rgba(23,99,45,.08);
+    box-shadow:0 10px 35px rgba(0,0,0,.09);
+}
+
+.logo{
+    padding:4px 0 2px;
+}
+
+.logo img{
+    width:210px;
+    max-width:78%;
+}
+
+h1{
+    font-size:clamp(19px,4.5vw,25px);
+    letter-spacing:.2px;
+}
+
+.subtitle{
+    font-size:13px;
+    color:#64748b;
+    margin-bottom:14px;
+}
+
+.menu{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:10px;
+    padding:10px;
+    background:linear-gradient(180deg,#f7faf8,#eef5f0);
+    border:1px solid var(--pc-borda);
+    border-radius:16px;
+    position:sticky;
+    top:8px;
+    z-index:20;
+    box-shadow:0 5px 18px rgba(0,0,0,.06);
+}
+
+.menu button,
+.menu button:last-child{
+    grid-column:auto;
+    width:100%;
+    min-height:62px;
+    margin-top:0;
+    border-radius:12px;
+    padding:10px 8px;
+    box-shadow:0 3px 10px rgba(0,0,0,.08);
+    transition:transform .15s ease,box-shadow .15s ease,filter .15s ease;
+}
+
+.menu button:hover{
+    transform:translateY(-1px);
+    box-shadow:0 6px 14px rgba(0,0,0,.11);
+    filter:brightness(1.02);
+}
+
+.menu button:active{
+    transform:translateY(0);
+}
+
+.menu button .menu-label{
+    display:block;
+    font-size:14px;
+    line-height:1.2;
+}
+
+.menu button .menu-help{
+    display:block;
+    margin-top:4px;
+    font-size:10px;
+    font-weight:normal;
+    opacity:.88;
+}
+
+.section{
+    margin-top:16px;
+}
+
+.section-title{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    color:var(--pc-verde-escuro);
+    font-size:19px;
+    border-bottom:0;
+    padding:12px 14px;
+    margin-bottom:14px;
+    background:linear-gradient(90deg,#eef7f0,#ffffff);
+    border:1px solid var(--pc-borda);
+    border-left:4px solid var(--pc-verde);
+    border-radius:12px;
+}
+
+.form-group{
+    background:#fff;
+    border:1px solid #e5ebe7;
+    border-radius:12px;
+    padding:11px 12px;
+    margin-bottom:11px;
+    box-shadow:0 2px 8px rgba(0,0,0,.025);
+}
+
+.form-group:focus-within{
+    border-color:rgba(23,99,45,.42);
+    box-shadow:0 0 0 3px rgba(23,99,45,.07);
+}
+
+label{
+    color:#334155;
+    font-size:13px;
+}
+
+input,select,textarea{
+    border:1px solid #cfd9d2;
+    border-radius:9px;
+    min-height:44px;
+    background:#fff;
+}
+
+textarea{
+    min-height:100px;
+}
+
+button{
+    min-height:44px;
+    border-radius:10px;
+    transition:filter .15s ease,transform .15s ease;
+}
+
+button:hover{
+    filter:brightness(1.03);
+}
+
+button:active{
+    transform:scale(.99);
+}
+
+/* Blocos de informação e resultados */
+.card,
+.resultado,
+.painel,
+.dashboard-card{
+    border-radius:14px;
+}
+
+@media (max-width:700px){
+    body{padding:7px}
+    .container{
+        border-radius:14px;
+        padding:12px;
+    }
+
+    .menu{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        position:relative;
+        top:auto;
+        padding:8px;
+    }
+
+    .menu button,
+    .menu button:last-child{
+        min-height:54px;
+        font-size:13px;
+    }
+
+    .menu button .menu-help{
+        display:none;
+    }
+
+    .menu .btn-admin-home{
+        grid-column:1 / -1;
+    }
+
+    .menu .btn-admin-home .menu-help{
+        display:block;
+        font-size:10px;
+        margin-top:4px;
+    }
+
+    /* No celular, Abrir Chamado e Consultar Protocolo ficam lado a lado.
+       A Área Administrativa ocupa a linha seguinte. */
+    .menu button:nth-child(3){
+        grid-column:1 / -1;
+    }
+
+    .logo img{
+        width:180px;
+    }
+
+    .section-title{
+        font-size:17px;
+        padding:11px 12px;
+    }
+
+    .form-group{
+        padding:10px;
+    }
+
+    input,select,textarea{
+        font-size:16px; /* evita zoom automático no iPhone */
+    }
+}
+
+@media (min-width:701px){
+    .form-group{
+        padding:12px 14px;
+    }
+}
+
+
+/* =====================================================
+   V4.5 — PROTOCOLO DESTACADO NO HISTÓRICO
+===================================================== */
+
+.historico-cabecalho{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:10px 12px;
+    margin-bottom:4px;
+    background:#eaf5ed;
+    border-bottom:1px solid #cfe0d4;
+}
+
+.historico-cabecalho .titulo{
+    margin:0;
+    font-weight:700;
+    color:#17632d;
+}
+
+.historico-protocolo{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    white-space:nowrap;
+    padding:6px 10px;
+    border:1px solid #b8d2bf;
+    border-radius:8px;
+    background:#fff;
+    color:#334155;
+    font-size:12px;
+}
+
+.historico-protocolo strong{
+    color:#17632d;
+    font-size:14px;
+    letter-spacing:.2px;
+}
+
+@media (max-width:700px){
+    .historico-cabecalho{
+        align-items:flex-start;
+        flex-direction:column;
+        gap:7px;
+    }
+
+    .historico-protocolo{
+        width:100%;
+        justify-content:space-between;
+        box-sizing:border-box;
+    }
+}
+
+/* =====================================================
+   V4.5 — AÇÃO FINAL DA CONSULTA DE PROTOCOLO
+===================================================== */
+
+.consulta-final-acao{
+    margin-top:16px;
+    padding:12px 0 2px;
+    border-top:1px solid #dfe8e2;
+    text-align:center;
+}
+
+.btn-fechar-consulta{
+    width:100%;
+    max-width:360px;
+    min-height:46px;
+    border:1px solid #17632d;
+    background:#17632d;
+    color:#fff;
+    font-weight:700;
+    border-radius:10px;
+    cursor:pointer;
+    box-shadow:0 4px 12px rgba(23,99,45,.14);
+}
+
+.btn-fechar-consulta:hover{
+    background:#104a22;
+}
+
+.btn-fechar-consulta:active{
+    transform:scale(.99);
+}
+
+@media (max-width:700px){
+    .consulta-final-acao{
+        margin-top:14px;
+    }
+
+    .btn-fechar-consulta{
+        max-width:none;
+    }
+}
+
+/* V4.5 — MELHORIAS DA TELA INICIAL */
+.home-bloco-titulo{
+    margin:10px 0 6px;padding:9px 12px;border-radius:10px;
+    background:#f2f7f3;border:1px solid #dce8df;color:#17632d;
+    font-size:13px;font-weight:800;letter-spacing:.2px;
+    text-transform:uppercase;
+}
+.home-bloco-subtitulo{margin:-2px 0 10px;color:#64748b;font-size:12px;line-height:1.4}
+.home-status-rapido{
+    display:none;margin:16px 0;padding:18px;border:1px solid #b9d9c2;
+    border-radius:14px;background:linear-gradient(180deg,#f0faf3,#fff);
+    box-shadow:0 6px 18px rgba(23,99,45,.08);text-align:center;
+}
+.home-status-rapido .status-icone{font-size:27px;margin-bottom:5px}
+.home-status-rapido .status-titulo{color:#17632d;font-size:17px;font-weight:800}
+.home-status-rapido .status-texto{margin-top:4px;color:#52606d;font-size:12px}
+.home-status-rapido .status-protocolo{
+    display:inline-block;margin:10px 0 12px;padding:8px 14px;border-radius:9px;
+    background:#fff;border:1px solid #b9d9c2;color:#104a22;font-size:18px;
+    font-weight:900;letter-spacing:.4px;
+}
+.btn-status-rapido{width:100%;max-width:320px;min-height:44px;border:0;border-radius:10px;background:#17632d;color:#fff;font-weight:800;cursor:pointer}
+.home-rodape{margin:22px 0 4px;padding:14px 8px 4px;border-top:1px solid #dfe8e2;text-align:center;color:#64748b;font-size:11px;line-height:1.5}
+.home-rodape strong{display:block;color:#17632d;font-size:12px}
+@media(max-width:700px){.home-bloco-titulo{margin-top:10px}.home-status-rapido{padding:15px}}
+
+/* =====================================================
+   V4.5 — CONSULTAR PROTOCOLO MELHORADO
+===================================================== */
+
+.consulta-ajuda{
+    margin:-4px 0 12px;
+    padding:10px 12px;
+    border:1px solid #dbe7de;
+    border-radius:10px;
+    background:#f7faf8;
+    color:#64748b;
+    font-size:12px;
+    line-height:1.45;
+}
+.consulta-ajuda strong{
+    color:#17632d;
+}
+
+.consulta-busca-estado{
+    display:none;
+    margin:8px 0;
+    padding:9px 12px;
+    border-radius:9px;
+    text-align:center;
+    font-size:12px;
+    font-weight:700;
+}
+.consulta-busca-estado.consultando{
+    display:block;
+    background:#eef6fb;
+    color:#1769aa;
+    border:1px solid #c9dfef;
+}
+.consulta-busca-estado.sucesso{
+    display:block;
+    background:#eef9f1;
+    color:#17632d;
+    border:1px solid #c8dfcf;
+}
+.consulta-busca-estado.erro{
+    display:block;
+    background:#fff0f0;
+    color:#a11;
+    border:1px solid #e7caca;
+}
+
+.consulta-resumo{
+    display:none;
+    margin-top:14px;
+    padding:16px;
+    border:1px solid #cfe0d4;
+    border-radius:14px;
+    background:linear-gradient(180deg,#f4faf5,#fff);
+    box-shadow:0 5px 16px rgba(23,99,45,.06);
+}
+.consulta-resumo-topo{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:12px;
+}
+.consulta-resumo-label{
+    color:#64748b;
+    font-size:11px;
+    text-transform:uppercase;
+    font-weight:800;
+}
+.consulta-resumo-protocolo{
+    margin-top:3px;
+    color:#104a22;
+    font-size:18px;
+    font-weight:900;
+    letter-spacing:.2px;
+}
+.consulta-resumo-status{
+    min-width:125px;
+    padding:8px 11px;
+    border-radius:9px;
+    text-align:center;
+    font-size:12px;
+    font-weight:900;
+    border:1px solid #b9d9c2;
+    background:#eaf6ed;
+    color:#17632d;
+}
+.consulta-resumo-dados{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:8px;
+    margin-top:13px;
+}
+.consulta-resumo-item{
+    padding:9px 10px;
+    border-radius:9px;
+    background:#fff;
+    border:1px solid #e3ebe5;
+}
+.consulta-resumo-item span{
+    display:block;
+    color:#64748b;
+    font-size:10px;
+    margin-bottom:2px;
+}
+.consulta-resumo-item strong{
+    color:#334155;
+    font-size:12px;
+}
+
+
+
+
+
+
+
+
+
+@media(max-width:700px){
+    .consulta-resumo-topo{
+        flex-direction:column;
+    }
+    .consulta-resumo-status{
+        width:100%;
+        box-sizing:border-box;
+    }
+    .consulta-resumo-dados{
+        grid-template-columns:1fr;
+    }
+}
+
+.consulta-resumo-status.status-resolvido{
+    background:#eaf7ed;
+    border-color:#b7d9bf;
+    color:#17632d;
+}
+.consulta-resumo-status.status-andamento{
+    background:#edf6fc;
+    border-color:#c5ddec;
+    color:#1769aa;
+}
+.consulta-resumo-status.status-aberto{
+    background:#fff8df;
+    border-color:#e7d69a;
+    color:#7a5a00;
+}
+.consulta-resumo-status.status-cancelado{
+    background:#fff0f0;
+    border-color:#e2baba;
+    color:#a11;
+}
+
+/* =====================================================
+   V4.5 — SOLUÇÃO FINAL + COMPARTILHAR PROTOCOLO
+===================================================== */
+
+.consulta-solucao{
+    display:none;
+    margin-top:14px;
+    padding:14px;
+    border:1px solid #cfe0d4;
+    border-left:4px solid #17632d;
+    border-radius:12px;
+    background:#f5faf6;
+}
+.consulta-solucao-title{
+    color:#17632d;
+    font-weight:800;
+    font-size:13px;
+    margin-bottom:6px;
+}
+.consulta-solucao-text{
+    color:#334155;
+    font-size:12px;
+    line-height:1.55;
+    white-space:pre-wrap;
+}
+.consulta-compartilhar{
+    margin-top:14px;
+    text-align:center;
+}
+.btn-compartilhar-protocolo{
+    width:100%;
+    max-width:360px;
+    min-height:46px;
+    border:0;
+    border-radius:10px;
+    background:#17632d;
+    color:#fff;
+    font-weight:800;
+    cursor:pointer;
+    box-shadow:0 4px 12px rgba(23,99,45,.13);
+}
+.btn-compartilhar-protocolo:hover{
+    filter:brightness(1.04);
+}
+@media(max-width:700px){
+    .btn-compartilhar-protocolo{
+        max-width:none;
+    }
+}
+
+/* V4.5 — AÇÕES FINAIS DA CONSULTA */
+.consulta-acoes-finais{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-top:14px;
+}
+
+.consulta-acoes-finais .btn-compartilhar-protocolo,
+.consulta-acoes-finais .btn-fechar-consulta{
+    width:100%;
+    max-width:none;
+    min-height:46px;
+    margin:0;
+}
+
+/* Compartilhar: azul para diferenciar da ação de fechar */
+.consulta-acoes-finais .btn-compartilhar-protocolo{
+    background:#1769aa;
+    border:1px solid #1769aa;
+    color:#fff;
+}
+
+/* Fechar: mantém verde institucional */
+.consulta-acoes-finais .btn-fechar-consulta{
+    background:#17632d;
+    border:1px solid #17632d;
+    color:#fff;
+}
+
+.consulta-acoes-finais .btn-compartilhar-protocolo:hover,
+.consulta-acoes-finais .btn-fechar-consulta:hover{
+    filter:brightness(1.04);
+}
+
+@media(max-width:700px){
+    .consulta-acoes-finais{
+        grid-template-columns:1fr;
+    }
+}
+
+/* V4.5 — CORREÇÃO MOBILE DOS BOTÕES DA CONSULTA */
+.consulta-acoes-finais{
+    position:relative;
+    z-index:20;
+    pointer-events:auto;
+}
+
+.consulta-acoes-finais button,
+.consulta-acoes-finais .btn-compartilhar-protocolo,
+.consulta-acoes-finais .btn-fechar-consulta{
+    position:relative;
+    z-index:21;
+    pointer-events:auto !important;
+    touch-action:manipulation;
+    -webkit-tap-highlight-color:transparent;
+}
+
+@media (max-width:700px){
+    .consulta-acoes-finais{
+        display:flex;
+        flex-direction:column;
+        gap:10px;
+        width:100%;
+        position:relative;
+        z-index:20;
+    }
+
+    .consulta-acoes-finais button{
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        width:100%;
+        min-height:50px;
+        margin:0;
+        opacity:1 !important;
+        visibility:visible !important;
+        cursor:pointer;
+        pointer-events:auto !important;
+    }
+
+    .consulta-acoes-finais .btn-compartilhar-protocolo{
+        background:#1769aa !important;
+        color:#fff !important;
+    }
+
+    .consulta-acoes-finais .btn-fechar-consulta{
+        background:#17632d !important;
+        color:#fff !important;
+    }
+}
+
+
+<style id="admin-dashboard-v45-css">
+.admin-v45-dashboard{margin:0 0 14px;padding:14px;border:1px solid #d7e0e5;border-radius:12px;background:#f8fafb;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.admin-v45-dashboard-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.admin-v45-dashboard-title{font-size:17px;font-weight:800;color:#123b5d}
+.admin-v45-dashboard-sub{font-size:11px;color:#667780;margin-top:2px}
+.admin-v45-dashboard-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.admin-v45-kpi{padding:11px;border-radius:10px;background:#fff;border:1px solid #d7e0e5;text-align:center}
+.admin-v45-kpi strong{display:block;font-size:22px;color:#123b5d}
+.admin-v45-kpi span{display:block;font-size:10px;color:#60717b;font-weight:700;margin-top:2px}
+.admin-v45-alert{margin-top:10px;padding:10px 12px;border-radius:9px;border:1px solid #e5b74f;background:#fff7dc;color:#5e4600;font-size:12px;font-weight:800;display:none}
+.admin-v45-alert.ok{border-color:#b9d9c2;background:#eef8f0;color:#17632d}
+.admin-v45-refresh{border:0;border-radius:8px;padding:8px 11px;background:#1d6fae;color:#fff;font-weight:800;cursor:pointer}
+.admin-v45-refresh:disabled{opacity:.65;cursor:wait}
+@media(max-width:700px){.admin-v45-dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-v45-kpi strong{font-size:20px}}
+</style>
+
+</head>
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+<!-- =====================================================
+     CABEÇALHO — V4.5 LAYOUT
+===================================================== -->
+
+<div class="logo">
+
+    <img
+        src="logo parqueclube.png"
+        alt="Parque Clube"
+    >
+
+</div>
+
+
+<h1>
+
+    SISTEMA DE GESTÃO DO CONDOMÍNIO
+
+</h1>
+
+
+<div class="subtitle">
+
+    Sistema de Chamados / Ordem de Serviço
+
+</div>
+
+
+<!-- =====================================================
+     MENU PRINCIPAL
+===================================================== -->
+
+<div class="menu">
+
+
+<button
+    type="button"
+    class="btn-verde"
+    onclick="prepararNovoChamado()"
+>
+
+    <span class="menu-label">📋 Abrir Chamado</span>
+    <span class="menu-help">Registrar uma nova solicitação</span>
+
+</button>
+
+
+<button
+    type="button"
+    class="btn-cinza"
+    onclick="mostrarSecao('consultar')"
+>
+
+    <span class="menu-label">🔎 Consultar Protocolo</span>
+    <span class="menu-help">Acompanhar uma solicitação</span>
+
+</button>
+
+
+<button
+    type="button"
+    class="btn-admin-home btn-azul"
+    onclick="mostrarSecao('admin')"
+>
+
+    <span class="menu-label">🔐 Área Administrativa</span>
+    <span class="menu-help">Acesso Restrito à Administração</span>
+
+</button>
+
+
+</div>
+
+
+<!-- =====================================================
+     ABRIR CHAMADO
+===================================================== -->
+
+
+<div id="homeStatusRapido" class="home-status-rapido">
+    <div class="status-icone">✅</div>
+    <div class="status-titulo">Chamado registrado!</div>
+    <div class="status-texto">Seu protocolo foi gerado com sucesso:</div>
+    <div id="homeStatusProtocolo" class="status-protocolo">-</div>
+    <button type="button" class="btn-status-rapido" onclick="consultarProtocoloRapido()">
+        🔎 Consultar chamado
+    </button>
+</div>
+<section
+    id="secaoAbrir"
+    class="section active"
+>
+
+
+<div class="section-title">
+
+    📋 Abertura de Chamado / OS
+
+</div>
+
+<div class="v45-intro">
+    <strong>Registre sua solicitação de forma rápida.</strong>
+    Preencha os dados abaixo e envie o chamado para gerar o protocolo.
+</div>
+
+
+<form id="formChamado">
+
+
+<div class="form-group">
+
+<label>
+
+    Protocolo / OS:
+
+</label>
+
+<input
+    id="protocolo"
+    value="Será gerado ao enviar"
+    readonly
+>
+
+</div>
+
+
+<div class="form-group">
+
+<label>
+
+    Seu Nome / Identificação:
+
+</label>
+
+<input
+    id="solicitante"
+    placeholder="Digite seu nome"
+    required
+>
+
+</div>
+
+<div class="form-group">
+
+<label>
+
+    📱 WhatsApp para retorno:
+
+</label>
+
+<input
+    id="whatsappRetorno"
+    type="tel"
+    inputmode="numeric"
+    autocomplete="tel"
+    maxlength="15"
+    placeholder="Ex.: (61) 99999-9999"
+>
+
+<small style="display:block;margin-top:5px;color:#64748b;">
+    Opcional. Informe para receber uma resposta da Administração pelo WhatsApp.
+</small>
+
+</div>
+
+
+<div class="form-group">
+
+<label>
+
+    Cargo/Função:
+
+</label>
+
+<select
+    id="cargo"
+    required
+>
+
+<option value="">
+
+    Selecione o cargo/função
+
+</option>
+
+<option>
+    ASG (Auxiliar de Serviços Gerais)
+</option>
+
+<option>
+    Conselheiro(a)
+</option>
+
+<option>
+    Porteiro(a)
+</option>
+
+<option>
+    Síndica
+</option>
+
+<option>
+    Subsíndico(a)
+</option>
+
+<option>
+    Zelador(a)
+</option>
+
+</select>
+
+</div>
+
+
+<div class="form-group">
+
+<label>
+
+    Área / Bloco:
+
+</label>
+
+<select
+    id="bloco"
+    required
+    onchange="const area=document.getElementById('areaPavimento');const mostrar=this.value.trim().startsWith('Bloco ');area.style.display=mostrar?'block':'none';if(!mostrar){document.querySelectorAll('input[name=\'pavimento\']').forEach(c=>c.checked=false);}"
+>
+<option value="">Selecione o local</option>
+<optgroup label="🏢 Blocos">
+<option>Bloco 1A</option><option>Bloco 1B</option><option>Bloco 1C</option><option>Bloco 1D</option><option>Bloco 1E</option>
+<option>Bloco 2A</option><option>Bloco 2B</option><option>Bloco 2C</option><option>Bloco 2D</option><option>Bloco 2E</option>
+</optgroup>
+<optgroup label="📍 Áreas">
+<option>Administração</option><option>Almoxarifado</option>
+<option>Área Comum Sub1</option><option>Área Comum Sub2</option>
+<option>Área de Lazer Sub1</option><option>Área de Lazer Sub2</option>
+<option>Bicicletário</option><option>Brinquedoteca</option>
+<option>Churrasqueira Sub1</option><option>Churrasqueira Sub2</option>
+<option>Container Lixo</option><option>Correios</option>
+<option>Estacionamento Rotativo</option><option>Garagens</option>
+<option>Jardim</option><option>Lavanderia</option><option>Mercadinho</option>
+<option>Parquinho Sub1</option><option>Parquinho Sub2</option>
+<option>Piscina Sub1</option><option>Piscina Sub2</option>
+<option>Portaria</option><option>Sala de Reunião</option>
+<option>Salão Sub1</option><option>Salão Sub2</option>
+</optgroup>
+</select>
+
+</div>
+
+
+<!-- =====================================================
+     ANDARES / PAVIMENTO
+===================================================== -->
+
+<div
+    class="form-group"
+    id="areaPavimento"
+    style="display:none;width:100%;"
+>
+
+<label>
+    Andar / Pavimento:
+    <small style="font-weight:normal;">
+        (selecione um ou mais andares)
+    </small>
+</label>
+
+<div
+    id="pavimento"
+    class="pavimentos-box"
+>
+
+<label class="pavimento-option">
+    <input type="checkbox" name="pavimento" value="Térreo">
+    <span>Térreo</span>
+</label>
+
+<label class="pavimento-option">
+    <input type="checkbox" name="pavimento" value="1° andar">
+    <span>1° andar</span>
+</label>
+
+<label class="pavimento-option">
+    <input type="checkbox" name="pavimento" value="2° andar">
+    <span>2° andar</span>
+</label>
+
+<label class="pavimento-option">
+    <input type="checkbox" name="pavimento" value="3° andar">
+    <span>3° andar</span>
+</label>
+
+<label class="pavimento-option">
+    <input type="checkbox" name="pavimento" value="4° andar">
+    <span>4° andar</span>
+</label>
+
+<label class="pavimento-option">
+    <input type="checkbox" name="pavimento" value="5° andar">
+    <span>5° andar</span>
+</label>
+
+<label class="pavimento-option">
+    <input type="checkbox" name="pavimento" value="6° andar">
+    <span>6° andar</span>
+</label>
+
+<label class="pavimento-option">
+    <input type="checkbox" name="pavimento" value="7° andar">
+    <span>7° andar</span>
+</label>
+
+<label class="pavimento-option">
+    <input type="checkbox" name="pavimento" value="8° andar">
+    <span>8° andar</span>
+</label>
+
+<label class="pavimento-option">
+    <input type="checkbox" name="pavimento" value="9° andar">
+    <span>9° andar</span>
+</label>
+
+<label class="pavimento-option">
+    <input type="checkbox" name="pavimento" value="10° andar">
+    <span>10° andar</span>
+</label>
+
+<label class="pavimento-option">
+    <input type="checkbox" name="pavimento" value="11° Andar">
+    <span>11° Andar</span>
+</label>
+
+<label class="pavimento-option">
+    <input
+        type="checkbox"
+        name="pavimento"
+        value="Todos os andares"
+        id="pavimentoTodos"
+    >
+    <span>Todos os andares</span>
+</label>
+
+<label class="pavimento-option">
+    <input type="checkbox" name="pavimento" value="Casa de Máquinas">
+    <span>Casa de Máquinas</span>
+</label>
+
+<label class="pavimento-option">
+    <input type="checkbox" name="pavimento" value="Cobertura/Terraço">
+    <span>Cobertura/Terraço</span>
+</label>
+
+</div>
+
+</div>
+
+
+<div class="form-group">
+
+<label>
+
+    Tipo de Ocorrência:
+
+</label>
+
+<select
+    id="ocorrencia"
+    required
+>
+
+<option value="">
+
+    Selecione o serviço
+
+</option>
+
+<option>
+    Lâmpada/Sensor
+</option>
+
+<option>
+    Limpeza
+</option>
+
+<option>
+    Elétrica
+</option>
+
+<option>
+    Hidráulica
+</option>
+
+<option>
+    Vazamento de água
+</option>
+
+<option>
+    Elevador
+</option>
+
+<option>
+    Portão
+</option>
+
+<option>
+    Área comum
+</option>
+
+<option>
+    Shaft Aberto
+</option>
+
+<option>
+    Gás
+</option>
+
+<option>
+    Falta de Água no Bloco
+</option>
+
+<option>
+    Falta de Energia no Bloco
+</option>
+
+<option>
+    Câmera/Imagens
+</option>
+
+<option>
+    Dedetização
+</option>
+
+<option>
+    Limpeza caixa d'água
+</option>
+
+<option>
+    Outros
+</option>
+
+</select>
+
+</div>
+
+
+<div class="form-group" id="areaExecucaoContainer" style="display:none;width:100%;">
+
+<label>
+    Área / Local da Execução:
+    <small style="font-weight:normal;">
+        (selecione um ou mais locais)
+    </small>
+</label>
+
+<input type="hidden" id="areaExecucao" name="areaExecucao" value="">
+
+<div id="areaExecucaoOptions" class="pavimentos-box">
+
+<label class="pavimento-option">
+    <input type="checkbox" name="areaExecucaoMulti" value="Condomínio Geral" id="areaCondominioGeral">
+    <span>Condomínio Geral</span>
+</label>
+
+<label class="pavimento-option">
+    <input type="checkbox" name="areaExecucaoMulti" value="Todos os Blocos" id="areaTodosBlocos">
+    <span>Todos os Blocos</span>
+</label>
+
+<label class="pavimento-option">
+    <input type="checkbox" name="areaExecucaoMulti" value="Bloco 1A">
+    <span>Bloco 1A</span>
+</label>
+
+<label class="pavimento-option">
+    <input type="checkbox" name="areaExecucaoMulti" value="Bloco 1B">
+    <span>Bloco 1B</span>
+</label>
+
+<label class="pavimento-option">
+    <input type="checkbox" name="areaExecucaoMulti" value="Bloco 1C">
+    <span>Bloco 1C</span>
+</label>
+
+<label class="pavimento-option">
+    <input type="checkbox" name="areaExecucaoMulti" value="Bloco 1D">
+    <span>Bloco 1D</span>
+</label>
+
+<label class="pavimento-option">
+    <input type="checkbox" name="areaExecucaoMulti" value="Bloco 1E">
+    <span>Bloco 1E</span>
+</label>
+
+<label class="pavimento-option">
+    <input type="checkbox" name="areaExecucaoMulti" value="Bloco 2A">
+    <span>Bloco 2A</span>
+</label>
+
+<label class="pavimento-option">
+    <input type="checkbox" name="areaExecucaoMulti" value="Bloco 2B">
+    <span>Bloco 2B</span>
+</label>
+
+<label class="pavimento-option">
+    <input type="checkbox" name="areaExecucaoMulti" value="Bloco 2C">
+    <span>Bloco 2C</span>
+</label>
+
+<label class="pavimento-option">
+    <input type="checkbox" name="areaExecucaoMulti" value="Bloco 2D">
+    <span>Bloco 2D</span>
+</label>
+
+<label class="pavimento-option">
+    <input type="checkbox" name="areaExecucaoMulti" value="Bloco 2E">
+    <span>Bloco 2E</span>
+</label>
+
+<label class="pavimento-option">
+    <input type="checkbox" name="areaExecucaoMulti" value="Somente Área Comum Sub1">
+    <span>Somente Área Comum Sub1</span>
+</label>
+
+<label class="pavimento-option">
+    <input type="checkbox" name="areaExecucaoMulti" value="Somente Área Comum Sub2">
+    <span>Somente Área Comum Sub2</span>
+</label>
+
+</div>
+
+<small id="areaExecucaoResumo" style="display:block;margin-top:6px;color:#666;">
+    Nenhum local selecionado.
+</small>
+
+</div>
+
+<div class="form-group">
+
+<label for="prioridade">
+    Prioridade:
+</label>
+
+<select
+    id="prioridade"
+    name="prioridade"
+>
+    <option value="Urgente">🔴 Urgente</option>
+    <option value="Alta">🟠 Alta</option>
+    <option value="Moderada" selected>🟡 Moderada</option>
+    <option value="Baixa">🟢 Baixa</option>
+</select>
+
+<small
+    style="display:block;margin-top:6px;color:#666;"
+>
+    A prioridade é opcional e começa como Moderada. A Administração poderá reclassificar o chamado.
+</small>
+
+</div>
+
+
+<!-- =====================================================
+     INTERVALO DE HORÁRIO - CÂMERA/IMAGENS
+===================================================== -->
+
+<div
+    class="form-group"
+    id="dataOcorrenciaContainer"
+    style="display:none;"
+>
+
+<label for="dataOcorrencia" id="dataOcorrenciaLabel">
+    Data do ocorrido:
+</label>
+
+<input
+    type="text"
+    id="dataOcorrencia"
+    name="dataOcorrencia"
+    placeholder="DD/MM/AAAA"
+    inputmode="numeric"
+    maxlength="10"
+    autocomplete="off"
+>
+
+</div>
+
+
+<div
+    class="form-group"
+    id="intervaloCamera"
+    style="display:none;"
+>
+
+<label>
+    Intervalo do ocorrido:
+</label>
+
+<div
+    style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"
+>
+
+    <div>
+        <label
+            for="horaInicial"
+            style="font-size:13px;font-weight:normal;"
+        >
+            Hora inicial:
+        </label>
+
+        <input
+            type="time"
+            id="horaInicial"
+        >
+    </div>
+
+    <div>
+        <label
+            for="horaFinal"
+            style="font-size:13px;font-weight:normal;"
+        >
+            Hora final:
+        </label>
+
+        <input
+            type="time"
+            id="horaFinal"
+        >
+    </div>
+
+</div>
+
+<small
+    style="display:block;margin-top:6px;color:#666;"
+>
+    Informe o período em que ocorreu o problema nas câmeras/imagens.
+</small>
+
+</div>
+
+
+<div class="form-group">
+
+<label>
+
+    Detalhes do Ocorrido:
+
+</label>
+
+<textarea
+    id="detalhes"
+    placeholder="Descreva brevemente o problema encontrado..."
+></textarea>
+
+</div>
+
+
+<button
+    type="submit"
+    id="btnEnviar"
+    class="btn-verde"
+>
+
+    📋 Enviar Chamado
+
+</button>
+
+
+</form>
+
+
+<div
+    id="mensagemSucesso"
+    class="mensagem sucesso"
+></div>
+
+
+<div
+    id="mensagemErro"
+    class="mensagem erro"
+></div>
+
+
+<div
+    id="protocoloBox"
+    class="protocolo-box"
+>
+
+    <div>
+
+        Protocolo gerado:
+
+    </div>
+
+
+    <div
+        id="numeroProtocolo"
+        class="protocolo-numero"
+    ></div>
+
+
+    <button
+        type="button"
+        id="btnWhatsApp"
+        class="btn-whatsapp"
+    >
+
+        💬 Enviar pelo WhatsApp
+
+    </button>
+
+
+    <button
+        type="button"
+        id="btnEmail"
+        class="btn-email"
+    >
+
+        📧 Enviar por E-mail
+
+    </button>
+
+    <small
+        style="
+            display:block;
+            margin-top:8px;
+            text-align:center;
+            color:#666;
+        "
+    >
+        O chamado será enviado por e-mail para
+        newcristian@gmail.com
+    </small>
+
+</div>
+
+
+</section>
+
+
+<!-- =====================================================
+     CONSULTAR PROTOCOLO
+===================================================== -->
+
+<section
+    id="secaoConsultar"
+    class="section"
+>
+
+
+<div class="section-title">
+
+    🔎 Consultar Protocolo
+
+</div>
+<div class="consulta-ajuda">
+    <strong>🔎 Consulte seu chamado</strong><br>
+    Digite o número do protocolo para acompanhar a situação da solicitação.
+    <br>Exemplo: <strong>PC-13-08-26-001</strong>
+</div>
+
+
+
+<div class="form-group">
+
+<label>
+
+    Protocolo / OS:
+
+</label>
+
+<input
+    id="consultaProtocolo"
+    placeholder="PC-13-08-26-001"
+>
+
+</div>
+
+
+<button
+    type="button"
+    id="btnConsultar"
+    class="btn-verde"
+>
+
+    🔎 Buscar Protocolo
+
+</button>
+<div id="consultaBuscaEstado" class="consulta-busca-estado"></div>
+
+
+
+<div
+    id="erroConsulta"
+    class="mensagem erro"
+></div>
+
+
+
+<div id="consultaResumo" class="consulta-resumo">
+    <div class="consulta-resumo-topo">
+        <div>
+            <div class="consulta-resumo-label">Protocolo</div>
+            <div id="consultaResumoProtocolo" class="consulta-resumo-protocolo">-</div>
+        </div>
+        <div id="consultaResumoStatus" class="consulta-resumo-status">-</div>
+    </div>
+
+    <div class="consulta-resumo-dados">
+        <div class="consulta-resumo-item">
+            <span>📍 Local</span>
+            <strong id="consultaResumoLocal">-</strong>
+        </div>
+        <div class="consulta-resumo-item">
+            <span>🧹 Ocorrência</span>
+            <strong id="consultaResumoOcorrencia">-</strong>
+        </div>
+    </div>
+</div>
+
+<div
+    id="resultadoConsulta"
+    class="resultado"
+>
+
+<div class="resultado-titulo">
+
+    📋 Dados do Chamado
+
+</div>
+
+
+<div
+    id="dadosConsulta"
+    class="resultado-corpo"
+></div>
+
+<div id="historicoConsultaProtocolo" class="historico-consulta-protocolo" style="display:none;">
+    <div class="historico-cabecalho">
+        <div class="titulo">🕒 Histórico do Protocolo</div>
+        <div class="historico-protocolo">
+            <span>Protocolo:</span>
+            <strong id="historicoProtocoloNumero">-</strong>
+        </div>
+    </div>
+    <div class="linha">📥 <strong>Recebido em:</strong> <span id="consultaRecebidoEm">-</span></div>
+    <div class="linha">🔄 <strong>Última atualização:</strong> <span id="consultaAtualizadoEm">-</span></div>
+    <div class="linha">✅ <strong>Concluído em:</strong> <span id="consultaConcluidoEm">-</span></div>
+</div>
+
+
+<div id="consultaSolucao" class="consulta-solucao">
+    <div class="consulta-solucao-title">✅ Solução / Observação da Administração</div>
+    <div id="consultaSolucaoTexto" class="consulta-solucao-text"></div>
+</div>
+
+<div class="consulta-acoes-finais">
+    <button
+        type="button"
+        class="btn-compartilhar-protocolo"
+        onclick="compartilharProtocoloConsulta()"
+    >
+        📤 Compartilhar protocolo
+    </button>
+
+    <button
+        type="button"
+        class="btn-fechar-consulta"
+        onclick="fecharConsultaProtocolo()"
+    >
+        ⬆️ Fechar consulta e voltar ao início
+    </button>
+</div>
+
+
+</div>
+
+
+</section>
+
+
+<!-- =====================================================
+     ADMINISTRAÇÃO
+===================================================== -->
+
+<section
+    id="secaoAdmin"
+    class="section"
+>
+
+
+<div class="section-title">
+
+    🔐 Área Administrativa
+
+</div>
+
+
+<!-- LOGIN -->
+
+<div class="admin-box">
+
+
+<div class="admin-titulo">
+
+    🔐 Acesso restrito
+
+</div>
+
+
+<div class="form-group">
+
+<label>
+
+    Senha administrativa:
+
+</label>
+
+<input
+    type="password"
+    id="senhaAdmin"
+    placeholder="Digite a senha administrativa"
+>
+
+</div>
+
+
+<button
+    type="button"
+    id="btnEntrarAdmin"
+    class="btn-azul"
+>
+
+    🔐 Entrar
+
+</button>
+
+
+<div
+    id="erroAdmin"
+    class="mensagem erro"
+></div>
+
+
+</div>
+
+
+<!-- =====================================================
+     PAINEL
+===================================================== -->
+
+<div
+    id="adminPainel"
+>
+
+
+<div class="admin-v45-dashboard" id="adminDashboardV45">
+  <div class="admin-v45-dashboard-head">
+    <div>
+      <div class="admin-v45-dashboard-title">📊 Visão Geral</div>
+      <div class="admin-v45-dashboard-sub">Resumo rápido da situação dos chamados do Parque Clube.</div>
+    </div>
+    <button type="button" class="admin-v45-refresh" id="btnAtualizarDashboardAdmV45">🔄 Atualizar</button>
+  </div>
+  <div class="admin-v45-dashboard-grid">
+    <div class="admin-v45-kpi"><strong id="admV45Abertos">0</strong><span>📋 Abertos</span></div>
+    <div class="admin-v45-kpi"><strong id="admV45Andamento">0</strong><span>🔄 Em andamento</span></div>
+    <div class="admin-v45-kpi"><strong id="admV45Resolvidos">0</strong><span>✅ Resolvidos</span></div>
+    <div class="admin-v45-kpi"><strong id="admV45Arquivados">0</strong><span>📦 Arquivados</span></div>
+  </div>
+  <div class="admin-v45-alert" id="admV45Alerta"></div>
+</div>
+
+<div class="admin-menu-v11" id="adminMenuV11">
+    <button type="button" class="admin-menu-card" id="menuPesquisarAdmin">
+        <div class="icon">🔎</div>
+        <div class="title">PESQUISAR CHAMADOS</div>
+        <div class="desc">Consultar protocolos, usar filtros, abrir um chamado e realizar as ações administrativas.</div>
+    </button>
+
+    <button type="button" class="admin-menu-card" id="menuRelatorioAdmin">
+        <div class="icon">📊</div>
+        <div class="title">GERAR RELATÓRIO</div>
+        <div class="desc">Acessar o painel, selecionar o período e gerar relatórios gerenciais em PDF.</div>
+    </button>
+
+<button class="admin-menu-card" id="menuAdministrativoV13" type="button">
+<div class="icon">⚠️</div>
+<div class="title">ADVERTÊNCIAS / NOTIFICAÇÕES</div>
+<div class="desc">Registrar medidas administrativas, consultar histórico por unidade e acompanhar reincidências.</div>
+</button>
+
+</div>
+
+<div class="admin-submenu-v11" id="adminVoltarMenu" style="display:none;">
+    <div class="titulo" id="adminModoTitulo">🔎 Pesquisar chamados</div>
+    <button type="button" class="btn-cinza" id="btnVoltarAdminMenu">↩️ Voltar ao menu</button>
+</div>
+
+
+
+<div id="adminConteudoPesquisaV11" style="display:none;">
+<div class="admin-box">
+
+
+<div class="admin-titulo">
+
+    📊 Painel de Chamados
+
+</div>
+
+
+<!-- ESTE É O BOTÃO QUE QUEREMOS -->
+
+<button
+    type="button"
+    id="btnListarTodos"
+    class="btn-azul btn-atualizar-v11"
+>
+
+    🔄 Atualizar Lista de Chamados
+
+</button>
+<div id="pcAlertaSonoroWrap" style="display:inline-flex;align-items:center;gap:10px;margin:8px 0 8px 10px;padding:8px 12px;border:1px solid #d8d8d8;border-radius:10px;background:#fff;vertical-align:middle;">
+  <span id="pcAlertaSonoroIcone" aria-hidden="true">🔔</span>
+  <span style="font-weight:700;font-size:14px;">Som de novos chamados</span>
+  <button type="button" id="pcToggleAlertaSonoro" aria-pressed="false"
+    style="border:0;border-radius:18px;padding:7px 13px;font-weight:700;cursor:pointer;">
+    ⚪ OFF
+  </button>
+</div>
+<div id="pcNotificacoesWrap" style="display:inline-flex;align-items:center;gap:8px;margin:8px 0 8px 10px;position:relative;vertical-align:middle;">
+  <button type="button" id="pcBotaoNotificacoes" title="Notificações"
+    style="position:relative;border:1px solid #d8d8d8;background:#fff;border-radius:10px;padding:9px 13px;font-weight:700;cursor:pointer;">
+    🔔 Notificações
+    <span id="pcContadorNotificacoes" style="display:none;position:absolute;top:-8px;right:-8px;min-width:20px;height:20px;line-height:20px;text-align:center;border-radius:50%;background:#d93025;color:#fff;font-size:12px;font-weight:700;"></span>
+  </button>
+  <div id="pcNotificacaoAutoWrap" style="display:inline-flex;align-items:center;gap:7px;margin-left:6px;padding:8px 10px;border:1px solid #d8d8d8;border-radius:10px;background:#fff;">
+    <span id="pcNotificacaoAutoIcone" aria-hidden="true">🆕</span>
+    <span style="font-weight:700;font-size:14px;">Notificação automática</span>
+    <button type="button" id="pcToggleNotificacaoAuto" aria-pressed="true"
+      style="border:0;border-radius:18px;padding:7px 13px;font-weight:700;cursor:pointer;">
+      🔘 ON
+    </button>
+  </div>
+
+</div>
+
+<div id="pcModalNovoChamado" role="dialog" aria-modal="true" aria-labelledby="pcTituloNovoChamado"
+  style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.48);align-items:center;justify-content:center;padding:20px;">
+  <div style="width:min(520px,96vw);max-height:90vh;overflow:auto;background:#fff;border-radius:16px;box-shadow:0 15px 50px rgba(0,0,0,.25);padding:24px;position:relative;">
+    <button type="button" id="pcFecharModalNovoChamado" aria-label="Fechar"
+      style="position:absolute;right:14px;top:12px;border:0;background:transparent;font-size:28px;cursor:pointer;">×</button>
+    <div style="font-size:38px;margin-bottom:8px;">🆕</div>
+    <h2 id="pcTituloNovoChamado" style="margin:0 35px 8px 0;">Novo chamado recebido!</h2>
+    <p style="margin:0 0 16px;color:#555;">Um novo chamado foi registrado no sistema.</p>
+    <div id="pcConteudoNovoChamado" style="background:#f6f7f8;border-radius:10px;padding:14px;line-height:1.55;"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:18px;flex-wrap:wrap;">
+      <button type="button" id="pcVerNovoChamado"
+        style="border:0;border-radius:9px;padding:10px 15px;font-weight:700;cursor:pointer;background:#1769aa;color:#fff;">
+        👁️ Ver chamado
+      </button>
+      <button type="button" id="pcOkNovoChamado"
+        style="border:1px solid #ccc;border-radius:9px;padding:10px 15px;font-weight:700;cursor:pointer;background:#fff;">
+        OK
+      </button>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="admin-list-buttons-v11">
+
+    <button
+        type="button"
+        id="btnChamadosAtivos"
+        class="btn-azul btn-ativos-v11"
+    >
+        📋 CHAMADOS ATIVOS
+    </button>
+
+    <button
+        type="button"
+        id="btnChamadosArquivados"
+        class="btn-cinza"
+    >
+        📦 CHAMADOS ARQUIVADOS
+    </button>
+
+    <button
+        type="button"
+        id="btnArquivarTodosResolvidos"
+        class="btn-arquivar-todos-v11"
+    >
+        📦 ARQUIVAR TODOS OS RESOLVIDOS
+    </button>
+
+    <button
+        type="button"
+        id="btnDesarquivarTodos"
+        class="btn-desarquivar-todos-v12"
+    >
+        📥 DESARQUIVAR TODOS
+    </button>
+
+</div>
+
+<div
+    id="listaChamadosArquivados"
+    style="display:none;margin-top:12px;"
+></div>
+
+
+<!-- ESTATÍSTICAS -->
+
+<div
+    id="estatisticas"
+    style="display:none;"
+>
+
+
+<div class="stats">
+
+
+<div
+    class="stat stat-filtro-v12" role="button" tabindex="0"
+    style="background:#eee;" data-filtro-status=""
+>
+
+<strong>
+
+    Total
+
+</strong>
+
+<span id="totalChamados">
+
+    0
+
+</span>
+
+</div>
+
+
+<div
+    class="stat stat-filtro-v12" role="button" tabindex="0"
+    style="background:#fff3cd;" data-filtro-status="Aberto"
+>
+
+<strong>
+
+    🟡 Abertos
+
+</strong>
+
+<span id="totalAbertos">
+
+    0
+
+</span>
+
+</div>
+
+
+<div
+    class="stat stat-filtro-v12" role="button" tabindex="0"
+    style="background:#cfe8ff;" data-filtro-status="Em andamento"
+>
+
+<strong>
+
+    🔵 Em andamento
+
+</strong>
+
+<span id="totalAndamento">
+
+    0
+
+</span>
+
+</div>
+
+
+<div
+    class="stat stat-filtro-v12" role="button" tabindex="0"
+    style="background:#d9f3df;" data-filtro-status="Resolvido"
+>
+
+<strong>
+
+    🟢 Resolvidos
+
+</strong>
+
+<span id="totalResolvidos">
+
+    0
+
+</span>
+
+</div>
+
+
+<div
+    class="stat stat-filtro-v12" role="button" tabindex="0"
+    style="background:#f8d7da;" data-filtro-status="Cancelado"
+>
+
+<strong>
+
+    🔴 Cancelados
+
+</strong>
+
+<span id="totalCancelados">
+
+    0
+
+</span>
+
+</div>
+
+<div
+    class="stat stat-filtro-v12" role="button" tabindex="0"
+    style="background:#e8edf1;" data-filtro-status="__ARQUIVADOS__"
+>
+
+<strong>
+
+    📦 Arquivados
+
+</strong>
+
+<span id="totalArquivados">
+
+    0
+
+</span>
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+<!-- FILTROS -->
+
+
+<div
+    id="filtros"
+    style="display:none;"
+>
+
+
+<div class="form-group">
+
+<label>
+
+    🔎 Pesquisar chamado:
+
+</label>
+
+<input
+    type="text"
+    id="pesquisaChamado"
+    placeholder="Protocolo, nome, bloco..."
+>
+
+</div>
+
+
+<div class="form-group">
+
+<label>
+
+    Status:
+
+</label>
+
+<select id="filtroStatus">
+
+<option value="">
+
+    Todos
+
+</option>
+
+<option value="Aberto">
+
+    🟡 Aberto
+
+</option>
+
+<option value="Em andamento">
+
+    🔵 Em andamento
+
+</option>
+
+<option value="Resolvido">
+
+    🟢 Resolvido
+
+</option>
+
+<option value="Cancelado">
+
+    🔴 Cancelado
+
+</option>
+
+</select>
+
+</div>
+
+<div class="form-group">
+
+<label>
+
+    ⭐ Prioridade:
+
+</label>
+
+<select id="filtroPrioridade">
+
+<option value="">
+    Todas
+</option>
+
+<option value="Urgente">
+    🔴 Urgente
+</option>
+
+<option value="Alta">
+    🟠 Alta
+</option>
+
+<option value="Moderada">
+    🟡 Moderada
+</option>
+
+<option value="Baixa">
+    🟢 Baixa
+</option>
+
+</select>
+
+</div>
+
+
+
+</div>
+
+
+<!-- LISTA -->
+
+<div
+    id="listaChamados"
+></div>
+
+
+</div>
+</div>
+
+<div id="adminConteudoRelatorioV11" style="display:none;">
+<div class="admin-box dashboard-v11" id="dashboardV11" style="display:none">
+<div class="admin-titulo">📊 PAINEL ADMINISTRATIVO</div>
+<div style="color:#687680;font-size:12px;margin-top:-6px;margin-bottom:10px;">Indicadores calculados a partir dos protocolos carregados no sistema.</div>
+<div class="form-group"><label for="dashboardPeriodo">📅 Período:</label>
+<select id="dashboardPeriodo">
+<option value="hoje">DIA</option><option value="semana">Esta semana</option><option value="mes" selected>Este mês</option><option value="mesAnterior">Mês anterior</option><option value="personalizado">Período personalizado</option>
+</select></div>
+<div class="form-group">
+<label for="dashboardEscopo">🏢 Área do relatório:</label>
+<select id="dashboardEscopo">
+<option value="condominio">Condomínio — geral</option>
+<option value="Bloco 1A">Bloco 1A</option>
+<option value="Bloco 1B">Bloco 1B</option>
+<option value="Bloco 1C">Bloco 1C</option>
+<option value="Bloco 1D">Bloco 1D</option>
+<option value="Bloco 1E">Bloco 1E</option>
+<option value="Bloco 2A">Bloco 2A</option>
+<option value="Bloco 2B">Bloco 2B</option>
+<option value="Bloco 2C">Bloco 2C</option>
+<option value="Bloco 2D">Bloco 2D</option>
+<option value="Bloco 2E">Bloco 2E</option>
+</select>
+</div>
+<div id="dashboardPersonalizado" style="display:none">
+<div class="form-group"><label>Data inicial:</label><input type="date" id="dashboardDataInicio"></div>
+<div class="form-group"><label>Data final:</label><input type="date" id="dashboardDataFim"></div>
+</div>
+<div class="dashboard-toolbar">
+<button type="button" id="btnAtualizarDashboard" class="btn-azul">📊 Atualizar Painel</button>
+<button type="button" id="btnGerarPDF" class="btn-cinza">📄 Gerar PDF</button>
+</div>
+<div id="dashboardResumo" class="dashboard-grid"></div>
+<div class="dashboard-section"><h3>📈 Chamados mais frequentes</h3><div id="dashboardOcorrencias" class="dashboard-bars"></div></div>
+<div class="dashboard-section"><h3>📊 Chamados por área</h3><div id="dashboardAreas" class="dashboard-bars"></div></div>
+<div class="dashboard-section"><h3>⭐ Distribuição por prioridade</h3><div id="dashboardPrioridades" class="dashboard-bars"></div></div>
+<div class="dashboard-section"><h3>🔄 Situação dos chamados</h3><div id="dashboardStatus" class="dashboard-status-grid"></div></div>
+<div class="dashboard-section"><h3>⏱️ Indicadores de atendimento</h3><div id="dashboardAtendimento" class="dashboard-bars"></div></div>
+</div>
+</div>
+
+
+
+<!-- =====================================================
+     LOCALIZAR
+===================================================== -->
+
+<div class="admin-box" id="localizarChamadoAdmin" style="display:none;">
+
+
+<div class="admin-titulo">
+
+    🔎 Localizar Chamado
+
+</div>
+
+
+<div class="form-group">
+
+<label>
+
+    Protocolo / OS:
+
+</label>
+
+<input
+    id="protocoloAdmin"
+    placeholder="PC-13-08-26-001"
+>
+
+</div>
+
+
+<button
+    type="button"
+    id="btnBuscarAdmin"
+    class="btn-verde"
+>
+
+    🔎 Buscar Chamado
+
+</button>
+
+
+</div>
+
+
+<!-- =====================================================
+     EDITAR
+===================================================== -->
+
+<div
+    id="editarChamado"
+    class="admin-box"
+ style="display:none;">
+<div id="historicoHorariosAdmin" class="historico-destaque">
+    <div class="historico-destaque-titulo">🕒 Histórico do Protocolo</div>
+
+    <div class="historico-destaque-linha">
+        <span class="historico-destaque-label">📥 Recebido em:</span>
+        <span id="adminRecebidoEm" class="historico-destaque-valor">-</span>
+    </div>
+
+    <div class="historico-destaque-linha">
+        <span class="historico-destaque-label">🔄 Última atualização:</span>
+        <span id="adminAtualizadoEm" class="historico-destaque-valor">-</span>
+    </div>
+
+    <div class="historico-destaque-linha">
+        <span class="historico-destaque-label">✅ Concluído em:</span>
+        <span id="adminConcluidoEm" class="historico-destaque-valor">-</span>
+    </div>
+</div>
+
+
+
+<div class="admin-titulo">
+
+    🛠️ Atualizar Chamado
+
+</div>
+
+
+<div
+    id="dadosAdmin"
+></div>
+
+
+<div class="form-group">
+
+<label>
+
+    Status:
+
+</label>
+
+<select id="statusAdmin">
+
+<option>
+    Aberto
+</option>
+
+<option>
+    Em andamento
+</option>
+
+<option>
+    Resolvido
+</option>
+
+<option>
+    Cancelado
+</option>
+
+</select>
+
+</div>
+
+
+<div class="form-group">
+
+<label>
+
+    Responsável:
+
+</label>
+
+<input
+    id="responsavelAdmin"
+    placeholder="Nome do responsável"
+>
+
+</div>
+
+
+<div class="form-group">
+
+<label>
+
+    Observação da solução:
+
+</label>
+
+<textarea
+    id="observacaoAdmin"
+    placeholder="Informe o que foi realizado..."
+></textarea>
+
+</div>
+
+<div
+    id="whatsappRetornoInfo"
+    style="display:none;margin:8px 0 14px;padding:10px 12px;border:1px solid #bbf7d0;background:#f0fdf4;border-radius:8px;color:#166534;"
+></div>
+
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
+
+<button
+    type="button"
+    id="btnResponderWhatsAppAdmin"
+    class="btn-verde"
+    style="flex:1;min-width:220px;"
+>
+    📲 Responder pelo WhatsApp
+</button>
+
+</div>
+
+
+<div class="form-group">
+
+<label>
+
+    ⭐ Prioridade:
+
+</label>
+
+<select id="prioridadeAdmin">
+
+<option value="Urgente">
+    🔴 Urgente
+</option>
+
+<option value="Alta">
+    🟠 Alta
+</option>
+
+<option value="Moderada" selected>
+    🟡 Moderada
+</option>
+
+<option value="Baixa">
+    🟢 Baixa
+</option>
+
+</select>
+
+</div>
+
+
+<button
+    type="button"
+    id="btnAtualizarAdmin"
+    class="btn-verde"
+>
+
+    💾 Salvar Alterações
+
+</button>
+
+
+<div
+    id="resultadoAtualizacao"
+    class="mensagem"
+></div>
+
+
+
+<button
+    type="button"
+    id="btnFecharEdicao"
+    class="btn-cinza"
+    style="margin-top:10px;"
+    onclick="fecharEdicaoChamado(); return false;"
+>
+    ✖️ Fechar / Minimizar Chamado
+</button>
+
+
+<button
+    type="button"
+    id="btnArquivarAdmin"
+    style="
+        margin-top:12px;
+        background:#6b7280;
+        color:#fff;
+        border:0;
+        padding:11px 16px;
+        border-radius:8px;
+        cursor:pointer;
+        width:100%;
+        font-weight:600;
+    "
+>
+    📦 Arquivar Chamado
+</button>
+
+<button
+    type="button"
+    id="btnReabrirAdmin"
+    style="
+        display:none;
+        margin-top:12px;
+        background:#17632d;
+        color:#fff;
+        border:0;
+        padding:11px 16px;
+        border-radius:8px;
+        cursor:pointer;
+        width:100%;
+        font-weight:600;
+    "
+>
+    🔓 Reabrir Chamado
+</button>
+
+<button
+    type="button"
+    id="btnExcluirAdmin"
+    style="
+        margin-top:12px;
+        background:#b91c1c;
+        color:#fff;
+        border:0;
+        padding:11px 16px;
+        border-radius:8px;
+        cursor:pointer;
+        width:100%;
+        font-weight:600;
+    "
+>
+    🗑️ Excluir Definitivamente
+</button>
+
+
+</div>
+
+
+<button
+    type="button"
+    id="btnSairAdmin"
+    class="btn-cinza"
+>
+
+    🔒 Sair da Administração
+
+</button>
+
+
+</div>
+
+
+</section>
+
+
+</div>
+
+
+<script>
+function atualizarHistoricoConsultaProtocolo(chamado) {
+    const bloco = document.getElementById("historicoConsultaProtocolo");
+    const recebido = document.getElementById("consultaRecebidoEm");
+    const atualizado = document.getElementById("consultaAtualizadoEm");
+    const concluido = document.getElementById("consultaConcluidoEm");
+
+    if (!bloco || !recebido || !atualizado || !concluido) return;
+
+    recebido.textContent =
+        (chamado?.dataAbertura || "-") +
+        (chamado?.horaAbertura ? " às " + chamado.horaAbertura : "");
+
+    atualizado.textContent =
+        chamado?.ultimaAtualizacao || "-";
+
+    concluido.textContent =
+        (chamado?.dataConclusao || "-") +
+        (chamado?.horaConclusao ? " às " + chamado.horaConclusao : "");
+
+    const historicoArquivamento =
+        Array.isArray(chamado?.historicoArquivamento)
+            ? chamado.historicoArquivamento
+            : [];
+
+    const linhasAntigas =
+        bloco.querySelectorAll(".historico-arquivamento-v11-publico");
+
+    linhasAntigas.forEach(
+        linha => linha.remove()
+    );
+
+    historicoArquivamento.forEach(
+        evento => {
+
+            const linha =
+                document.createElement("div");
+
+            linha.className =
+                "historico-destaque-linha historico-arquivamento-v11-publico";
+
+            linha.innerHTML =
+                `
+                <span class="historico-destaque-label">
+                    ${evento.tipo === "REABERTO" ? "🔓 Reaberto em:" : "📦 Arquivado em:"}
+                </span>
+                <span class="historico-destaque-valor">
+                    ${escapar(evento.dataHora || "-")}
+                </span>
+                `;
+
+            bloco.appendChild(linha);
+        }
+    );
+
+    bloco.style.display = "block";
+}
+
+
+
+function atualizarHistoricoHorariosAdmin(chamado) {
+
+    const recebido =
+        document.getElementById("adminRecebidoEm");
+
+    const atualizado =
+        document.getElementById("adminAtualizadoEm");
+
+    const concluido =
+        document.getElementById("adminConcluidoEm");
+
+    if (!recebido || !atualizado || !concluido) {
+        return;
+    }
+
+    recebido.textContent =
+        (
+            chamado?.dataAbertura ||
+            "-"
+        ) +
+        (
+            chamado?.horaAbertura
+                ? " às " + chamado.horaAbertura
+                : ""
+        );
+
+    atualizado.textContent =
+        chamado?.ultimaAtualizacao ||
+        "-";
+
+    concluido.textContent =
+        (
+            chamado?.dataConclusao ||
+            "-"
+        ) +
+        (
+            chamado?.horaConclusao
+                ? " às " + chamado.horaConclusao
+                : ""
+        );
+}
+
+
+
+/* =====================================================
+   CONFIGURAÇÕES
+===================================================== */
+
+const API = "/api/protocolo";
+
+const FORM_ENDPOINT =
+    "https://formspree.io/f/mljrnqgv";
+
+
+const WHATSAPP =
+    "5561986038106";
+
+
+let senhaAdministrativa = "";
+
+let chamados = [];
+
+let chamadosArquivadosV11 = [];
+
+let chamadosHistoricoV11 = [];
+
+let protocoloSelecionado = "";
+
+
+/* =====================================================
+   TROCAR SEÇÃO
+===================================================== */
+
+function mostrarSecao(nome) {
+
+    document
+        .querySelectorAll(".section")
+        .forEach(
+            secao => {
+
+                secao.classList.remove(
+                    "active"
+                );
+
+            }
+        );
+
+
+    const secao =
+        document.getElementById(
+            "secao" +
+            nome.charAt(0).toUpperCase() +
+            nome.slice(1)
+        );
+
+
+    if (secao) {
+
+        secao.classList.add(
+            "active"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   ESCAPAR HTML
+===================================================== */
+
+function escapar(valor) {
+
+    return String(
+        valor ?? ""
+    )
+
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+
+    .replace(
+        /</g,
+        "&lt;"
+    )
+
+    .replace(
+        />/g,
+        "&gt;"
+    )
+
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
+
+
+/* =====================================================
+   CÂMERA/IMAGENS → INTERVALO DE HORÁRIO
+===================================================== */
+
+const ocorrenciaSelect =
+    document.getElementById(
+        "ocorrencia"
+    );
+
+const dataOcorrenciaContainer =
+    document.getElementById(
+        "dataOcorrenciaContainer"
+    );
+
+const intervaloCamera =
+    document.getElementById(
+        "intervaloCamera"
+    );
+
+
+const areaExecucaoContainer =
+    document.getElementById(
+        "areaExecucaoContainer"
+    );
+
+const areaExecucaoSelect =
+    document.getElementById(
+        "areaExecucao"
+    );
+
+function atualizarAreaExecucao() {
+
+    const ocorrencia =
+        ocorrenciaSelect
+            ? ocorrenciaSelect.value
+            : "";
+
+    const exigeArea =
+        ocorrencia === "Dedetização" ||
+        ocorrencia === "Limpeza caixa d'água";
+
+    if (areaExecucaoContainer) {
+        areaExecucaoContainer.style.display =
+            exigeArea ? "block" : "none";
+    }
+
+    if (!exigeArea && areaExecucaoSelect) {
+        areaExecucaoSelect.value = "";
+    }
+}
+
+function atualizarIntervaloCamera() {
+
+    const ocorrencia =
+        ocorrenciaSelect
+            ? ocorrenciaSelect.value
+            : "";
+
+    const ehCamera =
+        ocorrencia === "Câmera/Imagens";
+
+    const ehServicoComData =
+        ocorrencia === "Dedetização" ||
+        ocorrencia === "Limpeza caixa d'água";
+
+    const mostrarData =
+        ehCamera ||
+        ehServicoComData;
+
+    const data =
+        document.getElementById(
+            "dataOcorrencia"
+        );
+
+    const labelData =
+        document.getElementById(
+            "dataOcorrenciaLabel"
+        );
+
+    if (dataOcorrenciaContainer) {
+
+        dataOcorrenciaContainer.style.display =
+            mostrarData
+                ? "block"
+                : "none";
+
+        dataOcorrenciaContainer.dataset.servicoEspecial =
+            String(ehServicoComData);
+
+    }
+
+    if (data) {
+
+        data.required =
+            ehServicoComData;
+
+    }
+
+    if (labelData) {
+
+        labelData.textContent =
+            ehServicoComData
+                ? "Data da execução/registro:"
+                : "Data do ocorrido:";
+
+    }
+
+    if (intervaloCamera) {
+
+        intervaloCamera.style.display =
+            ehCamera
+                ? "block"
+                : "none";
+
+    }
+
+    if (!mostrarData) {
+
+        if (data) {
+            data.value = "";
+        }
+
+    }
+
+    if (!ehCamera) {
+
+        const inicial =
+            document.getElementById(
+                "horaInicial"
+            );
+
+        const final =
+            document.getElementById(
+                "horaFinal"
+            );
+
+        if (inicial) {
+            inicial.value = "";
+        }
+
+        if (final) {
+            final.value = "";
+        }
+
+    }
+
+}
+
+
+const prioridadeSelect =
+    document.getElementById(
+        "prioridade"
+    );
+
+
+function definirPrioridadePadrao() {
+
+    prioridadeSelect.value = "Moderada";
+
+}
+
+
+ocorrenciaSelect.addEventListener(
+    "change",
+    function () {
+
+        atualizarIntervaloCamera();
+        atualizarAreaExecucao();
+
+    }
+);
+
+atualizarIntervaloCamera();
+atualizarAreaExecucao();
+
+
+/* =====================================================
+   BLOCO → MÚLTIPLOS ANDARES / PAVIMENTOS
+===================================================== */
+
+const blocoSelect =
+    document.getElementById(
+        "bloco"
+    );
+
+const areaPavimento =
+    document.getElementById(
+        "areaPavimento"
+    );
+
+const pavimentoTodos =
+    document.getElementById(
+        "pavimentoTodos"
+    );
+
+function limparPavimentos() {
+
+    document
+        .querySelectorAll(
+            'input[name="pavimento"]'
+        )
+        .forEach(
+            checkbox => {
+                checkbox.checked =
+                    false;
+            }
+        );
+
+}
+
+function atualizarAreaPavimento() {
+
+    const valor =
+        String(
+            blocoSelect.value || ""
+        ).trim();
+
+    const ehBloco =
+        valor.startsWith(
+            "Bloco "
+        );
+
+    if (ehBloco) {
+
+        areaPavimento.style.display =
+            "block";
+
+    } else {
+
+        areaPavimento.style.display =
+            "none";
+
+        limparPavimentos();
+
+    }
+
+}
+
+
+blocoSelect.addEventListener(
+    "change",
+    atualizarAreaPavimento
+);
+
+
+/*
+ * Inicializa a área corretamente ao carregar
+ * a página e evita depender somente do evento change.
+ */
+
+atualizarAreaPavimento();
+
+
+/*
+ * "Todos os andares" é exclusivo:
+ * ao selecionar, os demais são desmarcados.
+ */
+
+document
+    .querySelectorAll(
+        'input[name="pavimento"]'
+    )
+    .forEach(
+        checkbox => {
+
+            checkbox.addEventListener(
+                "change",
+                function () {
+
+                    if (
+                        this.id ===
+                        "pavimentoTodos" &&
+                        this.checked
+                    ) {
+
+                        document
+                            .querySelectorAll(
+                                'input[name="pavimento"]'
+                            )
+                            .forEach(
+                                outro => {
+
+                                    if (
+                                        outro !==
+                                        this
+                                    ) {
+                                        outro.checked =
+                                            false;
+                                    }
+
+                                }
+                            );
+
+                    }
+
+                    if (
+                        this.id !==
+                        "pavimentoTodos" &&
+                        this.checked &&
+                        pavimentoTodos.checked
+                    ) {
+
+                        pavimentoTodos.checked =
+                            false;
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+
+
+
+
+/* =====================================================
+   ENVIAR CHAMADO
+===================================================== */
+
+document
+    .getElementById(
+        "formChamado"
+    )
+    .addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
+
+
+            const botao =
+                document.getElementById(
+                    "btnEnviar"
+                );
+
+
+            const erro =
+                document.getElementById(
+                    "mensagemErro"
+                );
+
+
+            const sucesso =
+                document.getElementById(
+                    "mensagemSucesso"
+                );
+
+
+            erro.style.display =
+                "none";
+
+            sucesso.style.display =
+                "none";
+
+
+            botao.disabled =
+                true;
+
+            botao.textContent =
+                "⏳ Gerando protocolo...";
+
+
+            try {
+
+
+                const dados = {
+
+                    solicitante:
+                        document
+                            .getElementById(
+                                "solicitante"
+                            )
+                            .value
+                            .trim(),
+
+                    whatsappRetorno:
+                        document
+                            .getElementById(
+                                "whatsappRetorno"
+                            )
+                            .value
+                            .trim(),
+
+                    cargo:
+                        document
+                            .getElementById(
+                                "cargo"
+                            )
+                            .value,
+
+                    bloco:
+                        document
+                            .getElementById(
+                                "bloco"
+                            )
+                            .value,
+
+                    pavimentos:
+                        Array
+                            .from(
+                                document.querySelectorAll(
+                                    'input[name="pavimento"]:checked'
+                                )
+                            )
+                            .map(
+                                item => item.value
+                            )
+                            .join(", "),
+
+                    ocorrencia:
+                        document
+                            .getElementById(
+                                "ocorrencia"
+                            )
+                            .value,
+
+                    areaExecucao:
+                        document
+                            .getElementById(
+                                "areaExecucao"
+                            )
+                            .value,
+
+                    prioridade:
+                        document
+                            .getElementById(
+                                "prioridade"
+                            )
+                            .value,
+
+                    dataOcorrencia:
+                        document
+                            .getElementById(
+                                "dataOcorrencia"
+                            )
+                            .value,
+
+                    horaInicial:
+                        document
+                            .getElementById(
+                                "horaInicial"
+                            )
+                            .value,
+
+                    horaFinal:
+                        document
+                            .getElementById(
+                                "horaFinal"
+                            )
+                            .value,
+
+                    detalhes:
+                        document
+                            .getElementById(
+                                "detalhes"
+                            )
+                            .value
+                            .trim()
+
+                };
+
+
+                const resposta =
+                    await fetch(
+                        API,
+                        {
+
+                            method:
+                                "POST",
+
+                            headers: {
+
+                                "Content-Type":
+                                    "application/json"
+
+                            },
+
+                            body:
+                                JSON.stringify(
+                                    dados
+                                )
+
+                        }
+                    );
+
+
+                const textoResposta =
+                    await resposta.text();
+
+                let resultado = {};
+
+                try {
+
+                    resultado =
+                        textoResposta
+                            ? JSON.parse(
+                                textoResposta
+                            )
+                            : {};
+
+                } catch {
+
+                    throw new Error(
+                        "O servidor não retornou uma resposta JSON válida. Verifique o deploy do Worker."
+                    );
+                }
+
+
+                if (
+                    !resposta.ok ||
+                    !resultado.protocolo
+                ) {
+
+                    throw new Error(
+                        resultado.erro ||
+                        "Não foi possível gerar o protocolo."
+                    );
+
+                }
+
+
+                document
+                    .getElementById(
+                        "protocolo"
+                    )
+                    .value =
+                    resultado.protocolo;
+
+
+                document
+                    .getElementById(
+                        "numeroProtocolo"
+                    )
+                    .textContent =
+                    resultado.protocolo;
+
+
+                document
+                    .getElementById(
+                        "protocoloBox"
+                    )
+                    .style.display =
+                    "block";
+
+
+                sucesso.innerHTML =
+
+                    "✅ Chamado registrado com sucesso!" +
+                    "<br><br>" +
+                    "Protocolo: <strong>" +
+                    escapar(
+                        resultado.protocolo
+                    ) +
+                    "</strong>";
+
+
+                sucesso.style.display =
+                    "block";
+        mostrarStatusRapidoAposCadastro(
+            resultado.protocolo
+        );
+
+
+                dataHoraRegistroWhatsApp =
+                    new Date().toLocaleString(
+                        "pt-BR",
+                        {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit"
+                        }
+                    );
+
+                prepararBotoesEnvio(
+                    resultado.protocolo,
+                    dados
+                );
+
+
+            }
+
+            catch (error) {
+
+                erro.textContent =
+                    error.message;
+
+                erro.style.display =
+                    "block";
+
+            }
+
+            finally {
+
+                botao.disabled =
+                    false;
+
+                botao.textContent =
+                    "📋 Enviar Chamado";
+
+            }
+
+        }
+    );
+
+
+/* =====================================================
+   WHATSAPP
+===================================================== */
+
+function prepararWhatsApp(
+    protocolo,
+    dados
+) {
+
+
+    const mensagem =
+
+        "🏢 *PARQUE CLUBE*" +
+        "\n\n" +
+
+        "📋 *Novo Chamado*" +
+        "\n" +
+
+        "Protocolo: *" +
+        protocolo +
+        "*" +
+
+        "\n👤 Solicitante: " +
+        dados.solicitante +
+
+        "\n💼 Cargo: " +
+        dados.cargo +
+
+        "\n📍 Local: " +
+        dados.bloco +
+
+        (dados.pavimentos
+            ? "\n🏢 Andar/Pavimento: " +
+              dados.pavimentos
+            : "") +
+
+        "\n🔧 Ocorrência: " +
+        dados.ocorrencia +
+
+        "\n\n📝 Detalhes:" +
+        "\n" +
+        dados.detalhes;
+
+
+    document
+        .getElementById(
+            "btnWhatsApp"
+        )
+        .onclick =
+        function () {
+
+            const url =
+                "https://wa.me/" +
+                WHATSAPP +
+                "?text=" +
+                encodeURIComponent(
+                    mensagem
+                );
+
+
+            window.open(
+                url,
+                "_blank"
+            );
+
+        };
+
+}
+
+
+/* =====================================================
+   WHATSAPP + E-MAIL
+===================================================== */
+
+let ultimoChamadoParaEnvio = null;
+
+let dataHoraRegistroWhatsApp = "";
+
+function montarMensagemChamado(
+    protocolo,
+    dados
+) {
+
+    const dataRegistro =
+        dataHoraRegistroWhatsApp ||
+        new Date().toLocaleString(
+            "pt-BR",
+            {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit"
+            }
+        );
+
+    return (
+        "PARQUE CLUBE\n\n" +
+
+        "📋 *CHAMADO REGISTRADO*\n\n" +
+
+        "*Protocolo:* " +
+        protocolo +
+
+        "\n\n*Solicitante:* " +
+        (dados.solicitante || "") +
+
+        "\n*Cargo/Função:* " +
+        (dados.cargo || "") +
+
+        "\n*Bloco/Área:* " +
+        (dados.bloco || "") +
+
+        (
+            dados.pavimentos
+                ? "\n*Andar(es):* " +
+                  dados.pavimentos
+                : ""
+        ) +
+
+        "\n*Ocorrência:* " +
+        (dados.ocorrencia || "") +
+
+        "\n\n📅 *Recebido em:* " +
+        dataRegistro +
+
+        (
+            dados.dataOcorrencia
+                ? "\n📅 *Data da ocorrência:* " +
+                  dados.dataOcorrencia
+                : ""
+        ) +
+
+        (
+            dados.horaInicial
+                ? "\n⏰ *Hora inicial:* " +
+                  dados.horaInicial
+                : ""
+        ) +
+
+        (
+            dados.horaFinal
+                ? "\n⏰ *Hora final:* " +
+                  dados.horaFinal
+                : ""
+        ) +
+
+        "\n\n*Detalhes:*\n" +
+        (dados.detalhes || "") +
+
+        "\n\n*Protocolo:* " +
+        protocolo
+    );
+}
+
+
+function prepararBotoesEnvio(
+    protocolo,
+    dados
+) {
+
+    ultimoChamadoParaEnvio = {
+        protocolo:
+            protocolo,
+
+        dados:
+            dados
     };
-  }
 
-  if (!senhaInformada || senhaInformada !== senhaAdmin) {
-    return {
-      ok: false,
-      resposta: resposta({
-        sucesso: false,
-        erro: "Senha administrativa incorreta."
-      }, 401)
-    };
-  }
 
-  return { ok: true };
+    const mensagem =
+        montarMensagemChamado(
+            protocolo,
+            dados
+        );
+
+
+    const btnWhatsApp =
+        document.getElementById(
+            "btnWhatsApp"
+        );
+
+    const btnEmail =
+        document.getElementById(
+            "btnEmail"
+        );
+
+
+    if (btnWhatsApp) {
+
+        btnWhatsApp.onclick =
+            function () {
+
+                const telefone =
+                    "5561986038106"; // 61 98603-8106
+
+                const url =
+                    "https://wa.me/" +
+                    telefone +
+                    "?text=" +
+                    encodeURIComponent(
+                        mensagem
+                    );
+
+                window.open(
+                    url,
+                    "_blank"
+                );
+            };
+    }
+
+
+    if (btnEmail) {
+
+        btnEmail.onclick =
+            async function () {
+
+                const assunto =
+                    "Novo Chamado - " +
+                    protocolo;
+
+                const botao =
+                    this;
+
+                botao.disabled =
+                    true;
+
+                botao.textContent =
+                    "⏳ Enviando e-mail...";
+
+                try {
+
+                    const formData =
+                        new FormData();
+
+                    formData.append(
+                        "Protocolo / OS",
+                        protocolo
+                    );
+
+                    formData.append(
+                        "Solicitante",
+                        dados.solicitante || ""
+                    );
+
+                    formData.append(
+                        "Cargo/Função",
+                        dados.cargo || ""
+                    );
+
+                    formData.append(
+                        "Bloco / Área",
+                        dados.bloco || ""
+                    );
+
+                    formData.append(
+                        "Pavimento(s)",
+                        dados.pavimentos ||
+                        "Não informado"
+                    );
+
+                    formData.append(
+                        "Tipo de Ocorrência",
+                        dados.ocorrencia || ""
+                    );
+
+                    formData.append(
+                        "Área/Local da Execução",
+                        dados.areaExecucao || "Não se aplica"
+                    );
+
+                    formData.append(
+                        "Data da ocorrência",
+                        dados.dataOcorrencia || ""
+                    );
+
+                    formData.append(
+                        "Hora inicial",
+                        dados.horaInicial || ""
+                    );
+
+                    formData.append(
+                        "Hora final",
+                        dados.horaFinal || ""
+                    );
+
+                    formData.append(
+                        "Detalhes",
+                        dados.detalhes || ""
+                    );
+
+                    formData.append(
+                        "_subject",
+                        assunto
+                    );
+
+                    const resposta =
+                        await fetch(
+                            FORM_ENDPOINT,
+                            {
+                                method:
+                                    "POST",
+
+                                body:
+                                    formData,
+
+                                headers: {
+                                    Accept:
+                                        "application/json"
+                                }
+                            }
+                        );
+
+                    if (!resposta.ok) {
+
+                        throw new Error(
+                            "Não foi possível enviar o e-mail pelo Formspree."
+                        );
+                    }
+
+                    botao.textContent =
+                        "✅ E-mail enviado";
+
+                    /*
+                     * Volta ao texto original depois de alguns segundos.
+                     */
+
+                    setTimeout(
+                        function () {
+
+                            botao.textContent =
+                                "📧 Enviar por E-mail";
+
+                            botao.disabled =
+                                false;
+
+                        },
+                        3000
+                    );
+
+                }
+
+                catch (error) {
+
+                    alert(
+                        error.message ||
+                        "Erro ao enviar o e-mail."
+                    );
+
+                    botao.disabled =
+                        false;
+
+                    botao.textContent =
+                        "📧 Enviar por E-mail";
+                }
+            };
+    }
 }
 
-/* =========================================================
-   MIGRAÇÕES SEGURAS DO D1
-========================================================= */
+/* =====================================================
+   CONSULTAR PROTOCOLO
+===================================================== */
 
-async function colunaExiste(env, tabela, coluna) {
-  const info = await env.DB.prepare(`PRAGMA table_info(${tabela})`).all();
-  return (info.results || []).some(c => c.name === coluna);
+/*
+   LINK DIRETO PARA PROTOCOLO
+   Exemplo:
+   https://seu-app/?protocolo=PC-20-08-26-020
+
+   Ao abrir o aplicativo:
+   1. lê o protocolo da URL;
+   2. abre a seção Consultar Protocolo;
+   3. preenche o campo;
+   4. executa a busca automaticamente.
+===================================================== */
+
+function abrirProtocoloPeloLink() {
+    try {
+        const parametros = new URLSearchParams(window.location.search || "");
+        const protocoloURL = normalizarProtocoloConsulta(
+            parametros.get("protocolo") || ""
+        );
+
+        if (!protocoloURL) return;
+
+        const input = document.getElementById("consultaProtocolo");
+        const btn = document.getElementById("btnConsultar");
+
+        if (!input || !btn) return;
+
+        /*
+         * Garante que o usuário veja a área correta do aplicativo.
+         */
+        try {
+            if (typeof mostrarSecao === "function") {
+                mostrarSecao("consultar");
+            }
+        } catch (erroSecao) {
+            console.warn(
+                "Não foi possível alternar automaticamente para a consulta:",
+                erroSecao
+            );
+        }
+
+        input.value = protocoloURL;
+
+        /*
+         * Pequeno atraso para concluir a troca de seção antes da busca.
+         */
+        setTimeout(function () {
+            btn.click();
+        }, 250);
+
+        /*
+         * Remove apenas o parâmetro da URL após a leitura.
+         * Isso evita uma nova consulta automática caso a página seja recarregada.
+         */
+        try {
+            const urlLimpa =
+                window.location.origin +
+                window.location.pathname +
+                window.location.hash;
+
+            window.history.replaceState(
+                {},
+                document.title,
+                urlLimpa
+            );
+        } catch (erroHistorico) {}
+
+    } catch (erro) {
+        console.warn(
+            "Não foi possível abrir o protocolo pelo link:",
+            erro
+        );
+    }
 }
 
-async function garantirColuna(env, tabela, coluna, definicao) {
-  if (!(await colunaExiste(env, tabela, coluna))) {
-    await env.DB.prepare(
-      `ALTER TABLE ${tabela} ADD COLUMN ${coluna} ${definicao}`
-    ).run();
-  }
-}
+setTimeout(abrirProtocoloPeloLink, 500);
 
-async function garantirEstruturaChamados(env) {
-  /* Estas duas colunas são a correção da V4.7 */
-  await garantirColuna(env, "chamados", "whatsapp_retorno", "TEXT DEFAULT ''");
-  await garantirColuna(env, "chamados", "resposta_administracao", "TEXT DEFAULT ''");
 
-  /* Mantém compatibilidade com a versão que já usa prioridade */
-  await garantirColuna(env, "chamados", "prioridade", "TEXT DEFAULT 'Moderada'");
-
-  /* Campos usados pelas versões anteriores */
-  await garantirColuna(env, "chamados", "data_conclusao", "TEXT DEFAULT ''");
-  await garantirColuna(env, "chamados", "hora_conclusao", "TEXT DEFAULT ''");
-  await garantirColuna(env, "chamados", "ultima_atualizacao", "TEXT DEFAULT ''");
-}
-
-/* =========================================================
-   ARQUIVAMENTO
-========================================================= */
-
-async function garantirTabelaArquivamento(env) {
-  await env.DB.prepare(`
-    CREATE TABLE IF NOT EXISTS chamados_arquivamento (
-      protocolo TEXT PRIMARY KEY,
-      arquivado INTEGER NOT NULL DEFAULT 0,
-      data_ultimo_arquivamento TEXT DEFAULT '',
-      data_ultima_reabertura TEXT DEFAULT '',
-      historico_json TEXT DEFAULT '[]'
+document
+    .getElementById(
+        "btnConsultar"
     )
-  `).run();
+    .addEventListener(
+        "click",
+        async function () {
+
+            const input =
+                document.getElementById(
+                    "consultaProtocolo"
+                );
+
+            const protocolo =
+                normalizarProtocoloConsulta(
+                    input ? input.value : ""
+                );
+
+            if (input) {
+                input.value = protocolo;
+            }
+
+            const erro =
+                document.getElementById(
+                    "erroConsulta"
+                );
+
+            const resumo =
+                document.getElementById(
+                    "consultaResumo"
+                );
+
+            if (erro) {
+                erro.style.display = "none";
+                erro.textContent = "";
+            }
+
+            if (resumo) {
+                resumo.style.display = "none";
+            }
+
+            if (!protocolo) {
+
+                atualizarEstadoBuscaConsulta(
+                    "erro",
+                    "⚠️ Digite o número do protocolo."
+                );
+
+                if (erro) {
+                    erro.textContent =
+                        "Digite o número do protocolo.";
+                    erro.style.display = "block";
+                }
+
+                return;
+            }
+
+            this.disabled = true;
+            this.textContent =
+                "⏳ Consultando...";
+
+            atualizarEstadoBuscaConsulta(
+                "consultando",
+                "🔄 Consultando protocolo..."
+            );
+
+            try {
+
+                const resposta =
+                    await fetch(
+                        API +
+                        "?protocolo=" +
+                        encodeURIComponent(
+                            protocolo
+                        )
+                    );
+
+                const texto =
+                    await resposta.text();
+
+                let dados = {};
+
+                try {
+
+                    dados =
+                        texto
+                            ? JSON.parse(texto)
+                            : {};
+
+                } catch {
+
+                    throw new Error(
+                        "Resposta inválida do servidor."
+                    );
+
+                }
+
+                if (
+                    !resposta.ok ||
+                    !dados.encontrado
+                ) {
+
+                    throw new Error(
+                        dados.erro ||
+                        "Protocolo não encontrado."
+                    );
+
+                }
+
+                window.__chamadoConsultaAtual =
+                    dados.chamado;
+
+                mostrarResultado(
+                    dados.chamado
+                );
+
+                preencherResumoConsulta(
+                    dados.chamado
+                );
+
+                atualizarSolucaoConsulta(
+                    dados.chamado
+                );
+
+                atualizarEstadoBuscaConsulta(
+                    "sucesso",
+                    "✅ Protocolo localizado com sucesso."
+                );
+
+            } catch (error) {
+
+                if (resumo) {
+                    resumo.style.display = "none";
+                }
+
+                atualizarEstadoBuscaConsulta(
+                    "erro",
+                    "❌ " +
+                    (
+                        error.message ||
+                        "Não foi possível consultar o protocolo."
+                    )
+                );
+
+                if (erro) {
+
+                    erro.textContent =
+                        error.message ||
+                        "Não foi possível consultar o protocolo.";
+
+                    erro.style.display =
+                        "block";
+
+                }
+
+            } finally {
+
+                this.disabled = false;
+
+                this.textContent =
+                    "🔎 Buscar Protocolo";
+
+            }
+
+        }
+    );
+
+/* =====================================================
+   MOSTRAR RESULTADO
+===================================================== */
+
+
+function fecharConsultaProtocolo() {
+
+    window.__chamadoConsultaAtual =
+        null;
+
+    const resultado =
+        document.getElementById(
+            "resultadoConsulta"
+        );
+
+    const erro =
+        document.getElementById(
+            "erroConsulta"
+        );
+
+    const input =
+        document.getElementById(
+            "consultaProtocolo"
+        );
+
+    const resumo =
+        document.getElementById(
+            "consultaResumo"
+        );
+
+    const solucao =
+        document.getElementById(
+            "consultaSolucao"
+        );
+
+    if (resultado) {
+        resultado.style.display = "none";
+    }
+
+    if (erro) {
+        erro.style.display = "none";
+        erro.textContent = "";
+    }
+
+    if (resumo) {
+        resumo.style.display = "none";
+    }
+
+    if (solucao) {
+        solucao.style.display = "none";
+    }
+
+    atualizarEstadoBuscaConsulta(
+        "",
+        ""
+    );
+
+    if (input) {
+        input.value = "";
+    }
+
+    const protocoloHistorico =
+        document.getElementById(
+            "historicoProtocoloNumero"
+        );
+
+    if (protocoloHistorico) {
+        protocoloHistorico.textContent =
+            "-";
+    }
+
+    if (typeof mostrarSecao === "function") {
+        mostrarSecao("inicio");
+    }
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+
 }
 
-async function buscarArquivamento(env, protocolo) {
-  await garantirTabelaArquivamento(env);
 
-  return env.DB.prepare(`
-    SELECT *
-    FROM chamados_arquivamento
-    WHERE protocolo = ?
-    LIMIT 1
-  `).bind(protocolo).first();
+function montarMensagemCompartilharProtocolo(chamado) {
+
+    const protocolo =
+        chamado?.protocolo || "-";
+
+    const status =
+        chamado?.status || "Não informado";
+
+    const local =
+        chamado?.bloco
+            ? chamado.bloco +
+              (chamado.pavimentos
+                  ? " • " + chamado.pavimentos
+                  : "")
+            : (chamado?.local || "Não informado");
+
+    const ocorrencia =
+        chamado?.ocorrencia ||
+        chamado?.tipo ||
+        "Não informado";
+
+    const observacao =
+        chamado?.observacaoFinal ||
+        chamado?.solucao ||
+        chamado?.resolucao ||
+        chamado?.observacao ||
+        chamado?.observacoes ||
+        "";
+
+    let mensagem =
+        "🏢 *PARQUE CLUBE*\n\n" +
+        "📋 *PROTOCOLO DE CHAMADO*\n\n" +
+        "*Protocolo:* " + protocolo + "\n" +
+        "*Status:* " + status + "\n" +
+        "*Local:* " + local + "\n" +
+        "*Ocorrência:* " + ocorrencia;
+
+    if (observacao.trim()) {
+        mensagem +=
+            "\n\n*✅ Solução / Observação:*\n" +
+            observacao.trim();
+    }
+
+    mensagem +=
+        "\n\n🔎 *Consulte e acompanhe pelo aplicativo:*\n" +
+        "https://parque-clube.newcristian.workers.dev/";
+
+    return mensagem;
 }
 
-/* =========================================================
-   CONVERTER CHAMADO
-========================================================= */
+async function compartilharProtocoloConsulta() {
 
-function converterChamado(row, arquivo = null) {
-  if (!row) return null;
+    const chamado =
+        window.__chamadoConsultaAtual;
 
-  let historicoArquivamento = [];
-  try {
-    historicoArquivamento = arquivo && arquivo.historico_json
-      ? JSON.parse(arquivo.historico_json)
-      : [];
-  } catch {
-    historicoArquivamento = [];
-  }
+    if (!chamado) {
+        alert(
+            "Consulte um protocolo antes de compartilhar."
+        );
+        return;
+    }
 
-  return {
-    id: row.id,
-    protocolo: row.protocolo,
-    dataAbertura: row.data_abertura || "",
-    horaAbertura: row.hora_abertura || "",
-    status: row.status || "Aberto",
-    solicitante: row.solicitante || "",
-    cargo: row.cargo || "",
-    bloco: row.bloco || "",
-    pavimentos: row.pavimentos || "",
-    ocorrencia: row.ocorrencia || row.tipo_ocorrencia || "",
-    dataOcorrencia: row.data_ocorrencia || "",
-    horaInicial: row.hora_inicial || "",
-    horaFinal: row.hora_final || "",
-    detalhes: row.detalhes || "",
-    responsavel: row.responsavel || "",
-    observacaoSolucao: row.observacao_solucao || "",
-    dataConclusao: row.data_conclusao || "",
-    horaConclusao: row.hora_conclusao || "",
-    ultimaAtualizacao: row.ultima_atualizacao || "",
-    criadoEm: row.criado_em || "",
-    prioridade: row.prioridade || "Moderada",
+    const mensagem =
+        montarMensagemCompartilharProtocolo(
+            chamado
+        );
 
-    /* V4.7 */
-    whatsappRetorno: row.whatsapp_retorno || "",
-    respostaAdministracao: row.resposta_administracao || "",
+    try {
 
-    arquivado: arquivo ? Number(arquivo.arquivado || 0) === 1 : false,
-    dataHoraArquivamento: arquivo?.data_ultimo_arquivamento || "",
-    dataHoraReabertura: arquivo?.data_ultima_reabertura || "",
-    historicoArquivamento
-  };
+        if (
+            navigator.share &&
+            typeof navigator.share === "function"
+        ) {
+
+            await navigator.share({
+                title:
+                    "Protocolo " +
+                    (chamado.protocolo || ""),
+                text: mensagem
+            });
+
+            return;
+        }
+
+        if (
+            navigator.clipboard &&
+            navigator.clipboard.writeText
+        ) {
+
+            await navigator.clipboard.writeText(
+                mensagem
+            );
+
+            alert(
+                "📋 Dados do protocolo copiados. " +
+                "Agora você pode colar e compartilhar."
+            );
+
+            return;
+        }
+
+        alert(
+            mensagem
+        );
+
+    } catch (erro) {
+
+        if (erro?.name === "AbortError") {
+            return;
+        }
+
+        alert(
+            "Não foi possível compartilhar o protocolo."
+        );
+
+    }
+
 }
 
-/* =========================================================
-   BUSCAR / LISTAR CHAMADOS
-========================================================= */
 
-async function buscarChamado(env, protocolo) {
-  await garantirEstruturaChamados(env);
+function obterObservacaoFinalConsulta(chamado) {
 
-  const row = await env.DB.prepare(`
-    SELECT *
-    FROM chamados
-    WHERE protocolo = ?
-    LIMIT 1
-  `).bind(protocolo).first();
+    return (
+        chamado?.observacaoFinal ||
+        chamado?.solucao ||
+        chamado?.resolucao ||
+        chamado?.observacao ||
+        chamado?.observacoes ||
+        ""
+    ).trim();
 
-  const arquivo = await buscarArquivamento(env, protocolo);
-  return converterChamado(row, arquivo);
 }
 
-async function listarChamados(env) {
-  await garantirEstruturaChamados(env);
-  await garantirTabelaArquivamento(env);
+function atualizarSolucaoConsulta(chamado) {
 
-  const resultado = await env.DB.prepare(`
-    SELECT *
-    FROM chamados
-    ORDER BY id DESC
-  `).all();
+    const box =
+        document.getElementById(
+            "consultaSolucao"
+        );
 
-  const arquivos = await env.DB.prepare(`
-    SELECT *
-    FROM chamados_arquivamento
-  `).all();
+    const texto =
+        document.getElementById(
+            "consultaSolucaoTexto"
+        );
 
-  const mapaArquivos = new Map(
-    (arquivos.results || []).map(item => [item.protocolo, item])
-  );
+    if (!box || !texto) {
+        return;
+    }
 
-  const todos = (resultado.results || []).map(row =>
-    converterChamado(row, mapaArquivos.get(row.protocolo) || null)
-  );
+    const observacao =
+        obterObservacaoFinalConsulta(
+            chamado
+        );
 
-  const chamados = todos.filter(c => !c.arquivado);
-  const chamadosArquivados = todos.filter(c => c.arquivado);
+    if (!observacao) {
+        box.style.display = "none";
+        texto.textContent = "";
+        return;
+    }
 
-  const estatisticas = {
-    total: chamados.length,
-    abertos: chamados.filter(c => c.status === "Aberto").length,
-    andamento: chamados.filter(c => c.status === "Em andamento").length,
-    resolvidos: chamados.filter(c => c.status === "Resolvido").length,
-    cancelados: chamados.filter(c => c.status === "Cancelado").length
-  };
+    texto.textContent = observacao;
+    box.style.display = "block";
 
-  return { chamados, chamadosArquivados, estatisticas };
 }
 
-/* =========================================================
-   CRIAR CHAMADO
-========================================================= */
-
-async function criarChamado(env, dados) {
-  await garantirEstruturaChamados(env);
-
-  const data = obterDataBrasilia();
-  const hora = obterHoraBrasilia();
-  const dataContador = `${data.ano}-${data.mes}-${data.dia}`;
-
-  const contador = await env.DB.prepare(`
-    INSERT INTO contadores (data, numero)
-    VALUES (?, 1)
-    ON CONFLICT(data)
-    DO UPDATE SET numero = numero + 1
-    RETURNING numero
-  `).bind(dataContador).first();
-
-  if (!contador) {
-    return resposta({
-      sucesso: false,
-      erro: "Não foi possível gerar o número do protocolo."
-    }, 503);
-  }
-
-  const sequencial = String(Number(contador.numero)).padStart(3, "0");
-  const protocolo = `PC-${data.dia}-${data.mes}-${String(data.ano).slice(-2)}-${sequencial}`;
-
-  const prioridadesPermitidas = ["Urgente", "Alta", "Moderada", "Baixa"];
-  const prioridadeInformada = String(dados.prioridade || "Moderada").trim();
-  const prioridade = prioridadesPermitidas.includes(prioridadeInformada)
-    ? prioridadeInformada
-    : "Moderada";
-
-  const chamado = {
-    protocolo,
-    dataAbertura: `${data.dia}/${data.mes}/${data.ano}`,
-    horaAbertura: hora,
-    status: "Aberto",
-    solicitante: dados.solicitante || "",
-    cargo: dados.cargo || "",
-    bloco: dados.bloco || "",
-    pavimentos: dados.pavimentos || "",
-    ocorrencia: dados.ocorrencia || dados.tipo_ocorrencia || "",
-    dataOcorrencia: dados.dataOcorrencia || "",
-    horaInicial: dados.horaInicial || "",
-    horaFinal: dados.horaFinal || "",
-    detalhes: dados.detalhes || "",
-    responsavel: "",
-    observacaoSolucao: "",
-    prioridade,
-    whatsappRetorno: String(dados.whatsappRetorno || "").trim(),
-    respostaAdministracao: "",
-    criadoEm: new Date().toISOString()
-  };
-
-  await env.DB.prepare(`
-    INSERT INTO chamados (
-      protocolo,
-      data_abertura,
-      hora_abertura,
-      status,
-      solicitante,
-      cargo,
-      bloco,
-      pavimentos,
-      ocorrencia,
-      data_ocorrencia,
-      hora_inicial,
-      hora_final,
-      detalhes,
-      responsavel,
-      observacao_solucao,
-      prioridade,
-      whatsapp_retorno,
-      resposta_administracao,
-      criado_em
-    )
-    VALUES (
-      ?, ?, ?, ?, ?,
-      ?, ?, ?, ?, ?,
-      ?, ?, ?, ?, ?,
-      ?, ?, ?, ?
-    )
-  `).bind(
-    chamado.protocolo,
-    chamado.dataAbertura,
-    chamado.horaAbertura,
-    chamado.status,
-    chamado.solicitante,
-    chamado.cargo,
-    chamado.bloco,
-    chamado.pavimentos,
-    chamado.ocorrencia,
-    chamado.dataOcorrencia,
-    chamado.horaInicial,
-    chamado.horaFinal,
-    chamado.detalhes,
-    chamado.responsavel,
-    chamado.observacaoSolucao,
-    chamado.prioridade,
-    chamado.whatsappRetorno,
-    chamado.respostaAdministracao,
-    chamado.criadoEm
-  ).run();
-
-  return resposta({
-    sucesso: true,
-    mensagem: "Chamado registrado com sucesso.",
-    protocolo,
+function mostrarResultado(
     chamado
-  });
+) {
+
+    window.__chamadoConsultaAtual =
+        chamado;
+
+    atualizarSolucaoConsulta(
+        chamado
+    );
+
+
+    const resultado =
+        document.getElementById(
+            "resultadoConsulta"
+        );
+
+
+    const dados =
+        document.getElementById(
+            "dadosConsulta"
+        );
+
+
+    dados.innerHTML = `
+
+        <div class="resultado-item">
+
+            <strong>Protocolo</strong>
+
+            ${escapar(
+                chamado.protocolo
+            )}
+
+        </div>
+
+
+        <div class="resultado-item">
+
+            <strong>Solicitante</strong>
+
+            ${escapar(
+                chamado.solicitante
+            )}
+
+        </div>
+
+
+        <div class="resultado-item">
+
+            <strong>Cargo/Função</strong>
+
+            ${escapar(
+                chamado.cargo
+            )}
+
+        </div>
+
+
+        <div class="resultado-item">
+
+            <strong>Local</strong>
+
+            ${escapar(
+                chamado.bloco
+            )}
+
+        </div>
+
+
+        <div class="resultado-item">
+
+            <strong>Ocorrência</strong>
+
+            ${escapar(
+                chamado.ocorrencia
+            )}
+
+        </div>
+
+        ${
+            chamado.areaExecucao
+                ? `
+        <div class="resultado-item">
+
+            <strong>Área/Local da Execução</strong>
+
+            ${escapar(chamado.areaExecucao)}
+
+        </div>
+                `
+                : ""
+        }
+
+
+        <div class="resultado-item">
+
+            <strong>Andar / Pavimento</strong>
+
+            ${escapar(
+                chamado.pavimentos ||
+                "Não informado"
+            )}
+
+        </div>
+
+
+        <div class="resultado-item">
+
+            <strong>Detalhes</strong>
+
+            ${escapar(
+                chamado.detalhes
+            )}
+
+        </div>
+
+
+        <div class="resultado-item">
+
+            <strong>Status</strong>
+
+            ${escapar(
+                chamado.status ||
+                "Aberto"
+            )}
+
+        </div>
+
+
+        <div class="resultado-item">
+
+            <strong>Responsável</strong>
+
+            ${escapar(
+                chamado.responsavel ||
+                "Ainda não definido"
+            )}
+
+        </div>
+
+
+        <div class="resultado-item">
+
+            <strong>Observação</strong>
+
+            ${escapar(
+                chamado.observacaoSolucao ||
+                "Ainda não informada"
+            )}
+
+        </div>
+
+    `;
+
+
+    atualizarHistoricoConsultaProtocolo(chamado);
+
+    // Status visual dinâmico no resumo.
+    const resumoStatus =
+        document.getElementById(
+            "consultaResumoStatus"
+        );
+
+    if (resumoStatus) {
+        const statusTexto =
+            String(
+                chamado.status ||
+                "Aberto"
+            ).trim();
+
+        resumoStatus.textContent =
+            statusTexto;
+
+        resumoStatus.className =
+            "consulta-resumo-status " +
+            (
+                statusTexto
+                    .toLowerCase()
+                    .includes("resolvido") ||
+                statusTexto
+                    .toLowerCase()
+                    .includes("concluído") ||
+                statusTexto
+                    .toLowerCase()
+                    .includes("concluido")
+                    ? "status-resolvido"
+                    : statusTexto
+                        .toLowerCase()
+                        .includes("andamento")
+                        ? "status-andamento"
+                        : statusTexto
+                            .toLowerCase()
+                            .includes("cancel")
+                            ? "status-cancelado"
+                            : "status-aberto"
+            );
+    }
+
+    
+
+    const protocoloHistorico =
+        document.getElementById(
+            "historicoProtocoloNumero"
+        );
+
+    if (protocoloHistorico) {
+        protocoloHistorico.textContent =
+            chamado.protocolo || "-";
+    }
+
+    preencherResumoConsulta(chamado);
+
+    atualizarEstadoBuscaConsulta(
+        "sucesso",
+        "✅ Protocolo localizado com sucesso."
+    );
+
+    resultado.style.display =
+        "block";
+
 }
 
-/* =========================================================
-   ATUALIZAR CHAMADO
-========================================================= */
 
-async function atualizarChamado(env, dados) {
-  await garantirEstruturaChamados(env);
+/* =====================================================
+   ENTRAR ADMIN - VALIDAÇÃO NO CLOUDFLARE WORKER
+===================================================== */
 
-  if (!dados.protocolo) {
-    return resposta({
-      sucesso: false,
-      erro: "Informe o protocolo."
-    }, 400);
-  }
-
-  const protocolo = String(dados.protocolo).trim().toUpperCase();
-  const chamadoAtual = await buscarChamado(env, protocolo);
-
-  if (!chamadoAtual) {
-    return resposta({
-      sucesso: false,
-      erro: "Protocolo não encontrado."
-    }, 404);
-  }
-
-  const statusPermitidos = ["Aberto", "Em andamento", "Resolvido", "Cancelado"];
-  const status = dados.status || chamadoAtual.status || "Aberto";
-
-  if (!statusPermitidos.includes(status)) {
-    return resposta({
-      sucesso: false,
-      erro: "Status inválido."
-    }, 400);
-  }
-
-  const data = obterDataBrasilia();
-  const hora = obterHoraBrasilia();
-
-  let dataConclusao = chamadoAtual.dataConclusao || "";
-  let horaConclusao = chamadoAtual.horaConclusao || "";
-
-  if (status === "Resolvido") {
-    dataConclusao = `${data.dia}/${data.mes}/${data.ano}`;
-    horaConclusao = hora;
-  } else if (status !== "Resolvido") {
-    dataConclusao = "";
-    horaConclusao = "";
-  }
-
-  const prioridadesPermitidas = ["Urgente", "Alta", "Moderada", "Baixa"];
-  const prioridadeInformada =
-    dados.prioridade !== undefined
-      ? String(dados.prioridade || "").trim()
-      : chamadoAtual.prioridade;
-
-  const prioridade = prioridadesPermitidas.includes(prioridadeInformada)
-    ? prioridadeInformada
-    : (chamadoAtual.prioridade || "Moderada");
-
-  /*
-   * V4.7:
-   * A Observação da solução passou a ser a única resposta administrativa.
-   * Para manter compatibilidade com registros antigos, o campo
-   * resposta_administracao continua existindo no banco, mas recebe
-   * exatamente o mesmo texto de observacao_solucao.
-   */
-  const possuiObservacaoSolucao =
-    Object.prototype.hasOwnProperty.call(dados, "observacaoSolucao");
-
-  const observacaoSolucao = possuiObservacaoSolucao
-    ? String(dados.observacaoSolucao || "").trim()
-    : (chamadoAtual.observacaoSolucao || "");
-
-  const respostaAdministracao = observacaoSolucao;
-
-  const ultimaAtualizacao = `${data.dia}/${data.mes}/${data.ano} ${hora}`;
-
-  await env.DB.prepare(`
-    UPDATE chamados
-    SET
-      status = ?,
-      responsavel = ?,
-      observacao_solucao = ?,
-      data_conclusao = ?,
-      hora_conclusao = ?,
-      ultima_atualizacao = ?,
-      prioridade = ?,
-      resposta_administracao = ?
-    WHERE protocolo = ?
-  `).bind(
-    status,
-    dados.responsavel !== undefined
-      ? String(dados.responsavel || "")
-      : chamadoAtual.responsavel,
-    observacaoSolucao,
-    dataConclusao,
-    horaConclusao,
-    ultimaAtualizacao,
-    prioridade,
-    respostaAdministracao,
-    protocolo
-  ).run();
-
-  const atualizado = await buscarChamado(env, protocolo);
-
-  return resposta({
-    sucesso: true,
-    mensagem: "Chamado atualizado com sucesso.",
-    chamado: atualizado
-  });
-}
-
-/* =========================================================
-   ARQUIVAR / REABRIR / EXCLUIR
-========================================================= */
-
-async function arquivarChamado(env, dados) {
-  if (!dados.protocolo) {
-    return resposta({ sucesso: false, erro: "Informe o protocolo." }, 400);
-  }
-
-  const protocolo = String(dados.protocolo).trim().toUpperCase();
-  const chamado = await buscarChamado(env, protocolo);
-
-  if (!chamado) {
-    return resposta({ sucesso: false, erro: "Protocolo não encontrado." }, 404);
-  }
-
-  if (chamado.status !== "Resolvido") {
-    return resposta({
-      sucesso: false,
-      erro: "Somente chamados resolvidos podem ser arquivados."
-    }, 400);
-  }
-
-  await garantirTabelaArquivamento(env);
-
-  const agora = dataHoraBrasilia();
-  let historico = chamado.historicoArquivamento || [];
-  historico.push({ tipo: "ARQUIVADO", dataHora: agora });
-
-  await env.DB.prepare(`
-    INSERT INTO chamados_arquivamento (
-      protocolo, arquivado, data_ultimo_arquivamento, historico_json
+document
+    .getElementById(
+        "btnEntrarAdmin"
     )
-    VALUES (?, 1, ?, ?)
-    ON CONFLICT(protocolo)
-    DO UPDATE SET
-      arquivado = 1,
-      data_ultimo_arquivamento = excluded.data_ultimo_arquivamento,
-      historico_json = excluded.historico_json
-  `).bind(protocolo, agora, JSON.stringify(historico)).run();
+    .addEventListener(
+        "click",
+        async function () {
 
-  return resposta({
-    sucesso: true,
-    mensagem: "Chamado arquivado com sucesso.",
-    chamado: await buscarChamado(env, protocolo)
-  });
-}
+            const botao = this;
 
-async function reabrirChamado(env, dados) {
-  if (!dados.protocolo) {
-    return resposta({ sucesso: false, erro: "Informe o protocolo." }, 400);
-  }
+            const senha =
+                document
+                    .getElementById(
+                        "senhaAdmin"
+                    )
+                    .value
+                    .trim();
 
-  const protocolo = String(dados.protocolo).trim().toUpperCase();
-  const chamado = await buscarChamado(env, protocolo);
+            const erro =
+                document
+                    .getElementById(
+                        "erroAdmin"
+                    );
 
-  if (!chamado) {
-    return resposta({ sucesso: false, erro: "Protocolo não encontrado." }, 404);
-  }
+            const painel =
+                document
+                    .getElementById(
+                        "adminPainel"
+                    );
 
-  await garantirTabelaArquivamento(env);
+            erro.style.display =
+                "none";
 
-  const agora = dataHoraBrasilia();
-  let historico = chamado.historicoArquivamento || [];
-  historico.push({ tipo: "REABERTO", dataHora: agora });
+            painel.style.display =
+                "none";
 
-  await env.DB.prepare(`
-    INSERT INTO chamados_arquivamento (
-      protocolo, arquivado, data_ultima_reabertura, historico_json
+            if (!senha) {
+
+                erro.textContent =
+                    "Digite a senha administrativa.";
+
+                erro.style.display =
+                    "block";
+
+                return;
+            }
+
+            botao.disabled =
+                true;
+
+            botao.textContent =
+                "⏳ Verificando...";
+
+            try {
+
+                /*
+                 * A senha é enviada ao Worker.
+                 * O Worker compara com env.ADMIN_PASSWORD.
+                 */
+
+                const resposta =
+                    await fetch(
+                        API,
+                        {
+                            method:
+                                "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify({
+                                    action:
+                                        "login",
+
+                                    adminPassword:
+                                        senha
+                                })
+                        }
+                    );
+
+                const textoResposta =
+                    await resposta.text();
+
+                let resultado = {};
+
+                try {
+                    resultado =
+                        textoResposta
+                            ? JSON.parse(textoResposta)
+                            : {};
+                } catch {
+                    throw new Error(
+                        "O servidor respondeu sem JSON. Verifique o deploy do Worker."
+                    );
+                }
+
+                if (
+                    !resposta.ok ||
+                    !resultado.sucesso
+                ) {
+                    throw new Error(
+                        resultado.erro ||
+                        "Senha administrativa incorreta."
+                    );
+                }
+
+                /*
+                 * Somente depois da confirmação do Worker
+                 * guardamos a senha em memória para as
+                 * operações administrativas seguintes.
+                 */
+
+                senhaAdministrativa =
+                    senha;
+
+                painel.style.display =
+                    "block";
+
+                if (typeof atualizarDashboardAdministrativoV45 === "function") {
+                    atualizarDashboardAdministrativoV45();
+                }
+
+                botao.textContent =
+                    "✅ Acesso liberado";
+
+                botao.disabled =
+                    true;
+
+            } catch (error) {
+
+                senhaAdministrativa =
+                    "";
+
+                painel.style.display =
+                    "none";
+
+                erro.textContent =
+                    error.message ||
+                    "Senha administrativa incorreta.";
+
+                erro.style.display =
+                    "block";
+
+                botao.disabled =
+                    false;
+
+                botao.textContent =
+                    "🔐 Entrar";
+            }
+        }
+    );
+
+
+/* =====================================================
+   LISTAR TODOS OS CHAMADOS
+===================================================== */
+
+document
+    .getElementById(
+        "btnListarTodos"
     )
-    VALUES (?, 0, ?, ?)
-    ON CONFLICT(protocolo)
-    DO UPDATE SET
-      arquivado = 0,
-      data_ultima_reabertura = excluded.data_ultima_reabertura,
-      historico_json = excluded.historico_json
-  `).bind(protocolo, agora, JSON.stringify(historico)).run();
+    .addEventListener(
+        "click",
+        async function () {
 
-  return resposta({
-    sucesso: true,
-    mensagem: "Chamado reaberto com sucesso.",
-    chamado: await buscarChamado(env, protocolo)
-  });
+
+            if (!senhaAdministrativa) {
+
+                alert(
+                    "Faça o login administrativo primeiro."
+                );
+
+                return;
+
+            }
+
+
+            const botao =
+                this;
+
+
+            const lista =
+                document
+                    .getElementById(
+                        "listaChamados"
+                    );
+
+
+            botao.disabled =
+                true;
+
+
+            botao.textContent =
+                "⏳ Carregando chamados...";
+
+
+            lista.innerHTML =
+
+                "<p style='text-align:center;padding:20px;'>⏳ Buscando chamados...</p>";
+
+
+            try {
+
+
+                const resposta =
+                    await fetch(
+                        API,
+                        {
+
+                            method:
+                                "POST",
+
+                            headers: {
+
+                                "Content-Type":
+                                    "application/json"
+
+                            },
+
+                            body:
+                                JSON.stringify({
+
+                                    action:
+                                        "list",
+
+                                    adminPassword:
+                                        senhaAdministrativa
+
+                                })
+
+                        }
+                    );
+
+
+                const textoResposta =
+                    await resposta.text();
+
+                let dados = {};
+
+                try {
+                    dados =
+                        textoResposta
+                            ? JSON.parse(textoResposta)
+                            : {};
+                } catch {
+                    throw new Error(
+                        "O servidor respondeu sem JSON válido."
+                    );
+                }
+
+                console.log(
+                    "CHAMADOS:",
+                    dados
+                );
+
+                if (
+                    !resposta.ok
+                ) {
+
+                    throw new Error(
+                        dados.erro ||
+                        "Erro ao carregar chamados."
+                    );
+
+                }
+
+
+                chamados =
+                    dados.chamados ||
+                    [];
+
+                chamadosArquivadosV11 =
+                    dados.chamadosArquivados ||
+                    [];
+
+                chamadosHistoricoV11 =
+                    [
+                        ...chamados,
+                        ...chamadosArquivadosV11
+                    ];
+
+                const totalArquivados =
+                    document.getElementById(
+                        "totalArquivados"
+                    );
+
+                if (totalArquivados) {
+                    totalArquivados.textContent =
+                        chamadosArquivadosV11.length;
+                }
+
+
+                atualizarEstatisticas();
+
+
+                document
+                    .getElementById(
+                        "estatisticas"
+                    )
+                    .style.display =
+                    "block";
+
+
+                document
+                    .getElementById(
+                        "filtros"
+                    )
+                    .style.display =
+                    "block";
+
+
+                mostrarChamados();
+
+                renderizarChamadosArquivadosV11();
+
+                const listaAtivos =
+                    document.getElementById(
+                        "listaChamados"
+                    );
+
+                const listaArquivados =
+                    document.getElementById(
+                        "listaChamadosArquivados"
+                    );
+
+                if (listaAtivos) {
+                    listaAtivos.style.display =
+                        "block";
+                }
+
+                if (listaArquivados) {
+                    listaArquivados.style.display =
+                        "none";
+                }
+
+                document
+                    .getElementById(
+                        "btnChamadosAtivos"
+                    )
+                    ?.classList.add("ativo");
+
+                document
+                    .getElementById(
+                        "btnChamadosArquivados"
+                    )
+                    ?.classList.remove("ativo");
+
+                inicializarDashboardV11();
+
+
+            }
+
+            catch (error) {
+
+                lista.innerHTML = `
+
+                    <div
+                        class="mensagem erro"
+                        style="display:block;"
+                    >
+
+                        ❌
+                        ${escapar(
+                            error.message
+                        )}
+
+                    </div>
+
+                `;
+
+            }
+
+            finally {
+
+                botao.disabled =
+                    false;
+
+                botao.textContent =
+                    "🔄 Atualizar Lista de Chamados";
+
+            }
+
+        }
+    );
+
+
+/* =====================================================
+   ESTATÍSTICAS
+===================================================== */
+
+function atualizarEstatisticas() {
+
+
+    const total =
+        chamados.length;
+
+
+    const abertos =
+        chamados.filter(
+            c =>
+                (c.status ||
+                "Aberto") ===
+                "Aberto"
+        ).length;
+
+
+    const andamento =
+        chamados.filter(
+            c =>
+                c.status ===
+                "Em andamento"
+        ).length;
+
+
+    const resolvidos =
+        chamados.filter(
+            c =>
+                c.status ===
+                "Resolvido"
+        ).length;
+
+
+    const cancelados =
+        chamados.filter(
+            c =>
+                c.status ===
+                "Cancelado"
+        ).length;
+
+
+    document
+        .getElementById(
+            "totalChamados"
+        )
+        .textContent =
+        total;
+
+
+    document
+        .getElementById(
+            "totalAbertos"
+        )
+        .textContent =
+        abertos;
+
+
+    document
+        .getElementById(
+            "totalAndamento"
+        )
+        .textContent =
+        andamento;
+
+
+    document
+        .getElementById(
+            "totalResolvidos"
+        )
+        .textContent =
+        resolvidos;
+
+
+    document
+        .getElementById(
+            "totalCancelados"
+        )
+        .textContent =
+        cancelados;
+
 }
 
-async function excluirChamado(env, dados) {
-  if (!dados.protocolo) {
-    return resposta({ sucesso: false, erro: "Informe o protocolo." }, 400);
-  }
 
-  const protocolo = String(dados.protocolo).trim().toUpperCase();
-  const chamado = await buscarChamado(env, protocolo);
+/* =====================================================
+   MOSTRAR CHAMADOS
+===================================================== */
 
-  if (!chamado) {
-    return resposta({ sucesso: false, erro: "Protocolo não encontrado." }, 404);
-  }
+function mostrarChamados() {
 
-  await garantirTabelaArquivamento(env);
 
-  await env.DB.prepare(`
-    DELETE FROM chamados
-    WHERE protocolo = ?
-  `).bind(protocolo).run();
+    const lista =
+        document.getElementById(
+            "listaChamados"
+        );
 
-  await env.DB.prepare(`
-    DELETE FROM chamados_arquivamento
-    WHERE protocolo = ?
-  `).bind(protocolo).run();
 
-  return resposta({
-    sucesso: true,
-    mensagem: "Chamado excluído com sucesso.",
-    protocolo
-  });
+    const pesquisa =
+        document
+            .getElementById(
+                "pesquisaChamado"
+            )
+            .value
+            .toLowerCase()
+            .trim();
+
+
+    const filtro =
+        document
+            .getElementById(
+                "filtroStatus"
+            )
+            .value;
+
+    const filtroPrioridade =
+        document
+            .getElementById(
+                "filtroPrioridade"
+            )
+            .value;
+
+
+    const filtrados =
+        chamados.filter(
+            chamado => {
+
+
+                const texto =
+
+                    (
+                        chamado.protocolo +
+                        " " +
+                        chamado.solicitante +
+                        " " +
+                        chamado.bloco +
+                        " " +
+                        chamado.ocorrencia
+                    )
+                    .toLowerCase();
+
+
+                const passouPesquisa =
+                    !pesquisa ||
+                    texto.includes(
+                        pesquisa
+                    );
+
+
+                const passouStatus =
+                    !filtro ||
+                    (
+                        chamado.status ||
+                        "Aberto"
+                    ) ===
+                    filtro;
+
+                const prioridadeChamado =
+                    chamado.prioridade ||
+                    "Moderada";
+
+                const passouPrioridade =
+                    !filtroPrioridade ||
+                    prioridadeChamado ===
+                    filtroPrioridade;
+
+
+                return (
+                    passouPesquisa &&
+                    passouStatus &&
+                    passouPrioridade
+                );
+
+            }
+        );
+
+
+    if (!filtrados.length) {
+
+        lista.innerHTML = `
+
+            <div
+                style="
+                    text-align:center;
+                    padding:25px;
+                    color:#777;
+                "
+            >
+
+                📭 Nenhum chamado encontrado.
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    lista.innerHTML =
+
+        filtrados
+            .map(
+                chamado =>
+                    criarCard(
+                        chamado
+                    )
+            )
+            .join("");
+
 }
 
-/* =========================================================
-   LOGIN / CONSULTA
-========================================================= */
 
-async function login(env, dados) {
-  const autenticacao = verificarSenha(dados, env);
-  if (!autenticacao.ok) return autenticacao.resposta;
+/* =====================================================
+   CRIAR CARD
+===================================================== */
 
-  return resposta({
-    sucesso: true,
-    mensagem: "Acesso administrativo autorizado."
-  });
-}
-
-async function consultarProtocolo(env, protocolo) {
-  if (!protocolo) {
-    return resposta({
-      encontrado: false,
-      erro: "Informe o número do protocolo."
-    }, 400);
-  }
-
-  const protocoloNormalizado = String(protocolo).trim().toUpperCase();
-  const chamado = await buscarChamado(env, protocoloNormalizado);
-
-  if (!chamado) {
-    return resposta({
-      encontrado: false,
-      erro: "Protocolo não encontrado."
-    }, 404);
-  }
-
-  return resposta({
-    encontrado: true,
+function criarCard(
     chamado
-  });
+) {
+
+
+    const status =
+        chamado.status ||
+        "Aberto";
+
+
+    let classe =
+        "status-aberto";
+
+
+    let emoji =
+        "🟡";
+
+
+    if (
+        status ===
+        "Em andamento"
+    ) {
+
+        classe =
+            "status-andamento";
+
+        emoji =
+            "🔵";
+
+    }
+
+
+    if (
+        status ===
+        "Resolvido"
+    ) {
+
+        classe =
+            "status-resolvido";
+
+        emoji =
+            "🟢";
+
+    }
+
+
+    if (
+        status ===
+        "Cancelado"
+    ) {
+
+        classe =
+            "status-cancelado";
+
+        emoji =
+            "🔴";
+
+    }
+
+
+    return `
+
+        <div class="card">
+
+
+            <div class="card-protocolo">
+
+                📋
+                ${escapar(
+                    chamado.protocolo
+                )}
+
+            </div>
+
+
+            <div class="card-info">
+
+                👤
+                <strong>
+                    Solicitante:
+                </strong>
+
+                ${escapar(
+                    chamado.solicitante
+                )}
+
+                <br>
+
+
+                📍
+                <strong>
+                    Local:
+                </strong>
+
+                ${escapar(
+                    chamado.bloco
+                )}
+
+                ${chamado.pavimentos
+                    ? `<br>🏢 <strong>Andar:</strong> ${escapar(chamado.pavimentos)}`
+                    : ""}
+
+                <br>
+
+
+                🔧
+                <strong>
+                    Ocorrência:
+                </strong>
+
+                ${escapar(
+                    chamado.ocorrencia
+                )}
+
+                <br>
+
+                ⭐
+                <strong>
+                    Prioridade:
+                </strong>
+
+                <span class="prioridade-badge prioridade-${String(chamado.prioridade || "Moderada").toLowerCase().replace(/[^a-z]/g, "")}">
+                    ${escapar(
+                        chamado.prioridade ||
+                        "Moderada"
+                    )}
+                </span>
+
+                <br>
+
+
+                📥
+                <strong>
+                    Recebido em:
+                </strong>
+
+                ${escapar(
+                    chamado.dataAbertura ||
+                    "Não informado"
+                )}
+
+                ${
+                    chamado.horaAbertura
+                        ? " às " +
+                          escapar(
+                              chamado.horaAbertura
+                          )
+                        : ""
+                }
+
+                <br>
+
+                🔄
+                <strong>
+                    Última atualização:
+                </strong>
+
+                ${escapar(
+                    chamado.ultimaAtualizacao ||
+                    "Ainda não atualizado"
+                )}
+
+                ${
+                    chamado.dataConclusao
+                        ? "<br>✅ <strong>Concluído em:</strong> " +
+                          escapar(
+                              chamado.dataConclusao
+                          ) +
+                          (
+                              chamado.horaConclusao
+                                  ? " às " +
+                                    escapar(
+                                        chamado.horaConclusao
+                                    )
+                                  : ""
+                          )
+                        : ""
+                }
+
+            </div>
+
+
+            <span
+                class="
+                    status
+                    ${classe}
+                "
+            >
+
+                ${emoji}
+
+                ${escapar(
+                    status
+                )}
+
+            </span>
+
+
+            <button
+                type="button"
+                class="btn-verde"
+                onclick="
+                    selecionarChamado(
+                        '${encodeURIComponent(
+                            chamado.protocolo
+                        )}'
+                    )
+                "
+            >
+
+                👁️ Ver / Gerenciar
+
+            </button>
+
+
+        </div>
+
+    `;
+
 }
 
-/* =========================================================
-   ADVERTÊNCIAS / NOTIFICAÇÕES
-========================================================= */
 
-function obterDBAdministrativo(env) {
-  if (!env || !env.DB || typeof env.DB.prepare !== "function") {
-    throw new Error("Binding D1 'DB' não encontrado ou inválido.");
-  }
-  return env.DB;
-}
+/* =====================================================
+   FILTROS
+===================================================== */
 
-async function garantirTabelasAdministrativas(env) {
-  const db = obterDBAdministrativo(env);
-
-  await db.prepare(`
-    CREATE TABLE IF NOT EXISTS contadores_administrativos (
-      ano INTEGER PRIMARY KEY,
-      numero INTEGER NOT NULL DEFAULT 0
+document
+    .getElementById(
+        "pesquisaChamado"
     )
-  `).run();
+    .addEventListener(
+        "input",
+        mostrarChamados
+    );
 
-  await db.prepare(`
-    CREATE TABLE IF NOT EXISTS advertencias_notificacoes (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      protocolo TEXT NOT NULL UNIQUE,
-      tipo TEXT NOT NULL,
-      data_registro TEXT NOT NULL,
-      data_ocorrencia TEXT DEFAULT '',
-      bloco TEXT NOT NULL,
-      unidade TEXT NOT NULL,
-      infracao TEXT NOT NULL,
-      descricao TEXT DEFAULT '',
-      base_regimento TEXT DEFAULT '',
-      responsavel TEXT DEFAULT '',
-      observacoes TEXT DEFAULT '',
-      protocolo_chamado TEXT DEFAULT '',
-      status TEXT NOT NULL DEFAULT 'Registrada',
-      criado_em TEXT NOT NULL,
-      atualizado_em TEXT NOT NULL
+
+document
+    .getElementById(
+        "filtroStatus"
     )
-  `).run();
-}
+    .addEventListener(
+        "change",
+        mostrarChamados
+    );
 
-function converterMedidaAdministrativa(row) {
-  if (!row) return null;
-
-  return {
-    id: row.id,
-    protocolo: row.protocolo,
-    tipo: row.tipo,
-    dataRegistro: row.data_registro || "",
-    dataOcorrencia: row.data_ocorrencia || "",
-    bloco: row.bloco || "",
-    unidade: row.unidade || "",
-    infracao: row.infracao || "",
-    descricao: row.descricao || "",
-    baseRegimento: row.base_regimento || "",
-    responsavel: row.responsavel || "",
-    observacoes: row.observacoes || "",
-    protocoloChamado: row.protocolo_chamado || "",
-    status: row.status || "Registrada",
-    criadoEm: row.criado_em || "",
-    atualizadoEm: row.atualizado_em || ""
-  };
-}
-
-async function listarMedidasAdministrativas(env) {
-  const db = obterDBAdministrativo(env);
-  await garantirTabelasAdministrativas(env);
-
-  const resultado = await db.prepare(`
-    SELECT *
-    FROM advertencias_notificacoes
-    ORDER BY id DESC
-  `).all();
-
-  return (resultado.results || [])
-    .map(converterMedidaAdministrativa)
-    .filter(Boolean);
-}
-
-async function gerarProtocoloAdministrativo(env) {
-  const db = obterDBAdministrativo(env);
-  await garantirTabelasAdministrativas(env);
-
-  const data = obterDataBrasilia();
-  const ano = Number(data.ano);
-
-  await db.prepare(`
-    INSERT INTO contadores_administrativos (ano, numero)
-    VALUES (?, 1)
-    ON CONFLICT(ano)
-    DO UPDATE SET numero = numero + 1
-  `).bind(ano).run();
-
-  const contador = await db.prepare(`
-    SELECT numero
-    FROM contadores_administrativos
-    WHERE ano = ?
-    LIMIT 1
-  `).bind(ano).first();
-
-  const numero = Number(contador?.numero || 0);
-
-  if (!numero) {
-    throw new Error("Não foi possível gerar o protocolo administrativo.");
-  }
-
-  return `ADM-${ano}-${String(numero).padStart(4, "0")}`;
-}
-
-async function criarMedidaAdministrativa(env, dados) {
-  const db = obterDBAdministrativo(env);
-  await garantirTabelasAdministrativas(env);
-
-  const tipo = String(dados.tipo || "").trim();
-  const tiposPermitidos = ["Advertência", "Notificação"];
-
-  if (!tiposPermitidos.includes(tipo)) {
-    return resposta({
-      sucesso: false,
-      erro: "Tipo administrativo inválido."
-    }, 400);
-  }
-
-  const bloco = String(dados.bloco || "").trim();
-  const unidade = String(dados.unidade || "").trim();
-  const infracao = String(dados.infracao || "").trim();
-
-  if (!bloco || !unidade || !infracao) {
-    return resposta({
-      sucesso: false,
-      erro: "Informe bloco, unidade e infração."
-    }, 400);
-  }
-
-  const data = obterDataBrasilia();
-  const agora = `${data.dia}/${data.mes}/${data.ano} ${obterHoraBrasilia()}`;
-  const protocolo = await gerarProtocoloAdministrativo(env);
-
-  const medida = {
-    protocolo,
-    tipo,
-    dataRegistro: dados.dataRegistro || `${data.dia}/${data.mes}/${data.ano}`,
-    dataOcorrencia: dados.dataOcorrencia || "",
-    bloco,
-    unidade,
-    infracao,
-    descricao: dados.descricao || "",
-    baseRegimento: dados.baseRegimento || "",
-    responsavel: dados.responsavel || "",
-    observacoes: dados.observacoes || "",
-    protocoloChamado: dados.protocoloChamado || "",
-    status: dados.status || "Registrada",
-    criadoEm: agora,
-    atualizadoEm: agora
-  };
-
-  await db.prepare(`
-    INSERT INTO advertencias_notificacoes (
-      protocolo, tipo, data_registro, data_ocorrencia,
-      bloco, unidade, infracao, descricao,
-      base_regimento, responsavel, observacoes,
-      protocolo_chamado, status, criado_em, atualizado_em
+document
+    .getElementById(
+        "filtroPrioridade"
     )
-    VALUES (
-      ?, ?, ?, ?,
-      ?, ?, ?, ?,
-      ?, ?, ?,
-      ?, ?, ?, ?
-    )
-  `).bind(
-    medida.protocolo,
-    medida.tipo,
-    medida.dataRegistro,
-    medida.dataOcorrencia,
-    medida.bloco,
-    medida.unidade,
-    medida.infracao,
-    medida.descricao,
-    medida.baseRegimento,
-    medida.responsavel,
-    medida.observacoes,
-    medida.protocoloChamado,
-    medida.status,
-    medida.criadoEm,
-    medida.atualizadoEm
-  ).run();
+    .addEventListener(
+        "change",
+        mostrarChamados
+    );
 
-  return resposta({
-    sucesso: true,
-    mensagem: "Registro administrativo criado com sucesso.",
-    medida
-  });
+
+/* =====================================================
+   SELECIONAR CHAMADO
+===================================================== */
+
+function selecionarChamado(
+    protocoloCodificado
+) {
+    mostrarPainelDetalhesChamadoV45();
+
+
+    const protocolo =
+        decodeURIComponent(
+            protocoloCodificado
+        );
+
+
+    document
+        .getElementById(
+            "protocoloAdmin"
+        )
+        .value =
+        protocolo;
+
+
+    document
+        .getElementById(
+            "btnBuscarAdmin"
+        )
+        .click();
+
 }
 
-async function excluirMedidaAdministrativa(env, dados) {
-  const db = obterDBAdministrativo(env);
-  await garantirTabelasAdministrativas(env);
 
-  const protocolo = String(dados.protocolo || "").trim().toUpperCase();
+/* =====================================================
+   BUSCAR ADMIN
+===================================================== */
 
-  if (!protocolo) {
-    return resposta({
-      sucesso: false,
-      erro: "Informe o protocolo administrativo."
-    }, 400);
-  }
+document
+    .getElementById(
+        "btnBuscarAdmin"
+    )
+    .addEventListener(
+        "click",
+        async function () {
 
-  const registro = await db.prepare(`
-    SELECT id
-    FROM advertencias_notificacoes
-    WHERE protocolo = ?
-    LIMIT 1
-  `).bind(protocolo).first();
 
-  if (!registro) {
-    return resposta({
-      sucesso: false,
-      erro: "Registro administrativo não encontrado."
-    }, 404);
-  }
+            const protocolo =
+                document
+                    .getElementById(
+                        "protocoloAdmin"
+                    )
+                    .value
+                    .trim()
+                    .toUpperCase();
 
-  await db.prepare(`
-    DELETE FROM advertencias_notificacoes
-    WHERE protocolo = ?
-  `).bind(protocolo).run();
 
-  return resposta({
-    sucesso: true,
-    mensagem: "Registro administrativo excluído com sucesso.",
+            if (!protocolo) {
+
+                alert(
+                    "Digite o protocolo."
+                );
+
+                return;
+
+            }
+
+
+            this.disabled =
+                true;
+
+
+            this.textContent =
+                "⏳ Buscando...";
+
+
+            try {
+
+
+                const resposta =
+                    await fetch(
+
+                        API +
+                        "?protocolo=" +
+                        encodeURIComponent(
+                            protocolo
+                        )
+
+                    );
+
+
+                const textoResposta =
+                    await resposta.text();
+
+                let dados = {};
+
+                try {
+                    dados =
+                        textoResposta
+                            ? JSON.parse(textoResposta)
+                            : {};
+                } catch {
+                    throw new Error(
+                        "O servidor respondeu sem JSON válido."
+                    );
+                }
+
+
+                if (
+                    !resposta.ok ||
+                    !dados.encontrado
+                ) {
+
+                    throw new Error(
+                        dados.erro ||
+                        "Chamado não encontrado."
+                    );
+
+                }
+
+
+                protocoloSelecionado =
+                    protocolo;
+
+
+                mostrarEdicao(
+                    dados.chamado
+                );
+
+
+            }
+
+            catch (error) {
+
+                alert(
+                    error.message
+                );
+
+            }
+
+            finally {
+
+                this.disabled =
+                    false;
+
+                this.textContent =
+                    "🔎 Buscar Chamado";
+
+            }
+
+        }
+    );
+
+
+/* =====================================================
+   MOSTRAR EDIÇÃO
+===================================================== */
+
+function mostrarEdicao(
+    chamado
+) {
+
+    /*
+     * Atualiza o destaque do histórico do protocolo.
+     * O mesmo registro é usado tanto para chamados novos
+     * quanto para protocolos antigos.
+     */
+    atualizarHistoricoHorariosAdmin(
+        chamado
+    );
+
+
+    document
+        .getElementById(
+            "editarChamado"
+        )
+        .style.display =
+        "block";
+
+
+    document
+        .getElementById(
+            "dadosAdmin"
+        )
+        .innerHTML = `
+
+            <div class="resultado-item">
+
+                <strong>
+                    Protocolo
+                </strong>
+
+                ${escapar(
+                    chamado.protocolo
+                )}
+
+            </div>
+
+
+            <div class="resultado-item">
+
+                <strong>
+                    📥 Recebido em
+                </strong>
+
+                ${escapar(
+                    chamado.dataAbertura ||
+                    "Não informado"
+                )}
+
+                ${
+                    chamado.horaAbertura
+                        ? " às " +
+                          escapar(
+                              chamado.horaAbertura
+                          )
+                        : ""
+                }
+
+            </div>
+
+
+            <div class="resultado-item">
+
+                <strong>
+                    🔄 Última atualização
+                </strong>
+
+                ${escapar(
+                    chamado.ultimaAtualizacao ||
+                    "Ainda não atualizado"
+                )}
+
+            </div>
+
+
+            ${
+                chamado.dataConclusao
+                    ? `
+            <div class="resultado-item">
+
+                <strong>
+                    ✅ Concluído em
+                </strong>
+
+                ${escapar(
+                    chamado.dataConclusao
+                )}
+
+                ${
+                    chamado.horaConclusao
+                        ? " às " +
+                          escapar(
+                              chamado.horaConclusao
+                          )
+                        : ""
+                }
+
+            </div>
+                    `
+                    : ""
+            }
+
+
+            <div class="resultado-item">
+
+                <strong>
+                    Solicitante
+                </strong>
+
+                ${escapar(
+                    chamado.solicitante
+                )}
+
+            </div>
+
+
+            <div class="resultado-item">
+
+                <strong>
+                    Local
+                </strong>
+
+                ${escapar(
+                    chamado.bloco
+                )}
+
+            </div>
+
+
+            <div class="resultado-item">
+
+                <strong>
+                    Ocorrência
+                </strong>
+
+                ${escapar(
+                    chamado.ocorrencia
+                )}
+
+            </div>
+
+
+            <div class="resultado-item">
+
+                <strong>
+                    Andar / Pavimento
+                </strong>
+
+                ${escapar(
+                    chamado.pavimentos ||
+                    "Não informado"
+                )}
+
+            </div>
+
+
+            <div class="resultado-item">
+
+                <strong>
+                    Detalhes
+                </strong>
+
+                ${escapar(
+                    chamado.detalhes
+                )}
+
+            </div>
+
+
+            <div class="resultado-item">
+
+                <strong>
+                    Prioridade atual
+                </strong>
+
+                ${escapar(
+                    chamado.prioridade ||
+                    "Moderada"
+                )}
+
+            </div>
+
+        `;
+
+
+    document
+        .getElementById(
+            "statusAdmin"
+        )
+        .value =
+        chamado.status ||
+        "Aberto";
+
+
+    document
+        .getElementById(
+            "prioridadeAdmin"
+        )
+        .value =
+        chamado.prioridade ||
+        "Moderada";
+
+
+    document
+        .getElementById(
+            "responsavelAdmin"
+        )
+        .value =
+        chamado.responsavel ||
+        "";
+
+
+    document
+        .getElementById(
+            "observacaoAdmin"
+        )
+        .value =
+        chamado.observacaoSolucao ||
+        "";
+
+    atualizarAreaRespostaWhatsApp(chamado);
+
+
+    const historicoAdmin =
+        document.getElementById(
+            "historicoHorariosAdmin"
+        );
+
+    if (historicoAdmin) {
+
+        historicoAdmin
+            .querySelectorAll(
+                ".historico-arquivamento-v11-admin"
+            )
+            .forEach(
+                linha => linha.remove()
+            );
+
+        const historico =
+            Array.isArray(
+                chamado.historicoArquivamento
+            )
+                ? chamado.historicoArquivamento
+                : [];
+
+        historico.forEach(
+            evento => {
+
+                const linha =
+                    document.createElement(
+                        "div"
+                    );
+
+                linha.className =
+                    "historico-destaque-linha historico-arquivamento-v11-admin";
+
+                linha.innerHTML =
+                    `
+                    <span class="historico-destaque-label">
+                        ${evento.tipo === "REABERTO" ? "🔓 Reaberto em:" : "📦 Arquivado em:"}
+                    </span>
+                    <span class="historico-destaque-valor">
+                        ${escapar(evento.dataHora || "-")}
+                    </span>
+                    `;
+
+                historicoAdmin.appendChild(
+                    linha
+                );
+            }
+        );
+    }
+
+    const btnArquivar =
+        document.getElementById(
+            "btnArquivarAdmin"
+        );
+
+    const btnReabrir =
+        document.getElementById(
+            "btnReabrirAdmin"
+        );
+
+    if (btnArquivar) {
+        btnArquivar.style.display =
+            chamado.arquivado === true
+                ? "none"
+                : "block";
+    }
+
+    if (btnReabrir) {
+        btnReabrir.style.display =
+            chamado.arquivado === true
+                ? "block"
+                : "none";
+    }
+
+    document
+        .getElementById(
+            "editarChamado"
+        )
+        .scrollIntoView({
+
+            behavior:
+                "smooth"
+
+        });
+
+}
+
+
+/* =====================================================
+   FECHAR / MINIMIZAR CHAMADO
+===================================================== */
+
+function fecharEdicaoChamado() {
+
+    const painel = document.getElementById("editarChamado");
+
+    if (painel) {
+        painel.style.display = "none";
+    }
+
+    const resultado = document.getElementById("resultadoAtualizacao");
+    if (resultado) {
+        resultado.style.display = "none";
+        resultado.innerHTML = "";
+    }
+
+    const dados = document.getElementById("dadosAdmin");
+    if (dados) {
+        dados.innerHTML = "";
+    }
+
+    const protocolo = document.getElementById("protocoloAdmin");
+    if (protocolo) {
+        protocolo.value = "";
+    }
+
+    protocoloSelecionado = "";
+
+    const lista = document.getElementById("listaChamados");
+    if (lista) {
+        lista.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+}
+
+
+
+/* =====================================================
+   ARQUIVAMENTO / REABERTURA — V1.1
+===================================================== */
+
+function renderizarChamadosArquivadosV11() {
+
+    const box =
+        document.getElementById(
+            "listaChamadosArquivados"
+        );
+
+    if (!box) return;
+
+    if (!chamadosArquivadosV11.length) {
+
+        box.innerHTML =
+            `
+            <div
+                class="card-arquivado-v11"
+                style="text-align:center;color:#777;"
+            >
+                📦 Nenhum chamado arquivado.
+            </div>
+            `;
+
+        return;
+    }
+
+    box.innerHTML =
+        chamadosArquivadosV11
+            .map(
+                chamado => {
+
+                    const historico =
+                        Array.isArray(
+                            chamado.historicoArquivamento
+                        )
+                            ? chamado.historicoArquivamento
+                            : [];
+
+                    return `
+                    <div class="card-arquivado-v11">
+
+                        <div
+                            style="
+                                font-weight:800;
+                                color:#123b5d;
+                                font-size:16px;
+                            "
+                        >
+                            📋 ${escapar(chamado.protocolo || "-")}
+                        </div>
+
+                        <div
+                            style="
+                                line-height:1.6;
+                                margin-top:7px;
+                            "
+                        >
+                            👤 ${escapar(chamado.solicitante || "-")}<br>
+                            📍 ${escapar(chamado.bloco || "-")}<br>
+                            🔧 ${escapar(chamado.ocorrencia || "-")}<br>
+                            📅 ${escapar(chamado.dataAbertura || "-")}
+                            ${
+                                chamado.horaAbertura
+                                    ? " às " +
+                                      escapar(
+                                          chamado.horaAbertura
+                                      )
+                                    : ""
+                            }
+                        </div>
+
+                        <div class="tag-arquivado-v11">
+                            📦 ARQUIVADO
+                        </div>
+
+                        <div
+                            class="historico-destaque"
+                            style="margin-top:8px;"
+                        >
+
+                            <div class="historico-destaque-titulo">
+                                🕒 Histórico do Protocolo
+                            </div>
+
+                            <div class="historico-destaque-linha">
+                                <span class="historico-destaque-label">
+                                    📥 Recebido em:
+                                </span>
+                                <span class="historico-destaque-valor">
+                                    ${escapar(chamado.dataAbertura || "-")}
+                                    ${
+                                        chamado.horaAbertura
+                                            ? " às " +
+                                              escapar(
+                                                  chamado.horaAbertura
+                                              )
+                                            : ""
+                                    }
+                                </span>
+                            </div>
+
+                            <div class="historico-destaque-linha">
+                                <span class="historico-destaque-label">
+                                    🔄 Última atualização:
+                                </span>
+                                <span class="historico-destaque-valor">
+                                    ${escapar(chamado.ultimaAtualizacao || "-")}
+                                </span>
+                            </div>
+
+                            ${
+                                chamado.dataConclusao
+                                    ? `
+                            <div class="historico-destaque-linha">
+                                <span class="historico-destaque-label">
+                                    ✅ Concluído em:
+                                </span>
+                                <span class="historico-destaque-valor">
+                                    ${escapar(chamado.dataConclusao)}
+                                    ${
+                                        chamado.horaConclusao
+                                            ? " às " +
+                                              escapar(
+                                                  chamado.horaConclusao
+                                              )
+                                            : ""
+                                    }
+                                </span>
+                            </div>
+                                    `
+                                    : ""
+                            }
+
+                            ${
+                                historico
+                                    .map(
+                                        evento =>
+                                            `
+                                            <div class="historico-destaque-linha">
+                                                <span class="historico-destaque-label">
+                                                    ${
+                                                        evento.tipo === "REABERTO"
+                                                            ? "🔓 Reaberto em:"
+                                                            : "📦 Arquivado em:"
+                                                    }
+                                                </span>
+                                                <span class="historico-destaque-valor">
+                                                    ${escapar(evento.dataHora || "-")}
+                                                </span>
+                                            </div>
+                                            `
+                                    )
+                                    .join("")
+                            }
+
+                        </div>
+
+                        <button
+                            type="button"
+                            class="btn-reabrir-v11"
+                            onclick="reabrirChamadoV11('${encodeURIComponent(chamado.protocolo)}')"
+                        >
+                            🔓 REABRIR CHAMADO
+                        </button>
+
+                        <button
+                            type="button"
+                            class="btn-cinza"
+                            onclick="selecionarChamado('${encodeURIComponent(chamado.protocolo)}')"
+                        >
+                            👁️ VER / GERENCIAR CHAMADO
+                        </button>
+
+                    </div>
+                    `;
+                }
+            )
+            .join("");
+}
+
+
+async function executarArquivamentoV11(
+    action,
     protocolo
-  });
-}
+) {
 
-/* =========================================================
-   SERVIR INDEX
-========================================================= */
+    if (!senhaAdministrativa) {
 
-async function servirIndex(request, env) {
-  return env.ASSETS.fetch(
-    new Request(new URL("/index.html", request.url), request)
-  );
-}
+        alert(
+            "Faça o login administrativo."
+        );
 
-/* =========================================================
-   WORKER PRINCIPAL
-========================================================= */
+        return;
+    }
 
-export default {
-  async fetch(request, env) {
-    if (request.method === "OPTIONS") {
-      return resposta({ sucesso: true });
+    const pergunta =
+        action === "archive"
+            ? `Deseja arquivar o chamado ${protocolo}? Ele sairá da lista de ativos, mas seu histórico será preservado.`
+            : `Deseja reabrir o chamado ${protocolo}?`;
+
+    if (!confirm(pergunta)) {
+        return;
     }
 
     try {
-      const url = new URL(request.url);
-      const pathname = url.pathname;
 
-      const ehAPI =
-        pathname === "/api/protocolo" ||
-        pathname === "/.netlify/functions/protocolo";
+        const respostaServidor =
+            await fetch(
+                API,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+                    body:
+                        JSON.stringify({
+                            action,
+                            protocolo,
+                            adminPassword:
+                                senhaAdministrativa
+                        })
+                }
+            );
 
-      if (request.method === "GET" && ehAPI) {
-        return consultarProtocolo(
-          env,
-          url.searchParams.get("protocolo")
-        );
-      }
+        const texto =
+            await respostaServidor.text();
 
-      if (
-        request.method === "GET" &&
-        pathname === "/" &&
-        url.searchParams.has("protocolo")
-      ) {
-        return consultarProtocolo(
-          env,
-          url.searchParams.get("protocolo")
-        );
-      }
+        let dados = {};
 
-      if (request.method === "GET" && pathname === "/") {
-        return servirIndex(request, env);
-      }
+        try {
+            dados =
+                texto
+                    ? JSON.parse(texto)
+                    : {};
+        } catch {
+            throw new Error(
+                "O servidor respondeu sem JSON válido."
+            );
+        }
 
-      if (request.method === "GET") {
-        return env.ASSETS.fetch(request);
-      }
+        if (
+            !respostaServidor.ok ||
+            !dados.sucesso
+        ) {
+            throw new Error(
+                dados.erro ||
+                "Não foi possível concluir a ação."
+            );
+        }
 
-      if (request.method !== "POST") {
-        return resposta({
-          sucesso: false,
-          erro: "Método não permitido."
-        }, 405);
-      }
+        const chamado =
+            dados.chamado;
 
-      let dados;
-      try {
-        dados = await request.json();
-      } catch {
-        return resposta({
-          sucesso: false,
-          erro: "Dados inválidos."
-        }, 400);
-      }
+        chamados =
+            chamados.filter(
+                item =>
+                    item.protocolo !==
+                    chamado.protocolo
+            );
 
-      if (dados.action === "login") {
-        return login(env, dados);
-      }
+        chamadosArquivadosV11 =
+            chamadosArquivadosV11.filter(
+                item =>
+                    item.protocolo !==
+                    chamado.protocolo
+            );
 
-      if (dados.action === "list") {
-        const autenticacao = verificarSenha(dados, env);
-        if (!autenticacao.ok) return autenticacao.resposta;
+        if (
+            chamado.arquivado === true
+        ) {
+            chamadosArquivadosV11.push(
+                chamado
+            );
+        } else {
+            chamados.push(
+                chamado
+            );
+        }
 
-        const resultado = await listarChamados(env);
+        chamadosHistoricoV11 =
+            [
+                ...chamados,
+                ...chamadosArquivadosV11
+            ];
 
-        return resposta({
-          sucesso: true,
-          chamados: resultado.chamados,
-          chamadosArquivados: resultado.chamadosArquivados,
-          estatisticas: resultado.estatisticas
-        });
-      }
+        const totalArquivados =
+            document.getElementById(
+                "totalArquivados"
+            );
 
-      if (dados.action === "listAdministrative") {
-        const autenticacao = verificarSenha(dados, env);
-        if (!autenticacao.ok) return autenticacao.resposta;
+        if (totalArquivados) {
+            totalArquivados.textContent =
+                chamadosArquivadosV11.length;
+        }
 
-        const medidas = await listarMedidasAdministrativas(env);
-        return resposta({ sucesso: true, medidas });
-      }
+        atualizarEstatisticas();
 
-      if (dados.action === "createAdministrative") {
-        const autenticacao = verificarSenha(dados, env);
-        if (!autenticacao.ok) return autenticacao.resposta;
-        return criarMedidaAdministrativa(env, dados);
-      }
+        mostrarChamados();
 
-      if (dados.action === "deleteAdministrative") {
-        const autenticacao = verificarSenha(dados, env);
-        if (!autenticacao.ok) return autenticacao.resposta;
-        return excluirMedidaAdministrativa(env, dados);
-      }
+        renderizarChamadosArquivadosV11();
 
-      if (dados.action === "update") {
-        const autenticacao = verificarSenha(dados, env);
-        if (!autenticacao.ok) return autenticacao.resposta;
-        return atualizarChamado(env, dados);
-      }
+        if (
+            action === "archive"
+        ) {
 
-      if (dados.action === "archive") {
-        const autenticacao = verificarSenha(dados, env);
-        if (!autenticacao.ok) return autenticacao.resposta;
-        return arquivarChamado(env, dados);
-      }
+            alert(
+                "📦 Chamado arquivado com sucesso."
+            );
 
-      if (dados.action === "reopen") {
-        const autenticacao = verificarSenha(dados, env);
-        if (!autenticacao.ok) return autenticacao.resposta;
-        return reabrirChamado(env, dados);
-      }
+            fecharEdicaoChamado();
 
-      if (dados.action === "delete") {
-        const autenticacao = verificarSenha(dados, env);
-        if (!autenticacao.ok) return autenticacao.resposta;
-        return excluirChamado(env, dados);
-      }
+        } else {
 
-      /* Sem action = criação normal do chamado */
-      return criarChamado(env, dados);
+            alert(
+                "🔓 Chamado reaberto com sucesso."
+            );
+
+            document
+                .getElementById(
+                    "btnChamadosAtivos"
+                )
+                ?.click();
+
+            selecionarChamado(
+                encodeURIComponent(
+                    chamado.protocolo
+                )
+            );
+        }
 
     } catch (erro) {
-      console.error("ERRO NO WORKER:", erro);
 
-      return resposta({
-        sucesso: false,
-        erro: "Erro interno no sistema.",
-        detalhe: erro?.message || String(erro)
-      }, 500);
+        alert(
+            erro.message
+        );
     }
-  }
-};
+}
+
+
+function reabrirChamadoV11(
+    protocoloCodificado
+) {
+
+    executarArquivamentoV11(
+        "reopen",
+        decodeURIComponent(
+            protocoloCodificado
+        )
+    );
+}
+
+
+
+/* =====================================================
+   RESPOSTA DA ADMINISTRAÇÃO PELO WHATSAPP
+===================================================== */
+
+function normalizarNumeroWhatsApp(numero) {
+    let n = String(numero || "").replace(/\D/g, "");
+    if (!n) return "";
+    if (n.length === 10 || n.length === 11) n = "55" + n;
+    return n;
+}
+
+function montarMensagemRespostaAdministracao(chamado) {
+    const resposta =
+        document.getElementById("observacaoAdmin")?.value?.trim() ||
+        chamado?.observacaoSolucao ||
+        chamado?.respostaAdministracao ||
+        "";
+
+    const protocolo =
+        chamado?.protocolo ||
+        protocoloSelecionado ||
+        "";
+
+    const status =
+        document.getElementById("statusAdmin")?.value ||
+        chamado?.status ||
+        "";
+
+    let dataHoraResposta =
+        chamado?.ultimaAtualizacao ||
+        chamado?.dataRespostaAdministracao ||
+        "";
+
+    if (!dataHoraResposta) {
+        const agora = new Date();
+        dataHoraResposta =
+            agora.toLocaleDateString("pt-BR") +
+            " " +
+            agora.toLocaleTimeString("pt-BR", {
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit"
+            });
+    }
+
+    const enderecoBase =
+        (window.location && window.location.origin)
+            ? window.location.origin
+            : "https://parque-clube.newcristian.workers.dev";
+
+    const linkProtocolo =
+        enderecoBase +
+        "/?protocolo=" +
+        encodeURIComponent(protocolo);
+
+    /*
+       Símbolos/emoji seguros:
+       todos são criados em tempo de execução com caracteres BMP.
+       Nenhum emoji é gravado diretamente no arquivo HTML.
+    */
+    const icone = {
+        predio: String.fromCharCode(0x2605) + "\uFE0F",      // ★
+        titulo: String.fromCharCode(0x2709) + "\uFE0F",      // ✉️
+        status: String.fromCharCode(0x2714) + "\uFE0F",      // ✔️
+        local: String.fromCharCode(0x25CF) + "\uFE0F",       // ●
+        ocorrencia: String.fromCharCode(0x2692) + "\uFE0F",  // ⚒️
+        observacao: String.fromCharCode(0x270D) + "\uFE0F",  // ✍️
+        relogio: String.fromCharCode(0x231A) + "\uFE0F",     // ⌚️
+        carta: String.fromCharCode(0x2709) + "\uFE0F",       // ✉️
+        lupa: String.fromCharCode(0x2691) + "\uFE0F"         // ⚑️
+    };
+
+    return [
+        icone.predio + " *PARQUE CLUBE*",
+        "",
+        icone.titulo + " *ATUALIZAÇÃO DO CHAMADO*",
+        "",
+        "• *Protocolo:* " + protocolo,
+        "• " + icone.status + " *Status:* " + status,
+        "• " + icone.local + " *Local:* " + (chamado?.bloco || chamado?.local || ""),
+        "• " + icone.ocorrencia + " *Ocorrência:* " +
+            (chamado?.ocorrencia || chamado?.tipoOcorrencia || ""),
+        "",
+        icone.observacao + " *Observação da solução:*",
+        resposta,
+        "",
+        icone.relogio + " *Resposta enviada em:* " + dataHoraResposta,
+        "",
+        icone.carta + " Atenciosamente,",
+        "*Administração Parque Clube*",
+        "",
+        icone.lupa + " *Acompanhe seu chamado:*",
+        linkProtocolo
+    ].join("\n");
+}
+
+function atualizarAreaRespostaWhatsApp(chamado) {
+    const info = document.getElementById("whatsappRetornoInfo");
+    const btn = document.getElementById("btnResponderWhatsAppAdmin");
+    const numero = chamado?.whatsappRetorno || chamado?.whatsapp || chamado?.telefoneRetorno || "";
+
+    if (info) {
+        if (numero) {
+            info.style.display = "block";
+            info.innerHTML = "📱 <strong>WhatsApp para retorno:</strong> " + escapar(String(numero));
+        } else {
+            info.style.display = "block";
+            info.innerHTML = "⚠️ Este chamado não possui número de WhatsApp para retorno.";
+        }
+    }
+
+    if (btn) btn.disabled = !numero;
+}
+
+async function responderChamadoPeloWhatsApp() {
+    if (!senhaAdministrativa) {
+        alert("Faça o login administrativo.");
+        return;
+    }
+
+    if (!protocoloSelecionado) {
+        alert("Nenhum protocolo selecionado.");
+        return;
+    }
+
+    const chamado =
+        (typeof chamados !== "undefined" ? chamados : [])
+            .find(x => x.protocolo === protocoloSelecionado) ||
+        (typeof chamadosArquivadosV11 !== "undefined" ? chamadosArquivadosV11 : [])
+            .find(x => x.protocolo === protocoloSelecionado) ||
+        {};
+
+    const numeroBruto =
+        chamado.whatsappRetorno ||
+        chamado.whatsapp ||
+        chamado.telefoneRetorno ||
+        "";
+
+    const numero = normalizarNumeroWhatsApp(numeroBruto);
+    const resposta = document.getElementById("observacaoAdmin")?.value?.trim() || "";
+
+    if (!numero) {
+        alert("Este chamado não possui WhatsApp para retorno.");
+        return;
+    }
+
+    if (!resposta) {
+        alert("Digite a Observação da solução antes de abrir o WhatsApp.");
+        document.getElementById("observacaoAdmin")?.focus();
+        return;
+    }
+
+    const btn = document.getElementById("btnResponderWhatsAppAdmin");
+    const textoOriginal = btn?.textContent || "";
+
+    try {
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = "⏳ Salvando resposta...";
+        }
+
+        const respostaServidor = await fetch(API, {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify({
+                action: "update",
+                protocolo: protocoloSelecionado,
+                adminPassword: senhaAdministrativa,
+                status: document.getElementById("statusAdmin")?.value || chamado.status || "",
+                responsavel: document.getElementById("responsavelAdmin")?.value?.trim() || chamado.responsavel || "",
+                observacaoSolucao: resposta,
+                prioridade: document.getElementById("prioridadeAdmin")?.value || chamado.prioridade || ""
+            })
+        });
+
+        const texto = await respostaServidor.text();
+        let retorno = {};
+        try { retorno = texto ? JSON.parse(texto) : {}; } catch(e) {}
+
+        if (!respostaServidor.ok || retorno.sucesso === false) {
+            throw new Error(retorno.erro || "Não foi possível salvar a resposta.");
+        }
+
+        const atualizado = retorno.chamado || {
+            ...chamado,
+            observacaoSolucao: resposta,
+            respostaAdministracao: resposta
+        };
+
+        const lista = typeof chamados !== "undefined" ? chamados : [];
+        const i = lista.findIndex(x => x.protocolo === protocoloSelecionado);
+        if (i >= 0) lista[i] = {...lista[i], ...atualizado, observacaoSolucao: resposta, respostaAdministracao: resposta};
+
+        const mensagem = montarMensagemRespostaAdministracao({
+            ...chamado,
+            ...atualizado,
+            observacaoSolucao: resposta,
+            respostaAdministracao: resposta,
+            ultimaAtualizacao:
+                atualizado?.ultimaAtualizacao ||
+                retorno?.chamado?.ultimaAtualizacao ||
+                chamado?.ultimaAtualizacao ||
+                ""
+        });
+
+        if (btn) btn.textContent = "📲 Abrindo WhatsApp...";
+        /*
+         * Codificação UTF-8 manual para o WhatsApp.
+         * Os emojis são montados por códigos percentuais UTF-8, evitando
+         * qualquer conversão do navegador/editor para o caractere �.
+         */
+        const urlWhatsApp =
+            "https://wa.me/" +
+            numero +
+            "?text=" +
+            encodeURIComponent(String(mensagem));
+
+        window.open(urlWhatsApp, "_blank");
+
+        const resultado = document.getElementById("resultadoAtualizacao");
+        if (resultado) {
+            resultado.className = "mensagem sucesso";
+            resultado.style.display = "block";
+            resultado.innerHTML =
+                "✅ Resposta salva no chamado.<br><br>" +
+                "📲 O WhatsApp foi aberto para o número informado pelo solicitante.";
+        }
+    } catch (erro) {
+        alert(erro.message || "Não foi possível responder pelo WhatsApp.");
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = textoOriginal || "📲 Responder pelo WhatsApp";
+        }
+    }
+}
+
+document.getElementById("btnResponderWhatsAppAdmin")
+    ?.addEventListener("click", responderChamadoPeloWhatsApp);
+
+const _editarChamadoObs = document.getElementById("editarChamado");
+if (_editarChamadoObs && typeof MutationObserver !== "undefined") {
+    new MutationObserver(() => {
+        if (_editarChamadoObs.style.display !== "none" && protocoloSelecionado) {
+            const c =
+                (typeof chamados !== "undefined" ? chamados : []).find(x => x.protocolo === protocoloSelecionado) ||
+                (typeof chamadosArquivadosV11 !== "undefined" ? chamadosArquivadosV11 : []).find(x => x.protocolo === protocoloSelecionado);
+            if (c) atualizarAreaRespostaWhatsApp(c);
+        }
+    }).observe(_editarChamadoObs, {attributes:true, attributeFilter:["style"]});
+}
+
+
+/* =====================================================
+   ATUALIZAR CHAMADO
+===================================================== */
+
+document
+    .getElementById(
+        "btnAtualizarAdmin"
+    )
+    .addEventListener(
+        "click",
+        async function () {
+
+
+            if (
+                !senhaAdministrativa
+            ) {
+
+                alert(
+                    "Faça o login administrativo."
+                );
+
+                return;
+
+            }
+
+
+            if (
+                !protocoloSelecionado
+            ) {
+
+                alert(
+                    "Nenhum protocolo selecionado."
+                );
+
+                return;
+
+            }
+
+
+            this.disabled =
+                true;
+
+
+            this.textContent =
+                "⏳ Salvando...";
+
+
+            try {
+
+
+                const resposta =
+                    await fetch(
+                        API,
+                        {
+
+                            method:
+                                "POST",
+
+                            headers: {
+
+                                "Content-Type":
+                                    "application/json"
+
+                            },
+
+                            body:
+                                JSON.stringify({
+
+                                    action:
+                                        "update",
+
+                                    protocolo:
+                                        protocoloSelecionado,
+
+                                    adminPassword:
+                                        senhaAdministrativa,
+
+                                    status:
+                                        document
+                                            .getElementById(
+                                                "statusAdmin"
+                                            )
+                                            .value,
+
+                                    responsavel:
+                                        document
+                                            .getElementById(
+                                                "responsavelAdmin"
+                                            )
+                                            .value
+                                            .trim(),
+
+                                    observacaoSolucao:
+                                        document
+                                            .getElementById(
+                                                "observacaoAdmin"
+                                            )
+                                            .value
+                                            .trim(),
+
+                                    prioridade:
+                                        document
+                                            .getElementById(
+                                                "prioridadeAdmin"
+                                            )
+                                            .value
+
+                                })
+
+                        }
+                    );
+
+
+                const textoResposta =
+                    await resposta.text();
+
+                let dados = {};
+
+                try {
+                    dados =
+                        textoResposta
+                            ? JSON.parse(textoResposta)
+                            : {};
+                } catch {
+                    throw new Error(
+                        "O servidor respondeu sem JSON válido."
+                    );
+                }
+
+
+                if (
+                    !resposta.ok ||
+                    !dados.sucesso
+                ) {
+
+                    throw new Error(
+                        dados.erro ||
+                        "Não foi possível atualizar."
+                    );
+
+                }
+
+
+                const mensagem =
+                    document
+                        .getElementById(
+                            "resultadoAtualizacao"
+                        );
+
+
+                const chamadoAtualizado =
+                    dados.chamado || {};
+
+                mensagem.innerHTML =
+                    "✅ Chamado atualizado com sucesso." +
+                    "<br><br>" +
+                    "🔄 Última atualização: <strong>" +
+                    escapar(
+                        chamadoAtualizado.ultimaAtualizacao ||
+                        "Registrada agora"
+                    ) +
+                    "</strong>" +
+                    (
+                        chamadoAtualizado.dataConclusao
+                            ? "<br>✅ Concluído em: <strong>" +
+                              escapar(
+                                  chamadoAtualizado.dataConclusao
+                              ) +
+                              (
+                                  chamadoAtualizado.horaConclusao
+                                      ? " às " +
+                                        escapar(
+                                            chamadoAtualizado.horaConclusao
+                                        )
+                                      : ""
+                              ) +
+                              "</strong>"
+                            : ""
+                    );
+
+
+                mensagem.className =
+                    "mensagem sucesso";
+
+
+                mensagem.style.display =
+                    "block";
+
+
+                /*
+                 * Atualiza também a lista
+                 */
+
+                const indice =
+                    chamados.findIndex(
+                        chamado =>
+                            chamado.protocolo ===
+                            protocoloSelecionado
+                    );
+
+
+                if (
+                    indice >= 0
+                ) {
+
+                    chamados[indice] =
+                        dados.chamado;
+
+                    atualizarEstatisticas();
+
+                    mostrarChamados();
+
+                    /*
+                     * Atualiza os dados exibidos no painel
+                     * imediatamente, incluindo a data/hora.
+                     */
+                    mostrarEdicao(
+                        dados.chamado
+                    );
+
+                    document
+                        .getElementById(
+                            "resultadoAtualizacao"
+                        )
+                        .innerHTML =
+                        "✅ Chamado atualizado com sucesso." +
+                        "<br><br>" +
+                        "🔄 Última atualização: <strong>" +
+                        escapar(
+                            dados.chamado.ultimaAtualizacao ||
+                            "Registrada agora"
+                        ) +
+                        "</strong>" +
+                        (
+                            dados.chamado.dataConclusao
+                                ? "<br>✅ Concluído em: <strong>" +
+                                  escapar(
+                                      dados.chamado.dataConclusao
+                                  ) +
+                                  (
+                                      dados.chamado.horaConclusao
+                                          ? " às " +
+                                            escapar(
+                                                dados.chamado.horaConclusao
+                                            )
+                                          : ""
+                                  ) +
+                                  "</strong>"
+                                : ""
+                        );
+
+                    document
+                        .getElementById(
+                            "resultadoAtualizacao"
+                        )
+                        .className =
+                        "mensagem sucesso";
+
+                    document
+                        .getElementById(
+                            "resultadoAtualizacao"
+                        )
+                        .style.display =
+                        "block";
+
+                }
+
+            }
+
+            catch (error) {
+
+                alert(
+                    error.message
+                );
+
+            }
+
+            finally {
+
+                this.disabled =
+                    false;
+
+                this.textContent =
+                    "💾 Salvar Alterações";
+
+            }
+
+        }
+    );
+
+
+
+/* =====================================================
+   EXCLUIR CHAMADO - ADMINISTRAÇÃO
+===================================================== */
+
+document
+    .getElementById(
+        "btnExcluirAdmin"
+    )
+    .addEventListener(
+        "click",
+        async function () {
+
+            if (!senhaAdministrativa) {
+
+                alert(
+                    "Faça o login administrativo."
+                );
+
+                return;
+
+            }
+
+            if (!protocoloSelecionado) {
+
+                alert(
+                    "Nenhum protocolo selecionado."
+                );
+
+                return;
+
+            }
+
+            const confirmou =
+                confirm(
+                    "🗑️ EXCLUIR DEFINITIVAMENTE\n\n" +
+                    "1º PASSO — CONFIRMAÇÃO\n\n" +
+                    "⚠️ ATENÇÃO: EXCLUSÃO DEFINITIVA\n\n" +
+                    "Protocolo: " +
+                    protocoloSelecionado +
+                    "\n\n" +
+                    "O chamado será removido permanentemente do sistema " +
+                    "e deixará de fazer parte dos relatórios e estatísticas.\n\n" +
+                    "Ao continuar, será solicitada a senha administrativa " +
+                    "no 2º passo para confirmar a exclusão definitiva.\n\n" +
+                    "Essa ação não poderá ser desfeita.\n\n" +
+                    "Deseja continuar para o 2º passo?"
+                );
+
+            if (!confirmou) {
+                return;
+            }
+
+            const senhaExclusao =
+                prompt(
+                    "🔐 2º PASSO — SENHA ADMINISTRATIVA\n\n" +
+                    "Digite a senha administrativa para confirmar " +
+                    "a EXCLUSÃO DEFINITIVA do chamado " +
+                    protocoloSelecionado +
+                    ":"
+                );
+
+            if (senhaExclusao === null) {
+                return;
+            }
+
+            if (!senhaExclusao.trim()) {
+                alert(
+                    "A senha administrativa é obrigatória para concluir " +
+                    "a exclusão definitiva."
+                );
+                return;
+            }
+
+            this.disabled = true;
+            this.textContent = "⏳ Excluindo...";
+
+            try {
+
+                const resposta =
+                    await fetch(
+                        API,
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify({
+
+                                    action:
+                                        "delete",
+
+                                    adminPassword:
+                                        senhaExclusao.trim(),
+
+                                    protocolo:
+                                        protocoloSelecionado
+
+                                })
+                        }
+                    );
+
+                const texto =
+                    await resposta.text();
+
+                let dados = {};
+
+                try {
+                    dados =
+                        texto
+                            ? JSON.parse(texto)
+                            : {};
+                } catch {
+                    throw new Error(
+                        "O servidor respondeu sem JSON válido."
+                    );
+                }
+
+                if (
+                    !resposta.ok ||
+                    !dados.sucesso
+                ) {
+
+                    throw new Error(
+                        dados.erro ||
+                        "Senha administrativa incorreta ou não foi possível excluir o chamado."
+                    );
+                }
+
+                chamados =
+                    chamados.filter(
+                        chamado =>
+                            chamado.protocolo !==
+                            protocoloSelecionado
+                    );
+
+                chamadosArquivadosV11 =
+                    chamadosArquivadosV11.filter(
+                        chamado =>
+                            chamado.protocolo !==
+                            protocoloSelecionado
+                    );
+
+                chamadosHistoricoV11 =
+                    [
+                        ...chamados,
+                        ...chamadosArquivadosV11
+                    ];
+
+                const totalArquivados =
+                    document.getElementById(
+                        "totalArquivados"
+                    );
+
+                if (totalArquivados) {
+                    totalArquivados.textContent =
+                        chamadosArquivadosV11.length;
+                }
+
+                protocoloSelecionado =
+                    "";
+
+                mostrarChamados();
+
+                atualizarEstatisticas();
+
+                document
+                    .getElementById(
+                        "editarChamado"
+                    )
+                    .style.display =
+                    "none";
+
+                document
+                    .getElementById(
+                        "protocoloAdmin"
+                    )
+                    .value =
+                    "";
+
+                alert(
+                    "Chamado excluído definitivamente com sucesso."
+                );
+
+            }
+
+            catch (error) {
+
+                alert(
+                    error.message ||
+                    "Erro ao excluir o chamado."
+                );
+
+            }
+
+            finally {
+
+                this.disabled = false;
+                this.textContent =
+                    "🗑️ Excluir Chamado";
+
+            }
+
+        }
+    );
+
+
+
+/* =====================================================
+   ARQUIVAR TODOS OS CHAMADOS RESOLVIDOS
+===================================================== */
+
+async function arquivarTodosResolvidosV11() {
+
+    if (!senhaAdministrativa) {
+        alert("Faça o login administrativo.");
+        return;
+    }
+
+    const resolvidos = chamados.filter(
+        chamado =>
+            String(chamado.status || "")
+                .trim()
+                .toLowerCase() === "resolvido"
+    );
+
+    if (!resolvidos.length) {
+        alert("Não há chamados com status Resolvido para arquivar.");
+        return;
+    }
+
+    const confirmar = confirm(
+        "📦 ARQUIVAR TODOS OS CHAMADOS RESOLVIDOS\n\n" +
+        `Foram encontrados ${resolvidos.length} chamado(s) com status Resolvido.\n\n` +
+        "Eles sairão da lista de chamados ativos, mas não serão excluídos. " +
+        "O histórico será preservado e poderá ser consultado em CHAMADOS ARQUIVADOS.\n\n" +
+        "Deseja continuar?"
+    );
+
+    if (!confirmar) return;
+
+    const botao = document.getElementById("btnArquivarTodosResolvidos");
+    if (botao) {
+        botao.disabled = true;
+        botao.textContent = "⏳ Arquivando...";
+    }
+
+    let sucesso = 0;
+    let falhas = 0;
+
+    try {
+        for (const chamado of resolvidos) {
+            try {
+                const resposta = await fetch(API, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        action: "archive",
+                        protocolo: chamado.protocolo,
+                        adminPassword: senhaAdministrativa
+                    })
+                });
+
+                const texto = await resposta.text();
+                let dados = {};
+                try {
+                    dados = texto ? JSON.parse(texto) : {};
+                } catch {
+                    throw new Error("Resposta inválida do servidor.");
+                }
+
+                if (!resposta.ok || !dados.sucesso) {
+                    throw new Error(dados.erro || "Falha ao arquivar.");
+                }
+
+                const atualizado = dados.chamado;
+
+                chamados = chamados.filter(
+                    item => item.protocolo !== atualizado.protocolo
+                );
+
+                chamadosArquivadosV11 = chamadosArquivadosV11.filter(
+                    item => item.protocolo !== atualizado.protocolo
+                );
+
+                chamadosArquivadosV11.push(atualizado);
+                sucesso++;
+            } catch (erro) {
+                console.error("Falha ao arquivar", chamado.protocolo, erro);
+                falhas++;
+            }
+        }
+
+        chamadosHistoricoV11 = [
+            ...chamados,
+            ...chamadosArquivadosV11
+        ];
+
+        const totalArquivados = document.getElementById("totalArquivados");
+        if (totalArquivados) {
+            totalArquivados.textContent = chamadosArquivadosV11.length;
+        }
+
+        atualizarEstatisticas();
+        mostrarChamados();
+        renderizarChamadosArquivadosV11();
+
+        alert(
+            `📦 Processo concluído.\n\n` +
+            `Arquivados com sucesso: ${sucesso}\n` +
+            `Não arquivados: ${falhas}`
+        );
+    } finally {
+        if (botao) {
+            botao.disabled = false;
+            botao.textContent = "📦 ARQUIVAR TODOS OS RESOLVIDOS";
+        }
+    }
+}
+
+const btnArquivarTodosResolvidos = document.getElementById(
+    "btnArquivarTodosResolvidos"
+);
+
+if (btnArquivarTodosResolvidos) {
+    btnArquivarTodosResolvidos.addEventListener(
+        "click",
+        arquivarTodosResolvidosV11
+    );
+}
+
+
+/* =====================================================
+   CHAMADOS ATIVOS / ARQUIVADOS
+===================================================== */
+
+document
+    .getElementById(
+        "btnChamadosAtivos"
+    )
+    .addEventListener(
+        "click",
+        function () {
+
+            const lista =
+                document.getElementById(
+                    "listaChamados"
+                );
+
+            const arquivados =
+                document.getElementById(
+                    "listaChamadosArquivados"
+                );
+
+            if (lista) {
+                lista.style.display =
+                    "block";
+            }
+
+            if (arquivados) {
+                arquivados.style.display =
+                    "none";
+            }
+
+            this.classList.add(
+                "ativo"
+            );
+
+            document
+                .getElementById(
+                    "btnChamadosArquivados"
+                )
+                .classList.remove(
+                    "ativo"
+                );
+
+            mostrarChamados();
+        }
+    );
+
+
+document
+    .getElementById(
+        "btnChamadosArquivados"
+    )
+    .addEventListener(
+        "click",
+        function () {
+
+            const lista =
+                document.getElementById(
+                    "listaChamados"
+                );
+
+            const arquivados =
+                document.getElementById(
+                    "listaChamadosArquivados"
+                );
+
+            if (lista) {
+                lista.style.display =
+                    "none";
+            }
+
+            if (arquivados) {
+                arquivados.style.display =
+                    "block";
+            }
+
+            this.classList.add(
+                "ativo"
+            );
+
+            document
+                .getElementById(
+                    "btnChamadosAtivos"
+                )
+                .classList.remove(
+                    "ativo"
+                );
+
+            renderizarChamadosArquivadosV11();
+        }
+    );
+
+
+document
+    .getElementById(
+        "btnArquivarAdmin"
+    )
+    .addEventListener(
+        "click",
+        function () {
+
+            if (!protocoloSelecionado) {
+                alert(
+                    "Nenhum protocolo selecionado."
+                );
+                return;
+            }
+
+            executarArquivamentoV11(
+                "archive",
+                protocoloSelecionado
+            );
+        }
+    );
+
+
+document
+    .getElementById(
+        "btnReabrirAdmin"
+    )
+    .addEventListener(
+        "click",
+        function () {
+
+            if (!protocoloSelecionado) {
+                alert(
+                    "Nenhum protocolo selecionado."
+                );
+                return;
+            }
+
+            executarArquivamentoV11(
+                "reopen",
+                protocoloSelecionado
+            );
+        }
+    );
+
+
+/* =====================================================
+   SAIR DA ADMINISTRAÇÃO
+===================================================== */
+
+document
+    .getElementById(
+        "btnSairAdmin"
+    )
+    .addEventListener(
+        "click",
+        function () {
+
+
+            senhaAdministrativa =
+                "";
+
+            chamados =
+                [];
+
+            protocoloSelecionado =
+                "";
+
+
+            document
+                .getElementById(
+                    "adminPainel"
+                )
+                .style.display =
+                "none";
+
+
+            document
+                .getElementById(
+                    "senhaAdmin"
+                )
+                .value =
+                "";
+
+
+            document
+                .getElementById(
+                    "btnEntrarAdmin"
+                )
+                .disabled =
+                false;
+
+
+            document
+                .getElementById(
+                    "btnEntrarAdmin"
+                )
+                .textContent =
+                "🔐 Entrar";
+
+
+            document
+                .getElementById(
+                    "listaChamados"
+                )
+                .innerHTML =
+                "";
+
+
+            document
+                .getElementById(
+                    "editarChamado"
+                )
+                .style.display =
+                "none";
+
+
+            mostrarSecao(
+                "abrir"
+            );
+
+        }
+    );
+
+
+
+/* =====================================================
+   V4.5 — ESTABILIDADE DOS BOTÕES DO PAINEL
+   Evita duplo clique / duplo disparo durante navegação e atualizações.
+===================================================== */
+(function estabilizarBotoesPainelV45(){
+    const ids=[
+        'btnListarTodos',
+        'btnChamadosAtivos',
+        'btnChamadosArquivados',
+        'btnArquivarTodosResolvidos',
+        'btnDesarquivarTodos'
+    ];
+
+    ids.forEach(function(id){
+        const botao=document.getElementById(id);
+        if(!botao || botao.dataset.v45Guard==='1') return;
+
+        botao.dataset.v45Guard='1';
+        botao.addEventListener('click',function(){
+            if(this.dataset.v45Busy==='1') return;
+            this.dataset.v45Busy='1';
+            setTimeout(()=>{
+                this.dataset.v45Busy='0';
+            },450);
+        },true);
+    });
+})();
+
+/* =====================================================
+   V1.2 — DESARQUIVAR TODOS + FILTROS RÁPIDOS
+   Inserido no final do script principal para não interferir
+   no gerador de relatórios.
+===================================================== */
+
+async function desarquivarTodosV12() {
+    if (!senhaAdministrativa) {
+        alert("Faça o login administrativo.");
+        return;
+    }
+
+    const arquivados = Array.isArray(chamadosArquivadosV11)
+        ? chamadosArquivadosV11.slice()
+        : [];
+
+    if (!arquivados.length) {
+        alert("Não há chamados arquivados para desarquivar.");
+        return;
+    }
+
+    if (!window.confirm(
+        "📥 DESARQUIVAR TODOS OS CHAMADOS\n\n" +
+        "Foram encontrados " + arquivados.length + " chamado(s) arquivado(s).\n\n" +
+        "Eles voltarão para a lista de chamados ativos. Os dados e históricos serão preservados.\n\n" +
+        "Deseja continuar?"
+    )) return;
+
+    const senha = window.prompt(
+        "🔐 SENHA DO PAINEL ADMINISTRATIVO\n\n" +
+        "Digite novamente a senha administrativa para confirmar:"
+    );
+
+    if (senha === null) return;
+    if (!senha.trim()) {
+        alert("A senha administrativa não foi informada.");
+        return;
+    }
+
+    const botao = document.getElementById("btnDesarquivarTodos");
+    if (botao) {
+        botao.disabled = true;
+        botao.textContent = "⏳ Desarquivando...";
+    }
+
+    let sucesso = 0;
+    let falhas = 0;
+
+    try {
+        const login = await fetch(API, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "login", adminPassword: senha.trim() })
+        });
+
+        const loginText = await login.text();
+        let loginData = {};
+        try {
+            loginData = loginText ? JSON.parse(loginText) : {};
+        } catch (e) {
+            throw new Error("Resposta inválida ao validar a senha administrativa.");
+        }
+
+        if (!login.ok || !loginData.sucesso) {
+            throw new Error(loginData.erro || "Senha administrativa incorreta.");
+        }
+
+        for (const chamado of arquivados) {
+            try {
+                const resposta = await fetch(API, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        action: "reopen",
+                        protocolo: chamado.protocolo,
+                        adminPassword: senha.trim()
+                    })
+                });
+
+                const texto = await resposta.text();
+                let dados = {};
+                try {
+                    dados = texto ? JSON.parse(texto) : {};
+                } catch (e) {
+                    throw new Error("Resposta inválida do servidor.");
+                }
+
+                if (!resposta.ok || !dados.sucesso) {
+                    throw new Error(dados.erro || "Falha ao desarquivar.");
+                }
+
+                const atualizado = dados.chamado;
+                chamadosArquivadosV11 = chamadosArquivadosV11.filter(function(item) {
+                    return item.protocolo !== atualizado.protocolo;
+                });
+                chamados = chamados.filter(function(item) {
+                    return item.protocolo !== atualizado.protocolo;
+                });
+                chamados.push(atualizado);
+                sucesso++;
+            } catch (erro) {
+                console.error("Falha ao desarquivar", chamado.protocolo, erro);
+                falhas++;
+            }
+        }
+
+        chamadosHistoricoV11 = chamados.concat(chamadosArquivadosV11);
+        atualizarEstatisticas();
+        mostrarChamados();
+        renderizarChamadosArquivadosV11();
+
+        const lista = document.getElementById("listaChamados");
+        const arquivadosBox = document.getElementById("listaChamadosArquivados");
+        if (lista) lista.style.display = "block";
+        if (arquivadosBox) arquivadosBox.style.display = "none";
+        const ativosBtn = document.getElementById("btnChamadosAtivos");
+        const arquivadosBtn = document.getElementById("btnChamadosArquivados");
+        if (ativosBtn) ativosBtn.classList.add("ativo");
+        if (arquivadosBtn) arquivadosBtn.classList.remove("ativo");
+
+        alert(
+            "📥 Processo concluído.\n\n" +
+            "Desarquivados com sucesso: " + sucesso + "\n" +
+            "Não desarquivados: " + falhas
+        );
+    } catch (erro) {
+        alert(erro.message || "Não foi possível desarquivar os chamados.");
+    } finally {
+        if (botao) {
+            botao.disabled = false;
+            botao.textContent = "📥 DESARQUIVAR TODOS";
+        }
+    }
+}
+
+function aplicarFiltroRapidoV12(valor, elemento) {
+    ocultarPainelDetalhesChamadoV45();
+    document.querySelectorAll(".stat-filtro-v12").forEach(function(el) {
+        el.classList.remove("ativo");
+    });
+    if (elemento) elemento.classList.add("ativo");
+
+    const lista = document.getElementById("listaChamados");
+    const listaArquivados = document.getElementById("listaChamadosArquivados");
+    const filtroStatus = document.getElementById("filtroStatus");
+    const pesquisaChamado = document.getElementById("pesquisaChamado");
+    const filtroPrioridade = document.getElementById("filtroPrioridade");
+
+    if (valor === "__ARQUIVADOS__") {
+        if (lista) lista.style.display = "none";
+        if (listaArquivados) {
+            listaArquivados.style.display = "block";
+            renderizarChamadosArquivadosV11();
+        }
+        const ab = document.getElementById("btnChamadosArquivados");
+        const at = document.getElementById("btnChamadosAtivos");
+        if (ab) ab.classList.add("ativo");
+        if (at) at.classList.remove("ativo");
+        return;
+    }
+
+    if (lista) lista.style.display = "block";
+    if (listaArquivados) listaArquivados.style.display = "none";
+    const at = document.getElementById("btnChamadosAtivos");
+    const ab = document.getElementById("btnChamadosArquivados");
+    if (at) at.classList.add("ativo");
+    if (ab) ab.classList.remove("ativo");
+    if (filtroStatus) filtroStatus.value = valor;
+
+    /* Ao usar os cartões de status, começar uma consulta limpa.
+       Assim "Em andamento: 2" realmente mostra os 2 chamados. */
+    if (pesquisaChamado) pesquisaChamado.value = "";
+    if (filtroPrioridade) filtroPrioridade.value = "";
+
+    mostrarChamados();
+}
+
+(function inicializarAcoesFinaisV12() {
+    const btn = document.getElementById("btnDesarquivarTodos");
+    if (btn) btn.addEventListener("click", desarquivarTodosV12);
+
+    document.querySelectorAll(".stat-filtro-v12").forEach(function(el) {
+        const executar = function() {
+            aplicarFiltroRapidoV12(el.getAttribute("data-filtro-status") || "", el);
+        };
+        el.addEventListener("click", executar);
+        el.addEventListener("keydown", function(event) {
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                executar();
+            }
+        });
+    });
+})();
+
+function mostrarStatusRapidoAposCadastro(protocolo) {
+    const card = document.getElementById("homeStatusRapido");
+    const campo = document.getElementById("homeStatusProtocolo");
+    if (!card || !campo || !protocolo) return;
+    campo.textContent = protocolo;
+    card.style.display = "block";
+}
+
+function consultarProtocoloRapido() {
+    const protocolo = document.getElementById("homeStatusProtocolo")?.textContent?.trim();
+    if (!protocolo || protocolo === "-") return;
+
+    if (typeof mostrarSecao === "function") {
+        mostrarSecao("consultar");
+    }
+
+    const input = document.getElementById("consultaProtocolo");
+    if (input) input.value = protocolo;
+
+    if (typeof consultarProtocolo === "function") {
+        consultarProtocolo();
+    } else if (typeof localizarProtocolo === "function") {
+        localizarProtocolo();
+    } else if (input) {
+        input.focus();
+    }
+}
+
+
+function prepararNovoChamado() {
+
+    const form = document.getElementById("formChamado");
+    const sucesso = document.getElementById("mensagemSucesso");
+    const erro = document.getElementById("mensagemErro");
+    const protocoloBox = document.getElementById("protocoloBox");
+    const homeStatus = document.getElementById("homeStatusRapido");
+    const numeroProtocolo = document.getElementById("numeroProtocolo");
+    const homeProtocolo = document.getElementById("homeStatusProtocolo");
+
+    // Limpa os campos do formulário sem apagar o registro já salvo no banco.
+    if (form) {
+        form.reset();
+    }
+
+    // Limpa mensagens e o protocolo exibido na tela.
+    if (sucesso) {
+        sucesso.style.display = "none";
+        sucesso.innerHTML = "";
+    }
+
+    if (erro) {
+        erro.style.display = "none";
+        erro.innerHTML = "";
+    }
+
+    if (protocoloBox) {
+        protocoloBox.style.display = "none";
+    }
+
+    if (numeroProtocolo) {
+        numeroProtocolo.textContent = "";
+    }
+
+    // Esconde o cartão de status rápido do chamado anterior.
+    if (homeStatus) {
+        homeStatus.style.display = "none";
+    }
+
+    if (homeProtocolo) {
+        homeProtocolo.textContent = "-";
+    }
+
+    // Se houver botão de envio desabilitado, devolve ao estado normal.
+    const botao = document.getElementById("btnEnviar");
+    if (botao) {
+        botao.disabled = false;
+        botao.textContent = "📋 Enviar Chamado";
+    }
+
+    // Volta para a tela de abertura limpa e para o topo.
+    if (typeof mostrarSecao === "function") {
+        mostrarSecao("abrir");
+    }
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+}
+
+
+function atualizarEstadoBuscaConsulta(tipo, texto) {
+    const el = document.getElementById("consultaBuscaEstado");
+    if (!el) return;
+
+    el.className = "consulta-busca-estado " + (tipo || "");
+    el.textContent = texto || "";
+}
+
+function normalizarProtocoloConsulta(valor) {
+    const v = String(valor || "").trim().toUpperCase();
+    if (!v) return "";
+
+    // Mantém protocolos já formatados.
+    if (/^PC-\d{2}-\d{2}-\d{2}-\d{3}$/.test(v)) {
+        return v;
+    }
+
+    // Aceita PC130826001 e transforma em PC-13-08-26-001.
+    const compacto = v.replace(/[^A-Z0-9]/g, "");
+    const m = compacto.match(/^PC(\d{2})(\d{2})(\d{2})(\d{3})$/);
+
+    if (m) {
+        return `PC-${m[1]}-${m[2]}-${m[3]}-${m[4]}`;
+    }
+
+    return v;
+}
+
+function preencherResumoConsulta(chamado) {
+    const resumo = document.getElementById("consultaResumo");
+    if (!resumo || !chamado) return;
+
+    const protocolo = chamado.protocolo || "-";
+    const status = chamado.status || "Não informado";
+
+    const textoLocal =
+        chamado.bloco
+            ? (chamado.bloco + (chamado.pavimentos ? " • " + chamado.pavimentos : ""))
+            : (chamado.local || "Não informado");
+
+    document.getElementById("consultaResumoProtocolo").textContent = protocolo;
+    document.getElementById("consultaResumoStatus").textContent = status;
+    document.getElementById("consultaResumoLocal").textContent = textoLocal;
+    document.getElementById("consultaResumoOcorrencia").textContent =
+        chamado.ocorrencia || chamado.tipo || "Não informado";
+
+    resumo.style.display = "block";
+}
+
+</script>
+
+
+<script>
+document.addEventListener("input", function (event) {
+    if (event.target && event.target.id === "dataOcorrencia") {
+        let valor = event.target.value.replace(/\D/g, "").slice(0, 8);
+
+        if (valor.length > 4) {
+            valor = valor.slice(0, 2) + "/" + valor.slice(2, 4) + "/" + valor.slice(4);
+        } else if (valor.length > 2) {
+            valor = valor.slice(0, 2) + "/" + valor.slice(2);
+        }
+
+        event.target.value = valor;
+    }
+});
+
+function parseDataDashboardV11(v){
+    if(!v) return null;
+    const s=String(v).trim();
+    let m=s.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+    if(m) return new Date(Number(m[3]),Number(m[2])-1,Number(m[1]));
+    m=s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if(m) return new Date(Number(m[1]),Number(m[2])-1,Number(m[3]));
+    const d=new Date(s);
+    return isNaN(d.getTime())?null:d;
+}
+function inicioSemanaDashboardV11(d){
+    // Calendário semanal do condomínio: domingo a sábado.
+    const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());
+    const dia=x.getDay(); // 0 = domingo
+    x.setDate(x.getDate()-dia);
+    return new Date(x.getFullYear(),x.getMonth(),x.getDate());
+}
+function inicioDiaDashboardV11(d){
+    const x = new Date(d);
+    x.setHours(0,0,0,0);
+    return x;
+}
+
+function fimDiaDashboardV11(d){return new Date(d.getFullYear(),d.getMonth(),d.getDate(),23,59,59,999)}
+function formatarDataDashboardV11(d){
+    if(!d)return "-";
+    return String(d.getDate()).padStart(2,"0")+"/"+String(d.getMonth()+1).padStart(2,"0")+"/"+d.getFullYear();
+}
+function obterIntervaloDashboardV11(){
+    const hoje=new Date();
+    hoje.setHours(0,0,0,0);
+    const tipo=document.getElementById("dashboardPeriodo").value;
+    if(tipo==="hoje") return {inicio:hoje,fim:fimDiaDashboardV11(hoje),label:"Hoje"};
+    if(tipo==="semana"){
+        const i=inicioSemanaDashboardV11(hoje);
+        // A semana corrente é apurada somente até o momento da emissão,
+        // sem incluir dias futuros.
+        return {inicio:i,fim:fimDiaDashboardV11(hoje),label:"Esta semana"};
+    }
+    if(tipo==="mes"){
+        const i=new Date(hoje.getFullYear(),hoje.getMonth(),1);
+        // O mês corrente também é apurado somente até a data de emissão.
+        return {inicio:i,fim:fimDiaDashboardV11(hoje),label:"Este mês"};
+    }
+    if(tipo==="mesAnterior"){
+        const i=new Date(hoje.getFullYear(),hoje.getMonth()-1,1);
+        const f=new Date(hoje.getFullYear(),hoje.getMonth(),0);
+        return {inicio:i,fim:fimDiaDashboardV11(f),label:"Mês anterior"};
+    }
+    const di=document.getElementById("dashboardDataInicio").value;
+    const df=document.getElementById("dashboardDataFim").value;
+    if(!di||!df) return null;
+    const inicio=new Date(di+"T00:00:00");
+    const fim=new Date(df+"T23:59:59");
+    if(inicio>fim) return null;
+    return {inicio,fim,label:"Período personalizado: "+formatarDataDashboardV11(inicio)+" a "+formatarDataDashboardV11(fim)};
+}
+function chamadoDentroDashboardV11(c,intervalo){
+    const d=parseDataDashboardV11(c.dataAbertura);
+    return d && d>=intervalo.inicio && d<=intervalo.fim;
+}
+function contarBlocosOficiaisV12(lista){
+    const blocosOficiais = ["1A","1B","1C","1D","1E","2A","2B","2C","2D","2E"];
+    const mapa = {};
+    blocosOficiais.forEach(bloco => mapa[bloco] = 0);
+
+    lista.forEach(c => {
+        let valor = String(c.bloco || "").trim().toUpperCase();
+
+        // O formulário grava, por exemplo, "Bloco 2D".
+        valor = valor.replace(/^BLOCO\s+/, "");
+
+        if (blocosOficiais.includes(valor)) {
+            mapa[valor]++;
+        }
+    });
+
+    // Retorna SEM remover os blocos com zero.
+    // A ordem é fixa para sempre mostrar os 10 blocos do condomínio.
+    return blocosOficiais.map(bloco => [
+        `Bloco ${bloco}`,
+        mapa[bloco]
+    ]);
+}
+
+function contarDashboardV11(lista,campo,limite=10){
+    const mapa={};
+    lista.forEach(c=>{
+        const v=String(c[campo]||"Não informado").trim()||"Não informado";
+        mapa[v]=(mapa[v]||0)+1;
+    });
+    return Object.entries(mapa).sort((a,b)=>b[1]-a[1]).slice(0,limite);
+}
+function renderBarrasDashboardV11(id,items){
+    const el=document.getElementById(id);
+    if(!items.length){el.innerHTML='<div class="dashboard-empty">Nenhum chamado encontrado no período.</div>';return}
+    const max=Math.max(...items.map(x=>x[1]),1);
+    el.innerHTML=items.map(([nome,qtd])=>`
+        <div class="dashboard-bar-row">
+            <span>${escapar(nome)}</span>
+            <div class="dashboard-bar-track"><div class="dashboard-bar-fill" style="width:${(qtd/max)*100}%"></div></div>
+            <strong>${qtd}</strong>
+        </div>`).join("");
+}
+function calcularMediaHorasDashboardV11(lista,campo){
+    const valores=lista.map(c=>Number(c[campo])).filter(n=>Number.isFinite(n)&&n>=0);
+    if(!valores.length)return null;
+    return valores.reduce((a,b)=>a+b,0)/valores.length;
+}
+function renderDashboardV11(){
+
+    const dadosRelatorioV11 =
+        chamadosHistoricoV11.length
+            ? chamadosHistoricoV11
+            : chamados;
+
+    if(!dadosRelatorioV11.length){
+        document.getElementById("dashboardResumo").innerHTML='<div class="dashboard-empty" style="grid-column:1/-1">Clique em “Ver Todos os Protocolos” para carregar os dados reais.</div>';
+        ["dashboardOcorrencias","dashboardAreas","dashboardPrioridades","dashboardStatus","dashboardAtendimento"].forEach(id=>{
+            document.getElementById(id).innerHTML="";
+        });
+        return;
+    }
+    const intervalo=obterIntervaloDashboardV11();
+    if(!intervalo){
+        document.getElementById("dashboardResumo").innerHTML='<div class="dashboard-empty" style="grid-column:1/-1">Informe um período personalizado válido.</div>';
+        return;
+    }
+    const agora=new Date();
+    const escopoEl=document.getElementById("dashboardEscopo");
+    const escopo=escopoEl ? escopoEl.value : "condominio";
+
+    const porEscopo=(c)=>{
+        return escopo==="condominio" || String(c.bloco||"").trim()===escopo;
+    };
+
+    const chamadosEscopo=dadosRelatorioV11.filter(porEscopo);
+    const lista=chamadosEscopo.filter(c=>chamadoDentroDashboardV11(c,intervalo));
+
+    const hojeLista=chamadosEscopo.filter(c=>{
+        const d=parseDataDashboardV11(c.dataAbertura);
+        if(!d)return false;
+        return d.toDateString()===agora.toDateString();
+    });
+
+    const semana=inicioSemanaDashboardV11(agora);
+    const semanaLista=chamadosEscopo.filter(c=>{
+        const d=parseDataDashboardV11(c.dataAbertura);
+        return d && d>=semana && d<=fimDiaDashboardV11(agora);
+    });
+
+    const mesInicio=new Date(agora.getFullYear(),agora.getMonth(),1);
+    const mesLista=chamadosEscopo.filter(c=>{
+        const d=parseDataDashboardV11(c.dataAbertura);
+        return d && d>=mesInicio && d<=fimDiaDashboardV11(agora);
+    });
+    const total=lista.length;
+    const abertos=lista.filter(c=>(c.status||"Aberto")==="Aberto").length;
+    const andamento=lista.filter(c=>c.status==="Em andamento").length;
+    const resolvidos=lista.filter(c=>c.status==="Resolvido").length;
+    const cancelados=lista.filter(c=>c.status==="Cancelado").length;
+
+    // Período de comparação:
+    // Para o mês corrente, comparamos o mesmo intervalo de dias do mês anterior:
+    // 01/08 a 16/08 -> 01/07 a 16/07.
+    // Para hoje, comparamos o mesmo dia do mês anterior.
+    // Para semana, comparamos a semana imediatamente anterior.
+    // Para mês anterior, comparamos o mês completo imediatamente anterior.
+    // Para período personalizado, deslocamos o mesmo intervalo exatamente um mês
+    // quando possível; se isso não for possível, usamos a mesma duração anterior.
+    const tipoPeriodoAtual = document.getElementById("dashboardPeriodo")?.value || "mes";
+    let intervaloAnterior;
+    let diasPeriodo;
+
+    if(tipoPeriodoAtual === "mes"){
+        const inicioAtual = new Date(intervalo.inicio);
+        const fimAtual = new Date(intervalo.fim);
+
+        const anoAnterior = inicioAtual.getFullYear();
+        const mesAnterior = inicioAtual.getMonth() - 1;
+
+        const inicioAnterior = new Date(
+            anoAnterior, mesAnterior, inicioAtual.getDate()
+        );
+
+        // Mantém o mesmo dia do mês atual, limitado ao último dia
+        // existente no mês anterior.
+        const ultimoDiaMesAnterior = new Date(
+            anoAnterior, mesAnterior + 1, 0
+        ).getDate();
+
+        inicioAnterior.setDate(
+            Math.min(inicioAtual.getDate(), ultimoDiaMesAnterior)
+        );
+
+        const fimAnterior = new Date(
+            anoAnterior, mesAnterior, fimAtual.getDate()
+        );
+        fimAnterior.setDate(
+            Math.min(fimAtual.getDate(), ultimoDiaMesAnterior)
+        );
+
+        intervaloAnterior = {
+            inicio: inicioDiaDashboardV11(inicioAnterior),
+            fim: fimDiaDashboardV11(fimAnterior)
+        };
+
+        diasPeriodo = Math.round(
+            (intervaloAnterior.fim - intervaloAnterior.inicio) / 86400000
+        ) + 1;
+
+    }else if(tipoPeriodoAtual === "hoje"){
+        // "DIA" compara o dia selecionado com o dia calendário imediatamente anterior.
+        // Ex.: relatório de 16/08/26 -> comparação com 15/08/26.
+        const atual = inicioDiaDashboardV11(new Date(intervalo.inicio));
+        const anterior = new Date(atual.getTime() - 86400000);
+
+        intervaloAnterior = {
+            inicio: inicioDiaDashboardV11(anterior),
+            fim: fimDiaDashboardV11(anterior)
+        };
+        diasPeriodo = 1;
+
+    }else if(tipoPeriodoAtual === "mesAnterior"){
+        const base = new Date(intervalo.inicio);
+        const primeiro = new Date(
+            base.getFullYear(), base.getMonth() - 1, 1
+        );
+        const ultimo = new Date(
+            base.getFullYear(), base.getMonth(), 0
+        );
+
+        intervaloAnterior = {
+            inicio: inicioDiaDashboardV11(primeiro),
+            fim: fimDiaDashboardV11(ultimo)
+        };
+        diasPeriodo = Math.round(
+            (intervaloAnterior.fim - intervaloAnterior.inicio) / 86400000
+        ) + 1;
+
+    }else if(tipoPeriodoAtual === "semana"){
+        // A semana corrente começa no domingo e termina no sábado.
+        // Quando o relatório é emitido antes do sábado, o período termina
+        // no dia da emissão, sem incluir dias futuros.
+        const inicioSemanaAtual = inicioSemanaDashboardV11(intervalo.inicio);
+        const fimSemanaAnterior = new Date(
+            inicioSemanaAtual.getTime() - 86400000
+        );
+        const inicioSemanaAnterior = inicioSemanaDashboardV11(fimSemanaAnterior);
+
+        intervaloAnterior = {
+            inicio: inicioDiaDashboardV11(inicioSemanaAnterior),
+            fim: fimDiaDashboardV11(fimSemanaAnterior)
+        };
+
+        diasPeriodo = Math.round(
+            (intervaloAnterior.fim - intervaloAnterior.inicio) / 86400000
+        ) + 1;
+
+    }else{
+        // Período personalizado: tenta manter as mesmas datas no mês anterior.
+        const inicioAtual = new Date(intervalo.inicio);
+        const fimAtual = new Date(intervalo.fim);
+
+        const ultimoDiaMesAnterior = new Date(
+            inicioAtual.getFullYear(), inicioAtual.getMonth(), 0
+        ).getDate();
+
+        const inicioAnterior = new Date(
+            inicioAtual.getFullYear(),
+            inicioAtual.getMonth() - 1,
+            Math.min(inicioAtual.getDate(), ultimoDiaMesAnterior)
+        );
+
+        const ultimoDiaFimMesAnterior = new Date(
+            fimAtual.getFullYear(), fimAtual.getMonth(), 0
+        ).getDate();
+
+        const fimAnterior = new Date(
+            fimAtual.getFullYear(),
+            fimAtual.getMonth() - 1,
+            Math.min(fimAtual.getDate(), ultimoDiaFimMesAnterior)
+        );
+
+        intervaloAnterior = {
+            inicio: inicioDiaDashboardV11(inicioAnterior),
+            fim: fimDiaDashboardV11(fimAnterior)
+        };
+
+        if(intervaloAnterior.fim < intervaloAnterior.inicio){
+            const dias = Math.max(
+                1,
+                Math.round(
+                    (fimDiaDashboardV11(intervalo.fim) -
+                     inicioDiaDashboardV11(intervalo.inicio)) / 86400000
+                ) + 1
+            );
+            const fimFallback = new Date(intervalo.inicio.getTime() - 86400000);
+            const inicioFallback = new Date(
+                fimFallback.getTime() - (dias - 1) * 86400000
+            );
+            intervaloAnterior = {
+                inicio: inicioDiaDashboardV11(inicioFallback),
+                fim: fimDiaDashboardV11(fimFallback)
+            };
+        }
+
+        diasPeriodo = Math.round(
+            (intervaloAnterior.fim - intervaloAnterior.inicio) / 86400000
+        ) + 1;
+    }
+
+    const listaAnterior = chamadosEscopo.filter(c => chamadoDentroDashboardV11(c, intervaloAnterior));
+    const totalAnterior = listaAnterior.length;
+    const variacaoPercentual = totalAnterior
+        ? ((total - totalAnterior) / totalAnterior) * 100
+        : (total > 0 ? null : 0);
+
+    // Comparação por tipo de ocorrência: período atual x período anterior.
+    const ocorrenciasAtualMapa = {};
+    const ocorrenciasAnteriorMapa = {};
+    lista.forEach(c => {
+        const nome = String(c.ocorrencia || c.tipoOcorrencia || "Não informado").trim() || "Não informado";
+        ocorrenciasAtualMapa[nome] = (ocorrenciasAtualMapa[nome] || 0) + 1;
+    });
+    listaAnterior.forEach(c => {
+        const nome = String(c.ocorrencia || c.tipoOcorrencia || "Não informado").trim() || "Não informado";
+        ocorrenciasAnteriorMapa[nome] = (ocorrenciasAnteriorMapa[nome] || 0) + 1;
+    });
+
+    const tiposOcorrenciaComparativo = Array.from(
+        new Set([...Object.keys(ocorrenciasAtualMapa), ...Object.keys(ocorrenciasAnteriorMapa)])
+    ).map(nome => {
+        const atual = ocorrenciasAtualMapa[nome] || 0;
+        const anterior = ocorrenciasAnteriorMapa[nome] || 0;
+        const variacao = anterior
+            ? ((atual - anterior) / anterior) * 100
+            : (atual > 0 ? null : 0);
+        return {nome, atual, anterior, variacao};
+    }).sort((a,b) => b.atual - a.atual);
+
+    // Ranking de blocos para o relatório geral.
+    const prioridadesAtualMapa = {};
+    const prioridadesAnteriorMapa = {};
+
+    lista.forEach(c => {
+        const nome = String(c.prioridade || "Não informado").trim() || "Não informado";
+        prioridadesAtualMapa[nome] = (prioridadesAtualMapa[nome] || 0) + 1;
+    });
+
+    listaAnterior.forEach(c => {
+        const nome = String(c.prioridade || "Não informado").trim() || "Não informado";
+        prioridadesAnteriorMapa[nome] = (prioridadesAnteriorMapa[nome] || 0) + 1;
+    });
+
+    const prioridadesComparativo = Array.from(
+        new Set([
+            ...Object.keys(prioridadesAtualMapa),
+            ...Object.keys(prioridadesAnteriorMapa)
+        ])
+    ).map(nome => {
+        const atual = prioridadesAtualMapa[nome] || 0;
+        const anterior = prioridadesAnteriorMapa[nome] || 0;
+        const variacao = anterior
+            ? ((atual - anterior) / anterior) * 100
+            : (atual > 0 ? null : 0);
+        return {nome, atual, anterior, variacao};
+    }).sort((a,b) => b.atual - a.atual);
+
+    // Chamados por bloco considera SOMENTE os 10 blocos oficiais do condomínio.
+    const rankingBlocos = contarBlocosOficiaisV12(lista);
+
+    // Evolução dos últimos 6 meses, sempre até a data atual quando o mês é o corrente.
+    const evolucaoMensal = [];
+    for(let i=5;i>=0;i--){
+        const base = new Date(agora.getFullYear(), agora.getMonth()-i, 1);
+        const inicioMes = new Date(base.getFullYear(), base.getMonth(), 1);
+        const fimMes = i===0
+            ? fimDiaDashboardV11(agora)
+            : fimDiaDashboardV11(new Date(base.getFullYear(), base.getMonth()+1, 0));
+        const qtdMes = chamadosEscopo.filter(c=>{
+            const d=parseDataDashboardV11(c.dataAbertura);
+            return d && d>=inicioMes && d<=fimMes;
+        }).length;
+        evolucaoMensal.push({
+            label: inicioMes.toLocaleDateString("pt-BR",{month:"short"}).replace(".","").toUpperCase(),
+            inicio: inicioMes,
+            fim: fimMes,
+            qtd: qtdMes
+        });
+    }
+
+    // Indicador de chamados críticos.
+    const criticos = lista.filter(c=>{
+        const p=String(c.prioridade||"").toLowerCase();
+        return p==="urgente" || p==="alta";
+    }).length;
+
+    // Chamado aberto mais antigo.
+    const abertosComData = lista
+        .filter(c=>(c.status||"Aberto")==="Aberto" && parseDataDashboardV11(c.dataAbertura))
+        .sort((a,b)=>parseDataDashboardV11(a.dataAbertura)-parseDataDashboardV11(b.dataAbertura));
+    const chamadoMaisAntigo = abertosComData.length ? abertosComData[0] : null;
+
+    const conclusaoHoras=lista.map(c=>{
+        const a=parseDataDashboardV11(c.dataAbertura), f=parseDataDashboardV11(c.dataConclusao);
+        if(!a||!f)return null;
+        return (f-a)/36e5;
+    }).filter(v=>v!==null&&v>=0);
+    const media=conclusaoHoras.length?conclusaoHoras.reduce((a,b)=>a+b,0)/conclusaoHoras.length:null;
+    const pct=total?Math.round(resolvidos/total*100):0;
+
+    document.getElementById("dashboardResumo").innerHTML=`
+        <div class="dashboard-card"><strong>📅 Hoje</strong><span>${hojeLista.length}</span></div>
+        <div class="dashboard-card"><strong>📆 Semana</strong><span>${semanaLista.length}</span></div>
+        <div class="dashboard-card"><strong>🗓️ Mês</strong><span>${mesLista.length}</span></div>
+        <div class="dashboard-card"><strong>📋 ${escapar(intervalo.label)}</strong><span>${total}</span></div>`;
+
+    renderBarrasDashboardV11("dashboardOcorrencias",contarDashboardV11(lista,"ocorrencia",10));
+    renderBarrasDashboardV11("dashboardAreas",contarDashboardV11(lista,"bloco",10));
+    renderBarrasDashboardV11("dashboardPrioridades",contarDashboardV11(lista,"prioridade",10));
+
+    const statusItems=[
+        ["🟡 Abertos",abertos,"#fff3cd"],
+        ["🔵 Em andamento",andamento,"#cfe8ff"],
+        ["🟢 Resolvidos",resolvidos,"#d9f3df"],
+        ["🔴 Cancelados",cancelados,"#f8d7da"]
+    ];
+    document.getElementById("dashboardStatus").innerHTML=statusItems.map(([nome,qtd,bg])=>`
+        <div class="dashboard-mini" style="background:${bg}">
+            ${nome}<span>${qtd}</span>
+        </div>`).join("");
+
+
+    document.getElementById("dashboardAtendimento").innerHTML=`
+        <div class="dashboard-bar-row"><span>Total no período</span><div class="dashboard-bar-track"><div class="dashboard-bar-fill" style="width:100%"></div></div><strong>${total}</strong></div>
+        <div class="dashboard-bar-row"><span>Resolvidos</span><div class="dashboard-bar-track"><div class="dashboard-bar-fill" style="width:${pct}%"></div></div><strong>${pct}%</strong></div>
+        <div class="dashboard-bar-row"><span>Tempo médio até conclusão</span><div></div><strong>${media===null?"-":media.toFixed(1)+"h"}</strong></div>`;
+
+    window.dashboardDadosAtualV11={
+        intervalo,lista,total,abertos,andamento,resolvidos,cancelados,escopo,
+        ocorrencias:contarDashboardV11(lista,"ocorrencia",10),
+        // Distribuição completa para o relatório: não limita às 10 categorias mais frequentes.
+        ocorrenciasRelatorio:contarDashboardV11(lista,"ocorrencia",Number.MAX_SAFE_INTEGER),
+        // Distribuição completa das áreas: todas as áreas do período entram no relatório.
+        areas:contarDashboardV11(lista,"bloco",Number.MAX_SAFE_INTEGER),
+        prioridades:contarDashboardV11(lista,"prioridade",10),
+        hoje:hojeLista.length,semana:semanaLista.length,mes:mesLista.length,
+        pct,media,criticos,totalAnterior,variacaoPercentual,rankingBlocos,
+        evolucaoMensal,chamadoMaisAntigo,tiposOcorrenciaComparativo,
+        prioridadesComparativo,intervaloAnterior,diasPeriodo
+    };
+}
+function linhasRelatorioDashboardV11(items){
+    if(!items.length)return "<p>Nenhum registro no período.</p>";
+    return "<table><thead><tr><th>Categoria</th><th>Quantidade</th></tr></thead><tbody>"+
+        items.map(x=>`<tr><td>${escapar(x[0])}</td><td>${x[1]}</td></tr>`).join("")+
+        "</tbody></table>";
+}
+function gerarRelatorioHTMLV11(abrirJanela=true){
+    const logoRelatorioV11 = "data:image/png;base64,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";
+    renderDashboardV11();
+    const d=window.dashboardDadosAtualV11;
+    if(!d)return;
+
+    const dataBR = (dt) => {
+        if(!dt) return "-";
+        const x = new Date(dt);
+        return String(x.getDate()).padStart(2,"0") + "/" +
+               String(x.getMonth()+1).padStart(2,"0") + "/" +
+               x.getFullYear();
+    };
+
+
+    const agoraEmissao = new Date();
+    const dataEmissao = dataBR(agoraEmissao);
+    const horaEmissao = agoraEmissao.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+    const mesesEmissao = [
+        "JANEIRO","FEVEREIRO","MARÇO","ABRIL","MAIO","JUNHO",
+        "JULHO","AGOSTO","SETEMBRO","OUTUBRO","NOVEMBRO","DEZEMBRO"
+    ];
+    const dataFormalEmissao =
+        `VALPARAÍSO DE GOIÁS-GO, ${agoraEmissao.getDate()} DE ${mesesEmissao[agoraEmissao.getMonth()]} DE ${agoraEmissao.getFullYear()}.`;
+
+    const dataCurta = (dt) => {
+        if(!dt) return "-";
+        return String(dt.getDate()).padStart(2,"0") + "/" +
+               String(dt.getMonth()+1).padStart(2,"0") + "/" +
+               String(dt.getFullYear()).slice(-2);
+    };
+
+    const inicioSemanaKPI = inicioSemanaDashboardV11(agoraEmissao);
+    const fimSemanaKPI = agoraEmissao;
+    const inicioMesKPI = new Date(agoraEmissao.getFullYear(),agoraEmissao.getMonth(),1);
+
+    const faixaSemanaKPI =
+        `${dataCurta(inicioSemanaKPI)} a ${dataCurta(fimSemanaKPI)}`;
+
+    const faixaMesKPI =
+        `${dataCurta(inicioMesKPI)} a ${dataCurta(fimSemanaKPI)}`;
+
+    const inicio = dataBR(d.intervalo.inicio);
+    const fim = dataBR(d.intervalo.fim);
+    const periodoExato =
+        d.intervalo.label === "Hoje"
+        ? inicio
+        : `${inicio} a ${fim}`;
+
+    const abrangenciaRelatorio =
+        d.escopo === "condominio" ? "Condomínio — Geral" : d.escopo;
+
+    const pct = (q,total) =>
+        total ? ((q/total)*100).toFixed(1).replace(".",",") + "%" : "0,0%";
+
+    const grafico = (items,total) => {
+        if(!items.length){
+            return '<div class="empty">Nenhum chamado encontrado no período.</div>';
+        }
+
+        return `<div class="chart">
+            ${items.map(([nome,qtd]) => `
+                <div class="chart-row">
+                    <div class="chart-label" title="${escapar(nome)}">${escapar(nome)}</div>
+                    <div class="chart-track">
+                        <div class="chart-fill" style="width:${total ? (qtd/Math.max(...items.map(x=>x[1]),1))*100 : 0}%"></div>
+                    </div>
+                    <div class="chart-number">${qtd}</div>
+                    <div class="chart-percent">${pct(qtd,total)}</div>
+                </div>
+            `).join("")}
+        </div>`;
+    };
+
+    // Gráfico compacto horizontal para distribuição por área.
+    // É mais adequado para impressão A4 porque acomoda rótulos longos sem
+    // ultrapassar a largura da página.
+    const graficoAreasVertical = (items,total) => {
+        if(!items.length){
+            return '<div class="empty">Nenhum chamado encontrado no período.</div>';
+        }
+
+        const max = Math.max(...items.map(x=>x[1]),1);
+
+        return `<div class="area-horizontal-chart">
+            ${items.map(([nome,qtd]) => {
+                const largura = (qtd/max)*100;
+                return `
+                    <div class="area-row">
+                        <div class="area-row-label" title="${escapar(nome)}">${escapar(nome)}</div>
+                        <div class="area-row-track">
+                            <div class="area-row-fill" style="width:${largura}%"></div>
+                        </div>
+                        <div class="area-row-value">${qtd}</div>
+                        <div class="area-row-percent">${pct(qtd,total)}</div>
+                    </div>`;
+            }).join("")}
+        </div>`;
+    };
+
+    // Gráfico de pizza para mostrar a participação de cada tipo de ocorrência.
+    const graficoPizza = (items,total) => {
+        if(!items.length){
+            return '<div class="empty">Nenhum chamado encontrado no período.</div>';
+        }
+
+        const cores = ["#17632d","#1d78b5","#f0a51a","#d9534f","#7b61a8","#4b8b8b","#8b6f47","#6c757d","#2f5597","#5b9bd5"];
+        let acumulado = 0;
+
+        const fatias = items.map(([nome,qtd],i) => {
+            const inicio = acumulado / total * 360;
+            const fim = (acumulado + qtd) / total * 360;
+            acumulado += qtd;
+
+            const raio = 88;
+            const cx = 100, cy = 100;
+            const a1 = (inicio - 90) * Math.PI / 180;
+            const a2 = (fim - 90) * Math.PI / 180;
+            const x1 = cx + raio * Math.cos(a1);
+            const y1 = cy + raio * Math.sin(a1);
+            const x2 = cx + raio * Math.cos(a2);
+            const y2 = cy + raio * Math.sin(a2);
+            const grande = (fim - inicio) > 180 ? 1 : 0;
+
+            const caminho = items.length === 1
+                ? `M ${cx} ${cy-raio} A ${raio} ${raio} 0 1 1 ${cx-0.01} ${cy-raio} L ${cx} ${cy} Z`
+                : `M ${cx} ${cy} L ${x1} ${y1} A ${raio} ${raio} 0 ${grande} 1 ${x2} ${y2} Z`;
+
+            return `<path d="${caminho}" fill="${cores[i % cores.length]}" stroke="#fff" stroke-width="2">
+                <title>${escapar(nome)} — ${qtd} (${pct(qtd,total)})</title>
+            </path>`;
+        }).join("");
+
+        const legenda = items.map(([nome,qtd],i) => `
+            <div class="pie-legend-item">
+                <span class="pie-dot" style="background:${cores[i % cores.length]}"></span>
+                <span class="pie-name">${escapar(nome)}</span>
+                <strong>${qtd}</strong>
+                <span>${pct(qtd,total)}</span>
+            </div>
+        `).join("");
+
+        return `<div class="pie-chart-box">
+            <div class="pie-visual">
+                <svg viewBox="0 0 200 200" role="img" aria-label="Distribuição dos chamados mais frequentes">
+                    ${fatias}
+                </svg>
+            </div>
+            <div class="pie-legend">${legenda}</div>
+        </div>`;
+    };
+
+    const tabela = (items,total) => {
+        if(!items.length) return '<div class="empty">Nenhum registro no período.</div>';
+
+        const totalTabela = items.reduce((s, [,qtd]) => s + Number(qtd || 0), 0);
+
+        return `<table>
+            <thead>
+                <tr>
+                    <th>Categoria</th>
+                    <th>Quantidade</th>
+                    <th>Percentual</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${items.map(([nome,qtd]) => `
+                    <tr>
+                        <td>${escapar(nome)}</td>
+                        <td>${qtd}</td>
+                        <td>${pct(qtd,total)}</td>
+                    </tr>
+                `).join("")}
+                <tr class="total-row">
+                    <td>TOTAL</td>
+                    <td>${totalTabela}</td>
+                    <td>${pct(totalTabela,total)}</td>
+                </tr>
+            </tbody>
+        </table>`;
+    };
+
+
+    // A distribuição por categoria do relatório usa todas as categorias do período.
+    // O painel continua exibindo apenas as 10 mais frequentes para preservar o layout.
+
+    const graficoPizzaPrioridade = (items,total) => {
+        if(!items.length){
+            return '<div class="empty">Nenhuma prioridade encontrada no período.</div>';
+        }
+
+        const cores = ["#d9534f","#f0a51a","#f4c542","#2e8b57","#6c757d","#1d78b5"];
+        let acumulado = 0;
+        const baseTotal = items.reduce((s,[,q]) => s + Number(q || 0), 0);
+
+        const fatias = items.map(([nome,qtd],i) => {
+            const inicio = acumulado / baseTotal * 360;
+            const fim = (acumulado + qtd) / baseTotal * 360;
+            acumulado += qtd;
+
+            const raio = 88, cx = 100, cy = 100;
+            const a1 = (inicio - 90) * Math.PI / 180;
+            const a2 = (fim - 90) * Math.PI / 180;
+            const x1 = cx + raio * Math.cos(a1);
+            const y1 = cy + raio * Math.sin(a1);
+            const x2 = cx + raio * Math.cos(a2);
+            const y2 = cy + raio * Math.sin(a2);
+            const grande = (fim - inicio) > 180 ? 1 : 0;
+
+            const caminho = items.length === 1
+                ? `M ${cx} ${cy-raio} A ${raio} ${raio} 0 1 1 ${cx-0.01} ${cy-raio} L ${cx} ${cy} Z`
+                : `M ${cx} ${cy} L ${x1} ${y1} A ${raio} ${raio} 0 ${grande} 1 ${x2} ${y2} Z`;
+
+            return `<path d="${caminho}" fill="${cores[i % cores.length]}" stroke="#fff" stroke-width="2">
+                <title>${escapar(nome)} — ${qtd} (${pct(qtd,baseTotal)})</title>
+            </path>`;
+        }).join("");
+
+        const legenda = items.map(([nome,qtd],i) => `
+            <div class="pie-legend-item">
+                <span class="pie-dot" style="background:${cores[i % cores.length]}"></span>
+                <span class="pie-name">${escapar(nome)}</span>
+                <strong>${qtd}</strong>
+                <span>${pct(qtd,baseTotal)}</span>
+            </div>
+        `).join("");
+
+        return `<div class="pie-chart-box">
+            <div class="pie-visual">
+                <svg viewBox="0 0 200 200" role="img" aria-label="Distribuição por prioridade">
+                    ${fatias}
+                </svg>
+            </div>
+            <div class="pie-legend">${legenda}</div>
+        </div>`;
+    };
+
+
+    const sinalVariacao = d.variacaoPercentual === null
+        ? "Novo período"
+        : (d.variacaoPercentual > 0
+            ? `▲ ${d.variacaoPercentual.toFixed(1).replace(".",",")}%`
+            : d.variacaoPercentual < 0
+                ? `▼ ${Math.abs(d.variacaoPercentual).toFixed(1).replace(".",",")}%`
+                : "0,0%");
+
+    const corVariacao = d.variacaoPercentual === null
+        ? "#5f6e77"
+        : d.variacaoPercentual > 0 ? "#b42318" : d.variacaoPercentual < 0 ? "#17632d" : "#5f6e77";
+
+    const rankingBlocosTabela = d.escopo === "condominio"
+        ? tabela(d.rankingBlocos,d.total)
+        : "";
+
+    const graficoRankingBlocos = d.escopo === "condominio"
+        ? (() => {
+            const itens = d.rankingBlocos || [];
+            const maxBloco = Math.max(...itens.map(x => Number(x[1] || 0)), 1);
+            return `<div class="bloco-horizontal-chart"><div class="area-horizontal-chart">
+                ${itens.map(([nome,qtd]) => {
+                    const altura = ((Number(qtd || 0) / maxBloco) * 100).toFixed(1);
+                    return `<div class="area-row">
+                        <div class="area-row-value">${qtd}</div>
+                        <div class="area-row-track">
+                            <div class="area-row-fill" style="height:${altura}%"></div>
+                        </div>
+                        <div class="area-row-percent">${pct(qtd,d.total)}</div>
+                        <div class="area-row-label">${escapar(nome)}</div>
+                    </div>`;
+                }).join("")}
+            </div></div>`;
+        })()
+        : "";
+
+    const graficoEvolucao = (items) => {
+        if(!items || !items.length) return '<div class="empty">Sem dados para evolução mensal.</div>';
+        const max=Math.max(...items.map(x=>x.qtd),1);
+        return `<div class="evolution-chart">
+            ${items.map(x=>`
+                <div class="evolution-item">
+                    <div class="evolution-value">${x.qtd}</div>
+                    <div class="evolution-track">
+                        <div class="evolution-fill" style="height:${(x.qtd/max)*100}%"></div>
+                    </div>
+                    <div class="evolution-label">${x.label}</div>
+                </div>
+            `).join("")}
+        </div>`;
+    };
+
+    const idadeMaisAntigo = d.chamadoMaisAntigo
+        ? Math.max(0, Math.floor((new Date().getTime()-parseDataDashboardV11(d.chamadoMaisAntigo.dataAbertura).getTime())/86400000))
+        : null;
+
+
+    const faixaComparacao = (inicio, fim) => {
+        const i = new Date(inicio);
+        const f = new Date(fim);
+        const formatarDataCurta = (d) =>
+            `${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}/${String(d.getFullYear()).slice(-2)}`;
+
+        return `${formatarDataCurta(i)} a ${formatarDataCurta(f)}`;
+    };
+
+    const faixaAtualComparacao = faixaComparacao(d.intervalo.inicio,d.intervalo.fim);
+    const faixaAnteriorComparacao = faixaComparacao(d.intervaloAnterior.inicio,d.intervaloAnterior.fim);
+
+    const nomeMesAtual = faixaAtualComparacao;
+    const nomeMesAnterior = faixaAnteriorComparacao;
+
+    const tipoComparacaoRelatorio = ({
+        hoje: "DIA",
+        semana: "SEMANA",
+        mes: "MÊS",
+        mesAnterior: "MÊS",
+        personalizado: "PERÍODO PERSONALIZADO"
+    })[document.getElementById("dashboardPeriodo")?.value || "mes"] || "PERÍODO";
+
+    const comparativoTipos = (items) => {
+        if(!items || !items.length){
+            return '<div class="empty">Nenhum tipo de ocorrência encontrado para comparação.</div>';
+        }
+
+        return `<table class="comparison-types-table">
+            <thead>
+                <tr>
+                    <th>Tipo de ocorrência</th>
+                    <th>Período atual<br><small>${nomeMesAtual}</small></th>
+                    <th>Período anterior<br><small>${nomeMesAnterior}</small></th>
+                    <th>Variação</th>
+                    <th>Análise</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${items.map(x => {
+                    const texto = x.variacao === null
+                        ? "NOVO"
+                        : x.variacao > 0
+                            ? `▲ ${x.variacao.toFixed(1).replace(".",",")}%`
+                            : x.variacao < 0
+                                ? `▼ ${Math.abs(x.variacao).toFixed(1).replace(".",",")}%`
+                                : "0,0%";
+                    const cor = x.variacao === null
+                        ? "#17632d"
+                        : x.variacao > 0 ? "#b42318" : x.variacao < 0 ? "#17632d" : "#5f6e77";
+
+                    return `<tr>
+                        <td>${escapar(x.nome)}</td>
+                        <td>${x.atual}</td>
+                        <td>${x.anterior}</td>
+                        <td class="variation-cell" style="color:${cor}">${texto}</td>
+                        <td class="status-cell" style="color:${cor}">${x.variacao === null ? "NOVA OCORRÊNCIA" : x.variacao > 0 ? "AUMENTO" : x.variacao < 0 ? "REDUÇÃO" : "ESTABILIDADE"}</td>
+                    </tr>`;
+                }).join("")}
+            </tbody>
+        </table>`;
+    };
+
+
+    const prioridadesComparativo = (items) => {
+        if(!items || !items.length){
+            return '<div class="empty">Nenhuma prioridade encontrada para comparação.</div>';
+        }
+
+        return `<table class="comparison-types-table priority-comparison-table">
+            <thead>
+                <tr>
+                    <th>Prioridade</th>
+                    <th>Período atual<br><small>${nomeMesAtual}</small></th>
+                    <th>Período anterior<br><small>${nomeMesAnterior}</small></th>
+                    <th>Variação</th>
+                    <th>Análise</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${items.map(x => {
+                    const texto = x.variacao === null
+                        ? "NOVO"
+                        : x.variacao > 0
+                            ? `▲ ${x.variacao.toFixed(1).replace(".",",")}%`
+                            : x.variacao < 0
+                                ? `▼ ${Math.abs(x.variacao).toFixed(1).replace(".",",")}%`
+                                : "0,0%";
+                    const cor = x.variacao === null
+                        ? "#17632d"
+                        : x.variacao > 0 ? "#b42318" : x.variacao < 0 ? "#17632d" : "#5f6e77";
+
+                    return `<tr>
+                        <td>${escapar(x.nome)}</td>
+                        <td>${x.atual}</td>
+                        <td>${x.anterior}</td>
+                        <td class="variation-cell" style="color:${cor}">${texto}</td>
+                        <td class="status-cell" style="color:${cor}">${x.variacao === null ? "NOVA OCORRÊNCIA" : x.variacao > 0 ? "AUMENTO" : x.variacao < 0 ? "REDUÇÃO" : "ESTABILIDADE"}</td>
+                    </tr>`;
+                }).join("")}
+            </tbody>
+        </table>`;
+    };
+
+    const prioridadesComparativoDados = d.prioridadesComparativo || [];
+
+    const status = [
+        ["Abertos",d.abertos],
+        ["Em andamento",d.andamento],
+        ["Resolvidos",d.resolvidos],
+        ["Cancelados",d.cancelados]
+    ];
+
+    const htmlRel=`<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Relatório Gerencial — Sistema de Chamado Parque Clube</title>
+
+<style>
+@page{
+    size:A4;
+    margin:14mm;
+}
+
+*{box-sizing:border-box}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    color:#24323d;
+    background:#fff;
+    margin:0;
+    line-height:1.45;
+}
+
+.report{
+    max-width:920px;
+    margin:0 auto;
+}
+
+.header{
+    display:flex;
+    align-items:center;
+    gap:22px;
+    padding:18px 20px;
+    border-radius:14px;
+    background:linear-gradient(135deg,#123b5d,#17632d);
+    color:#fff;
+    margin-bottom:18px;
+}
+
+.header img{
+    width:145px;
+    max-height:78px;
+    object-fit:contain;
+    background:#fff;
+    border-radius:10px;
+    padding:6px;
+}
+
+.header-title{
+    flex:1;
+}
+
+.header-title .system{
+    font-size:25px;
+    font-weight:800;
+    letter-spacing:.3px;
+}
+
+.header-title .report-title{
+    margin-top:4px;
+    font-size:16px;
+    opacity:.95;
+}
+
+.period-box{
+    border:2px solid #17632d;
+    border-radius:14px;
+    padding:16px 18px;
+    background:#f4faf5;
+    margin-bottom:18px;
+}
+
+.period-box .label{
+    color:#17632d;
+    font-size:13px;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:.5px;
+}
+
+.period-box .period{
+    margin-top:4px;
+    font-size:22px;
+    font-weight:800;
+    color:#123b5d;
+}
+
+
+.date-subtitle{
+    margin-top:5px;
+    font-size:10px;
+    color:#6a7881;
+    font-weight:600;
+    white-space:nowrap;
+}
+.period-box .scope-line{
+    margin-top:6px;
+    color:#123b5d;
+    font-size:12px;
+}
+
+.period-box .report-scope-highlight{
+    margin-top:10px;
+    padding:10px 12px;
+    border-radius:10px;
+    background:#eaf3f9;
+    border:1px solid #bcd2df;
+    text-align:center;
+}
+.period-box .report-scope-label{
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:1px;
+    color:#17632d;
+}
+.period-box .report-scope-title{
+    margin-top:2px;
+    font-size:18px;
+    font-weight:800;
+    color:#123b5d;
+}
+
+.period-box .issued{
+    margin-top:9px;
+    padding-top:8px;
+    border-top:1px solid #cfe0d2;
+    color:#17632d;
+    font-size:12px;
+}
+
+.period-box .exact{
+    margin-top:3px;
+    font-size:13px;
+    color:#60707b;
+}
+
+
+.executive-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+}
+.exec-card{
+    border:1px solid #dce5ea;
+    border-radius:11px;
+    padding:13px;
+    background:#f8fafb;
+    text-align:center;
+}
+.exec-card strong{
+    display:block;
+    font-size:11px;
+    color:#65737d;
+}
+.exec-card span{
+    display:block;
+    margin-top:4px;
+    font-size:23px;
+    font-weight:800;
+    color:#123b5d;
+}
+.exec-card span small{
+    font-size:11px;
+    color:#17632d;
+}
+.exec-card>small{
+    font-size:9px;
+    color:#74818a;
+}
+.management-highlight{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    margin-top:11px;
+}
+.management-highlight>div{
+    border-left:4px solid #17632d;
+    background:#f4f8f5;
+    border-radius:9px;
+    padding:11px;
+}
+.management-highlight strong{
+    display:block;
+    font-size:10px;
+    color:#65737d;
+}
+.management-highlight span{
+    display:block;
+    margin-top:4px;
+    font-size:16px;
+    font-weight:800;
+    color:#123b5d;
+}
+.section-note{
+    margin:0 0 9px;
+    font-size:11px;
+    color:#687680;
+}
+.evolution-chart{
+    height:235px;
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-around;
+    gap:12px;
+    border-bottom:1px solid #cfd9df;
+    border-left:1px solid #e1e7ea;
+    padding:12px 12px 0;
+}
+.evolution-item{
+    height:100%;
+    flex:1;
+    max-width:100px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-end;
+}
+.evolution-value{
+    font-size:11px;
+    font-weight:800;
+    color:#123b5d;
+    margin-bottom:4px;
+}
+.evolution-track{
+    height:165px;
+    width:52px;
+    background:#edf2f5;
+    border-radius:7px 7px 0 0;
+    display:flex;
+    align-items:flex-end;
+    overflow:hidden;
+}
+.evolution-fill{
+    width:100%;
+    background:#17632d;
+    border-radius:7px 7px 0 0;
+}
+.evolution-label{
+    margin-top:7px;
+    font-size:10px;
+    font-weight:800;
+    color:#33434d;
+}
+@media(max-width:650px){
+    .executive-grid{grid-template-columns:repeat(2,1fr)}
+    .management-highlight{grid-template-columns:1fr}
+}
+@media print{
+    .evolution-fill{
+        -webkit-print-color-adjust:exact;
+        print-color-adjust:exact;
+    }
+}
+
+.summary{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    margin-bottom:20px;
+}
+
+.card{
+    background:#f5f8fa;
+    border:1px solid #dce5ea;
+    border-radius:11px;
+    padding:13px;
+    text-align:center;
+}
+
+.card .label{
+    color:#65737d;
+    font-size:12px;
+    font-weight:700;
+}
+
+.card .value{
+    color:#123b5d;
+    font-size:26px;
+    font-weight:800;
+    margin-top:3px;
+}
+
+.section{
+    margin-top:22px;
+    page-break-inside:avoid;
+}
+
+.section h2{
+    color:#123b5d;
+    font-size:18px;
+    margin:0 0 9px;
+    padding-bottom:7px;
+    border-bottom:2px solid #17632d;
+}
+
+
+.vertical-chart{
+    border:1px solid #dce4e9;
+    border-radius:11px;
+    padding:16px 12px 10px;
+    background:#fff;
+    overflow-x:auto;
+}
+.vertical-bars{
+    height:285px;
+    min-width:650px;
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-around;
+    gap:12px;
+    border-bottom:1px solid #cfd9df;
+    padding:10px 8px 0;
+}
+.vertical-item{
+    flex:1;
+    max-width:110px;
+    min-width:72px;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-end;
+}
+.vertical-value{
+    font-size:11px;
+    font-weight:800;
+    color:#123b5d;
+    margin-bottom:4px;
+}
+.vertical-track{
+    width:54px;
+    height:205px;
+    display:flex;
+    align-items:flex-end;
+    background:#edf2f5;
+    border-radius:7px 7px 0 0;
+    overflow:hidden;
+}
+.vertical-fill{
+    width:100%;
+    background:#1d78b5;
+    border-radius:7px 7px 0 0;
+}
+.vertical-label{
+    margin-top:7px;
+    font-size:10px;
+    font-weight:700;
+    color:#33434d;
+    text-align:center;
+    max-width:100px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+.vertical-percent{
+    font-size:9px;
+    color:#6a7881;
+    margin-top:2px;
+}
+.pie-chart-box{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:30px;
+    border:1px solid #dce4e9;
+    border-radius:11px;
+    padding:18px;
+    background:#fff;
+}
+.pie-visual{
+    width:245px;
+    flex:0 0 245px;
+}
+.pie-visual svg{
+    display:block;
+    width:100%;
+    height:auto;
+}
+.pie-legend{
+    flex:1;
+    min-width:250px;
+}
+.pie-legend-item{
+    display:grid;
+    grid-template-columns:12px 1fr 42px 58px;
+    gap:7px;
+    align-items:center;
+    font-size:11px;
+    padding:5px 0;
+    border-bottom:1px solid #edf1f3;
+}
+.pie-dot{
+    width:10px;
+    height:10px;
+    border-radius:50%;
+    display:block;
+}
+.pie-name{
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+.pie-legend-item strong{
+    text-align:right;
+    color:#123b5d;
+}
+.pie-legend-item span:last-child{
+    text-align:right;
+    color:#687680;
+}
+@media(max-width:650px){
+    .pie-chart-box{flex-direction:column}
+    .pie-visual{width:220px;flex-basis:220px}
+}
+@media print{
+    .vertical-fill,.pie-visual path{
+        -webkit-print-color-adjust:exact;
+        print-color-adjust:exact;
+    }
+}
+
+.chart{
+    border:1px solid #dce4e9;
+    border-radius:11px;
+    padding:13px;
+    background:#fff;
+}
+
+.chart-row{
+    display:grid;
+    grid-template-columns:155px 1fr 45px 58px;
+    align-items:center;
+    gap:8px;
+    margin:8px 0;
+    font-size:12px;
+}
+
+.chart-label{
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+
+.chart-track{
+    height:15px;
+    background:#edf2f5;
+    border-radius:99px;
+    overflow:hidden;
+}
+
+.chart-fill{
+    height:100%;
+    background:#1d78b5;
+    border-radius:99px;
+}
+
+.chart-number{
+    font-weight:800;
+    text-align:right;
+    color:#123b5d;
+}
+
+.chart-percent{
+    text-align:right;
+    color:#5f6e77;
+    font-weight:700;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:10px;
+    font-size:12px;
+}
+
+th,td{
+    border:1px solid #d4dee5;
+    padding:8px;
+    text-align:left;
+}
+
+th{
+    background:#123b5d;
+    color:#fff;
+}
+
+td:nth-child(2),td:nth-child(3){
+    text-align:center;
+}
+
+.total-row td{
+    background:#eaf3f9;
+    font-weight:800;
+}
+
+.kpi-box{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+.kpi{
+    border:1px solid #dce5ea;
+    border-radius:11px;
+    padding:14px;
+    background:#f8fafb;
+}
+
+.kpi strong{
+    display:block;
+    color:#17632d;
+    font-size:12px;
+}
+
+.kpi span{
+    display:block;
+    color:#123b5d;
+    font-size:22px;
+    font-weight:800;
+    margin-top:3px;
+}
+
+.empty{
+    padding:14px;
+    background:#f7f7f7;
+    border-radius:9px;
+    color:#777;
+}
+
+
+.signature-section{
+    margin-top:38px;
+    page-break-inside:avoid;
+    padding:0 28px;
+}
+.signature-logo{
+    text-align:center;
+    margin-bottom:18px;
+}
+.signature-logo img{
+    width:72px;
+    max-height:42px;
+    object-fit:contain;
+}
+.signature-date{
+    text-align:right;
+    font-size:11px;
+    font-weight:800;
+    color:#24323d;
+    margin-bottom:28px;
+}
+.signature-line{
+    width:300px;
+    max-width:100%;
+    margin:0 auto 7px;
+    border-top:1.5px solid #24323d;
+}
+.signature-role,
+.signature-action{
+    text-align:center;
+    font-size:11px;
+    font-weight:800;
+    color:#24323d;
+    letter-spacing:.3px;
+    line-height:1.4;
+}
+.signature-action{
+    margin-top:2px;
+}
+
+.comparison-card{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+}
+.comparison-card>div{
+    border:1px solid #dce5ea;
+    border-radius:11px;
+    padding:15px;
+    background:#f8fafb;
+    text-align:center;
+}
+.comparison-card strong{
+    display:block;
+    font-size:10px;
+    color:#65737d;
+}
+.comparison-card span{
+    display:block;
+    margin-top:5px;
+    font-size:18px;
+    font-weight:800;
+    color:#123b5d;
+}
+.scope-focus-card{
+    border:1px solid #bcd2df;
+    background:#eaf3f9;
+    border-radius:11px;
+    padding:18px;
+    text-align:center;
+}
+.scope-focus-card strong{
+    display:block;
+    font-size:18px;
+    color:#123b5d;
+}
+.scope-focus-card span{
+    display:block;
+    margin-top:4px;
+    font-size:12px;
+    color:#5f6e77;
+}
+.signature-section-wrapper{
+    page-break-inside:avoid;
+}
+.signature-section-wrapper>h2{
+    margin-bottom:0;
+}
+@media(max-width:650px){
+    .comparison-card{grid-template-columns:1fr}
+}
+
+
+.comparison-subsection{
+    margin-top:18px;
+    padding-top:12px;
+    border-top:2px solid #e2e9ed;
+}
+.comparison-subsection h3{
+    margin:0 0 4px;
+    color:#123b5d;
+    font-size:15px;
+}
+.comparison-types-table{
+    margin-top:9px;
+}
+.comparison-types-table th,
+.comparison-types-table td{
+    padding:7px 8px;
+}
+.comparison-types-table th:not(:first-child),
+.comparison-types-table td:not(:first-child){
+    text-align:center;
+}
+.variation-cell{
+    font-weight:800;
+    white-space:nowrap;
+}
+
+
+.comparison-types-table th small{
+    display:block;
+    margin-top:2px;
+    font-size:9px;
+    font-weight:600;
+    opacity:.9;
+}
+
+
+.priority-comparison-table td:first-child{
+    font-weight:800;
+}
+
+
+.status-cell{
+    font-weight:800;
+    white-space:nowrap;
+    text-align:center;
+}
+
+
+.comparison-types-table th:last-child,
+.comparison-types-table td:last-child{
+    min-width:90px;
+}
+
+.footer{
+    margin-top:28px;
+    padding-top:10px;
+    border-top:1px solid #dce4e9;
+    color:#74818a;
+    font-size:10px;
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+}
+
+.actions{
+    text-align:center;
+    margin:22px 0;
+}
+
+.actions button{
+    border:0;
+    border-radius:9px;
+    padding:11px 16px;
+    background:#17632d;
+    color:#fff;
+    font-weight:800;
+    cursor:pointer;
+}
+
+@media(max-width:650px){
+    .header{flex-direction:column;text-align:center}
+    .summary{grid-template-columns:repeat(2,1fr)}
+    .chart-row{grid-template-columns:100px 1fr 35px 50px}
+    .kpi-box{grid-template-columns:1fr}
+}
+
+@media print{
+    .actions{display:none}
+    .header{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    th,.chart-fill{ -webkit-print-color-adjust:exact; print-color-adjust:exact}
+}
+
+.report .header-title{
+    text-align:center;
+}
+.report .header-title .system{
+    white-space:nowrap;
+    font-size:22px;
+}
+.report .header-title .report-title{
+    white-space:nowrap;
+}
+@media(max-width:650px){
+    .report .header-title .system{white-space:normal;font-size:20px}
+    .report .header-title .report-title{white-space:normal}
+}
+
+
+
+/* =========================================================
+   IMPRESSÃO / PDF — A4 COM MARGENS FIXAS E TABELAS INTEGRAS
+   ========================================================= */
+@page{
+    size:A4 portrait;
+    margin:12mm 12mm 14mm 12mm;
+}
+
+@media print{
+    html, body{
+        width:210mm;
+        min-width:210mm;
+        margin:0 !important;
+        padding:0 !important;
+        background:#fff !important;
+    }
+
+    .report{
+        width:auto !important;
+        max-width:none !important;
+        margin:0 !important;
+        padding:0 !important;
+        box-shadow:none !important;
+        border:none !important;
+    }
+
+    /* Mantém cada tabela como uma unidade sempre que houver espaço. */
+    table,
+    .comparison-types-table,
+    .chart,
+    .vertical-chart,
+    .pie-chart,
+    .kpi-box,
+    .executive-grid,
+    .management-highlight,
+    .comparison-card{
+        break-inside:avoid !important;
+        page-break-inside:avoid !important;
+    }
+
+    /* Não separa uma linha da seguinte entre páginas. */
+    tr,
+    td,
+    th{
+        break-inside:avoid !important;
+        page-break-inside:avoid !important;
+    }
+
+    /* Repete o cabeçalho da tabela caso uma tabela realmente precise
+       continuar em outra página. */
+    thead{
+        display:table-header-group;
+    }
+
+    tfoot{
+        display:table-footer-group;
+    }
+
+    /* Evita que o título fique sozinho no final da página. */
+    h2, h3{
+        break-after:avoid !important;
+        page-break-after:avoid !important;
+        break-inside:avoid !important;
+        page-break-inside:avoid !important;
+    }
+
+    /* O rodapé/assinatura permanece inteiro. */
+    .signature-section,
+    .signature-section-wrapper{
+        break-inside:avoid !important;
+        page-break-inside:avoid !important;
+    }
+
+    .actions{
+        display:none !important;
+    }
+
+    th,
+    .chart-fill,
+    .vertical-bar,
+    .evolution-fill{
+        -webkit-print-color-adjust:exact !important;
+        print-color-adjust:exact !important;
+    }
+}
+
+
+/* =========================================================
+   CHAMADOS POR ÁREA — GRÁFICO HORIZONTAL COMPACTO
+   Estilos incorporados ao HTML do relatório/PDF.
+========================================================= */
+.area-horizontal-chart{
+    width:100%;
+    box-sizing:border-box;
+    border:1px solid #dce4e9;
+    border-radius:10px;
+    padding:10px 12px;
+    background:#fff;
+    overflow:hidden;
+}
+
+.area-row{
+    display:grid;
+    grid-template-columns:145px minmax(0,1fr) 34px 48px;
+    align-items:center;
+    gap:7px;
+    min-height:24px;
+    margin:2px 0;
+    font-size:10px;
+}
+
+.area-row-label{
+    min-width:0;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    color:#33434d;
+    font-weight:700;
+}
+
+.area-row-track{
+    height:11px;
+    min-width:0;
+    background:#edf2f5;
+    border-radius:99px;
+    overflow:hidden;
+}
+
+.area-row-fill{
+    height:100%;
+    background:#1d78b5;
+    border-radius:99px;
+}
+
+.area-row-value{
+    text-align:right;
+    font-weight:800;
+    color:#123b5d;
+}
+
+.area-row-percent{
+    text-align:right;
+    color:#5f6e77;
+    font-weight:700;
+}
+
+@media print{
+    .area-horizontal-chart{
+        width:100% !important;
+        max-width:100% !important;
+        overflow:visible !important;
+        box-sizing:border-box !important;
+        padding:8px 10px !important;
+        break-inside:avoid !important;
+        page-break-inside:avoid !important;
+    }
+
+    .area-row{
+        grid-template-columns:125px minmax(0,1fr) 30px 44px;
+        min-height:21px;
+        gap:6px;
+        font-size:9px;
+        margin:1px 0;
+    }
+
+    .area-row-track{
+        height:9px;
+    }
+
+    .area-row-fill{
+        -webkit-print-color-adjust:exact !important;
+        print-color-adjust:exact !important;
+    }
+}
+
+
+/* V1.2 — gráfico dos 10 blocos oficiais, horizontal e compacto */
+.bloco-horizontal-chart{
+    width:100%;
+    box-sizing:border-box;
+}
+.bloco-horizontal-chart .area-horizontal-chart{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:7px;
+    min-height:165px;
+    padding:12px 10px 8px;
+    overflow:hidden;
+}
+.bloco-horizontal-chart .area-row{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-end;
+    flex:1 1 0;
+    min-width:0;
+    height:140px;
+    margin:0;
+    gap:4px;
+    font-size:8px;
+}
+.bloco-horizontal-chart .area-row-label{
+    order:4;
+    width:100%;
+    text-align:center;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    font-weight:700;
+}
+.bloco-horizontal-chart .area-row-track{
+    order:2;
+    width:100%;
+    max-width:42px;
+    height:92px;
+    display:flex;
+    align-items:flex-end;
+    background:#edf2f5;
+    border-radius:5px 5px 0 0;
+    overflow:hidden;
+}
+.bloco-horizontal-chart .area-row-fill{
+    width:100% !important;
+    height:var(--barra-altura,0%);
+    background:#1d78b5;
+    border-radius:5px 5px 0 0;
+}
+.bloco-horizontal-chart .area-row-value{
+    order:1;
+    width:100%;
+    text-align:center;
+    font-size:9px;
+    font-weight:800;
+    color:#123b5d;
+}
+.bloco-horizontal-chart .area-row-percent{
+    order:3;
+    width:100%;
+    text-align:center;
+    font-size:7.5px;
+    color:#5f6e77;
+}
+@media print{
+    .bloco-horizontal-chart{
+        padding:0 !important;
+        break-inside:avoid !important;
+        page-break-inside:avoid !important;
+    }
+    .bloco-horizontal-chart .area-horizontal-chart{
+        min-height:145px;
+        padding:8px 7px 6px !important;
+        gap:5px;
+    }
+    .bloco-horizontal-chart .area-row{
+        height:124px;
+        font-size:7.5px;
+        gap:3px;
+    }
+    .bloco-horizontal-chart .area-row-track{
+        height:82px;
+        max-width:34px;
+    }
+    .bloco-horizontal-chart .area-row-value{
+        font-size:8px;
+    }
+    .bloco-horizontal-chart .area-row-percent{
+        font-size:7px;
+    }
+}
+
+</style>
+</head>
+
+<body>
+<div class="report">
+
+<header class="header">
+    ${logoRelatorioV11 ? `<img src="${logoRelatorioV11}" alt="Parque Clube">` : ""}
+    <div class="header-title">
+        <div class="system">SISTEMA DE GESTÃO DO CONDOMÍNIO</div>
+        <div class="report-title">Relatório Gerencial de Chamados / Ordens de Serviço</div>
+    </div>
+</header>
+
+<section class="period-box">
+    <div class="label">Período Apurado</div>
+    <div class="period">${escapar(d.intervalo.label)}</div>
+    <div class="exact">📅 ${periodoExato}</div>
+    <div class="issued">🕒 <strong>Relatório emitido em:</strong> ${dataEmissao} às ${horaEmissao}</div>
+    <div class="report-scope-highlight">
+        <div class="report-scope-label">CONDOMÍNIO / BLOCO</div>
+        <div class="report-scope-title">
+            ${d.escopo === "condominio"
+                ? "Relatório do Condomínio"
+                : "Relatório do " + escapar(d.escopo)}
+        </div>
+    </div>
+</section>
+
+<div class="summary">
+    <div class="card">
+        <div class="label">Chamados hoje</div>
+        <div class="value">${d.hoje}</div>
+        <div class="date-subtitle">📅 ${dataCurta(agoraEmissao)}</div>
+    </div>
+    <div class="card">
+        <div class="label">Chamados na semana</div>
+        <div class="value">${d.semana}</div>
+        <div class="date-subtitle">📅 ${faixaSemanaKPI}</div>
+    </div>
+    <div class="card">
+        <div class="label">Chamados no mês</div>
+        <div class="value">${d.mes}</div>
+        <div class="date-subtitle">📅 ${faixaMesKPI}</div>
+    </div>
+    <div class="card">
+        <div class="label">Total no período</div>
+        <div class="value">${d.total}</div>
+        <div class="date-subtitle">📅 ${dataCurta(d.intervalo.inicio)} a ${dataCurta(d.intervalo.fim)}</div>
+    </div>
+</div>
+
+
+<section class="section">
+    <h2>1. Resumo executivo</h2>
+    <div class="executive-grid">
+        <div class="exec-card"><strong>Total de chamados</strong><span>${d.total}</span></div>
+        <div class="exec-card"><strong>Resolvidos</strong><span>${d.resolvidos} <small>${d.pct}%</small></span></div>
+        <div class="exec-card"><strong>Em andamento</strong><span>${d.andamento}</span></div>
+        <div class="exec-card"><strong>Chamados críticos</strong><span>${d.criticos}</span><small>Urgente + Alta</small></div>
+    </div>
+    <div class="management-highlight">
+        <div>
+            <strong>Chamados pendentes</strong>
+            <span>${d.abertos+d.andamento}</span>
+        </div>
+        <div>
+            <strong>Chamado aberto mais antigo</strong>
+            <span>${idadeMaisAntigo===null ? "Nenhum pendente" : idadeMaisAntigo+" dia(s)"}</span>
+        </div>
+        <div>
+            <strong>Tempo médio até conclusão</strong>
+            <span>${d.media===null ? "Não disponível" : d.media.toFixed(1).replace(".",",")+" h"}</span>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <h2>2. Indicadores de atendimento</h2>
+    <div class="kpi-box">
+        <div class="kpi">
+            <strong>PERCENTUAL DE CHAMADOS RESOLVIDOS</strong>
+            <span>${d.pct}%</span>
+        </div>
+        <div class="kpi">
+            <strong>TEMPO MÉDIO ATÉ CONCLUSÃO</strong>
+            <span>${d.media===null ? "Não disponível" : d.media.toFixed(1)+" horas"}</span>
+        </div>
+        <div class="kpi">
+            <strong>CHAMADOS CRÍTICOS</strong>
+            <span>${d.criticos}</span>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <h2>3. Chamados mais frequentes</h2>
+    ${graficoPizza(d.ocorrenciasRelatorio || d.ocorrencias,d.total)}
+    ${tabela(d.ocorrenciasRelatorio || d.ocorrencias,d.total)}
+
+    <div class="comparison-subsection">
+        <h3>Comparação com o período anterior (${tipoComparacaoRelatorio})</h3>
+        <p class="section-note">
+            Comparação com o período anterior de mesma duração:
+            <strong>${faixaAtualComparacao}</strong> × <strong>${faixaAnteriorComparacao}</strong>.
+            A variação identifica quais tipos de ocorrência aumentaram, reduziram ou surgiram.
+        </p>
+        ${comparativoTipos(d.tiposOcorrenciaComparativo)}
+    </div>
+</section>
+
+<section class="section">
+    <h2>4. Chamados por área</h2>
+    ${graficoAreasVertical(d.areas,d.total)}
+    ${tabela(d.areas,d.total)}
+</section>
+
+<section class="section">
+    <h2>5. Distribuição por prioridade</h2>
+    ${graficoPizzaPrioridade(d.prioridades,d.total)}
+    ${tabela(d.prioridades,d.total)}
+
+    <div class="comparison-subsection">
+        <h3>Comparação com o período anterior (${tipoComparacaoRelatorio})</h3>
+        <p class="section-note">
+            Comparação das prioridades no período atual com o período anterior
+            de mesma duração: <strong>${nomeMesAtual}</strong> × <strong>${nomeMesAnterior}</strong>.
+        </p>
+        ${prioridadesComparativo(prioridadesComparativoDados)}
+    </div>
+</section>
+
+<section class="section">
+    <h2>6. Chamados por bloco</h2>
+    ${d.escopo === "condominio" ? `
+        <p class="section-note">Chamados registrados em cada um dos 10 blocos oficiais do condomínio no período, incluindo blocos sem chamados.</p>
+        ${graficoRankingBlocos}
+        ${rankingBlocosTabela}
+    ` : `
+        <p class="section-note">O relatório está filtrado especificamente para ${escapar(d.escopo)}.</p>
+        <div class="scope-focus-card">
+            <strong>${escapar(d.escopo)}</strong>
+            <span>${d.total} chamado(s) no período</span>
+        </div>
+    `}
+</section>
+
+<section class="section">
+    <h2>7. Evolução dos chamados</h2>
+    <p class="section-note">Quantidade de chamados por mês nos últimos seis meses, considerando o escopo selecionado.</p>
+    ${graficoEvolucao(d.evolucaoMensal)}
+</section>
+
+<section class="section">
+    <h2>8. Situação dos chamados</h2>
+    <div class="chart">
+        ${status.map(([nome,qtd]) => `
+            <div class="chart-row">
+                <div class="chart-label">${nome}</div>
+                <div class="chart-track">
+                    <div class="chart-fill" style="width:${d.total ? (qtd/d.total)*100 : 0}%"></div>
+                </div>
+                <div class="chart-number">${qtd}</div>
+                <div class="chart-percent">${pct(qtd,d.total)}</div>
+            </div>
+        `).join("")}
+    </div>
+    <table>
+        <thead><tr><th>Status</th><th>Quantidade</th><th>%</th></tr></thead>
+        <tbody>
+            ${status.map(([nome,qtd]) => `
+                <tr><td>${nome}</td><td>${qtd}</td><td>${pct(qtd,d.total)}</td></tr>
+            `).join("")}
+            <tr class="total-row"><td>TOTAL</td><td>${d.total}</td><td>100%</td></tr>
+        </tbody>
+    </table>
+</section>
+
+<section class="section">
+    <h2>9. Comparativo com período anterior</h2>
+    <div class="comparison-card">
+        <div>
+            <strong>Período atual</strong>
+            <span>${d.total} chamados</span>
+        </div>
+        <div>
+            <strong>Período anterior</strong>
+            <span>${d.totalAnterior} chamados</span>
+        </div>
+        <div>
+            <strong>Variação</strong>
+            <span style="color:${corVariacao}">${sinalVariacao}</span>
+        </div>
+    </div>
+    <p class="section-note">
+        A comparação utiliza períodos de mesma duração, permitindo identificar aumento,
+        redução ou estabilidade na demanda.
+    </p>
+</section>
+
+<section class="section signature-section-wrapper">
+    <h2>10. Assinatura</h2>
+    <div class="signature-section">
+        <div class="signature-logo">
+            ${logoRelatorioV11
+                ? `<img src="${logoRelatorioV11}" alt="Parque Clube">`
+                : ""}
+        </div>
+        <div class="signature-date">${dataFormalEmissao}</div>
+        <div class="signature-line"></div>
+        <div class="signature-role">
+            ${d.escopo === "condominio"
+                ? "SÍNDICO(A)"
+                : "SUBSÍNDICO(A) " + escapar(d.escopo.replace(/^Bloco\s*/i,"BLOCO "))}
+        </div>
+        <div class="signature-action">ASSINATURA</div>
+    </div>
+</section>
+
+<div class="actions">
+    <button onclick="window.print()">📄 Salvar relatório em PDF</button>
+</div>
+
+<footer class="footer">
+    <span>Sistema de Chamado Parque Clube — Relatório Gerencial</span>
+    <span>Relatório emitido em ${new Date().toLocaleString("pt-BR")}</span>
+</footer>
+
+</div>
+
+
+
+</body>
+</html>`;
+
+    if(abrirJanela){
+        const w=window.open("","_blank");
+        if(!w){
+            alert("O navegador bloqueou a nova janela. Permita pop-ups para gerar o relatório.");
+            return;
+        }
+        w.document.open();
+        w.document.write(htmlRel);
+        w.document.close();
+    }
+    return htmlRel;
+}
+
+
+let janelaRelatorioPDFV11 = null;
+
+function gerarPDFV11(){
+    // Open/reuse the report window immediately, while this function is still
+    // directly inside the user's click event. This prevents popup blockers.
+    let w = janelaRelatorioPDFV11;
+
+    if(!w || w.closed){
+        w = window.open("", "parque_clube_relatorio_pdf");
+        janelaRelatorioPDFV11 = w;
+    }
+
+    if(!w){
+        alert("O navegador bloqueou a janela do relatório. Permita pop-ups para gerar o PDF.");
+        return;
+    }
+
+    // Show immediate feedback while the report is being assembled.
+    w.document.open();
+    w.document.write(`
+        <!DOCTYPE html>
+        <html lang="pt-BR">
+        <head>
+            <meta charset="UTF-8">
+            <title>Gerando relatório...</title>
+        </head>
+        <body style="font-family:Arial;text-align:center;padding:50px;color:#123b5d">
+            <h2>📊 Preparando relatório...</h2>
+            <p>Aguarde um momento.</p>
+        </body>
+        </html>
+    `);
+    w.document.close();
+
+    try{
+        renderDashboardV11();
+
+        const htmlRel = gerarRelatorioHTMLV11(false);
+
+        if(!htmlRel){
+            w.close();
+            return;
+        }
+
+        w.document.open();
+        w.document.write(htmlRel);
+        w.document.close();
+        w.focus();
+
+        // Native print dialog -> user chooses "Salvar como PDF".
+        setTimeout(function(){
+            try{
+                w.focus();
+                w.print();
+            }catch(e){
+                console.error("Erro ao abrir impressão do relatório:",e);
+                alert("O relatório foi aberto, mas o diálogo de impressão não pôde ser aberto automaticamente. Use Ctrl+P ou o menu Imprimir do navegador.");
+            }
+        }, 700);
+
+    }catch(e){
+        console.error("Erro ao gerar relatório:",e);
+        w.document.open();
+        w.document.write(`
+            <div style="font-family:Arial;padding:30px">
+                <h2>Não foi possível gerar o relatório.</h2>
+                <p>Atualize a página e tente novamente.</p>
+            </div>
+        `);
+        w.document.close();
+        alert("Ocorreu um erro ao montar o relatório. A página foi preservada. Tente novamente.");
+    }
+}
+
+function inicializarDashboardV11(){
+    const painel=document.getElementById("dashboardV11");
+    if(!painel)return;
+    painel.style.display="block";
+    const periodo=document.getElementById("dashboardPeriodo");
+    const personalizado=document.getElementById("dashboardPersonalizado");
+    const escopo=document.getElementById("dashboardEscopo");
+    if(periodo.dataset.v11==="1"){renderDashboardV11();return;}
+    periodo.dataset.v11="1";
+    periodo.addEventListener("change",function(){
+        personalizado.style.display=this.value==="personalizado"?"block":"none";
+        if(this.value!=="personalizado")renderDashboardV11();
+    });
+    document.getElementById("dashboardDataInicio").addEventListener("change",renderDashboardV11);
+    document.getElementById("dashboardDataFim").addEventListener("change",renderDashboardV11);
+    if(escopo) escopo.addEventListener("change",renderDashboardV11);
+    document.getElementById("btnAtualizarDashboard").addEventListener("click",renderDashboardV11);
+    document.getElementById("btnGerarPDF").addEventListener("click",gerarPDFV11);
+    renderDashboardV11();
+}
+
+
+
+(function(){
+    const menu = document.getElementById("adminMenuV11");
+    const search = document.getElementById("adminConteudoPesquisaV11");
+    const report = document.getElementById("adminConteudoRelatorioV11");
+    const adminV13 = document.getElementById("adminConteudoAdministrativoV13");
+    const voltar = document.getElementById("adminVoltarMenu");
+    const titulo = document.getElementById("adminModoTitulo");
+
+    const btnPesquisar = document.getElementById("menuPesquisarAdmin");
+    const btnRelatorio = document.getElementById("menuRelatorioAdmin");
+    const btnVoltar = document.getElementById("btnVoltarAdminMenu");
+
+    const localizar = document.getElementById("editarChamado");
+    const protocoloAdmin = document.getElementById("protocoloAdmin");
+    const btnBuscarAdmin = document.getElementById("btnBuscarAdmin");
+
+    function esconderTudoAdminV11(){
+    controlarVisaoGeralAoAbrirAdvertencias(false);
+        if(search) { search.style.display = "none"; search.hidden = true; }
+        if(report) { report.style.display = "none"; report.hidden = true; }
+        if(adminV13) { adminV13.style.display = "none"; adminV13.hidden = true; }
+        document.body.classList.remove("admin-v13-active");
+        if(voltar) voltar.style.display = "none";
+        if(menu) { menu.style.display = "grid"; menu.hidden = false; }
+    }
+
+    function mostrarPesquisaAdminV11(){
+    controlarVisaoGeralAoAbrirAdvertencias(false);
+    document.body.classList.remove('admin-v13-active');
+    const adminV13=document.getElementById('adminConteudoAdministrativoV13');
+    if(adminV13){adminV13.style.display='none';adminV13.hidden=true;}
+    if(menu) menu.style.display='none';
+    if(report) report.style.display='none';
+    if(search){search.style.display='block';search.hidden=false;}
+
+    const localizarChamado=document.getElementById('localizarChamadoAdmin');
+    const editarChamado=document.getElementById('editarChamado');
+    if(localizarChamado) localizarChamado.style.display='block';
+    if(editarChamado) editarChamado.style.display='block';
+
+    if(voltar) voltar.style.display='flex';
+    if(titulo) titulo.textContent='🔎 Pesquisar chamados';
+
+    const btnListar=document.getElementById('btnListarTodos');
+    if(btnListar){btnListar.style.display='block';btnListar.click();}
+
+    setTimeout(function(){
+        ['estatisticas','filtros','listaChamados'].forEach(function(id){
+            const el=document.getElementById(id);
+            if(el) el.style.display='block';
+        });
+    },500);
+}
+function mostrarRelatorioAdminV11(){
+    controlarVisaoGeralAoAbrirAdvertencias(false);
+        document.body.classList.remove('admin-v13-active');
+        const adminV13=document.getElementById('adminConteudoAdministrativoV13');
+        if(adminV13){adminV13.style.display='none';adminV13.hidden=true;}
+        if(menu) menu.style.display = "none";
+        if(search) search.style.display = "none";
+        if(voltar) voltar.style.display = "flex";
+        if(titulo) titulo.textContent = "📊 Gerar relatório";
+
+        if(report) { report.style.display = "block"; report.hidden = false; }
+
+        // The existing administrative loader is reused so the report uses
+        // the same real protocol data as the search screen.
+        const btnListar = document.getElementById("btnListarTodos");
+
+        if(btnListar){
+            btnListar.click();
+        }
+
+        setTimeout(function(){
+            if(typeof inicializarDashboardV11 === "function"){
+                inicializarDashboardV11();
+            }
+            if(typeof renderDashboardV11 === "function"){
+                renderDashboardV11();
+            }
+        }, 1100);
+    }
+
+    if(btnPesquisar) btnPesquisar.addEventListener("click", mostrarPesquisaAdminV11);
+    if(btnRelatorio) btnRelatorio.addEventListener("click", mostrarRelatorioAdminV11);
+
+    if(btnVoltar){
+        btnVoltar.addEventListener("click", function(){
+            // If a call is being edited, close/minimize it before returning.
+            if(typeof fecharEdicaoChamado === "function"){
+                try{ fecharEdicaoChamado(); }catch(e){}
+            }
+            esconderTudoAdminV11();
+        });
+    }
+
+    // Initially, after login, only the two choices are visible.
+    esconderTudoAdminV11();
+})();
+
+</script>
+
+<script id="area-multipla-v12-js">
+(function(){
+
+    const ocorrenciaSelect =
+        document.getElementById("ocorrencia");
+
+    const areaExecucaoContainer =
+        document.getElementById("areaExecucaoContainer");
+
+    const areaExecucaoHidden =
+        document.getElementById("areaExecucao");
+
+    const areaTodosBlocos =
+        document.getElementById("areaTodosBlocos");
+
+    const areaBoxes =
+        () => Array.from(
+            document.querySelectorAll(
+                'input[name="areaExecucaoMulti"]'
+            )
+        );
+
+    function limparAreasExecucao() {
+
+        areaBoxes().forEach(
+            checkbox => {
+                checkbox.checked = false;
+            }
+        );
+
+        if (areaExecucaoHidden) {
+            areaExecucaoHidden.value = "";
+        }
+
+        atualizarResumoAreas();
+    }
+
+    function atualizarResumoAreas() {
+
+        const selecionados =
+            areaBoxes()
+                .filter(checkbox => checkbox.checked)
+                .map(checkbox => checkbox.value);
+
+        if (areaExecucaoHidden) {
+            areaExecucaoHidden.value =
+                selecionados.join(", ");
+        }
+
+        const resumo =
+            document.getElementById(
+                "areaExecucaoResumo"
+            );
+
+        if (resumo) {
+
+            resumo.textContent =
+                selecionados.length
+                    ? selecionados.join(" • ")
+                    : "Nenhum local selecionado.";
+
+        }
+
+    }
+
+    function atualizarAreaExecucao() {
+
+        const valor =
+            ocorrenciaSelect
+                ? ocorrenciaSelect.value
+                : "";
+
+        const exigeArea =
+            valor === "Dedetização" ||
+            valor === "Limpeza caixa d'água";
+
+        if (areaExecucaoContainer) {
+
+            areaExecucaoContainer.style.display =
+                exigeArea
+                    ? "block"
+                    : "none";
+
+        }
+
+        if (!exigeArea) {
+            limparAreasExecucao();
+        }
+
+    }
+
+    if (ocorrenciaSelect) {
+
+        ocorrenciaSelect.addEventListener(
+            "change",
+            atualizarAreaExecucao
+        );
+
+        atualizarAreaExecucao();
+
+    }
+
+    /*
+     * Funcionamento igual ao campo de andares:
+     *
+     * - Todos os Blocos é uma seleção exclusiva.
+     * - Se marcar Todos os Blocos, os blocos individuais são desmarcados.
+     * - Se marcar qualquer bloco individual, Todos os Blocos é desmarcado.
+     * - As demais opções podem ser combinadas.
+     */
+
+    areaBoxes().forEach(
+        checkbox => {
+
+            checkbox.addEventListener(
+                "change",
+                function() {
+
+                    if (
+                        this.id === "areaTodosBlocos" &&
+                        this.checked
+                    ) {
+
+                        areaBoxes().forEach(
+                            outro => {
+
+                                if (
+                                    outro !== this &&
+                                    outro.value.startsWith("Bloco ")
+                                ) {
+                                    outro.checked = false;
+                                }
+
+                            }
+                        );
+
+                    }
+
+                    if (
+                        this.value.startsWith("Bloco ") &&
+                        this.checked &&
+                        areaTodosBlocos &&
+                        areaTodosBlocos.checked
+                    ) {
+
+                        areaTodosBlocos.checked = false;
+
+                    }
+
+                    atualizarResumoAreas();
+
+                }
+            );
+
+        }
+    );
+
+    /*
+     * Disponibiliza a seleção para o restante do sistema.
+     */
+    window.getAreasExecucaoSelecionadas =
+        function() {
+
+            return areaBoxes()
+                .filter(
+                    checkbox =>
+                        checkbox.checked
+                )
+                .map(
+                    checkbox =>
+                        checkbox.value
+                );
+
+        };
+
+    atualizarResumoAreas();
+
+})();
+</script>
+
+
+
+<div id="adminConteudoAdministrativoV13" style="display:none;">
+<div class="admin-v13-wrap">
+<div class="admin-v13-header">
+<div>
+<div class="admin-v13-title">⚠️ Advertências / Notificações</div>
+<div class="admin-v13-hint">Registro administrativo por unidade, com protocolo próprio e vínculo opcional a um chamado.</div>
+</div>
+<div class="admin-v13-actions no-print">
+<button class="admin-v13-btn blue" id="btnAtualizarAdministrativoV13" type="button">🔄 Atualizar registros</button>
+<button class="admin-v13-btn gray" id="btnNovaAdministrativaV13" type="button">➕ Nova advertência/notificação</button><button class="admin-v13-btn blue" id="btnConsultarProtocolosAdmV13" type="button">📋 Protocolos administrativos</button>
+</div>
+</div>
+<div class="admin-v13-kpis" id="v13Kpis" style="display:none">
+<div class="admin-v13-kpi active" data-v13-kpi="todos" role="button" tabindex="0" title="Mostrar todos os registros encontrados">
+<strong id="v13TotalMedidas">0</strong><span>Total de registros</span>
+</div>
+<div class="admin-v13-kpi" data-v13-kpi="advertencias" role="button" tabindex="0" title="Mostrar somente Advertências">
+<strong id="v13TotalAdvertencias">0</strong><span>Advertências</span>
+</div>
+<div class="admin-v13-kpi" data-v13-kpi="notificacoes" role="button" tabindex="0" title="Mostrar somente Notificações">
+<strong id="v13TotalNotificacoes">0</strong><span>Notificações</span>
+</div>
+<div class="admin-v13-kpi" data-v13-kpi="reincidencias" role="button" tabindex="0" title="Mostrar registros envolvidos em reincidência">
+<strong id="v13TotalReincidencias">0</strong><span>Unidades com reincidência</span>
+</div>
+<div class="admin-v13-kpi" data-v13-kpi="recursos" role="button" tabindex="0" title="Mostrar notificações com recurso pendente">
+<strong id="v13TotalRecursos">0</strong><span>Recursos pendentes</span>
+</div>
+</div>
+<div class="admin-v13-hint" id="v13FiltroAtivo" style="display:none;margin:-4px 0 10px;font-weight:700"></div>
+<div class="admin-v13-card" id="adminV13FormCard">
+<h3 style="margin:0 0 12px;color:#123b5d">📄 Novo registro administrativo</h3>
+<form id="formAdministrativoV13">
+<div class="admin-v13-grid">
+
+<div>
+<label class="admin-v13-label">Tipo de medida *</label>
+<select class="admin-v13-select" id="v13Tipo" required>
+<option value="">Selecione...</option>
+<option value="Advertência">🟡 Advertência — sem multa</option>
+<option value="Notificação">🔴 Notificação — com multa</option>
+</select>
+</div>
+
+<div>
+<label class="admin-v13-label">Data do registro *</label>
+<input class="admin-v13-input" id="v13DataRegistro" required type="date"/>
+</div>
+
+<div>
+<label class="admin-v13-label">Data da infração *</label>
+<input class="admin-v13-input" id="v13DataOcorrencia" required type="date"/>
+</div>
+
+<div>
+<label class="admin-v13-label">Origem da ocorrência</label>
+<select class="admin-v13-select" id="v13Origem">
+<option>Administração</option>
+<option>Subsíndico</option>
+<option>Morador</option>
+<option>Funcionário</option>
+<option>CFTV</option>
+<option>Outro</option>
+</select>
+</div>
+
+<div>
+<label class="admin-v13-label">Bloco *</label>
+<select class="admin-v13-select" id="v13Bloco" required>
+<option value="">Selecione...</option>
+<option>1A</option><option>1B</option><option>1C</option><option>1D</option><option>1E</option>
+<option>2A</option><option>2B</option><option>2C</option><option>2D</option><option>2E</option>
+</select>
+</div>
+
+<div>
+<label class="admin-v13-label">Unidade *</label>
+<input class="admin-v13-input" id="v13Unidade" inputmode="numeric" maxlength="8" placeholder="Ex.: 804" required type="text"/>
+</div>
+
+<div>
+<label class="admin-v13-label">Categoria da infração *</label>
+<select class="admin-v13-select" id="v13Categoria" required>
+<option value="">Selecione...</option>
+<option value="Animais domésticos">🐶 Animais domésticos</option>
+<option value="Churrasqueira / Salão de festas">🎉 Churrasqueira / Salão de festas</option>
+<option value="Piscina">🏊 Piscina</option>
+<option value="Playground">🛝 Playground</option>
+<option value="Garagem">🚗 Garagem</option>
+<option value="Mudanças / Entregas / Obras">📦 Mudanças / Entregas / Obras</option>
+<option value="Quadra">🏀 Quadra</option>
+<option value="Elevadores">🛗 Elevadores</option>
+<option value="Ruídos / Sossego">🔊 Ruídos / Sossego</option>
+<option value="Proibições gerais">🚫 Proibições gerais</option>
+<option value="Acesso ao condomínio">🔐 Acesso ao condomínio</option>
+</select>
+</div>
+
+<div>
+<label class="admin-v13-label">Infração / ocorrência *</label>
+<select class="admin-v13-select" id="v13Infracao" required>
+<option value="">Selecione a categoria primeiro...</option>
+</select>
+</div>
+
+<div>
+<label class="admin-v13-label">Artigo / fundamento</label>
+<input class="admin-v13-input" id="v13BaseRegimento" readonly placeholder="Preenchido conforme a infração"/>
+</div>
+
+<div>
+<label class="admin-v13-label">Responsável pelo registro</label>
+<input class="admin-v13-input" id="v13Responsavel" placeholder="Nome do subsíndico/administrador" type="text"/>
+</div>
+
+<div class="full">
+<label class="admin-v13-label">Chamado relacionado (opcional)</label>
+<select class="admin-v13-select" id="v13ProtocoloChamado">
+<option value="">— Sem chamado associado —</option>
+</select>
+</div>
+
+<div class="full">
+<label class="admin-v13-label">Descrição detalhada *</label>
+<textarea class="admin-v13-textarea" id="v13Descricao" placeholder="Descreva objetivamente a ocorrência, local e circunstâncias." required></textarea>
+</div>
+
+<div class="full">
+<label class="admin-v13-label">Observações administrativas</label>
+<textarea class="admin-v13-textarea" id="v13Observacoes" placeholder="Informações administrativas adicionais." style="min-height:65px"></textarea>
+</div>
+
+<div class="full admin-v13-penalty" id="v13NotificacaoArea" style="display:none">
+<div class="admin-v13-section-title">💰 Penalidade da Notificação</div>
+<div class="admin-v13-grid">
+<div>
+<label class="admin-v13-label">Multa prevista (cotas)</label>
+<input class="admin-v13-input" id="v13MultaCotas" inputmode="decimal" min="0" step="0.01" type="number" placeholder="Ex.: 1"/>
+</div>
+<div>
+<label class="admin-v13-label">Valor da cota (R$)</label>
+<input class="admin-v13-input" id="v13ValorCota" inputmode="decimal" min="0" step="0.01" type="number" placeholder="Ex.: 330,00"/>
+</div>
+<div>
+<label class="admin-v13-label">Valor da multa (R$)</label>
+<input class="admin-v13-input" id="v13ValorMulta" readonly type="text" placeholder="Calculado automaticamente"/>
+</div>
+<div>
+<label class="admin-v13-label">Prazo para recurso</label>
+<input class="admin-v13-input" id="v13PrazoRecurso" readonly value="7 dias úteis"/>
+</div>
+</div>
+</div>
+
+<div class="full admin-v13-appeal" id="v13RecursoArea" style="display:none">
+<div class="admin-v13-section-title">⚖️ Recurso administrativo</div>
+<div class="admin-v13-grid">
+<div>
+<label class="admin-v13-label">Recurso apresentado?</label>
+<select class="admin-v13-select" id="v13RecursoApresentado">
+<option value="Não">Não</option>
+<option value="Sim">Sim</option>
+</select>
+</div>
+<div>
+<label class="admin-v13-label">Data do recurso</label>
+<input class="admin-v13-input" id="v13DataRecurso" type="date"/>
+</div>
+<div class="full">
+<label class="admin-v13-label">Justificativa do recurso</label>
+<textarea class="admin-v13-textarea" id="v13JustificativaRecurso" style="min-height:80px" placeholder="Registre a argumentação apresentada pelo morador."></textarea>
+</div>
+</div>
+</div>
+
+<div class="full admin-v13-decision" id="v13DecisaoArea" style="display:none">
+<div class="admin-v13-section-title">🏛️ Análise — Síndico e Conselho</div>
+<div class="admin-v13-grid">
+<div>
+<label class="admin-v13-label">Decisão</label>
+<select class="admin-v13-select" id="v13Decisao">
+<option value="">Aguardando análise</option>
+<option value="Recurso acolhido">🟢 Recurso acolhido — multa cancelada</option>
+<option value="Recurso indeferido">🔴 Recurso indeferido — multa mantida</option>
+</select>
+</div>
+<div>
+<label class="admin-v13-label">Data da decisão</label>
+<input class="admin-v13-input" id="v13DataDecisao" type="date"/>
+</div>
+<div>
+<label class="admin-v13-label">Responsáveis pela decisão</label>
+<input class="admin-v13-input" id="v13ResponsaveisDecisao" placeholder="Síndico / Conselheiros"/>
+</div>
+<div class="full">
+<label class="admin-v13-label">Justificativa da decisão</label>
+<textarea class="admin-v13-textarea" id="v13JustificativaDecisao" style="min-height:80px" placeholder="Fundamente a decisão administrativa."></textarea>
+</div>
+</div>
+</div>
+
+</div>
+<div class="admin-v13-actions no-print" style="margin-top:12px">
+<button class="admin-v13-btn green" id="btnSalvarAdministrativoV13" type="submit">💾 Registrar medida</button>
+<button class="admin-v13-btn gray" id="btnCancelarAdministrativoV13" type="button">Cancelar</button>
+</div>
+</form>
+</div>
+<div class="admin-v13-card" id="adminV13ProtocolosCard" style="display:none;">
+<h3 style="margin:0 0 10px;color:#123b5d">📋 Consulta de Protocolos Administrativos</h3>
+<div class="admin-v13-hint" style="margin-bottom:10px">
+Consulte todos os protocolos de Advertências e Notificações gerados pelo sistema.
+</div>
+<div class="admin-v13-grid">
+<div class="full">
+<label class="admin-v13-label">🔎 Buscar protocolo, unidade ou infração</label>
+<input class="admin-v13-input" id="v13BuscaProtocoloAdm" type="text" placeholder="Ex.: ADM-2026-0004, 804, Xixi de cachorro">
+</div>
+<div>
+<label class="admin-v13-label">Tipo</label>
+<select class="admin-v13-select" id="v13FiltroTipoAdm">
+<option value="">Todos</option>
+<option value="Advertência">Advertências</option>
+<option value="Notificação">Notificações</option>
+</select>
+</div>
+<div class="admin-v13-actions no-print" style="align-items:end">
+<button class="admin-v13-btn blue" id="btnBuscarProtocolosAdmV13" type="button">🔎 Consultar</button><button class="admin-v13-btn green" id="btnImprimirProtocolosAdmV13" type="button">🖨️ Imprimir protocolos</button>
+<button class="admin-v13-btn gray" id="btnLimparProtocolosAdmV13" type="button">Limpar</button>
+<button class="admin-v13-btn gray" id="btnFecharProtocolosAdmV13" type="button">↩️ Voltar</button>
+</div>
+<div class="full no-print" style="margin-top:4px">
+<label class="admin-v13-label">📅 Período para impressão dos protocolos</label>
+<select class="admin-v13-select" id="v13PeriodoImpressaoAdm">
+<option value="hoje">Hoje</option>
+<option value="mes">Este mês</option>
+<option value="mes_anterior">Mês anterior</option>
+<option value="periodo">Período personalizado</option>
+</select>
+</div>
+<div class="admin-v13-grid full no-print" id="v13PeriodoPersonalizadoAdm" style="display:none;margin-top:4px">
+<div>
+<label class="admin-v13-label">Data inicial</label>
+<input class="admin-v13-input" id="v13DataInicialImpressaoAdm" type="date">
+</div>
+<div>
+<label class="admin-v13-label">Data final</label>
+<input class="admin-v13-input" id="v13DataFinalImpressaoAdm" type="date">
+</div>
+</div>
+</div>
+<div id="v13ProtocolosResumoAdm" style="margin-top:12px"></div>
+<div class="admin-v13-result" id="v13ProtocolosListaAdm" style="margin-top:10px"></div>
+</div>
+<div class="admin-v13-card">
+<h3 style="margin:0 0 12px;color:#123b5d">🔎 Histórico da unidade</h3>
+<div class="admin-v13-grid">
+<div>
+<label class="admin-v13-label">Bloco</label>
+<select class="admin-v13-select" id="v13BuscaBloco">
+<option value="">Todos</option>
+<option>1A</option><option>1B</option><option>1C</option><option>1D</option><option>1E</option>
+<option>2A</option><option>2B</option><option>2C</option><option>2D</option><option>2E</option>
+</select>
+</div>
+<div>
+<label class="admin-v13-label">Unidade</label>
+<input class="admin-v13-input" id="v13BuscaUnidade" placeholder="Ex.: 804" type="text"/>
+</div>
+<div class="full admin-v13-actions no-print">
+<button class="admin-v13-btn blue" id="btnConsultarHistoricoV13" type="button">🔎 Consultar histórico</button>
+<button class="admin-v13-btn gray" id="btnLimparHistoricoV13" type="button">Limpar</button>
+<button class="admin-v13-btn green" id="btnRelatorioUnidadeV13" type="button">📄 Relatório da unidade</button>
+</div>
+</div>
+<div id="v13HistoricoResumo" style="margin-top:12px"></div>
+</div>
+<div class="admin-v13-card">
+<h3 style="margin:0 0 10px;color:#123b5d">📋 Registros administrativos</h3>
+<div class="admin-v13-result" id="v13ListaMedidas">Carregando...</div>
+</div>
+</div>
+</div>
+
+<div aria-hidden="true" class="admin-v13-modal" id="adm13DetalhesModal">
+<div aria-labelledby="adm13ModalTitulo" aria-modal="true" class="admin-v13-modal-box" role="dialog">
+<div class="admin-v13-modal-head">
+<div class="admin-v13-modal-title" id="adm13ModalTitulo">⚠️ Detalhes da Advertência</div>
+<button aria-label="Fechar" class="admin-v13-modal-close" id="btnFecharAdm13Modal" type="button">×</button>
+</div>
+<div class="admin-v13-modal-body">
+<div class="admin-v13-detail-grid">
+<div class="admin-v13-detail">
+<div class="admin-v13-detail-label">Protocolo</div>
+<div class="admin-v13-detail-value" id="adm13ModalProtocolo"></div>
+</div>
+<div class="admin-v13-detail">
+<div class="admin-v13-detail-label">Tipo</div>
+<div class="admin-v13-detail-value" id="adm13ModalTipo"></div>
+</div>
+<div class="admin-v13-detail">
+<div class="admin-v13-detail-label">Data do registro</div>
+<div class="admin-v13-detail-value" id="adm13ModalData"></div>
+</div>
+<div class="admin-v13-detail"><div class="admin-v13-detail-label">Data da infração</div><div class="admin-v13-detail-value" id="adm13ModalDataInfracao"></div></div>
+<div class="admin-v13-detail">
+<div class="admin-v13-detail-label">Unidade / Bloco</div>
+<div class="admin-v13-detail-value" id="adm13ModalUnidade"></div>
+</div>
+<div class="admin-v13-detail full">
+<div class="admin-v13-detail-label">Infração / Ocorrência</div>
+<div class="admin-v13-detail-value" id="adm13ModalInfracao"></div>
+</div>
+<div class="admin-v13-detail">
+<div class="admin-v13-detail-label">Base no Regimento</div>
+<div class="admin-v13-detail-value" id="adm13ModalBase"></div>
+</div>
+<div class="admin-v13-detail">
+<div class="admin-v13-detail-label">Responsável</div>
+<div class="admin-v13-detail-value" id="adm13ModalResponsavel"></div>
+</div>
+<div class="admin-v13-detail full">
+<div class="admin-v13-detail-label">Descrição</div>
+<div class="admin-v13-detail-value" id="adm13ModalDescricao"></div>
+</div>
+<div class="admin-v13-detail full">
+<div class="admin-v13-detail-label">Observações</div>
+<div class="admin-v13-detail-value" id="adm13ModalObservacoes"></div>
+</div>
+<div class="admin-v13-detail full">
+<div class="admin-v13-detail-label">🔗 Chamado relacionado</div>
+<div class="admin-v13-detail-value" id="adm13ModalChamado"></div>
+</div>
+<div class="admin-v13-detail full">
+<div class="admin-v13-detail-label">💰 Penalidade</div>
+<div class="admin-v13-detail-value" id="adm13ModalPenalidade"></div>
+</div>
+<div class="admin-v13-detail full">
+<div class="admin-v13-detail-label">⚖️ Recurso</div>
+<div class="admin-v13-detail-value" id="adm13ModalRecurso"></div>
+</div>
+<div class="admin-v13-detail full">
+<div class="admin-v13-detail-label">🏛️ Decisão</div>
+<div class="admin-v13-detail-value" id="adm13ModalDecisao"></div>
+</div>
+<div class="admin-v13-detail full">
+<div class="admin-v13-detail-label">Histórico da unidade</div>
+<div class="admin-v13-detail-value" id="adm13ModalHistorico"></div>
+</div>
+</div>
+<div class="admin-v13-modal-footer">
+
+<button class="admin-v13-btn blue" id="btnAbrirChamadoAdm13" style="display:none" type="button">🔎 Consultar chamado relacionado</button>
+<button class="admin-v13-btn green" id="btnImprimirAdm13Modal" type="button">🖨️ Imprimir</button>
+<button class="admin-v13-btn gray" id="btnFecharAdm13Modal2" type="button">Fechar</button>
+</div>
+</div>
+</div>
+</div>
+
+<script id="admin-dashboard-v45-js">
+(function(){
+    async function atualizarDashboardAdministrativoV45(){
+        if(!senhaAdministrativa){ return; }
+        const btn=document.getElementById('btnAtualizarDashboardAdmV45');
+        const alerta=document.getElementById('admV45Alerta');
+        if(btn){btn.disabled=true;btn.textContent='⏳ Atualizando...';}
+        try{
+            const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'list',adminPassword:senhaAdministrativa})});
+            const d=await r.json();
+            if(!r.ok || !d.sucesso) throw new Error(d.erro||'Não foi possível atualizar o painel.');
+            const s=d.estatisticas||{};
+            document.getElementById('admV45Abertos').textContent=Number(s.abertos||0);
+            document.getElementById('admV45Andamento').textContent=Number(s.andamento||0);
+            document.getElementById('admV45Resolvidos').textContent=Number(s.resolvidos||0);
+            document.getElementById('admV45Arquivados').textContent=Number(s.arquivados||0);
+            const pend=Number(s.abertos||0)+Number(s.andamento||0);
+            if(alerta){
+                alerta.style.display='block';
+                if(pend>0){
+                    alerta.classList.remove('ok');
+                    alerta.textContent='⚠️ ATENÇÃO: '+pend+' chamado(s) aguardam providência da Administração.';
+                }else{
+                    alerta.classList.add('ok');
+                    alerta.textContent='✅ Não há chamados abertos ou em andamento no momento.';
+                }
+            }
+        }catch(e){
+            if(alerta){alerta.style.display='block';alerta.classList.remove('ok');alerta.textContent='⚠️ Não foi possível atualizar a visão geral agora.';}
+            console.error('Dashboard administrativo V4.5:',e);
+        }finally{
+            if(btn){btn.disabled=false;btn.textContent='🔄 Atualizar';}
+        }
+    }
+    window.atualizarDashboardAdministrativoV45=atualizarDashboardAdministrativoV45;
+    const btn=document.getElementById('btnAtualizarDashboardAdmV45');
+    if(btn) btn.addEventListener('click',atualizarDashboardAdministrativoV45);
+})();
+</script>
+
+<script>
+function controlarVisaoGeralAoAbrirAdvertencias(ocultar) {
+    const painel = document.getElementById('adminDashboardV45');
+    if (!painel) return;
+
+    painel.style.display = ocultar ? 'none' : '';
+}
+</script>
+
+<script id="administrativo-v13-js">
+
+(function(){
+    const menu = document.getElementById('adminMenuV11');
+    const search = document.getElementById('adminConteudoPesquisaV11');
+    const report = document.getElementById('adminConteudoRelatorioV11');
+    const admin = document.getElementById('adminConteudoAdministrativoV13');
+    const voltar = document.getElementById('adminVoltarMenu');
+    const titulo = document.getElementById('adminModoTitulo');
+    const btnMenu = document.getElementById('menuAdministrativoV13');
+    const btnAtualizar = document.getElementById('btnAtualizarAdministrativoV13');
+    const form = document.getElementById('formAdministrativoV13');
+    const selectChamado = document.getElementById('v13ProtocoloChamado');
+    const lista = document.getElementById('v13ListaMedidas');
+    let medidas = [];
+    let ultimaConsulta = { bloco:'', unidade:'' };
+
+    function hojeLocal(){
+        const d=new Date();
+        const m=String(d.getMonth()+1).padStart(2,'0');
+        const dia=String(d.getDate()).padStart(2,'0');
+        return `${d.getFullYear()}-${m}-${dia}`;
+    }
+    function esc(v){ return typeof escapar==='function' ? escapar(v) : String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+    function formatarData(v){
+        if(!v) return '-';
+        const p=String(v).split('-');
+        return p.length===3 ? `${p[2]}/${p[1]}/${p[0]}` : v;
+    }
+    function mostrarAdmin(){
+    controlarVisaoGeralAoAbrirAdvertencias(true);
+    document.body.classList.add('admin-v13-active');
+    if(menu) menu.style.display='none';
+    if(search){search.style.display='none';search.hidden=true;}
+    if(report){report.style.display='none';report.hidden=true;}
+    const protocolosAdm=document.getElementById('adminV13ProtocolosCard');
+    if(protocolosAdm) protocolosAdm.style.display='none';
+
+    const localizarChamado=document.getElementById('localizarChamadoAdmin');
+    const editarChamado=document.getElementById('editarChamado');
+
+    if(localizarChamado) localizarChamado.style.display='none';
+    if(editarChamado) editarChamado.style.display='none';
+
+    if(admin){admin.style.display='block';admin.hidden=false;}
+    if(voltar) voltar.style.display='flex';
+    if(titulo) titulo.textContent='⚠️ Advertências / Notificações';
+
+    preencherDatas();
+    carregarChamadosSelect();
+    carregarMedidas();
+}
+    function preencherDatas(){
+        const h=hojeLocal();
+        const a=document.getElementById('v13DataRegistro');
+        const b=document.getElementById('v13DataOcorrencia');
+        if(a && !a.value) a.value=h;
+        if(b && !b.value) b.value=h;
+    }
+    function carregarChamadosSelect(){
+        if(!selectChamado) return;
+        const atuais = Array.isArray(window.chamados) ? window.chamados : (typeof chamados!=='undefined' ? chamados : []);
+        const arquivados = Array.isArray(window.chamadosArquivadosV11) ? window.chamadosArquivadosV11 : (typeof chamadosArquivadosV11!=='undefined' ? chamadosArquivadosV11 : []);
+        const todos=[...atuais,...arquivados].filter((x,i,a)=>x?.protocolo && a.findIndex(y=>y.protocolo===x.protocolo)===i);
+        const valor=selectChamado.value;
+        selectChamado.innerHTML='<option value="">— Sem chamado associado —</option>';
+        todos.sort((a,b)=>String(b.protocolo).localeCompare(String(a.protocolo))).forEach(c=>{
+            const o=document.createElement('option');
+            o.value=c.protocolo;
+            o.textContent=`${c.protocolo} — ${c.ocorrencia||'Sem ocorrência'} — ${c.bloco||'Sem bloco'}${c.arquivado?' — Arquivado':''}`;
+            selectChamado.appendChild(o);
+        });
+        if(valor) selectChamado.value=valor;
+    }
+    let filtroKpiAtual = 'todos';
+    let registrosDaPesquisaAtual = [];
+
+    function calcularReincidencias(regs){
+        const mapa={};
+        regs.forEach(x=>{
+            const k=`${x.bloco}|${x.unidade}|${x.infracao}`;
+            mapa[k]=(mapa[k]||0)+1;
+        });
+        return mapa;
+    }
+
+    function registrosReincidentes(regs){
+        const mapa=calcularReincidencias(regs);
+        return regs.filter(x=>{
+            const k=`${x.bloco}|${x.unidade}|${x.infracao}`;
+            return (mapa[k]||0)>1;
+        });
+    }
+
+    function atualizarKpis(regs=registrosDaPesquisaAtual){
+        const base=Array.isArray(regs)?regs:[];
+        const adv=base.filter(x=>x.tipo==='Advertência').length;
+        const not=base.filter(x=>x.tipo==='Notificação').length;
+        const reinc=Object.values(calcularReincidencias(base)).filter(n=>n>1).length;
+        const recursos=base.filter(x=>{
+            const m=obterMetaAdministrativa(x);
+            return x.tipo==='Notificação' && m.recursoApresentado==='Sim' && !m.decisao;
+        }).length;
+
+        document.getElementById('v13TotalMedidas').textContent=base.length;
+        document.getElementById('v13TotalAdvertencias').textContent=adv;
+        document.getElementById('v13TotalNotificacoes').textContent=not;
+        document.getElementById('v13TotalReincidencias').textContent=reinc;
+        const recEl=document.getElementById('v13TotalRecursos'); if(recEl) recEl.textContent=recursos;
+
+        const kpis=document.getElementById('v13Kpis');
+        if(kpis) kpis.style.display=base.length || registrosDaPesquisaAtual.length ? 'grid' : 'none';
+
+        const botoes=document.querySelectorAll('[data-v13-kpi]');
+        botoes.forEach(b=>{
+            b.classList.toggle('active',b.dataset.v13Kpi===filtroKpiAtual);
+            b.classList.toggle('disabled',base.length===0);
+        });
+
+        const rotulos={
+            todos:'Todos os registros',
+            advertencias:'Somente Advertências',
+            notificacoes:'Somente Notificações',
+            reincidencias:'Registros envolvidos em reincidência',
+            recursos:'Notificações com recurso pendente'
+        };
+        const aviso=document.getElementById('v13FiltroAtivo');
+        if(aviso){
+            aviso.style.display='block';
+            aviso.innerHTML=`Filtro ativo: <strong>${rotulos[filtroKpiAtual]}</strong> · ${base.length} registro(s)`;
+        }
+    }
+
+    function aplicarFiltroKpi(filtro){
+        if(!registrosDaPesquisaAtual.length) return;
+        filtroKpiAtual=filtro;
+        let regs=registrosDaPesquisaAtual;
+        if(filtro==='advertencias') regs=regs.filter(x=>x.tipo==='Advertência');
+        if(filtro==='notificacoes') regs=regs.filter(x=>x.tipo==='Notificação');
+        if(filtro==='reincidencias') regs=registrosReincidentes(regs);
+        if(filtro==='recursos') regs=regs.filter(x=>{
+            const m=obterMetaAdministrativa(x);
+            return x.tipo==='Notificação' && m.recursoApresentado==='Sim' && !m.decisao;
+        });
+        renderLista(regs);
+        atualizarKpis(registrosDaPesquisaAtual);
+    }
+
+    function reincidenciasDaUnidade(regs){
+        const mapa={}; regs.forEach(x=>{mapa[x.infracao]=(mapa[x.infracao]||0)+1;});
+        return Object.entries(mapa).filter(([,n])=>n>1).map(([i,n])=>`${i} (${n} registros)`);
+    }
+
+
+    function obterMetaAdministrativa(x){
+        // Compatibility layer: until the Worker is upgraded, the new fields
+        // can be supplied by a future API without breaking old records.
+        return {
+            multaCotas:x.multaCotas ?? '',
+            valorCota:x.valorCota ?? '',
+            valorMulta:x.valorMulta ?? '',
+            recursoApresentado:x.recursoApresentado ?? 'Não',
+            dataRecurso:x.dataRecurso ?? '',
+            justificativaRecurso:x.justificativaRecurso ?? '',
+            decisao:x.decisao ?? '',
+            dataDecisao:x.dataDecisao ?? '',
+            responsaveisDecisao:x.responsaveisDecisao ?? '',
+            justificativaDecisao:x.justificativaDecisao ?? '',
+            origem:x.origem ?? 'Administração',
+            categoria:x.categoria ?? ''
+        };
+    }
+
+    function formatarMoeda(v){
+        const n=Number(v);
+        if(!Number.isFinite(n)) return String(v||'');
+        return n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+    }
+
+    function statusAdministrativo(meta){
+        if(meta.decisao==='Recurso acolhido'){
+            return {texto:'🟢 Cancelada',classe:'cancelada'};
+        }
+        if(meta.decisao==='Recurso indeferido'){
+            return {texto:'🔴 Multa mantida',classe:'mantida'};
+        }
+        if(meta.recursoApresentado==='Sim'){
+            return {texto:'⚖️ Recurso pendente',classe:'recurso'};
+        }
+        return {texto:'🟡 Registrada',classe:'registrada'};
+    }
+
+    function calcularPrazoRecurso(data){
+        if(!data) return '';
+        const d=new Date(data+'T12:00:00');
+        let uteis=0;
+        while(uteis<7){
+            d.setDate(d.getDate()+1);
+            const dia=d.getDay();
+            if(dia!==0 && dia!==6) uteis++;
+        }
+        return d.toISOString().slice(0,10);
+    }
+
+    const infracoesRegimentoV45={
+        "Animais domésticos":[
+            ["Animal que comprometa a tranquilidade, higiene ou segurança","Art. 1º"],
+            ["Animal em desacordo com as regras do condomínio","Art. 1º"],
+            ["Excrementos em jardim/área comum","Art. 1º"],
+            ["Circulação de animal em área comum em desacordo","Art. 1º"],
+            ["Entrada de animal em área de lazer proibida","Art. 1º"]
+        ],
+        "Churrasqueira / Salão de festas":[
+            ["Uso do espaço sem reserva","Arts. 2º e 3º"],
+            ["Excesso de convidados","Arts. 2º e 3º"],
+            ["Uso fora do horário permitido","Arts. 2º e 3º"],
+            ["Som/perturbação em desacordo com as regras","Arts. 2º e 3º"],
+            ["Danos ou falta de limpeza após o evento","Arts. 2º e 3º"]
+        ],
+        "Piscina":[
+            ["Uso fora do horário permitido","Art. 4º"],
+            ["Criança desacompanhada em situação proibida","Art. 4º"],
+            ["Traje inadequado","Art. 4º"],
+            ["Uso inadequado da área ou mobiliário","Art. 4º"],
+            ["Entrada com objetos/bebidas proibidos","Art. 4º"]
+        ],
+        "Playground":[
+            ["Uso inadequado dos brinquedos","Art. 5º"],
+            ["Criança desacompanhada em desacordo com a regra","Art. 5º"],
+            ["Danos aos brinquedos","Art. 5º"],
+            ["Consumo de bebida/cigarro em local proibido","Art. 5º"]
+        ],
+        "Garagem":[
+            ["Estacionar fora dos limites da vaga","Art. 6º"],
+            ["Veículo não cadastrado/autorizado","Art. 6º"],
+            ["Exceder 20 km/h","Art. 6º"],
+            ["Circular na contramão","Art. 6º"],
+            ["Mecânica/lanternagem/pintura na garagem","Art. 6º"],
+            ["Uso irregular da vaga","Art. 6º"]
+        ],
+        "Mudanças / Entregas / Obras":[
+            ["Mudança fora do horário","Arts. 7º e 8º"],
+            ["Entrega fora do horário","Arts. 7º e 8º"],
+            ["Falta de agendamento","Arts. 7º e 8º"],
+            ["Obra fora do horário permitido","Art. 8º"],
+            ["Obra em domingo/feriado","Art. 8º"]
+        ],
+        "Quadra":[
+            ["Uso fora do horário","Art. 9º"],
+            ["Excesso de visitantes","Art. 9º"],
+            ["Torneio sem autorização","Art. 9º"],
+            ["Xingamentos/gritaria/perturbação","Art. 9º"]
+        ],
+        "Elevadores":[
+            ["Excesso de carga","Art. 10º"],
+            ["Gritaria/algazarra","Art. 10º"],
+            ["Uso indevido dos comandos","Art. 10º"],
+            ["Mudança fora do horário","Art. 10º"],
+            ["Sujar elevador ou rol","Art. 10º"]
+        ],
+        "Ruídos / Sossego":[
+            ["Som automotivo em área comum","Arts. 11 e 12"],
+            ["Ruído perturbando o sossego","Arts. 11 e 12"],
+            ["Caixa de som após 22h","Art. 12"],
+            ["Gritaria nos corredores/áreas comuns","Arts. 12 e 13"],
+            ["Reincidência de perturbação do sossego","Art. 14"]
+        ],
+        "Proibições gerais":[
+            ["Descarte irregular de lixo/detritos","Art. 15"],
+            ["Fumo em área proibida","Art. 15"],
+            ["Bebida alcoólica em área proibida","Art. 15"],
+            ["Desacato/agressão/desrespeito à Administração","Art. 15"],
+            ["Veículo abandonado","Art. 15"],
+            ["Drogas ilícitas","Art. 15"],
+            ["Ato que viole a privacidade de terceiros","Art. 15"]
+        ],
+        "Acesso ao condomínio":[
+            ["Cadastro de morador desatualizado","Arts. 16 e 17"],
+            ["Veículo sem TAG cadastrada","Art. 17"],
+            ["Troca de veículo sem atualização da TAG","Art. 17"],
+            ["Uso da TAG em desacordo com as regras","Art. 17"]
+        ]
+    };
+
+    function atualizarInfracoesV45(){
+        const cat=document.getElementById('v13Categoria');
+        const inf=document.getElementById('v13Infracao');
+        const base=document.getElementById('v13BaseRegimento');
+        if(!cat||!inf) return;
+        const lista=cat.value ? (infracoesRegimentoV45[cat.value]||[]) : [];
+        inf.innerHTML='<option value="">Selecione...</option>'+lista.map(([nome,art])=>`<option value="${esc(nome)}" data-artigo="${esc(art)}">${esc(nome)}</option>`).join('');
+        if(base) base.value='';
+    }
+
+    function atualizarBaseV45(){
+        const inf=document.getElementById('v13Infracao');
+        const opt=inf?.selectedOptions?.[0];
+        const base=document.getElementById('v13BaseRegimento');
+        if(base) base.value=opt?.dataset?.artigo||'';
+    }
+
+    function atualizarTipoAdministrativoV45(){
+        const tipo=document.getElementById('v13Tipo')?.value;
+        const notificacao=tipo==='Notificação';
+        ['v13NotificacaoArea','v13RecursoArea','v13DecisaoArea'].forEach(id=>{
+            const el=document.getElementById(id);
+            if(el) el.style.display=notificacao?'block':'none';
+        });
+        if(!notificacao){
+            ['v13MultaCotas','v13ValorCota','v13ValorMulta','v13DataRecurso','v13JustificativaRecurso','v13DataDecisao','v13ResponsaveisDecisao','v13JustificativaDecisao'].forEach(id=>{
+                const el=document.getElementById(id); if(el) el.value='';
+            });
+            const r=document.getElementById('v13RecursoApresentado'); if(r) r.value='Não';
+            const d=document.getElementById('v13Decisao'); if(d) d.value='';
+        }
+        calcularMultaV45();
+    }
+
+    function calcularMultaV45(){
+        const c=Number(document.getElementById('v13MultaCotas')?.value||0);
+        const v=Number(document.getElementById('v13ValorCota')?.value||0);
+        const out=document.getElementById('v13ValorMulta');
+        if(out) out.value=(c>0&&v>0)?`R$ ${formatarMoeda(c*v)}`:'';
+    }
+
+    function atualizarRecursoV45(){
+        const sim=document.getElementById('v13RecursoApresentado')?.value==='Sim';
+        const area=document.getElementById('v13DecisaoArea');
+        if(area) area.style.display=sim?'block':'none';
+        if(sim){
+            const data=document.getElementById('v13DataRegistro')?.value;
+            const campo=document.getElementById('v13PrazoRecurso');
+            if(campo && data){
+                campo.value='7 dias úteis — até '+formatarData(calcularPrazoRecurso(data));
+            }
+        }
+    }
+
+    function renderLista(regs=medidas){
+        if(!lista) return;
+        if(!regs.length){
+            lista.innerHTML='<div style="padding:16px;text-align:center;color:#64737c">Nenhum registro administrativo encontrado para o filtro selecionado.</div>';
+            return;
+        }
+        lista.innerHTML=`<table class="admin-v13-table"><thead><tr><th>Protocolo</th><th>Data do registro</th><th>Data da infração</th><th>Unidade</th><th>Tipo</th><th>Infração</th><th>Multa</th><th>Status</th><th>Ações</th></tr></thead><tbody>${regs.map(x=>{
+            const meta=obterMetaAdministrativa(x);
+            return `<tr>
+            <td><span class="admin-v13-protocol">${esc(x.protocolo)}</span></td>
+            <td>${esc(formatarData(x.dataRegistro))}</td>
+            <td>${esc(formatarData(x.dataOcorrencia || x.dataInfracao || x.dataFato || ''))}</td>
+            <td>${esc(x.unidade)} / ${esc(x.bloco)}</td>
+            <td><span class="admin-v13-badge ${x.tipo==='Advertência'?'adv':'not'}">${esc(x.tipo)}</span></td>
+            <td>${esc(x.infracao)}<br><small>${esc(x.descricao||'')}</small></td>
+            <td>${x.tipo==='Notificação' && meta.valorMulta ? `R$ ${esc(formatarMoeda(meta.valorMulta))}` : '—'}</td>
+            <td>${esc(statusAdministrativo(meta).texto)}</td>
+            <td><button class="admin-v13-btn gray" type="button" data-v13-view="${esc(x.protocolo)}">👁️ Ver</button></td>
+        </tr>`;
+        }).join('')}</tbody></table>`;
+        lista.querySelectorAll('[data-v13-view]').forEach(b=>b.addEventListener('click',()=>verRegistro(b.dataset.v13View)));
+
+    }
+
+    var adm13RegistroModalAtual = null;
+    function verRegistro(protocolo){
+        const x=medidas.find(m=>m.protocolo===protocolo); if(!x) return;
+        const hist=medidas.filter(m=>m.bloco===x.bloco && m.unidade===x.unidade);
+        const rec=hist.filter(m=>m.infracao===x.infracao).length;
+        adm13RegistroModalAtual = x;
+        const tipo = x.tipo === 'Notificação' ? '📄 Detalhes da Notificação' : '⚠️ Detalhes da Advertência';
+        const set=(id,value)=>{const el=document.getElementById(id); if(el) el.textContent=value||'Não informado';};
+        const modal=document.getElementById('adm13DetalhesModal');
+        document.getElementById('adm13ModalTitulo').textContent=tipo;
+        set('adm13ModalProtocolo',x.protocolo);
+        set('adm13ModalTipo',x.tipo);
+        set('adm13ModalData',formatarData(x.dataRegistro)); set('adm13ModalDataInfracao',formatarData(x.dataOcorrencia||x.dataInfracao||x.dataFato||''));
+        set('adm13ModalUnidade',`${x.unidade||'—'} / ${x.bloco||'—'}`);
+        set('adm13ModalInfracao',x.infracao);
+        set('adm13ModalBase',x.baseRegimento);
+        set('adm13ModalResponsavel',x.responsavel);
+        set('adm13ModalDescricao',x.descricao);
+        set('adm13ModalObservacoes',x.observacoes);
+        set('adm13ModalChamado',x.protocoloChamado||'Não associado');
+        const meta=obterMetaAdministrativa(x);
+        const st=statusAdministrativo(meta);
+        set('adm13ModalPenalidade',x.tipo==='Notificação' ? `${meta.multaCotas||'—'} cota(s)${meta.valorMulta?` · R$ ${formatarMoeda(meta.valorMulta)}`:''} · ${st.texto}` : 'Advertência — sem multa');
+        set('adm13ModalRecurso',x.tipo==='Notificação' ? `${meta.recursoApresentado==='Sim'?'Apresentado':'Não apresentado'}${meta.dataRecurso?' em '+formatarData(meta.dataRecurso):''}${meta.justificativaRecurso?' · '+meta.justificativaRecurso:''}` : 'Não se aplica');
+        set('adm13ModalDecisao',x.tipo==='Notificação' ? (meta.decisao ? `${meta.decisao}${meta.dataDecisao?' em '+formatarData(meta.dataDecisao):''}${meta.responsaveisDecisao?' · '+meta.responsaveisDecisao:''}` : 'Aguardando análise') : 'Não se aplica');
+        set('adm13ModalHistorico',`${hist.length} registro(s) nesta unidade · ${rec} registro(s) da mesma infração.`);
+        const btnChamado=document.getElementById('btnAbrirChamadoAdm13');
+        if(btnChamado){
+            btnChamado.style.display=x.protocoloChamado?'inline-block':'none';
+        }
+        if(modal){modal.classList.add('open');modal.setAttribute('aria-hidden','false');}
+    }
+    function fecharModalAdm13(){
+        const modal=document.getElementById('adm13DetalhesModal');
+        if(modal){modal.classList.remove('open');modal.setAttribute('aria-hidden','true');}
+        adm13RegistroModalAtual=null;
+    }
+    function consultarChamadoRelacionadoAdm13(){
+        const p=adm13RegistroModalAtual?.protocoloChamado;
+        if(!p) return;
+        fecharModalAdm13();
+        const input=document.getElementById('consultaProtocolo');
+        const btn=document.getElementById('btnConsultar');
+        if(input) input.value=p;
+        try{ mostrarSecao('consultar'); }catch(e){}
+        if(btn) btn.click();
+    }
+
+    function imprimirMedidaAdm13(){
+    const x=adm13RegistroModalAtual;
+    if(!x) return;
+
+    const esc=(v)=>String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    const tipo=String(x.tipo||'Advertência');
+    const notificacao=tipo.toLowerCase()==='notificação';
+    const titulo=notificacao?'NOTIFICAÇÃO POR INFRAÇÃO ÀS NORMAS INTERNAS':'ADVERTÊNCIA POR INFRAÇÃO ÀS NORMAS INTERNAS';
+    const meses=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+
+    function dataExtenso(v){
+        if(!v)return '';
+        const p=String(v).split('-');
+        return p.length===3?`${Number(p[2])} de ${meses[Number(p[1])-1]||p[1]} de ${p[0]}`:formatarData(v);
+    }
+
+    const dataRegistro=formatarData(x.dataRegistro||'');
+    const dataInfracao=formatarData(x.dataOcorrencia||x.dataInfracao||x.dataFato||'');
+    const unidade=String(x.unidade||'Não informada');
+    const bloco=String(x.bloco||'Não informado');
+    const responsavel=String(x.responsavel||'Administração');
+    const cotas=Number(x.multaCotas||0);
+    const valorCota=Number(x.valorCota||0);
+    const valorMulta=Number(x.valorMulta||0);
+
+    const logoData=new URL('logo parqueclube.png',window.location.href).href;
+    const qrData='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAM0AAADNAQAAAAAzx8nEAAACjElEQVR4nO2YMY7kNhBFX7UEUI6oG1AXGcmR7+Ncg9a4B/AxfJQVe07hjH2CpSKzAam/g/YCDrzOlgsYrkSAKuDHL/6q+jTxlbifvpaB/24qmlknex26K3Cf+mMwMxsqwzBJQBMZt9fB/7K55KS9LhsoZoKLGTApMeVGbmUO5TvUS/0c9OCY3Fv/rc/6p2ifH8s9BoTtBx1DfRgoSnIxE9zD70iZ4KS9dlFkZsAMH7cldFdm7mZtbcFOkor6XyPqm8gISFKqrxTcw0tP6Y4QgLOqFgVF7UEPv4QyMlNGv1NGmrowWkbeMVAyvFP3x8mlbvQ/D7/XZUO6pDLlc2LKUKY8B6y2UlDUDiNNAr8EoElu9UttGA9miuUZ9+RFO2WSal/R1UsAoUx5xj38RYX6bKxeKlNu5KQFJu1g9dl4+AW3+kuSMgGYcTFTu5lfgcJ2H+4WlDC1gZe+qdtFW9gkg0Zoe32XrNk701vdvnFiyu83rd6MK03qPjKUK3Pt0XaF0LHtMPoloH6+dVC5KCjmsxTzHNxKk8ok6TliKt8N32L2GbaffKYrW0/p/Lc4619TL/0xFPVNgu3VnibJcuWinPi47bduhJu/6JL0qW9SN273uj4Frf6SFDMw5Tno4XfK6Ct30RbLR4t9bna7ehe7cmsD8PZb5X0j6pKeO9eU/1o/XKw/U2Ju5GJuUjFd5FZmMFUW7InR7xT1c+jgGLaz2qBPtWcKWgEnKWF5Dm71e3AxV/ewJonYH4NW37KdbwtFwX0HnxJczGdJ+ctPq83GFxhSKiYlSQsu1vewz9gW3INj6NiUykt9D4tXYoTQXbdLuv/IMXUf9V97VsCtXno2LbzkVirvovb/g+Tf4k9GGKk1eOEOZAAAAABJRU5ErkJggg==';
+
+    const w=window.open('','_blank','width=900,height=1000');
+    if(!w){alert('O navegador bloqueou a janela de impressão. Permita pop-ups para este site.');return;}
+
+    w.document.write(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<title>${esc(tipo)} - ${esc(x.protocolo)}</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;padding:0;background:#fff}
+body{color:#222;font-family:"Times New Roman",Times,serif;font-size:13.5px;line-height:1.45}
+.page{position:relative;width:210mm;min-height:297mm;margin:0 auto;padding:12mm 18mm 22mm}
+.header{display:flex;align-items:center;gap:13px;padding-bottom:5px;border-bottom:2px solid #222}
+.header-logo{width:92px;height:58px;object-fit:contain}
+.header-text{flex:1;text-align:center;padding-right:92px}
+.header-title{font-size:20px;font-weight:700;text-transform:uppercase;line-height:1.05}
+.header-sub{font-size:10.5px;line-height:1.25;margin-top:3px}.header-phone{font-size:10.5px}
+.date-place{text-align:right;margin:14px 0 22px}.recipient{margin-left:7%;margin-bottom:18px;line-height:1.4}
+.reference{font-size:15px;font-weight:700;text-decoration:underline;text-transform:uppercase;margin:15px 0 22px 7%}
+p{margin:0 7% 13px;text-align:justify}
+.info{margin:12px 7% 16px;padding:8px 10px;border-left:3px solid #176b35}
+.info-row{margin:3px 0}.label{font-weight:700}.regimento{margin:10px 7% 15px;text-align:center}
+.regimento-title{font-weight:700;text-transform:uppercase;text-decoration:underline;margin-bottom:7px}
+.penalty{margin:15px 7%;padding:10px 12px;border:1px solid #777}
+.signature{margin:55px 7% 0;display:grid;grid-template-columns:1fr 1fr;gap:45px;text-align:center}
+.signature-line{border-top:1px solid #222;padding-top:5px;font-size:10.5px}
+.qrbox{position:absolute;right:18mm;bottom:13mm;width:31mm;text-align:center;font-family:Arial,Helvetica,sans-serif;color:#555;font-size:6.5px;line-height:1.15}
+.qrbox img{display:block;width:24mm;height:24mm;margin:0 auto 2mm}
+.qrprotocol{font-weight:700;font-size:6.5px;word-break:break-all}
+.footer{position:absolute;left:18mm;bottom:9mm;font-family:Arial,Helvetica,sans-serif;font-size:8px;letter-spacing:.4px;color:#555;text-transform:uppercase}
+@page{size:A4;margin:0}@media print{.page{width:auto;min-height:297mm;margin:0}}
+</style></head><body><div class="page">
+<header class="header"><img class="header-logo" src="${logoData}" alt="Parque Clube"><div class="header-text">
+<div class="header-title">CONDOMÍNIO PARQUE CLUBE</div>
+<div class="header-sub">Conjunto Residencial 05 - CR 05 Fazenda Santa Maria</div>
+<div class="header-sub">Valparaíso de Goiás – GO&nbsp;&nbsp; CEP: 72.872-600</div>
+<div class="header-phone">Telefone: 3054 – 8464</div>
+</div></header>
+<div class="date-place">Valparaíso de Goiás, ${esc(dataExtenso(x.dataRegistro||''))}.</div>
+<div class="recipient"><strong>Ilmo. (A) Sr (A). ${esc(responsavel)}</strong><br>Da Unid. ${esc(unidade)} - ${esc(bloco)} do Conjunto Residencial Parque Clube.</div>
+<div class="reference">REF.: ${esc(titulo)}</div>
+<p>Prezado (a) Senhor (a),</p>
+<p>Na qualidade de Administração do Condomínio Parque Clube, atendendo às obrigações estabelecidas, temos a missão de comunicar formalmente o descumprimento das normas deste residencial, conforme registro administrativo.</p>
+<div class="info">
+<div class="info-row"><span class="label">Protocolo:</span> ${esc(x.protocolo)}</div>
+<div class="info-row"><span class="label">Data do registro:</span> ${esc(dataRegistro||'Não informada')}</div>
+<div class="info-row"><span class="label">Data da infração:</span> ${esc(dataInfracao||'Não informada')}</div>
+<div class="info-row"><span class="label">Infração / ocorrência:</span> ${esc(x.infracao||'Não informada')}</div>
+</div>
+<p><strong>Descrição da ocorrência:</strong><br>${esc(x.descricao||'Não informado.')}</p>
+${x.observacoes?`<p><strong>Observações:</strong><br>${esc(x.observacoes)}</p>`:''}
+<div class="regimento"><div class="regimento-title">Previsto em:</div><div><strong>${esc(x.baseRegimento||'Não informada')}</strong></div></div>
+${notificacao?`<div class="penalty"><strong>PENALIDADE ADMINISTRATIVA</strong><br>${cotas?`Multa prevista: ${esc(cotas)} cota(s) condominial(is).<br>`:''}${valorCota?`Valor da cota: R$ ${valorCota.toFixed(2).replace('.',',')}<br>`:''}${valorMulta?`<strong>Valor da multa: R$ ${valorMulta.toFixed(2).replace('.',',')}</strong><br>`:''}Prazo para recurso administrativo: <strong>7 dias úteis</strong>.</div>`:''}
+<p>${notificacao?'Solicitamos sua atenção para o cumprimento das normas internas. Caso entenda necessário, poderá apresentar recurso administrativo dentro do prazo previsto.':'Solicitamos sua atenção para evitar reincidências e novos descumprimentos das normas, preservando os interesses de todos e as melhores condições de habitabilidade para toda a comunidade do condomínio.'}</p>
+<p>Atenciosamente,</p>
+<div class="signature"><div class="signature-line">${esc(responsavel)}<br>Administração do Condomínio</div><div class="signature-line">Ciente / assinatura do responsável pela unidade</div></div>
+
+<div class="qrbox">
+<img src="${qrData}" alt="QR Code">
+<div>Consulte pelo aplicativo</div>
+<div class="qrprotocol">${esc(x.protocolo)}</div>
+</div>
+<div class="footer">REGIMENTO INTERNO</div>
+</div><script>window.onload=function(){setTimeout(function(){window.print();},300);};<\/script>
+</body></html>`);
+    w.document.close();
+}
+
+async function carregarMedidas(){
+        if(!senhaAdministrativa){alert('Faça o login administrativo primeiro.');return;}
+        if(btnAtualizar){btnAtualizar.disabled=true;btnAtualizar.textContent='⏳ Atualizando...';}
+        try{
+            const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'listAdministrative',adminPassword:senhaAdministrativa})});
+            const d=await r.json();
+            if(!r.ok||!d.sucesso){
+                const detalhe = d.detalhe ? `\n\nDetalhe técnico: ${d.detalhe}` : '';
+                throw new Error((d.erro||'Não foi possível carregar os registros.') + detalhe);
+            }
+            medidas=Array.isArray(d.medidas)?d.medidas:[];
+            registrosDaPesquisaAtual=[];
+            filtroKpiAtual='todos';
+            const kpis=document.getElementById('v13Kpis');
+            const aviso=document.getElementById('v13FiltroAtivo');
+            if(kpis) kpis.style.display='none';
+            if(aviso) aviso.style.display='none';
+            renderLista([]);
+            carregarChamadosSelect();
+        }catch(e){
+            console.error('Erro ao listar Advertências/Notificações:', e);
+            alert(e.message||'Erro ao carregar registros administrativos.');
+        }
+        finally{if(btnAtualizar){btnAtualizar.disabled=false;btnAtualizar.textContent='🔄 Atualizar registros';}}
+    }
+    async function garantirChamadosCarregados(){
+        const tem = (typeof chamados!=='undefined' && (chamados.length || chamadosArquivadosV11.length));
+        if(tem){carregarChamadosSelect();return true;}
+
+        const r = await fetch(API,{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({action:'list',adminPassword:senhaAdministrativa})
+        });
+
+        const d = await r.json();
+
+        if(!r.ok || !d.sucesso){
+            throw new Error(d.erro || 'Não foi possível carregar os chamados.');
+        }
+
+        if(typeof chamados!=='undefined') chamados=d.chamados||[];
+        if(typeof chamadosArquivadosV11!=='undefined') chamadosArquivadosV11=d.chamadosArquivados||[];
+
+        carregarChamadosSelect();
+        return true;
+    }
+    function limparForm(){
+        if(form) form.reset(); preencherDatas();
+    }
+    async function salvar(e){
+        e.preventDefault();
+        const bot=document.getElementById('btnSalvarAdministrativoV13');
+        const payload={
+            action:'createAdministrative', adminPassword:senhaAdministrativa,
+            tipo:document.getElementById('v13Tipo').value,
+            dataRegistro:document.getElementById('v13DataRegistro').value,
+            dataOcorrencia:document.getElementById('v13DataOcorrencia').value,
+            bloco:document.getElementById('v13Bloco').value,
+            unidade:document.getElementById('v13Unidade').value.trim(),
+            infracao:document.getElementById('v13Infracao').value,
+            descricao:document.getElementById('v13Descricao').value.trim(),
+            baseRegimento:document.getElementById('v13BaseRegimento').value.trim(),
+            responsavel:document.getElementById('v13Responsavel').value.trim(),
+            observacoes:document.getElementById('v13Observacoes').value.trim(),
+            protocoloChamado:document.getElementById('v13ProtocoloChamado').value,
+            origem:document.getElementById('v13Origem').value,
+            categoria:document.getElementById('v13Categoria').value,
+            multaCotas:document.getElementById('v13MultaCotas').value,
+            valorCota:document.getElementById('v13ValorCota').value,
+            valorMulta:(()=>{
+                const c=Number(document.getElementById('v13MultaCotas').value||0);
+                const v=Number(document.getElementById('v13ValorCota').value||0);
+                return c>0&&v>0 ? (c*v).toFixed(2) : '';
+            })(),
+            prazoRecurso:document.getElementById('v13PrazoRecurso').value,
+            recursoApresentado:document.getElementById('v13RecursoApresentado').value,
+            dataRecurso:document.getElementById('v13DataRecurso').value,
+            justificativaRecurso:document.getElementById('v13JustificativaRecurso').value.trim(),
+            decisao:document.getElementById('v13Decisao').value,
+            dataDecisao:document.getElementById('v13DataDecisao').value,
+            responsaveisDecisao:document.getElementById('v13ResponsaveisDecisao').value.trim(),
+            justificativaDecisao:document.getElementById('v13JustificativaDecisao').value.trim()
+        };
+        if(!payload.tipo||!payload.bloco||!payload.unidade||!payload.categoria||!payload.infracao||!payload.descricao){alert('Preencha os campos obrigatórios.');return;}
+        if(payload.tipo==='Notificação' && !payload.multaCotas){alert('Informe a quantidade de cotas da multa prevista para a Notificação.');return;}
+        bot.disabled=true;bot.textContent='⏳ Registrando...';
+        try{
+            const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+            const d=await r.json(); if(!r.ok||!d.sucesso) throw new Error(d.erro||'Não foi possível registrar.');
+            alert(`✅ ${d.medida.tipo} registrada com sucesso.\n\nProtocolo: ${d.medida.protocolo}`);
+            limparForm(); await carregarMedidas(); consultarHistorico(payload.bloco,payload.unidade);
+        }catch(e){alert(e.message||'Erro ao registrar medida administrativa.');}
+        finally{bot.disabled=false;bot.textContent='💾 Registrar medida';}
+    }
+    function consultarHistorico(blocoArg,unidadeArg){
+        const bloco=blocoArg!==undefined?blocoArg:document.getElementById('v13BuscaBloco').value;
+        const unidade=unidadeArg!==undefined?String(unidadeArg).trim():document.getElementById('v13BuscaUnidade').value.trim();
+        ultimaConsulta={bloco,unidade};
+
+        if(!bloco&&!unidade){
+            registrosDaPesquisaAtual=[];
+            filtroKpiAtual='todos';
+            const kpis=document.getElementById('v13Kpis');
+            const aviso=document.getElementById('v13FiltroAtivo');
+            if(kpis) kpis.style.display='none';
+            if(aviso) aviso.style.display='none';
+            const resumo=document.getElementById('v13HistoricoResumo');
+            if(resumo) resumo.innerHTML='<div class="admin-v13-hint">Informe o bloco e/ou a unidade para consultar o histórico.</div>';
+            renderLista([]);
+            return;
+        }
+
+        const regs=medidas.filter(x=>(!bloco||x.bloco===bloco)&&(!unidade||x.unidade===unidade));
+        registrosDaPesquisaAtual=regs;
+        filtroKpiAtual='todos';
+
+        const resumo=document.getElementById('v13HistoricoResumo');
+        if(!resumo) return;
+
+        const rec=reincidenciasDaUnidade(regs);
+        resumo.innerHTML=`<div style="font-weight:800;color:#123b5d;margin-bottom:7px">Histórico — ${unidade?`Unidade ${esc(unidade)}`:''}${bloco?` / Bloco ${esc(bloco)}`:''}</div>
+            <div class="admin-v13-hint">${regs.length} registro(s) encontrado(s).</div>
+            ${rec.length?`<div class="admin-v13-alert">⚠️ ATENÇÃO — possível reincidência: ${esc(rec.join('; '))}</div>`:'<div style="margin-top:8px;color:#176b35;font-weight:700">✓ Nenhuma reincidência identificada entre os registros encontrados.</div>'}`;
+
+        atualizarKpis(regs);
+        renderLista(regs);
+    }
+
+    
+    
+    function imprimirProtocolosAdministrativos(){
+        const texto=document.getElementById('v13BuscaProtocoloAdm')?.value||'';
+        const tipo=document.getElementById('v13FiltroTipoAdm')?.value||'';
+        const periodo=document.getElementById('v13PeriodoImpressaoAdm')?.value||'hoje';
+        const termo=String(texto).trim().toLowerCase();
+
+        const agora=new Date();
+        const pad=n=>String(n).padStart(2,'0');
+        const isoLocal=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+
+        let inicio='', fim='', descricaoPeriodo='Hoje';
+
+        if(periodo==='hoje'){
+            inicio=isoLocal(agora);
+            fim=inicio;
+            descricaoPeriodo='Hoje';
+        }else if(periodo==='mes'){
+            inicio=`${agora.getFullYear()}-${pad(agora.getMonth()+1)}-01`;
+            fim=isoLocal(new Date(agora.getFullYear(),agora.getMonth()+1,0));
+            descricaoPeriodo='Este mês';
+        }else if(periodo==='mes_anterior'){
+            const primeiroMesAnterior=new Date(agora.getFullYear(),agora.getMonth()-1,1);
+            inicio=isoLocal(primeiroMesAnterior);
+            fim=isoLocal(new Date(agora.getFullYear(),agora.getMonth(),0));
+            descricaoPeriodo='Mês anterior';
+        }else{
+            inicio=document.getElementById('v13DataInicialImpressaoAdm')?.value||'';
+            fim=document.getElementById('v13DataFinalImpressaoAdm')?.value||'';
+            descricaoPeriodo=(inicio&&fim)?`${formatarData(inicio)} a ${formatarData(fim)}`:'Período personalizado';
+            if(!inicio||!fim){
+                alert('Informe a data inicial e a data final para gerar o relatório.');
+                return;
+            }
+            if(inicio>fim){
+                alert('A data inicial não pode ser posterior à data final.');
+                return;
+            }
+        }
+
+        const regs=medidas
+            .filter(x=>{
+                const d=String(x.dataRegistro||'').slice(0,10);
+                return d && d>=inicio && d<=fim;
+            })
+            .filter(x=>!tipo || String(x.tipo||'')===tipo)
+            .filter(x=>{
+                if(!termo) return true;
+                const base=[
+                    x.protocolo,x.unidade,x.bloco,x.tipo,
+                    x.infracao,x.descricao,x.protocoloChamado
+                ].map(v=>String(v||'').toLowerCase()).join(' ');
+                return base.includes(termo);
+            })
+            .slice()
+            .sort((a,b)=>String(b.dataRegistro||'').localeCompare(String(a.dataRegistro||'')) ||
+                         String(b.protocolo||'').localeCompare(String(a.protocolo||'')));
+
+        const esc=(v)=>String(v??'')
+            .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+            .replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+            .replace(/'/g,'&#39;');
+
+        const emissao=agora.toLocaleDateString('pt-BR')+' às '+
+            agora.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+
+        const rows=regs.map(x=>`
+        <tr>
+          <td><strong>${esc(x.protocolo||'—')}</strong></td>
+          <td>${esc(formatarData(x.dataRegistro||''))}</td>
+          <td>${esc(formatarData(x.dataOcorrencia||x.dataInfracao||x.dataFato||''))}</td>
+          <td>${esc(x.unidade||'—')} / ${esc(x.bloco||'—')}</td>
+          <td>${esc(x.tipo||'—')}</td>
+          <td>${esc(x.infracao||'—')}</td>
+        </tr>`).join('');
+
+        const w=window.open('','_blank','width=1100,height=900');
+        if(!w){
+            alert('O navegador bloqueou a janela de impressão. Permita pop-ups para este site.');
+            return;
+        }
+
+        w.document.write(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<title>RELATÓRIO DE PROTOCOLOS ADMINISTRATIVOS - Parque Clube</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:#fff}
+body{font-family:Arial,Helvetica,sans-serif;color:#18313f;font-size:11px}
+.page{width:210mm;min-height:297mm;margin:0 auto;padding:12mm 14mm 16mm}
+.header{display:flex;align-items:center;gap:13px;padding-bottom:6px;border-bottom:2px solid #222}
+.header-logo{width:92px;height:58px;object-fit:contain}
+.header-text{flex:1;text-align:center;padding-right:92px}
+.header-title{font-family:"Times New Roman",Times,serif;font-size:20px;font-weight:700;line-height:1.05}
+.header-sub{font-family:"Times New Roman",Times,serif;font-size:10.5px;line-height:1.25;margin-top:3px}
+.header-phone{font-family:"Times New Roman",Times,serif;font-size:10.5px}
+.title{text-align:center;font-size:18px;color:#123b5d;margin:20px 0 12px;font-weight:800;text-transform:uppercase}
+.meta{border:1px solid #d6e0e5;border-radius:7px;padding:9px;margin-bottom:10px}
+.meta strong{color:#123b5d}
+.emissao{text-align:right;font-size:9px;color:#555;margin-top:6px}
+table{width:100%;border-collapse:collapse;table-layout:fixed;margin-top:12px}
+th{background:#123b5d;color:#fff;text-align:left;padding:7px 6px;font-size:10px}
+td{border:1px solid #ccd7dc;padding:6px;font-size:9.5px;vertical-align:top;word-wrap:break-word}
+th:nth-child(1){width:18%}
+th:nth-child(2){width:13%}
+th:nth-child(3){width:13%}
+th:nth-child(4){width:18%}
+th:nth-child(5){width:13%}
+th:nth-child(6){width:25%}
+.note{margin-top:12px;border:1px solid #d6e0e5;border-radius:7px;padding:8px;color:#555;font-size:9px}
+.footer{margin-top:24px;border-top:1px solid #d6e0e5;padding-top:7px;font-size:8px;color:#666;display:flex;justify-content:space-between}
+.no-print{margin-top:15px;padding:8px 14px}
+@page{size:A4;margin:0}
+@media print{.page{width:auto;min-height:297mm;margin:0}.no-print{display:none!important}}
+</style></head><body><div class="page">
+
+<header class="header">
+<img class="header-logo" src="${location.origin}/logo parqueclube.png" alt="Parque Clube">
+<div class="header-text">
+<div class="header-title">CONDOMÍNIO PARQUE CLUBE</div>
+<div class="header-sub">Conjunto Residencial 05 - CR 05 Fazenda Santa Maria</div>
+<div class="header-sub">Valparaíso de Goiás – GO&nbsp;&nbsp; CEP: 72.872-600</div>
+<div class="header-phone">Telefone: 3054 – 8464</div>
+</div>
+</header>
+
+<div class="title">RELATÓRIO DE PROTOCOLOS ADMINISTRATIVOS</div>
+
+<div class="meta">
+<strong>Período:</strong> ${esc(descricaoPeriodo)}
+&nbsp;&nbsp;&nbsp;
+<strong>Total de protocolos:</strong> ${regs.length}
+${tipo?`&nbsp;&nbsp;&nbsp;<strong>Tipo:</strong> ${esc(tipo)}`:''}
+${termo?`<br><strong>Filtro:</strong> ${esc(texto)}`:''}
+<div class="emissao"><strong>Data e hora de emissão:</strong> ${esc(emissao)}</div>
+</div>
+
+<table>
+<thead><tr>
+<th>Protocolo</th>
+<th>Data do registro</th>
+<th>Data da infração</th>
+<th>Unidade / Bloco</th>
+<th>Tipo</th>
+<th>Descrição da infração</th>
+</tr></thead>
+<tbody>
+${rows||'<tr><td colspan="6" style="text-align:center;padding:14px">Nenhum protocolo encontrado para o período selecionado.</td></tr>'}
+</tbody></table>
+
+<div class="note">
+<strong>Observação:</strong> relatório dos protocolos administrativos registrados no Sistema de Gestão do Condomínio Parque Clube.
+</div>
+
+<div class="footer">
+<span>Sistema de Gestão do Condomínio</span>
+<span>Relatório de Protocolos Administrativos</span>
+</div>
+
+<button class="no-print" onclick="window.print()">🖨️ Imprimir / Salvar PDF</button>
+</div></body></html>`);
+
+        w.document.close();
+        setTimeout(()=>w.print(),500);
+    }
+
+function renderProtocolosAdministrativos(filtroTexto='', filtroTipo=''){
+        const lista=document.getElementById('v13ProtocolosListaAdm');
+        const resumo=document.getElementById('v13ProtocolosResumoAdm');
+        if(!lista) return;
+
+        const termo=String(filtroTexto||'').trim().toLowerCase();
+        const tipo=String(filtroTipo||'').trim();
+
+        const regs=medidas
+            .filter(x=>!tipo || String(x.tipo||'')===tipo)
+            .filter(x=>{
+                if(!termo) return true;
+                const base=[
+                    x.protocolo,
+                    x.unidade,
+                    x.bloco,
+                    x.tipo,
+                    x.infracao,
+                    x.descricao,
+                    x.protocoloChamado
+                ].map(v=>String(v||'').toLowerCase()).join(' ');
+                return base.includes(termo);
+            })
+            .slice()
+            .sort((a,b)=>String(b.dataRegistro||'').localeCompare(String(a.dataRegistro||'')) ||
+                         String(b.protocolo||'').localeCompare(String(a.protocolo||'')));
+
+        if(resumo){
+            resumo.innerHTML=`<div class="admin-v13-hint"><strong>${regs.length}</strong> protocolo(s) encontrado(s).</div>`;
+        }
+
+        if(!regs.length){
+            lista.innerHTML='<div style="padding:16px;text-align:center;color:#64737c">Nenhum protocolo administrativo encontrado.</div>';
+            return;
+        }
+
+        lista.innerHTML=`<table class="admin-v13-table">
+<thead><tr>
+<th>Protocolo</th>
+<th>Data do registro</th>
+<th>Data da infração</th>
+<th>Unidade / Bloco</th>
+<th>Tipo</th>
+<th>Infração</th>
+<th>Ação</th>
+</tr></thead>
+<tbody>${regs.map(x=>`
+<tr>
+<td><strong>${esc(x.protocolo||'—')}</strong></td>
+<td>${esc(formatarData(x.dataRegistro||''))}</td>
+<td>${esc(formatarData(x.dataOcorrencia||x.dataInfracao||x.dataFato||''))}</td>
+<td>${esc(x.unidade||'—')} / ${esc(x.bloco||'—')}</td>
+<td><span class="admin-v13-badge ${x.tipo==='Advertência'?'adv':'not'}">${esc(x.tipo||'—')}</span></td>
+<td>${esc(x.infracao||'—')}</td>
+<td><button class="admin-v13-btn gray" type="button" data-adm-protocol-view="${esc(x.protocolo)}">👁️ Ver</button></td>
+</tr>`).join('')}</tbody></table>`;
+
+        lista.querySelectorAll('[data-adm-protocol-view]').forEach(btn=>{
+            btn.addEventListener('click',()=>verRegistro(btn.dataset.admProtocolView));
+        });
+    }
+
+    function abrirConsultaProtocolosAdministrativos(){
+        const card=document.getElementById('adminV13ProtocolosCard');
+        if(!card) return;
+        card.style.display='block';
+        const busca=document.getElementById('v13BuscaProtocoloAdm');
+        const tipo=document.getElementById('v13FiltroTipoAdm');
+        if(busca) busca.value='';
+        if(tipo) tipo.value='';
+        renderProtocolosAdministrativos('','');
+        card.scrollIntoView({behavior:'smooth',block:'start'});
+    }
+
+    function fecharConsultaProtocolosAdministrativos(){
+        const card=document.getElementById('adminV13ProtocolosCard');
+        if(card) card.style.display='none';
+    }
+
+function relatorioUnidade(){
+    const bloco=ultimaConsulta.bloco || document.getElementById('v13BuscaBloco').value;
+    const unidade=ultimaConsulta.unidade || document.getElementById('v13BuscaUnidade').value.trim();
+    if(!bloco||!unidade){
+        alert('Consulte primeiro o bloco e a unidade.');
+        return;
+    }
+
+    const regs=medidas.filter(x=>x.bloco===bloco&&x.unidade===unidade);
+    const w=window.open('','_blank','width=1000,height=900');
+    if(!w){
+        alert('O navegador bloqueou a nova janela. Permita pop-ups para gerar o relatório.');
+        return;
+    }
+
+    const esc=(v)=>String(v??'')
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+        .replace(/'/g,'&#39;');
+
+    function dataHoraEmissao(){
+        const agora=new Date();
+        const data=agora.toLocaleDateString('pt-BR');
+        const hora=agora.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+        return `${data} às ${hora}`;
+    }
+
+    function dataRegistro(x){
+        return x.dataRegistro ? formatarData(x.dataRegistro) : '—';
+    }
+
+    function dataInfracao(x){
+        const v=x.dataOcorrencia||x.dataInfracao||x.dataFato||'';
+        return v ? formatarData(v) : '—';
+    }
+
+    const rows=regs.map(x=>`
+        <tr>
+            <td>${esc(dataRegistro(x))}</td>
+            <td>${esc(dataInfracao(x))}</td>
+            <td><span class="tipo ${String(x.tipo||'').toLowerCase()==='notificação'?'notificacao':'advertencia'}">${esc(x.tipo||'—')}</span></td>
+            <td>${esc(x.infracao||'—')}${x.descricao?`<div class="descricao">${esc(x.descricao)}</div>`:''}</td>
+            <td><strong>${esc(x.protocolo||'—')}</strong></td>
+        </tr>`).join('');
+
+    const emissao=dataHoraEmissao();
+
+    w.document.write(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<title>Histórico de Advertências / Notificações - ${esc(unidade)}/${esc(bloco)}</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:#fff}
+body{font-family:Arial,Helvetica,sans-serif;color:#18313f;font-size:12px}
+.page{width:210mm;min-height:297mm;margin:0 auto;padding:12mm 14mm 16mm}
+.header{display:flex;align-items:center;gap:13px;padding-bottom:6px;border-bottom:2px solid #222}
+.header-logo{width:92px;height:58px;object-fit:contain}
+.header-text{flex:1;text-align:center;padding-right:92px}
+.header-title{font-family:"Times New Roman",Times,serif;font-size:20px;font-weight:700;line-height:1.05}
+.header-sub{font-family:"Times New Roman",Times,serif;font-size:10.5px;line-height:1.25;margin-top:3px}
+.header-phone{font-family:"Times New Roman",Times,serif;font-size:10.5px}
+.title{font-size:20px;color:#123b5d;margin:22px 0 12px;font-weight:700}
+.meta{border:1px solid #d6e0e5;border-radius:7px;padding:10px;margin-bottom:10px}
+.meta strong{color:#123b5d}
+.emissao{text-align:right;font-size:10px;color:#555;margin-top:4px}
+table{width:100%;border-collapse:collapse;table-layout:fixed;margin-top:14px}
+th{background:#123b5d;color:#fff;text-align:left;padding:8px 7px;font-size:11px}
+td{border:1px solid #ccd7dc;padding:7px;font-size:10.5px;vertical-align:top;word-wrap:break-word}
+th:nth-child(1){width:14%}
+th:nth-child(2){width:14%}
+th:nth-child(3){width:14%}
+th:nth-child(4){width:38%}
+th:nth-child(5){width:20%}
+.tipo{font-weight:700}
+.tipo.notificacao{color:#b42318}
+.tipo.advertencia{color:#9a6700}
+.descricao{margin-top:4px;color:#555;font-size:9.5px;line-height:1.3}
+.observacao{border:1px solid #d6e0e5;border-radius:7px;padding:10px;margin-top:14px}
+.footer{margin-top:30px;border-top:1px solid #d6e0e5;padding-top:8px;font-size:8.5px;color:#666;display:flex;justify-content:space-between}
+@page{size:A4;margin:0}
+@media print{
+    .page{width:auto;min-height:297mm;margin:0}
+    button{display:none!important}
+}
+</style></head><body><div class="page">
+
+<header class="header">
+<img class="header-logo" src="${location.origin}/logo parqueclube.png" alt="Parque Clube">
+<div class="header-text">
+<div class="header-title">CONDOMÍNIO PARQUE CLUBE</div>
+<div class="header-sub">Conjunto Residencial 05 - CR 05 Fazenda Santa Maria</div>
+<div class="header-sub">Valparaíso de Goiás – GO&nbsp;&nbsp; CEP: 72.872-600</div>
+<div class="header-phone">Telefone: 3054 – 8464</div>
+</div>
+</header>
+
+<div class="title">Histórico de Advertências / Notificações</div>
+
+<div class="meta">
+<strong>Unidade:</strong> ${esc(unidade)}
+&nbsp;&nbsp;&nbsp;
+<strong>Bloco:</strong> ${esc(bloco)}
+<br>
+<strong>Total de registros:</strong> ${regs.length}
+<div class="emissao"><strong>Documento emitido em:</strong> ${esc(emissao)}</div>
+</div>
+
+<table>
+<thead><tr>
+<th>Data do registro</th>
+<th>Data da infração</th>
+<th>Tipo</th>
+<th>Descrição da infração</th>
+<th>Protocolo</th>
+</tr></thead>
+<tbody>
+${rows||'<tr><td colspan="5">Nenhum registro encontrado.</td></tr>'}
+</tbody>
+</table>
+
+<div class="observacao">
+<strong>Observação:</strong> documento destinado ao acompanhamento administrativo da unidade.
+</div>
+
+<div class="footer">
+<span>Sistema de Gestão do Condomínio</span>
+<span>Documento administrativo • Histórico da unidade</span>
+</div>
+
+<button onclick="window.print()" style="margin-top:16px;padding:9px 16px">🖨️ Imprimir / Salvar PDF</button>
+
+</div></body></html>`);
+
+    w.document.close();
+    setTimeout(()=>w.print(),500);
+}
+    async function abrir(){
+        mostrarAdmin();
+        preencherDatas();
+        await carregarMedidas();
+        try{
+            await garantirChamadosCarregados();
+        }catch(e){
+            console.warn('Aviso: chamados relacionados não estão disponíveis no D1 oficial. O cadastro administrativo continuará funcionando sem vínculo de chamado.', e);
+            chamados = [];
+            chamadosArquivadosV11 = [];
+            carregarChamadosSelect();
+        }
+    }
+    window.abrirAdministrativoParaChamado = async function(protocoloCodificado){
+        const protocolo=decodeURIComponent(protocoloCodificado||'');
+        mostrarAdmin();
+        preencherDatas();
+        try{
+            await garantirChamadosCarregados();
+            carregarChamadosSelect();
+            if(selectChamado) selectChamado.value=protocolo;
+            const todos=[...(typeof chamados!=='undefined'?chamados:[]),...(typeof chamadosArquivadosV11!=='undefined'?chamadosArquivadosV11:[])];
+            const c=todos.find(x=>x.protocolo===protocolo);
+            if(c){
+                if(c.bloco) document.getElementById('v13Bloco').value=String(c.bloco).replace(/^Bloco\s+/i,'').toUpperCase();
+                if(c.dataOcorrencia) document.getElementById('v13DataOcorrencia').value=c.dataOcorrencia;
+                if(c.ocorrencia){
+                    const sel=document.getElementById('v13Infracao');
+                    const opt=[...sel.options].find(o=>o.textContent.toLowerCase().includes(String(c.ocorrencia).toLowerCase()));
+                    if(opt) sel.value=opt.value;
+                }
+            }
+            document.getElementById('adminV13FormCard')?.scrollIntoView({behavior:'smooth'});
+        }catch(e){alert(e.message||'Não foi possível carregar o chamado relacionado.');}
+        carregarMedidas();
+    };
+    if(btnMenu) btnMenu.addEventListener('click',abrir);
+    document.getElementById('btnVoltarAdminMenu')?.addEventListener('click',()=>{
+    if(admin){admin.style.display='none';admin.hidden=true;}
+    const localizarChamado=document.getElementById('localizarChamadoAdmin');
+    const editarChamado=document.getElementById('editarChamado');
+    if(localizarChamado) localizarChamado.style.display='none';
+    if(editarChamado) editarChamado.style.display='none';
+    if(search){search.style.display='none';search.hidden=true;}
+    if(report){report.style.display='none';report.hidden=true;}
+    if(voltar) voltar.style.display='none';
+    if(menu){menu.style.display='grid';menu.hidden=false;}
+});
+    if(btnAtualizar) btnAtualizar.addEventListener('click',carregarMedidas);
+    if(form) form.addEventListener('submit',salvar);
+    document.getElementById('btnNovaAdministrativaV13')?.addEventListener('click',()=>{document.getElementById('adminV13FormCard')?.scrollIntoView({behavior:'smooth'});limparForm();});
+    document.getElementById('btnConsultarProtocolosAdmV13')?.addEventListener('click',abrirConsultaProtocolosAdministrativos);
+        document.getElementById('btnImprimirProtocolosAdmV13')?.addEventListener('click',imprimirProtocolosAdministrativos);
+    document.getElementById('v13PeriodoImpressaoAdm')?.addEventListener('change',()=>{
+        const v=document.getElementById('v13PeriodoImpressaoAdm')?.value;
+        const box=document.getElementById('v13PeriodoPersonalizadoAdm');
+        if(box) box.style.display=v==='periodo'?'grid':'none';
+    });
+
+document.getElementById('btnBuscarProtocolosAdmV13')?.addEventListener('click',()=>{
+        renderProtocolosAdministrativos(
+            document.getElementById('v13BuscaProtocoloAdm')?.value||'',
+            document.getElementById('v13FiltroTipoAdm')?.value||''
+        );
+    });
+    document.getElementById('v13BuscaProtocoloAdm')?.addEventListener('keydown',e=>{
+        if(e.key==='Enter'){
+            e.preventDefault();
+            document.getElementById('btnBuscarProtocolosAdmV13')?.click();
+        }
+    });
+    document.getElementById('btnLimparProtocolosAdmV13')?.addEventListener('click',()=>{
+        const busca=document.getElementById('v13BuscaProtocoloAdm');
+        const tipo=document.getElementById('v13FiltroTipoAdm');
+        if(busca) busca.value='';
+        if(tipo) tipo.value='';
+        renderProtocolosAdministrativos('','');
+    });
+    document.getElementById('btnFecharProtocolosAdmV13')?.addEventListener('click',fecharConsultaProtocolosAdministrativos);
+
+    document.getElementById('btnCancelarAdministrativoV13')?.addEventListener('click',limparForm);
+    document.getElementById('btnConsultarHistoricoV13')?.addEventListener('click',()=>consultarHistorico());
+    document.getElementById('btnLimparHistoricoV13')?.addEventListener('click',()=>{
+        ultimaConsulta={bloco:'',unidade:''};
+        registrosDaPesquisaAtual=[];
+        filtroKpiAtual='todos';
+        document.getElementById('v13BuscaBloco').value='';
+        document.getElementById('v13BuscaUnidade').value='';
+        document.getElementById('v13HistoricoResumo').innerHTML='';
+        const kpis=document.getElementById('v13Kpis');
+        const aviso=document.getElementById('v13FiltroAtivo');
+        if(kpis) kpis.style.display='none';
+        if(aviso) aviso.style.display='none';
+        renderLista([]);
+    });
+    document.getElementById('btnRelatorioUnidadeV13')?.addEventListener('click',relatorioUnidade);
+
+    document.querySelectorAll('[data-v13-kpi]').forEach(btn=>{
+        const ativar=()=>aplicarFiltroKpi(btn.dataset.v13Kpi);
+        btn.addEventListener('click',ativar);
+        btn.addEventListener('keydown',e=>{
+            if(e.key==='Enter'||e.key===' '){e.preventDefault();ativar();}
+        });
+    });
+
+    function configurarModalAdm13(){
+        document.getElementById('btnFecharAdm13Modal')?.addEventListener('click',fecharModalAdm13);
+        document.getElementById('btnFecharAdm13Modal2')?.addEventListener('click',fecharModalAdm13);
+        document.getElementById('btnAbrirChamadoAdm13')?.addEventListener('click',consultarChamadoRelacionadoAdm13);
+        document.getElementById('btnImprimirAdm13Modal')?.addEventListener('click',imprimirMedidaAdm13);
+
+        document.getElementById('adm13DetalhesModal')?.addEventListener('click',(e)=>{
+            if(e.target.id==='adm13DetalhesModal') fecharModalAdm13();
+        });
+    }
+    if(document.readyState==='loading'){
+        document.addEventListener('DOMContentLoaded',configurarModalAdm13,{once:true});
+    }else{
+        configurarModalAdm13();
+    }
+    document.addEventListener('keydown',(e)=>{
+        if(e.key==='Escape') fecharModalAdm13();
+    });
+    selectChamado?.addEventListener('change',()=>{
+        const p=selectChamado.value;
+        const todos=[...(typeof chamados!=='undefined'?chamados:[]),...(typeof chamadosArquivadosV11!=='undefined'?chamadosArquivadosV11:[])];
+        const c=todos.find(x=>x.protocolo===p);
+        if(c && c.bloco){document.getElementById('v13Bloco').value=String(c.bloco).replace(/^Bloco\s+/i,'').toUpperCase();}
+        if(c && c.dataOcorrencia){document.getElementById('v13DataOcorrencia').value=c.dataOcorrencia;}
+        if(c && c.ocorrencia){const sel=document.getElementById('v13Infracao');const opt=[...sel.options].find(o=>o.textContent.toLowerCase().includes(String(c.ocorrencia).toLowerCase()));if(opt)sel.value=opt.value;}
+    });
+    const categoriaV45=document.getElementById('v13Categoria');
+    const infracaoV45=document.getElementById('v13Infracao');
+    const tipoV45=document.getElementById('v13Tipo');
+    const recV45=document.getElementById('v13RecursoApresentado');
+    if(categoriaV45) categoriaV45.addEventListener('change',atualizarInfracoesV45);
+    if(infracaoV45) infracaoV45.addEventListener('change',atualizarBaseV45);
+    if(tipoV45) tipoV45.addEventListener('change',atualizarTipoAdministrativoV45);
+    ['v13MultaCotas','v13ValorCota'].forEach(id=>{
+        const el=document.getElementById(id);
+        if(el) el.addEventListener('input',calcularMultaV45);
+    });
+    if(recV45) recV45.addEventListener('change',atualizarRecursoV45);
+    document.getElementById('v13DataRegistro')?.addEventListener('change',atualizarRecursoV45);
+    document.getElementById('v13DataOcorrencia')?.addEventListener('change',()=>{
+        const data=document.getElementById('v13DataRegistro')?.value;
+        const campo=document.getElementById('v13PrazoRecurso');
+        if(campo && data && document.getElementById('v13Tipo')?.value==='Notificação'){
+            campo.value='7 dias úteis — até '+formatarData(calcularPrazoRecurso(data));
+        }
+    });
+    atualizarTipoAdministrativoV45();
+
+
+    if(btnMenu){
+        btnMenu.addEventListener('click',function(e){
+            e.preventDefault();
+            e.stopPropagation();
+            mostrarAdmin();
+        });
+    }
+})();
+
+
+
+
+function ocultarPainelDetalhesChamadoV45() {
+    ["localizarChamadoAdmin","editarChamado"].forEach(function(id){
+        const el=document.getElementById(id);
+        if(el) el.style.display="none";
+    });
+    const historico=document.getElementById("historicoChamado");
+    if(historico) historico.style.display="none";
+}
+
+function mostrarPainelDetalhesChamadoV45() {
+    ["localizarChamadoAdmin","editarChamado"].forEach(function(id){
+        const el=document.getElementById(id);
+        if(el) el.style.display="block";
+    });
+}
+
+</script>
+
+<div class="home-rodape">
+    <strong>PARQUE CLUBE</strong>
+    Sistema de Gestão de Chamados<br>
+    Versão 4.5
+</div>
+
+
+
+
+<script id="pc-atualizacao-inteligente-final-v413">
+(function () {
+    "use strict";
+
+    /*
+    ============================================================
+    V4.22 — CONTROLE DA NOTIFICAÇÃO AUTOMÁTICA
+    - ON: abre automaticamente "Novo chamado recebido!"
+    - OFF: não abre o modal automaticamente
+    - O contador 🔔 Notificações continua registrando novos chamados
+    - Preferência salva no navegador
+    ============================================================
+    */
+
+    var PC_CHAVE_NOTIFICACAO_AUTO =
+        "parqueClubeNotificacaoAutomatica";
+
+    var pcNotificacaoAutomaticaAtivada = true;
+
+    function pcLerPreferenciaNotificacaoAutomatica() {
+        try {
+            var valor = localStorage.getItem(
+                PC_CHAVE_NOTIFICACAO_AUTO
+            );
+
+            /*
+             * Por padrão, fica ativado.
+             */
+            return valor !== "off";
+        } catch (e) {
+            return true;
+        }
+    }
+
+    function pcSalvarPreferenciaNotificacaoAutomatica(ativo) {
+        try {
+            localStorage.setItem(
+                PC_CHAVE_NOTIFICACAO_AUTO,
+                ativo ? "on" : "off"
+            );
+        } catch (e) {}
+    }
+
+    function pcAtualizarBotaoNotificacaoAutomatica() {
+        var botao = document.getElementById(
+            "pcToggleNotificacaoAuto"
+        );
+
+        var icone = document.getElementById(
+            "pcNotificacaoAutoIcone"
+        );
+
+        if (!botao) return;
+
+        botao.setAttribute(
+            "aria-pressed",
+            pcNotificacaoAutomaticaAtivada ? "true" : "false"
+        );
+
+        if (pcNotificacaoAutomaticaAtivada) {
+            botao.textContent = "🔘 ON";
+            botao.style.background = "#1f8f4e";
+            botao.style.color = "#fff";
+            if (icone) icone.textContent = "🆕";
+        } else {
+            botao.textContent = "⚪ OFF";
+            botao.style.background = "#ececec";
+            botao.style.color = "#333";
+            if (icone) icone.textContent = "🔕";
+        }
+    }
+
+    function pcConfigurarControleNotificacaoAutomatica() {
+        pcNotificacaoAutomaticaAtivada =
+            pcLerPreferenciaNotificacaoAutomatica();
+
+        pcAtualizarBotaoNotificacaoAutomatica();
+
+        var botao = document.getElementById(
+            "pcToggleNotificacaoAuto"
+        );
+
+        if (!botao ||
+            botao.dataset.pcNotificacaoConfigurada === "1") {
+            return;
+        }
+
+        botao.dataset.pcNotificacaoConfigurada = "1";
+
+        botao.addEventListener("click", function () {
+            pcNotificacaoAutomaticaAtivada =
+                !pcNotificacaoAutomaticaAtivada;
+
+            pcSalvarPreferenciaNotificacaoAutomatica(
+                pcNotificacaoAutomaticaAtivada
+            );
+
+            pcAtualizarBotaoNotificacaoAutomatica();
+        });
+    }
+
+
+    /*
+    ============================================================
+    V4.22 — NOTIFICAÇÕES DE NOVOS CHAMADOS
+    - Botão 🔔 Notificações
+    - Contador de novos chamados não visualizados
+    - Modal "Novo chamado recebido!"
+    - Aproveita a mesma consulta de 90 segundos
+    - Não gera chamadas extras ao Worker
+    ============================================================
+    */
+
+    var pcNotificacoesNovosChamados = [];
+    var pcUltimoNovoChamado = null;
+
+    function pcEscaparHtml(valor) {
+        return String(valor == null ? "" : valor)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    function pcAtualizarBotaoNotificacoes() {
+        var contador = document.getElementById("pcContadorNotificacoes");
+        if (!contador) return;
+
+        var total = pcNotificacoesNovosChamados.length;
+        contador.textContent = total > 99 ? "99+" : String(total);
+        contador.style.display = total > 0 ? "inline-block" : "none";
+    }
+
+    function pcFecharModalNovoChamado() {
+        var modal = document.getElementById("pcModalNovoChamado");
+        if (modal) modal.style.display = "none";
+    }
+
+    function pcMostrarNovoChamado(chamado) {
+        if (!chamado) return;
+
+        pcUltimoNovoChamado = chamado;
+
+        var protocolo = chamado.protocolo || chamado.id || "Não informado";
+        var tipo = chamado.tipoOcorrencia || chamado.tipo || chamado.categoria || "Chamado";
+        var bloco = chamado.bloco || chamado.unidadeBloco || "";
+        var unidade = chamado.unidade || chamado.apartamento || "";
+        var descricao = chamado.descricao || chamado.relato || chamado.mensagem || "";
+
+        var conteudo = document.getElementById("pcConteudoNovoChamado");
+        if (conteudo) {
+            conteudo.innerHTML =
+                "<strong>Protocolo:</strong> " + pcEscaparHtml(protocolo) + "<br>" +
+                "<strong>Tipo:</strong> " + pcEscaparHtml(tipo) + "<br>" +
+                (bloco ? "<strong>Bloco:</strong> " + pcEscaparHtml(bloco) + "<br>" : "") +
+                (unidade ? "<strong>Unidade:</strong> " + pcEscaparHtml(unidade) + "<br>" : "") +
+                (descricao ? "<strong>Descrição:</strong><br>" + pcEscaparHtml(descricao) : "");
+        }
+
+        var modal = document.getElementById("pcModalNovoChamado");
+        if (modal) modal.style.display = "flex";
+    }
+
+    function pcRegistrarNovasNotificacoes(listaNova) {
+        var novosMapa = pcObterProtocolos(listaNova);
+        var lista = Array.isArray(listaNova) ? listaNova : [];
+        var encontrouNovo = false;
+        var primeiroNovo = null;
+
+        if (!pcPrimeiraLeituraConcluida) {
+            pcProtocolosConhecidos = novosMapa;
+            pcPrimeiraLeituraConcluida = true;
+            return;
+        }
+
+        lista.forEach(function (chamado) {
+            var chave = String(
+                chamado && (chamado.protocolo || chamado.id || chamado.createdAt || "")
+            ).trim();
+
+            if (chave && !pcProtocolosConhecidos[chave]) {
+                encontrouNovo = true;
+                pcNotificacoesNovosChamados.push(chamado);
+                if (!primeiroNovo) primeiroNovo = chamado;
+            }
+        });
+
+        pcProtocolosConhecidos = novosMapa;
+        pcAtualizarBotaoNotificacoes();
+
+        if (encontrouNovo) {
+            pcTocarSomNovoChamado();
+
+            /*
+             * A tela automática respeita a escolha do administrador.
+             * O novo chamado continua registrado no botão Notificações
+             * mesmo quando a abertura automática está desligada.
+             */
+            if (pcNotificacaoAutomaticaAtivada) {
+                pcMostrarNovoChamado(primeiroNovo);
+            }
+
+            console.log(
+                "Parque Clube: novo chamado detectado e registrado nas notificações."
+            );
+        }
+    }
+
+    function pcAbrirCentralNotificacoes() {
+        if (!pcNotificacoesNovosChamados.length) {
+            alert("🔔 Não há novas notificações.");
+            return;
+        }
+
+        pcMostrarNovoChamado(
+            pcNotificacoesNovosChamados[
+                pcNotificacoesNovosChamados.length - 1
+            ]
+        );
+    }
+
+    function pcConfigurarNotificacoes() {
+        var botao = document.getElementById("pcBotaoNotificacoes");
+        var fechar = document.getElementById("pcFecharModalNovoChamado");
+        var ok = document.getElementById("pcOkNovoChamado");
+        var ver = document.getElementById("pcVerNovoChamado");
+        var modal = document.getElementById("pcModalNovoChamado");
+
+        if (botao && botao.dataset.pcConfigurado !== "1") {
+            botao.dataset.pcConfigurado = "1";
+            botao.addEventListener("click", pcAbrirCentralNotificacoes);
+        }
+
+        if (fechar) fechar.addEventListener("click", pcFecharModalNovoChamado);
+        if (ok) ok.addEventListener("click", pcFecharModalNovoChamado);
+
+        if (modal) {
+            modal.addEventListener("click", function (evento) {
+                if (evento.target === modal) pcFecharModalNovoChamado();
+            });
+        }
+
+        if (ver) {
+            ver.addEventListener("click", function () {
+                pcFecharModalNovoChamado();
+
+                /*
+                 * Atualiza a lista normalmente e deixa o novo chamado
+                 * disponível na área administrativa sem alterar a lógica existente.
+                 */
+                if (typeof mostrarChamados === "function") {
+                    mostrarChamados();
+                }
+            });
+        }
+
+        pcAtualizarBotaoNotificacoes();
+    }
+
+
+    /*
+    ============================================================
+    ALERTA SONORO DE NOVOS CHAMADOS
+    - ON/OFF escolhido pelo administrador
+    - Preferência salva no navegador (localStorage)
+    - Não gera consultas extras ao Worker
+    - Só toca quando surgir protocolo novo
+    ============================================================
+    */
+
+    var PC_CHAVE_SOM = "parqueClubeSomNovosChamados";
+    var pcSomAtivado = false;
+    var pcPrimeiraLeituraConcluida = false;
+    var pcProtocolosConhecidos = {};
+
+    function pcLerPreferenciaSom() {
+        try {
+            return localStorage.getItem(PC_CHAVE_SOM) === "on";
+        } catch (e) {
+            return false;
+        }
+    }
+
+    function pcSalvarPreferenciaSom(ativo) {
+        try {
+            localStorage.setItem(PC_CHAVE_SOM, ativo ? "on" : "off");
+        } catch (e) {}
+    }
+
+    function pcAtualizarBotaoSom() {
+        var botao = document.getElementById("pcToggleAlertaSonoro");
+        var icone = document.getElementById("pcAlertaSonoroIcone");
+        if (!botao) return;
+
+        botao.setAttribute("aria-pressed", pcSomAtivado ? "true" : "false");
+
+        if (pcSomAtivado) {
+            botao.textContent = "🔘 ON";
+            botao.style.background = "#1f8f4e";
+            botao.style.color = "#fff";
+            if (icone) icone.textContent = "🔔";
+        } else {
+            botao.textContent = "⚪ OFF";
+            botao.style.background = "#ececec";
+            botao.style.color = "#333";
+            if (icone) icone.textContent = "🔇";
+        }
+    }
+
+    function pcConfigurarAlertaSonoro() {
+        pcSomAtivado = pcLerPreferenciaSom();
+        pcAtualizarBotaoSom();
+
+        var botao = document.getElementById("pcToggleAlertaSonoro");
+        if (!botao || botao.dataset.pcSomConfigurado === "1") return;
+
+        botao.dataset.pcSomConfigurado = "1";
+
+        /*
+         * Uma interação do administrador libera o áudio no navegador.
+         */
+        botao.addEventListener("click", function () {
+            pcSomAtivado = !pcSomAtivado;
+            pcSalvarPreferenciaSom(pcSomAtivado);
+            pcAtualizarBotaoSom();
+
+            if (pcSomAtivado) {
+                pcTocarSomNovoChamado();
+            }
+        });
+    }
+
+    function pcTocarSomNovoChamado() {
+        if (!pcSomAtivado) return;
+
+        try {
+            var AudioContextClass = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContextClass) return;
+
+            var ctx = new AudioContextClass();
+            var oscillator = ctx.createOscillator();
+            var gain = ctx.createGain();
+
+            oscillator.type = "sine";
+            oscillator.frequency.setValueAtTime(880, ctx.currentTime);
+
+            gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.12, ctx.currentTime + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.45);
+
+            oscillator.connect(gain);
+            gain.connect(ctx.destination);
+
+            oscillator.start();
+            oscillator.stop(ctx.currentTime + 0.46);
+
+            oscillator.addEventListener("ended", function () {
+                if (ctx && ctx.close) ctx.close();
+            });
+        } catch (erro) {
+            console.warn("Não foi possível tocar o alerta sonoro:", erro);
+        }
+    }
+
+    function pcObterProtocolos(lista) {
+        var mapa = {};
+        (Array.isArray(lista) ? lista : []).forEach(function (chamado) {
+            var chave = String(
+                chamado && (chamado.protocolo || chamado.id || chamado.createdAt || "")
+            ).trim();
+
+            if (chave) mapa[chave] = true;
+        });
+        return mapa;
+    }
+
+    function pcVerificarNovoChamado(listaNova) {
+        var novos = pcObterProtocolos(listaNova);
+
+        /*
+         * Na primeira leitura apenas registra os protocolos existentes.
+         * Assim, não toca para chamados antigos já presentes no sistema.
+         */
+        if (!pcPrimeiraLeituraConcluida) {
+            pcProtocolosConhecidos = novos;
+            pcPrimeiraLeituraConcluida = true;
+            return;
+        }
+
+        var existeNovo = false;
+
+        Object.keys(novos).forEach(function (protocolo) {
+            if (!pcProtocolosConhecidos[protocolo]) {
+                existeNovo = true;
+            }
+        });
+
+        pcProtocolosConhecidos = novos;
+
+        if (existeNovo) {
+            pcTocarSomNovoChamado();
+            console.log("Parque Clube: novo chamado detectado. Alerta sonoro acionado.");
+        }
+    }
+
+
+    /*
+    ============================================================
+    PARQUE CLUBE — V4.13 FINAL
+    ATUALIZAÇÃO INTELIGENTE DO PAINEL ADMINISTRATIVO
+
+    • Consulta o Worker a cada 90 segundos
+    • Continua programada mesmo com a aba em segundo plano
+    • NÃO redesenha a lista se os dados forem iguais
+    • Só atualiza visualmente quando houver alteração no banco
+    • Não interfere se houver chamado em edição
+    • Não interfere em atualização manual em andamento
+    • Não exige alteração no Worker ou no banco D1
+    ============================================================
+    */
+
+    var PC_INTERVALO_ATUALIZACAO = 90000;
+    var pcTimerAtualizacao = null;
+    var pcConsultaEmAndamento = false;
+
+    function pcPainelPesquisaAberto() {
+        var painel = document.getElementById("adminConteudoPesquisaV11");
+        if (!painel) return false;
+
+        var estilo = window.getComputedStyle(painel);
+
+        return !painel.hidden &&
+            estilo.display !== "none" &&
+            estilo.visibility !== "hidden";
+    }
+
+    function pcChamadoEmEdicao() {
+        /*
+         * CORREÇÃO V4.14
+         *
+         * Na tela "Pesquisar chamados", o sistema mantém o container
+         * #editarChamado visível mesmo quando nenhum chamado foi aberto.
+         * A versão anterior interpretava isso como edição ativa e, por isso,
+         * a atualização automática era bloqueada o tempo todo.
+         *
+         * O indicador confiável de edição é o protocolo selecionado.
+         */
+        return typeof protocoloSelecionado !== "undefined" &&
+            String(protocoloSelecionado || "").trim() !== "";
+    }
+
+    function pcNormalizarValor(valor) {
+        if (valor === null || valor === undefined) return "";
+
+        if (Array.isArray(valor)) {
+            return valor.map(pcNormalizarValor);
+        }
+
+        if (typeof valor === "object") {
+            var objetoOrdenado = {};
+            Object.keys(valor)
+                .sort()
+                .forEach(function (chave) {
+                    objetoOrdenado[chave] =
+                        pcNormalizarValor(valor[chave]);
+                });
+            return objetoOrdenado;
+        }
+
+        return valor;
+    }
+
+    function pcAssinaturaLista(lista) {
+        var copia = Array.isArray(lista) ? lista.slice() : [];
+
+        copia.sort(function (a, b) {
+            var chaveA = String(
+                (a && (a.protocolo || a.id || a.createdAt)) || ""
+            );
+
+            var chaveB = String(
+                (b && (b.protocolo || b.id || b.createdAt)) || ""
+            );
+
+            return chaveA.localeCompare(chaveB);
+        });
+
+        return JSON.stringify(pcNormalizarValor(copia));
+    }
+
+    function pcAssinaturaBanco(ativos, arquivados) {
+        return JSON.stringify({
+            ativos: pcAssinaturaLista(ativos),
+            arquivados: pcAssinaturaLista(arquivados)
+        });
+    }
+
+    async function pcVerificarAlteracoesNoBanco() {
+        if (pcConsultaEmAndamento) return;
+
+        if (!pcPainelPesquisaAberto()) return;
+
+        if (pcChamadoEmEdicao()) return;
+
+        if (typeof senhaAdministrativa === "undefined" ||
+            !senhaAdministrativa) {
+            return;
+        }
+
+        var botaoManual = document.getElementById("btnListarTodos");
+
+        /*
+         * Se a atualização manual já está em andamento,
+         * aguardamos o próximo ciclo.
+         */
+        if (botaoManual && botaoManual.disabled) {
+            return;
+        }
+
+        if (typeof API === "undefined" || !API) {
+            console.warn(
+                "Atualização automática: endereço da API não encontrado."
+            );
+            return;
+        }
+
+        pcConsultaEmAndamento = true;
+
+        try {
+            var resposta = await fetch(API, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    action: "list",
+                    adminPassword: senhaAdministrativa
+                })
+            });
+
+            var texto = await resposta.text();
+            var dados = {};
+
+            try {
+                dados = texto ? JSON.parse(texto) : {};
+            } catch (erroJson) {
+                throw new Error(
+                    "O Worker respondeu com dados inválidos."
+                );
+            }
+
+            if (!resposta.ok) {
+                throw new Error(
+                    dados.erro || "Erro ao verificar alterações."
+                );
+            }
+
+            var novosAtivos = Array.isArray(dados.chamados)
+                ? dados.chamados
+                : [];
+
+            var novosArquivados = Array.isArray(
+                dados.chamadosArquivados
+            )
+                ? dados.chamadosArquivados
+                : [];
+
+            var assinaturaAtual = pcAssinaturaBanco(
+                typeof chamados !== "undefined" ? chamados : [],
+                typeof chamadosArquivadosV11 !== "undefined"
+                    ? chamadosArquivadosV11
+                    : []
+            );
+
+            var novaAssinatura = pcAssinaturaBanco(
+                novosAtivos,
+                novosArquivados
+            );
+
+            /*
+             * Detecta novos protocolos usando a própria resposta da consulta.
+             * Não cria nenhuma chamada adicional ao Worker.
+             */
+            pcRegistrarNovasNotificacoes(novosAtivos);
+
+            /*
+             * O ponto principal:
+             * se nada mudou no banco, não mexe na interface.
+             */
+            if (assinaturaAtual === novaAssinatura) {
+                console.log(
+                    "Parque Clube: nenhuma alteração. Lista preservada."
+                );
+                return;
+            }
+
+            /*
+             * Houve alteração: atualiza os dados globais
+             * e somente agora redesenha o painel.
+             */
+            chamados = novosAtivos;
+            chamadosArquivadosV11 = novosArquivados;
+            chamadosHistoricoV11 = [
+                ...novosAtivos,
+                ...novosArquivados
+            ];
+
+            var totalArquivados = document.getElementById(
+                "totalArquivados"
+            );
+
+            if (totalArquivados) {
+                totalArquivados.textContent =
+                    novosArquivados.length;
+            }
+
+            if (typeof atualizarEstatisticas === "function") {
+                atualizarEstatisticas();
+            }
+
+            var estatisticas = document.getElementById(
+                "estatisticas"
+            );
+
+            if (estatisticas) {
+                estatisticas.style.display = "block";
+            }
+
+            var filtros = document.getElementById("filtros");
+
+            if (filtros) {
+                filtros.style.display = "block";
+            }
+
+            /*
+             * Respeita a pesquisa e os filtros que já estão
+             * selecionados pelo administrador.
+             */
+            if (typeof mostrarChamados === "function") {
+                mostrarChamados();
+            }
+
+            if (typeof renderizarChamadosArquivadosV11 === "function") {
+                renderizarChamadosArquivadosV11();
+            }
+
+            if (typeof inicializarDashboardV11 === "function") {
+                inicializarDashboardV11();
+            }
+
+            console.log(
+                "Parque Clube: alteração detectada. Painel atualizado."
+            );
+
+        } catch (erro) {
+            /*
+             * Erro silencioso na atualização automática:
+             * não substitui a tela nem quebra o sistema.
+             */
+            console.warn(
+                "Atualização automática Parque Clube:",
+                erro
+            );
+        } finally {
+            pcConsultaEmAndamento = false;
+        }
+    }
+
+    function pcIniciarAtualizacaoInteligente() {
+        if (pcTimerAtualizacao) {
+            clearInterval(pcTimerAtualizacao);
+        }
+
+        pcTimerAtualizacao = setInterval(
+            pcVerificarAlteracoesNoBanco,
+            PC_INTERVALO_ATUALIZACAO
+        );
+
+        window.__pcAutoRefreshTimer = pcTimerAtualizacao;
+
+        console.log(
+            "Atualização inteligente ativada: verificação a cada 90 segundos."
+        );
+
+        /*
+         * Não força atualização visual no início.
+         * A primeira verificação silenciosa ocorre após 90 segundos.
+         */
+    }
+
+    function pcIniciarMascaraWhatsapp() {
+        var campo = document.getElementById("whatsappRetorno");
+
+        if (!campo || campo.dataset.mascaraParqueClube === "1") {
+            return;
+        }
+
+        campo.dataset.mascaraParqueClube = "1";
+        campo.maxLength = 15;
+        campo.inputMode = "numeric";
+        campo.autocomplete = "tel";
+
+        function formatarTelefone() {
+            var numeros = String(campo.value || "")
+                .replace(/\D/g, "")
+                .slice(0, 11);
+
+            if (!numeros) {
+                campo.value = "";
+            } else if (numeros.length <= 2) {
+                campo.value = "(" + numeros;
+            } else if (numeros.length <= 7) {
+                campo.value =
+                    "(" + numeros.slice(0, 2) + ") " +
+                    numeros.slice(2);
+            } else {
+                campo.value =
+                    "(" + numeros.slice(0, 2) + ") " +
+                    numeros.slice(2, 7) + "-" +
+                    numeros.slice(7);
+            }
+        }
+
+        campo.addEventListener("input", formatarTelefone);
+
+        if (campo.value) {
+            formatarTelefone();
+        }
+    }
+
+    function pcInicializarV413Final() {
+        pcIniciarMascaraWhatsapp();
+        pcConfigurarAlertaSonoro();
+        pcConfigurarControleNotificacaoAutomatica();
+        pcConfigurarNotificacoes();
+
+        /*
+         * Registra os protocolos já carregados para evitar alerta
+         * para chamados antigos ao abrir a Área Administrativa.
+         */
+        if (typeof chamados !== "undefined") {
+            pcProtocolosConhecidos = pcObterProtocolos(chamados || []);
+            pcPrimeiraLeituraConcluida = true;
+        }
+
+        pcIniciarAtualizacaoInteligente();
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener(
+            "DOMContentLoaded",
+            pcInicializarV413Final
+        );
+    } else {
+        pcInicializarV413Final();
+    }
+})();
+</script>
+
+</body>
+
+</html>
