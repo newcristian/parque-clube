@@ -4531,6 +4531,57 @@ document
                             )
                             .value,
 
+                    // Compatibilidade com versões diferentes do Worker.
+                    // Os mesmos dados são enviados também com nomes alternativos.
+                    data_ocorrencia:
+                        document
+                            .getElementById(
+                                "dataOcorrencia"
+                            )
+                            .value,
+
+                    dataOcorrido:
+                        document
+                            .getElementById(
+                                "dataOcorrencia"
+                            )
+                            .value,
+
+                    data_ocorrido:
+                        document
+                            .getElementById(
+                                "dataOcorrencia"
+                            )
+                            .value,
+
+                    hora_inicial:
+                        document
+                            .getElementById(
+                                "horaInicial"
+                            )
+                            .value,
+
+                    inicio:
+                        document
+                            .getElementById(
+                                "horaInicial"
+                            )
+                            .value,
+
+                    hora_final:
+                        document
+                            .getElementById(
+                                "horaFinal"
+                            )
+                            .value,
+
+                    fim:
+                        document
+                            .getElementById(
+                                "horaFinal"
+                            )
+                            .value,
+
                     detalhes:
                         document
                             .getElementById(
@@ -13117,7 +13168,7 @@ function mostrarPainelDetalhesChamadoV45() {
 
     /*
     ============================================================
-    V4.28 — CONTROLE DA NOTIFICAÇÃO AUTOMÁTICA
+    V4.29 — CONTROLE DA NOTIFICAÇÃO AUTOMÁTICA
     - ON: abre automaticamente "Novo chamado recebido!"
     - OFF: não abre o modal automaticamente
     - O contador 🔔 Notificações continua registrando novos chamados
@@ -13215,7 +13266,7 @@ function mostrarPainelDetalhesChamadoV45() {
 
     /*
     ============================================================
-    V4.28 — NOTIFICAÇÕES DE NOVOS CHAMADOS
+    V4.29 — NOTIFICAÇÕES DE NOVOS CHAMADOS
     - Botão 🔔 Notificações
     - Contador de novos chamados não visualizados
     - Modal "Novo chamado recebido!"
@@ -13871,7 +13922,7 @@ function mostrarPainelDetalhesChamadoV45() {
 })();
 
 /* =====================================================
-   V4.28 — RELATÓRIO FIEL AOS DADOS DO BANCO
+   V4.29 — RELATÓRIO FIEL AOS DADOS DO BANCO
    - Busca os dados novamente no Worker no momento da impressão.
    - Não confunde data do ocorrido com data de abertura.
    - Exibe todos os campos preenchidos pelo solicitante.
@@ -13945,10 +13996,16 @@ function pcLabelCampoV428(chave) {
         prioridade: "Prioridade",
         dataOcorrencia: "Data do ocorrido/execução",
         data_ocorrencia: "Data do ocorrido/execução",
+        dataOcorrido: "Data do ocorrido/execução",
+        data_ocorrido: "Data do ocorrido/execução",
+        dataFato: "Data do ocorrido/execução",
+        data_fato: "Data do ocorrido/execução",
         horaInicial: "Hora inicial",
         hora_inicial: "Hora inicial",
+        inicio: "Hora inicial",
         horaFinal: "Hora final",
         hora_final: "Hora final",
+        fim: "Hora final",
         areaExecucao: "Área/Local da execução",
         area_execucao: "Área/Local da execução",
         detalhes: "Detalhes informados",
@@ -13970,7 +14027,7 @@ function pcPrioridadeClasseV428(prioridade) {
 }
 
 function pcValorExibivelV428(chave, valor) {
-    if (["dataOcorrencia", "data_ocorrencia"].includes(chave)) {
+    if (["dataOcorrencia", "data_ocorrencia", "dataOcorrido", "data_ocorrido", "dataFato", "data_fato"].includes(chave)) {
         return pcFormatarDataV428(valor, false);
     }
     if (["criadoEm", "criado_em", "dataAbertura", "dataCriacao", "created_at", "createdAt", "timestamp"].includes(chave)) {
@@ -13999,9 +14056,9 @@ function pcCamposUsuarioV428(chamado) {
         "unidade", "apartamento",
         "ocorrencia", "tipoOcorrencia", "tipo_ocorrencia",
         "prioridade",
-        "dataOcorrencia", "data_ocorrencia",
-        "horaInicial", "hora_inicial",
-        "horaFinal", "hora_final",
+        "dataOcorrencia", "data_ocorrencia", "dataOcorrido", "data_ocorrido", "dataFato", "data_fato",
+        "horaInicial", "hora_inicial", "inicio",
+        "horaFinal", "hora_final", "fim",
         "areaExecucao", "area_execucao",
         "detalhes", "descricao", "relato"
     ];
@@ -14039,6 +14096,40 @@ function pcCamposUsuarioV428(chamado) {
     });
 
     return resultado;
+}
+
+function pcNormalizarCamposCameraV429(chamado) {
+    if (!chamado || typeof chamado !== "object") return chamado;
+
+    const data = pcValorV428(chamado, [
+        "dataOcorrencia", "data_ocorrencia",
+        "dataOcorrido", "data_ocorrido",
+        "dataFato", "data_fato"
+    ], "");
+
+    const inicio = pcValorV428(chamado, [
+        "horaInicial", "hora_inicial", "inicio", "horaInicio", "hora_inicio"
+    ], "");
+
+    const fim = pcValorV428(chamado, [
+        "horaFinal", "hora_final", "fim", "horaFim", "hora_fim"
+    ], "");
+
+    // Mantém os campos oficiais disponíveis para qualquer parte da tela administrativa.
+    if (data) {
+        chamado.dataOcorrencia = data;
+        chamado.data_ocorrencia = data;
+    }
+    if (inicio) {
+        chamado.horaInicial = inicio;
+        chamado.hora_inicial = inicio;
+    }
+    if (fim) {
+        chamado.horaFinal = fim;
+        chamado.hora_final = fim;
+    }
+
+    return chamado;
 }
 
 function pcObterAberturaV428(chamado) {
@@ -14092,6 +14183,8 @@ async function pcBuscarChamadosFrescosV428() {
         Array.isArray(dados.items) ? dados.items :
         Array.isArray(dados.data) ? dados.data :
         [];
+
+    lista.forEach(pcNormalizarCamposCameraV429);
 
     // Atualiza a memória da tela, mas o relatório usa esta lista recém-vinda do banco.
     try {
