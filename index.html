@@ -3172,6 +3172,7 @@ button:active{
 <button
     type="button"
     id="btnImprimirChamadosAbertos"
+    onclick="if(window.imprimirChamadosAbertosV427){ window.imprimirChamadosAbertosV427(); } else { alert('A função de impressão ainda está carregando. Aguarde alguns segundos e tente novamente.'); } return false;"
     class="btn-azul btn-imprimir-abertos-v426"
     title="Imprimir somente os chamados com status Aberto"
 >
@@ -13116,7 +13117,7 @@ function mostrarPainelDetalhesChamadoV45() {
 
     /*
     ============================================================
-    V4.27 — CONTROLE DA NOTIFICAÇÃO AUTOMÁTICA
+    V4.27.1 — CONTROLE DA NOTIFICAÇÃO AUTOMÁTICA
     - ON: abre automaticamente "Novo chamado recebido!"
     - OFF: não abre o modal automaticamente
     - O contador 🔔 Notificações continua registrando novos chamados
@@ -13214,7 +13215,7 @@ function mostrarPainelDetalhesChamadoV45() {
 
     /*
     ============================================================
-    V4.27 — NOTIFICAÇÕES DE NOVOS CHAMADOS
+    V4.27.1 — NOTIFICAÇÕES DE NOVOS CHAMADOS
     - Botão 🔔 Notificações
     - Contador de novos chamados não visualizados
     - Modal "Novo chamado recebido!"
@@ -13870,7 +13871,7 @@ function mostrarPainelDetalhesChamadoV45() {
 })();
 
 /* =====================================================
-   V4.27.1 — IMPRESSÃO DE CHAMADOS ABERTOS
+   V4.27.1.1 — IMPRESSÃO DE CHAMADOS ABERTOS
    Correção: busca a variável real 'chamados' e, se necessário,
    consulta o banco antes de abrir a impressão.
 ===================================================== */
@@ -13921,7 +13922,7 @@ function pcObterListaChamadosV426() {
 }
 
 async /* =====================================================
-   V4.27 — RELATÓRIO COMPLETO DE CHAMADOS ABERTOS
+   V4.27.1 — RELATÓRIO COMPLETO DE CHAMADOS ABERTOS
 ===================================================== */
 
 function pcEscapeHtmlV427(valor) {
@@ -14268,13 +14269,18 @@ window.onload=function(){
     }
 }
 
-// Remove possível ligação anterior do botão e cria uma ligação única.
+// V4.27.1.1 — ligação garantida do botão de impressão.
+window.imprimirChamadosAbertosV427 = imprimirChamadosAbertosV427;
+
 (function() {
     const botao = document.getElementById("btnImprimirChamadosAbertos");
     if (botao) {
-        botao.onclick = function() {
-            imprimirChamadosAbertosV427();
-        };
+        // Mantém uma ação direta no botão.
+        botao.addEventListener("click", function(evento) {
+            evento.preventDefault();
+            evento.stopPropagation();
+            window.imprimirChamadosAbertosV427();
+        }, true);
     }
 })();
 
