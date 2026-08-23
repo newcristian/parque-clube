@@ -13117,7 +13117,7 @@ function mostrarPainelDetalhesChamadoV45() {
 
     /*
     ============================================================
-    V4.27.2 — CONTROLE DA NOTIFICAÇÃO AUTOMÁTICA
+    V4.28 — CONTROLE DA NOTIFICAÇÃO AUTOMÁTICA
     - ON: abre automaticamente "Novo chamado recebido!"
     - OFF: não abre o modal automaticamente
     - O contador 🔔 Notificações continua registrando novos chamados
@@ -13215,7 +13215,7 @@ function mostrarPainelDetalhesChamadoV45() {
 
     /*
     ============================================================
-    V4.27.2 — NOTIFICAÇÕES DE NOVOS CHAMADOS
+    V4.28 — NOTIFICAÇÕES DE NOVOS CHAMADOS
     - Botão 🔔 Notificações
     - Contador de novos chamados não visualizados
     - Modal "Novo chamado recebido!"
@@ -13871,12 +13871,13 @@ function mostrarPainelDetalhesChamadoV45() {
 })();
 
 /* =====================================================
-   V4.27.2.1 — IMPRESSÃO DE CHAMADOS ABERTOS
-   Correção: busca a variável real 'chamados' e, se necessário,
-   consulta o banco antes de abrir a impressão.
+   V4.28 — RELATÓRIO FIEL AOS DADOS DO BANCO
+   - Busca os dados novamente no Worker no momento da impressão.
+   - Não confunde data do ocorrido com data de abertura.
+   - Exibe todos os campos preenchidos pelo solicitante.
 ===================================================== */
 
-function pcEscapeHtmlV426(valor) {
+function pcEscapeHtmlV428(valor) {
     return String(valor == null ? "" : valor)
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
@@ -13885,93 +13886,82 @@ function pcEscapeHtmlV426(valor) {
         .replace(/'/g, "&#039;");
 }
 
-function pcFormatarDataV426(valor) {
-    if (!valor) return "Não informado";
-    const texto = String(valor).trim();
-
-    // Datas já formatadas pelo sistema, por exemplo 23/08/2026 10:30
-    if (/^\d{2}\/\d{2}\/\d{4}/.test(texto)) return texto;
-
-    const data = new Date(texto);
-    if (!isNaN(data.getTime())) {
-        return data.toLocaleString("pt-BR", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit"
-        });
-    }
-    return texto;
-}
-
-function pcObterListaChamadosV426() {
-    // A variável principal do sistema pode ser declarada com let,
-    // portanto ela não aparece obrigatoriamente em window.chamados.
-    try {
-        if (typeof chamados !== "undefined" && Array.isArray(chamados)) {
-            return chamados;
-        }
-    } catch (e) {}
-
-    if (Array.isArray(window.chamados)) {
-        return window.chamados;
-    }
-
-    return [];
-}
-
-async /* =====================================================
-   V4.27.2 — RELATÓRIO COMPLETO DE CHAMADOS ABERTOS
-===================================================== */
-
-function pcEscapeHtmlV427(valor) {
-    return String(valor == null ? "" : valor)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
-
-function pcFormatarDataV427(valor) {
-    if (!valor) return "Não informado";
-    const texto = String(valor).trim();
-
-    if (/^\d{2}\/\d{2}\/\d{4}/.test(texto)) return texto;
-
-    const data = new Date(texto);
-    if (!isNaN(data.getTime())) {
-        return data.toLocaleString("pt-BR", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit"
-        });
-    }
-    return texto;
-}
-
-function pcCampoV427(obj, nomes, padrao) {
+function pcValorV428(obj, nomes, padrao) {
     for (const nome of nomes) {
-        if (obj && obj[nome] !== undefined && obj[nome] !== null && String(obj[nome]).trim() !== "") {
-            return obj[nome];
+        if (obj && obj[nome] !== undefined && obj[nome] !== null) {
+            const valor = String(obj[nome]).trim();
+            if (valor !== "") return obj[nome];
         }
     }
-    return padrao || "Não informado";
+    return padrao === undefined ? "" : padrao;
 }
 
-function pcObterListaChamadosV427() {
-    try {
-        if (typeof chamados !== "undefined" && Array.isArray(chamados)) return chamados;
-    } catch (e) {}
+/* Evita erro de fuso horário com datas YYYY-MM-DD. */
+function pcFormatarDataV428(valor, comHora) {
+    if (valor === undefined || valor === null || String(valor).trim() === "") return "Não informado";
+    const texto = String(valor).trim();
 
-    if (Array.isArray(window.chamados)) return window.chamados;
-    return [];
+    // Já está no formato brasileiro: preserva exatamente como veio do banco.
+    if (/^\d{2}\/\d{2}\/\d{4}(?:[ T]\d{2}:\d{2}(?::\d{2})?)?$/.test(texto)) {
+        return texto;
+    }
+
+    // Data sem hora YYYY-MM-DD: não usar new Date para não mudar o dia pelo fuso.
+    const somenteData = texto.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (somenteData) return `${somenteData[3]}/${somenteData[2]}/${somenteData[1]}`;
+
+    // ISO com data e hora: usa os componentes informados, sem deslocamento indevido.
+    const iso = texto.match(/^(\d{4})-(\d{2})-(\d{2})[T\s](\d{2}):(\d{2})(?::(\d{2}))?/);
+    if (iso) {
+        return `${iso[3]}/${iso[2]}/${iso[1]} ${iso[4]}:${iso[5]}`;
+    }
+
+    return texto;
 }
 
-function pcPrioridadeClasseV427(prioridade) {
+function pcLabelCampoV428(chave) {
+    const mapa = {
+        protocolo: "Protocolo",
+        numeroProtocolo: "Protocolo",
+        solicitante: "Solicitante",
+        nome: "Solicitante",
+        whatsappRetorno: "WhatsApp para retorno",
+        whatsapp: "WhatsApp para retorno",
+        telefone: "Telefone",
+        celular: "Celular",
+        cargo: "Cargo/Função",
+        funcao: "Cargo/Função",
+        bloco: "Bloco",
+        areaBloco: "Área/Bloco",
+        local: "Local/Área",
+        area: "Local/Área",
+        pavimentos: "Andar/Pavimento",
+        pavimento: "Andar/Pavimento",
+        unidade: "Unidade",
+        apartamento: "Apartamento",
+        ocorrencia: "Tipo de ocorrência",
+        tipoOcorrencia: "Tipo de ocorrência",
+        tipo_ocorrencia: "Tipo de ocorrência",
+        prioridade: "Prioridade",
+        dataOcorrencia: "Data do ocorrido/execução",
+        data_ocorrencia: "Data do ocorrido/execução",
+        horaInicial: "Hora inicial",
+        hora_inicial: "Hora inicial",
+        horaFinal: "Hora final",
+        hora_final: "Hora final",
+        areaExecucao: "Área/Local da execução",
+        area_execucao: "Área/Local da execução",
+        detalhes: "Detalhes informados",
+        descricao: "Detalhes informados",
+        relato: "Detalhes informados"
+    };
+    return mapa[chave] || String(chave)
+        .replace(/([A-Z])/g, " $1")
+        .replace(/_/g, " ")
+        .replace(/^./, c => c.toUpperCase());
+}
+
+function pcPrioridadeClasseV428(prioridade) {
     const p = String(prioridade || "").toLowerCase();
     if (p.includes("urg")) return "urgente";
     if (p.includes("alta")) return "alta";
@@ -13979,11 +13969,142 @@ function pcPrioridadeClasseV427(prioridade) {
     return "moderada";
 }
 
-async function imprimirChamadosAbertosV427() {
+function pcValorExibivelV428(chave, valor) {
+    if (["dataOcorrencia", "data_ocorrencia"].includes(chave)) {
+        return pcFormatarDataV428(valor, false);
+    }
+    if (["criadoEm", "criado_em", "dataAbertura", "dataCriacao", "created_at", "createdAt", "timestamp"].includes(chave)) {
+        return pcFormatarDataV428(valor, true);
+    }
+    return String(valor);
+}
+
+function pcCamposUsuarioV428(chamado) {
+    const internos = new Set([
+        "id", "protocolo", "numeroProtocolo", "status",
+        "arquivado", "responsavel", "atendente",
+        "observacaoSolucao", "respostaAdministracao",
+        "ultimaAtualizacao", "atualizadoEm", "updated_at",
+        "criadoEm", "criado_em", "dataAbertura", "dataCriacao",
+        "created_at", "createdAt", "timestamp",
+        "adminPassword", "senhaAdministrativa", "action"
+    ]);
+
+    const ordem = [
+        "solicitante", "nome",
+        "whatsappRetorno", "whatsapp", "telefone", "celular",
+        "cargo", "funcao",
+        "bloco", "areaBloco", "local", "area",
+        "pavimentos", "pavimento",
+        "unidade", "apartamento",
+        "ocorrencia", "tipoOcorrencia", "tipo_ocorrencia",
+        "prioridade",
+        "dataOcorrencia", "data_ocorrencia",
+        "horaInicial", "hora_inicial",
+        "horaFinal", "hora_final",
+        "areaExecucao", "area_execucao",
+        "detalhes", "descricao", "relato"
+    ];
+
+    const usados = new Set();
+    const resultado = [];
+
+    function adicionar(chave) {
+        if (internos.has(chave) || usados.has(chave)) return;
+        if (!Object.prototype.hasOwnProperty.call(chamado, chave)) return;
+        const valor = chamado[chave];
+        if (valor === undefined || valor === null || String(valor).trim() === "") return;
+
+        const label = pcLabelCampoV428(chave);
+
+        // Evita duplicar o mesmo campo quando o Worker envia nomes equivalentes.
+        if (resultado.some(x => x.label === label && String(x.valor) === String(valor))) {
+            usados.add(chave);
+            return;
+        }
+
+        resultado.push({
+            chave,
+            label,
+            valor: pcValorExibivelV428(chave, valor)
+        });
+        usados.add(chave);
+    }
+
+    ordem.forEach(adicionar);
+
+    // Qualquer outro campo preenchido pelo usuário também entra no relatório.
+    Object.keys(chamado || {}).forEach(chave => {
+        if (!internos.has(chave)) adicionar(chave);
+    });
+
+    return resultado;
+}
+
+function pcObterAberturaV428(chamado) {
+    // NÃO usa "data", porque em algumas versões ela representa a data do ocorrido.
+    return pcValorV428(chamado, [
+        "criadoEm",
+        "criado_em",
+        "dataAbertura",
+        "dataCriacao",
+        "created_at",
+        "createdAt",
+        "timestamp",
+        "dataHoraAbertura"
+    ], "");
+}
+
+async function pcBuscarChamadosFrescosV428() {
+    if (typeof API === "undefined" || !API) {
+        throw new Error("A API do sistema não está disponível.");
+    }
+
+    if (typeof senhaAdministrativa === "undefined" || !senhaAdministrativa) {
+        throw new Error("Acesse novamente a área administrativa antes de imprimir.");
+    }
+
+    const resposta = await fetch(API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        cache: "no-store",
+        body: JSON.stringify({
+            action: "list",
+            adminPassword: senhaAdministrativa,
+            senhaAdministrativa: senhaAdministrativa
+        })
+    });
+
+    const texto = await resposta.text();
+    let dados = {};
+    try {
+        dados = texto ? JSON.parse(texto) : {};
+    } catch (e) {
+        throw new Error("O Worker retornou uma resposta inválida ao buscar os chamados.");
+    }
+
+    if (!resposta.ok || dados.sucesso === false) {
+        throw new Error(dados.erro || "Não foi possível carregar os chamados atualizados.");
+    }
+
+    const lista =
+        Array.isArray(dados.chamados) ? dados.chamados :
+        Array.isArray(dados.items) ? dados.items :
+        Array.isArray(dados.data) ? dados.data :
+        [];
+
+    // Atualiza a memória da tela, mas o relatório usa esta lista recém-vinda do banco.
+    try {
+        if (typeof chamados !== "undefined") chamados = lista;
+        window.chamados = lista;
+    } catch (e) {}
+
+    return lista;
+}
+
+async function imprimirChamadosAbertosV428() {
     const botao = document.getElementById("btnImprimirChamadosAbertos");
     const textoOriginal = botao ? botao.textContent : "🖨️ Imprimir Chamados Abertos";
-
-    // Abre imediatamente dentro do clique para evitar bloqueio do navegador.
     const janela = window.open("", "parque_clube_relatorio_chamados_abertos");
 
     if (!janela) {
@@ -13993,46 +14114,16 @@ async function imprimirChamadosAbertosV427() {
 
     if (botao) {
         botao.disabled = true;
-        botao.textContent = "⏳ Preparando relatório...";
+        botao.textContent = "⏳ Buscando dados atualizados...";
     }
 
     try {
-        let listaBase = pcObterListaChamadosV427();
+        // Sempre consulta o Worker no momento da impressão.
+        const listaBase = await pcBuscarChamadosFrescosV428();
 
-        if (!Array.isArray(listaBase) || listaBase.length === 0) {
-            if (typeof API === "undefined" || !API) {
-                throw new Error("A API do sistema não está disponível.");
-            }
-
-            if (typeof senhaAdministrativa === "undefined" || !senhaAdministrativa) {
-                throw new Error("Acesse novamente a área administrativa antes de imprimir.");
-            }
-
-            const resposta = await fetch(API, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    action: "list",
-                    adminPassword: senhaAdministrativa
-                })
-            });
-
-            const dados = await resposta.json();
-
-            if (!resposta.ok || !dados.sucesso) {
-                throw new Error(dados.erro || "Não foi possível carregar os chamados.");
-            }
-
-            listaBase = Array.isArray(dados.chamados) ? dados.chamados : [];
-
-            try {
-                if (typeof chamados !== "undefined") chamados = listaBase;
-            } catch (e) {}
-        }
-
-        const chamadosAbertos = listaBase.filter(function(chamado) {
-            const status = String(pcCampoV427(chamado, ["status"], "Aberto")).trim().toLowerCase();
-            return chamado && status === "aberto" && chamado.arquivado !== true;
+        const chamadosAbertos = listaBase.filter(chamado => {
+            const status = String(pcValorV428(chamado, ["status"], "Aberto")).trim().toLowerCase();
+            return status === "aberto" && chamado.arquivado !== true;
         });
 
         if (!chamadosAbertos.length) {
@@ -14041,146 +14132,55 @@ async function imprimirChamadosAbertosV427() {
             return;
         }
 
-        chamadosAbertos.sort(function(a, b) {
-            const da = String(pcCampoV427(a, ["criadoEm", "dataAbertura", "data", "created_at"], ""));
-            const db = String(pcCampoV427(b, ["criadoEm", "dataAbertura", "data", "created_at"], ""));
+        chamadosAbertos.sort((a, b) => {
+            const da = String(pcObterAberturaV428(a) || "");
+            const db = String(pcObterAberturaV428(b) || "");
             return da.localeCompare(db);
         });
 
+        const resumo = { urgente: 0, alta: 0, moderada: 0, baixa: 0 };
+        chamadosAbertos.forEach(chamado => {
+            const prioridade = pcValorV428(chamado, ["prioridade"], "Moderada");
+            resumo[pcPrioridadeClasseV428(prioridade)]++;
+        });
+
         const agora = new Date();
-        const dataImpressao = agora.toLocaleString("pt-BR", {
+        const emissao = agora.toLocaleString("pt-BR", {
             day: "2-digit", month: "2-digit", year: "numeric",
             hour: "2-digit", minute: "2-digit"
         });
 
-        // Resumo por prioridade.
-        const resumo = { urgente: 0, alta: 0, moderada: 0, baixa: 0 };
+        const linhas = chamadosAbertos.map((chamado, indice) => {
+            const protocolo = pcValorV428(chamado, ["protocolo", "numeroProtocolo"], "Não informado");
+            const status = pcValorV428(chamado, ["status"], "Aberto");
+            const abertura = pcObterAberturaV428(chamado);
+            const prioridade = pcValorV428(chamado, ["prioridade"], "Moderada");
+            const campos = pcCamposUsuarioV428(chamado);
 
-        chamadosAbertos.forEach(function(chamado) {
-            const prioridade = pcCampoV427(chamado, ["prioridade"], "Moderada");
-            const classe = pcPrioridadeClasseV427(prioridade);
-            resumo[classe]++;
-        });
-
-        const linhas = chamadosAbertos.map(function(chamado, indice) {
-            const protocolo = pcCampoV427(chamado, ["protocolo", "numeroProtocolo"], "Não informado");
-            const solicitante = pcCampoV427(chamado, ["solicitante", "nome", "nomeSolicitante", "morador"], "Não informado");
-            const whatsapp = pcCampoV427(chamado, ["whatsapp", "telefone", "telefoneWhatsApp", "celular"], "");
-            const bloco = pcCampoV427(chamado, ["bloco", "areaBloco"], "Não informado");
-            const local = pcCampoV427(chamado, ["local", "area", "localizacao"], "");
-            const pavimento = pcCampoV427(chamado, ["pavimento", "andar"], "");
-            const unidade = pcCampoV427(chamado, ["unidade", "apartamento", "apto"], "");
-            // V4.27.2 — inclui todos os nomes usados pelo sistema e pelo Worker.
-            const ocorrencia = pcCampoV427(
-                chamado,
-                ["ocorrencia", "tipoOcorrencia", "tipo_ocorrencia", "tipo", "servico", "tipoServico"],
-                "Não informado"
-            );
-
-            const dataOcorrencia = pcCampoV427(
-                chamado,
-                ["dataOcorrencia", "data_ocorrencia", "dataDoOcorrido"],
-                ""
-            );
-
-            const horaInicial = pcCampoV427(
-                chamado,
-                ["horaInicial", "hora_inicial", "inicio", "horaInicio"],
-                ""
-            );
-
-            const horaFinal = pcCampoV427(
-                chamado,
-                ["horaFinal", "hora_final", "fim", "horaFim"],
-                ""
-            );
-
-            const areaExecucao = pcCampoV427(
-                chamado,
-                ["areaExecucao", "area_execucao", "localExecucao"],
-                ""
-            );
-
-            const prioridade = pcCampoV427(chamado, ["prioridade"], "Moderada");
-            const detalhes = pcCampoV427(chamado, ["detalhes", "descricao", "relato", "mensagem"], "Não informado");
-            const abertura = pcCampoV427(chamado, ["criadoEm", "dataAbertura", "data", "created_at"], "");
-            const atualizacao = pcCampoV427(chamado, ["atualizadoEm", "ultimaAtualizacao", "updated_at"], "");
-            const responsavel = pcCampoV427(chamado, ["responsavel", "atendente"], "");
-            const prioridadeClasse = pcPrioridadeClasseV427(prioridade);
-
-            const ehCamera = String(ocorrencia).toLowerCase().includes("câmera") ||
-                             String(ocorrencia).toLowerCase().includes("camera") ||
-                             String(ocorrencia).toLowerCase().includes("imagem");
-
-            const dadosEspeciais = (ehCamera || dataOcorrencia || horaInicial || horaFinal || areaExecucao) ? `
-                <div class="secao dados-especiais">
-                    <div class="secao-titulo">📷 INFORMAÇÕES COMPLEMENTARES</div>
-                    <div class="grade">
-                        ${dataOcorrencia ? `<div><strong>📅 Data do ocorrido:</strong> ${pcEscapeHtmlV427(dataOcorrencia)}</div>` : ""}
-                        ${horaInicial ? `<div><strong>🕐 Hora inicial:</strong> ${pcEscapeHtmlV427(horaInicial)}</div>` : ""}
-                        ${horaFinal ? `<div><strong>🕑 Hora final:</strong> ${pcEscapeHtmlV427(horaFinal)}</div>` : ""}
-                        ${horaInicial && horaFinal ? `<div><strong>⏱ Período solicitado:</strong> ${pcEscapeHtmlV427(horaInicial)} às ${pcEscapeHtmlV427(horaFinal)}</div>` : ""}
-                        ${areaExecucao ? `<div><strong>📍 Área/Local da execução:</strong> ${pcEscapeHtmlV427(areaExecucao)}</div>` : ""}
-                    </div>
+            const camposHtml = campos.map(campo => `
+                <div class="campo-dado">
+                    <div class="campo-label">${pcEscapeHtmlV428(campo.label)}</div>
+                    <div class="campo-valor">${pcEscapeHtmlV428(campo.valor).replace(/\n/g, "<br>")}</div>
                 </div>
-            ` : "";
+            `).join("");
 
             return `
                 <article class="chamado">
-                    <div class="linha-superior">
-                        <div class="numero">CHAMADO ${String(indice + 1).padStart(2, "0")}</div>
-                        <div class="badge-status">● ABERTO</div>
-                    </div>
-
-                    <div class="titulo-chamado">
-                        <span>PROTOCOLO:</span> ${pcEscapeHtmlV427(protocolo)}
-                    </div>
-
-                    <div class="info-principal">
-                        <div class="campo">
-                            <span>👤 SOLICITANTE</span>
-                            <strong>${pcEscapeHtmlV427(solicitante)}</strong>
+                    <div class="topo-chamado">
+                        <div>
+                            <div class="sequencia">CHAMADO ${String(indice + 1).padStart(2, "0")}</div>
+                            <div class="protocolo">PROTOCOLO: ${pcEscapeHtmlV428(protocolo)}</div>
                         </div>
-                        <div class="campo">
-                            <span>📱 WHATSAPP</span>
-                            <strong>${pcEscapeHtmlV427(whatsapp || "Não informado")}</strong>
-                        </div>
-                        <div class="campo">
-                            <span>📅 ABERTURA</span>
-                            <strong>${pcEscapeHtmlV427(pcFormatarDataV427(abertura))}</strong>
-                        </div>
-                        <div class="campo">
-                            <span>⚠ PRIORIDADE</span>
-                            <strong class="prioridade ${prioridadeClasse}">${pcEscapeHtmlV427(prioridade)}</strong>
-                        </div>
+                        <div class="status">${pcEscapeHtmlV428(String(status).toUpperCase())}</div>
                     </div>
 
-                    <div class="secao">
-                        <div class="secao-titulo">📍 LOCALIZAÇÃO</div>
-                        <div class="grade">
-                            <div><strong>Bloco:</strong> ${pcEscapeHtmlV427(bloco)}</div>
-                            ${local ? `<div><strong>Local/Área:</strong> ${pcEscapeHtmlV427(local)}</div>` : ""}
-                            ${pavimento ? `<div><strong>Andar/Pavimento:</strong> ${pcEscapeHtmlV427(pavimento)}</div>` : ""}
-                            ${unidade ? `<div><strong>Unidade:</strong> ${pcEscapeHtmlV427(unidade)}</div>` : ""}
-                        </div>
+                    <div class="metadados">
+                        <div><strong>Data/hora de abertura:</strong> ${pcEscapeHtmlV428(abertura ? pcFormatarDataV428(abertura, true) : "Não informado")}</div>
+                        <div><strong>Prioridade:</strong> ${pcEscapeHtmlV428(prioridade)}</div>
                     </div>
 
-                    <div class="secao">
-                        <div class="secao-titulo">🛠 OCORRÊNCIA</div>
-                        <div class="texto-destaque">${pcEscapeHtmlV427(ocorrencia)}</div>
-                    </div>
-
-                    ${dadosEspeciais}
-
-                    <div class="secao descricao">
-                        <div class="secao-titulo">📝 DETALHES INFORMADOS</div>
-                        <div class="texto-longo">${pcEscapeHtmlV427(detalhes).replace(/\n/g, "<br>")}</div>
-                    </div>
-
-                    <div class="rodape-chamado">
-                        ${responsavel ? `<span><strong>Responsável:</strong> ${pcEscapeHtmlV427(responsavel)}</span>` : ""}
-                        ${atualizacao ? `<span><strong>Última atualização:</strong> ${pcEscapeHtmlV427(pcFormatarDataV427(atualizacao))}</span>` : ""}
-                    </div>
+                    <div class="secao-titulo">DADOS INFORMADOS NO MOMENTO DA ABERTURA DO CHAMADO</div>
+                    <div class="grade-campos">${camposHtml || '<div class="campo-dado"><div class="campo-valor">Nenhum campo adicional informado.</div></div>'}</div>
                 </article>
             `;
         }).join("");
@@ -14190,117 +14190,69 @@ async function imprimirChamadosAbertosV427() {
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Relatório de Chamados Abertos - Parque Clube</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#e9edf0;font-family:Arial,Helvetica,sans-serif;color:#1d2933}
-.pagina{width:210mm;min-height:297mm;margin:10mm auto;background:#fff;padding:13mm}
-.cabecalho{border-bottom:4px solid #235d38;padding-bottom:14px;margin-bottom:16px}
-.cabecalho-linha{display:flex;justify-content:space-between;align-items:flex-start;gap:20px}
-.marca{font-size:26px;font-weight:800;color:#235d38;letter-spacing:.5px}
-.titulo{font-size:21px;font-weight:800;color:#193d59;margin-top:5px}
-.subtitulo{font-size:12px;color:#667;margin-top:4px}
-.data-relatorio{text-align:right;font-size:11px;line-height:1.5;color:#444}
-.painel-resumo{display:grid;grid-template-columns:2fr repeat(4,1fr);gap:8px;margin:0 0 18px}
-.resumo-item{border:1px solid #cfd8dc;border-radius:7px;padding:10px;text-align:center;background:#f8fafb}
-.resumo-item .rotulo{font-size:10px;color:#5d6a72;font-weight:700;text-transform:uppercase}
-.resumo-item .numero-resumo{font-size:20px;font-weight:800;color:#193d59;margin-top:3px}
-.resumo-item.urgente{border-color:#d66}
-.resumo-item.alta{border-color:#e0a12c}
-.resumo-item.moderada{border-color:#6c9bc1}
-.resumo-item.baixa{border-color:#6da879}
-.chamado{border:1px solid #bfcbd2;border-left:5px solid #235d38;border-radius:8px;padding:15px;margin-bottom:14px;break-inside:avoid;page-break-inside:avoid;background:#fff}
-.linha-superior{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
-.numero{font-size:10px;font-weight:800;color:#7a858b;letter-spacing:.5px}
-.badge-status{font-size:11px;font-weight:800;color:#1f6b38;background:#e5f5e8;padding:5px 9px;border-radius:14px;border:1px solid #b7ddc0}
-.titulo-chamado{font-size:18px;font-weight:800;color:#193d59;border-bottom:1px solid #e1e6e8;padding-bottom:10px}
-.titulo-chamado span{font-size:11px;color:#68757b}
-.info-principal{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}
-.campo{background:#f5f7f8;border-radius:6px;padding:9px;min-height:56px}
-.campo span{display:block;font-size:9px;font-weight:800;color:#69767c;margin-bottom:4px}
-.campo strong{font-size:11px;display:block;word-break:break-word}
-.prioridade{padding:3px 6px;border-radius:4px;width:max-content}
-.prioridade.urgente{background:#ffe3e3;color:#9b1c1c}
-.prioridade.alta{background:#fff0c7;color:#805300}
-.prioridade.moderada{background:#e5f0fa;color:#275f8c}
-.prioridade.baixa{background:#e5f5e8;color:#276738}
-.secao{margin-top:10px}
-.secao-titulo{font-size:10px;font-weight:800;color:#235d38;border-bottom:1px solid #dfe5e8;padding-bottom:5px;margin-bottom:7px;letter-spacing:.2px}
-.grade{display:grid;grid-template-columns:repeat(2,1fr);gap:6px 15px;font-size:11px;line-height:1.45}
-.texto-destaque{font-size:12px;font-weight:700}
-.dados-especiais{background:#f5f9fc;border:1px solid #d9e7f2;border-radius:6px;padding:10px}.descricao{background:#fbfcfc;border:1px solid #edf0f1;border-radius:6px;padding:10px}
-.texto-longo{font-size:11px;line-height:1.5}
-.rodape-chamado{margin-top:11px;padding-top:8px;border-top:1px dashed #d7dde0;display:flex;justify-content:space-between;gap:12px;font-size:9px;color:#647178}
-.rodape-geral{margin-top:22px;padding-top:10px;border-top:1px solid #cfd8dc;display:flex;justify-content:space-between;font-size:9px;color:#69767c}
+body{margin:0;background:#edf1f3;font-family:Arial,Helvetica,sans-serif;color:#26333b}
+.pagina{width:210mm;min-height:297mm;margin:10mm auto;background:#fff;padding:12mm}
+.cabecalho{border-bottom:4px solid #1f5a38;padding-bottom:12px;margin-bottom:14px}
+.marca{font-size:24px;font-weight:800;color:#1f5a38;letter-spacing:1px}
+.titulo{font-size:19px;font-weight:800;color:#1c3d56;margin-top:4px}
+.sub{font-size:11px;color:#66747d;margin-top:4px}
+.emissao{font-size:10px;color:#56636b;margin-top:8px}
+.resumo{display:grid;grid-template-columns:2fr repeat(4,1fr);gap:7px;margin-bottom:14px}
+.resumo-item{border:1px solid #d4dde1;border-radius:6px;padding:8px;text-align:center;background:#fafcfc}
+.resumo-item b{display:block;font-size:18px;color:#1c3d56}
+.resumo-item span{font-size:9px;text-transform:uppercase;font-weight:700;color:#68767e}
+.chamado{border:1px solid #c5d0d5;border-left:5px solid #1f5a38;border-radius:8px;padding:13px;margin-bottom:13px;break-inside:avoid;page-break-inside:avoid}
+.topo-chamado{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;border-bottom:1px solid #d8e0e3;padding-bottom:9px}
+.sequencia{font-size:9px;font-weight:800;letter-spacing:1px;color:#6a777e}
+.protocolo{font-size:17px;font-weight:800;color:#1c3d56;margin-top:3px}
+.status{font-size:10px;font-weight:800;color:#176338;background:#e7f5e9;border:1px solid #bddfc4;border-radius:14px;padding:5px 10px}
+.metadados{display:grid;grid-template-columns:1fr 1fr;gap:8px;background:#f4f7f8;padding:9px;margin:10px 0;border-radius:6px;font-size:10px}
+.secao-titulo{font-size:10px;font-weight:800;color:#1f5a38;border-bottom:1px solid #dce4e7;padding:7px 0;margin-bottom:8px;letter-spacing:.4px}
+.grade-campos{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.campo-dado{border:1px solid #e0e6e8;border-radius:5px;padding:8px;min-height:52px;background:#fff}
+.campo-label{font-size:9px;font-weight:800;text-transform:uppercase;color:#617078;margin-bottom:4px}
+.campo-valor{font-size:11px;line-height:1.45;color:#26333b;word-break:break-word}
+.rodape{margin-top:16px;padding-top:8px;border-top:1px solid #d5dde0;font-size:9px;color:#6d797f;display:flex;justify-content:space-between}
 @media screen and (max-width:800px){
-  .pagina{width:100%;min-height:auto;margin:0;padding:16px}
-  .painel-resumo{grid-template-columns:repeat(2,1fr)}
-  .info-principal{grid-template-columns:repeat(2,1fr)}
-  .cabecalho-linha{display:block}
-  .data-relatorio{text-align:left;margin-top:10px}
+ .pagina{width:100%;margin:0;padding:14px}
+ .resumo,.grade-campos,.metadados{grid-template-columns:1fr 1fr}
 }
 @media print{
-  body{background:#fff}
-  .pagina{width:auto;min-height:auto;margin:0;padding:0}
-  .chamado{break-inside:avoid;page-break-inside:avoid}
-  @page{size:A4;margin:11mm}
+ body{background:#fff}
+ .pagina{width:auto;min-height:auto;margin:0;padding:0}
+ @page{size:A4;margin:11mm}
 }
 </style>
 </head>
 <body>
 <main class="pagina">
-  <header class="cabecalho">
-    <div class="cabecalho-linha">
-      <div>
-        <div class="marca">PARQUE CLUBE</div>
-        <div class="titulo">RELATÓRIO ADMINISTRATIVO DE CHAMADOS ABERTOS</div>
-        <div class="subtitulo">Sistema de Gestão do Condomínio • Ordem de Serviço / Chamados Pendentes</div>
-      </div>
-      <div class="data-relatorio">
-        <strong>Data de emissão:</strong><br>${pcEscapeHtmlV427(dataImpressao)}<br>
-        <strong>Relatório:</strong> Chamados em aberto
-      </div>
-    </div>
-  </header>
+<header class="cabecalho">
+  <div class="marca">PARQUE CLUBE</div>
+  <div class="titulo">RELATÓRIO ADMINISTRATIVO — CHAMADOS ABERTOS</div>
+  <div class="sub">Sistema de Gestão do Condomínio • Relatório com dados informados pelos solicitantes</div>
+  <div class="emissao"><strong>Emitido em:</strong> ${pcEscapeHtmlV428(emissao)} • <strong>Total de chamados abertos:</strong> ${chamadosAbertos.length}</div>
+</header>
 
-  <section class="painel-resumo">
-    <div class="resumo-item">
-      <div class="rotulo">Total em aberto</div>
-      <div class="numero-resumo">${chamadosAbertos.length}</div>
-    </div>
-    <div class="resumo-item urgente">
-      <div class="rotulo">Urgentes</div>
-      <div class="numero-resumo">${resumo.urgente}</div>
-    </div>
-    <div class="resumo-item alta">
-      <div class="rotulo">Alta</div>
-      <div class="numero-resumo">${resumo.alta}</div>
-    </div>
-    <div class="resumo-item moderada">
-      <div class="rotulo">Moderada</div>
-      <div class="numero-resumo">${resumo.moderada}</div>
-    </div>
-    <div class="resumo-item baixa">
-      <div class="rotulo">Baixa</div>
-      <div class="numero-resumo">${resumo.baixa}</div>
-    </div>
-  </section>
+<section class="resumo">
+  <div class="resumo-item"><b>${chamadosAbertos.length}</b><span>Total aberto</span></div>
+  <div class="resumo-item"><b>${resumo.urgente}</b><span>Urgentes</span></div>
+  <div class="resumo-item"><b>${resumo.alta}</b><span>Alta</span></div>
+  <div class="resumo-item"><b>${resumo.moderada}</b><span>Moderada</span></div>
+  <div class="resumo-item"><b>${resumo.baixa}</b><span>Baixa</span></div>
+</section>
 
-  ${linhas}
+${linhas}
 
-  <footer class="rodape-geral">
-    <span>PARQUE CLUBE — Sistema de Gestão do Condomínio</span>
-    <span>Documento gerado automaticamente pelo sistema</span>
-  </footer>
+<footer class="rodape">
+  <span>PARQUE CLUBE — Sistema de Gestão do Condomínio</span>
+  <span>Relatório gerado com dados atuais do banco</span>
+</footer>
 </main>
 <script>
-window.onload=function(){
-  setTimeout(function(){
-    window.focus();
-    window.print();
-  },400);
-};
+window.onload=function(){setTimeout(function(){window.focus();window.print();},350);};
 <\/script>
 </body>
 </html>`);
@@ -14318,18 +14270,17 @@ window.onload=function(){
     }
 }
 
-// V4.27.2.1 — ligação garantida do botão de impressão.
-window.imprimirChamadosAbertosV427 = imprimirChamadosAbertosV427;
+window.imprimirChamadosAbertosV427 = imprimirChamadosAbertosV428;
+window.imprimirChamadosAbertosV428 = imprimirChamadosAbertosV428;
 
 (function() {
     const botao = document.getElementById("btnImprimirChamadosAbertos");
     if (botao) {
-        // Mantém uma ação direta no botão.
-        botao.addEventListener("click", function(evento) {
-            evento.preventDefault();
-            evento.stopPropagation();
-            window.imprimirChamadosAbertosV427();
-        }, true);
+        botao.onclick = function(evento) {
+            if (evento) evento.preventDefault();
+            imprimirChamadosAbertosV428();
+            return false;
+        };
     }
 })();
 
