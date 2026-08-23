@@ -15,7 +15,7 @@
     content="#17632d"
 >
 
-<title>Sistema Parque Clube — V6.1</title>
+<title>Sistema Parque Clube — V6.0</title>
 
 <style>
 
@@ -3283,15 +3283,6 @@ input:focus,select:focus,textarea:focus{
 </div>
 
 
-<div class="v61-theme-box" id="v61ThemeBox">
-  <div class="v61-theme-title">🎨 Aparência do Sistema</div>
-  <div class="v61-theme-sub">Escolha como a Área Administrativa será exibida neste navegador.</div>
-  <div class="v61-theme-options">
-    <button type="button" class="v61-theme-btn" data-pc-theme="parque">🟢 Tema Parque Clube</button>
-    <button type="button" class="v61-theme-btn" data-pc-theme="claro">☀️ Tema Claro</button>
-    <button type="button" class="v61-theme-btn" data-pc-theme="escuro">🌙 Tema Escuro</button>
-  </div>
-</div>
 
 <div class="admin-v45-dashboard" id="adminDashboardV45">
   <div class="admin-v45-dashboard-head">
@@ -3595,40 +3586,6 @@ input:focus,select:focus,textarea:focus{
 </div>
 
 
-</div>
-
-
-
-<!-- V6.1 CENTRAL REQUER ATENÇÃO -->
-<div class="v61-attention" id="v61Attention">
-  <div class="v61-attention-head">
-    <div>
-      <div class="v61-attention-title">⚠️ REQUER ATENÇÃO</div>
-      <div class="v61-attention-sub">Acompanhamento prioritário dos chamados ativos.</div>
-    </div>
-  </div>
-  <div class="v61-attention-grid">
-    <div class="v61-attention-card v61-open">
-      <div class="v61-attention-icon">📋</div>
-      <div class="v61-attention-number" id="v61TotalAbertos">0</div>
-      <div class="v61-attention-label">Total de chamados em aberto</div>
-    </div>
-    <div class="v61-attention-card v61-urgent">
-      <div class="v61-attention-icon">🔴</div>
-      <div class="v61-attention-number" id="v61Urgentes">0</div>
-      <div class="v61-attention-label">Chamados prioridade urgente</div>
-    </div>
-    <div class="v61-attention-card v61-high">
-      <div class="v61-attention-icon">🟠</div>
-      <div class="v61-attention-number" id="v61Alta">0</div>
-      <div class="v61-attention-label">Chamados prioridade alta</div>
-    </div>
-    <div class="v61-attention-card v61-old">
-      <div class="v61-attention-icon">🕒</div>
-      <div class="v61-attention-number" id="v61Mais2Dias">0</div>
-      <div class="v61-attention-label">Abertos há 2 dias ou mais</div>
-    </div>
-  </div>
 </div>
 
 
@@ -6518,10 +6475,6 @@ function atualizarEstatisticas() {
         )
         .textContent =
         cancelados;
-
-    if (typeof atualizarCentralAtencaoV61 === "function") {
-        atualizarCentralAtencaoV61();
-    }
 
 }
 
@@ -14552,176 +14505,6 @@ body{margin:0;background:#edf1f3;font-family:Arial,Helvetica,sans-serif;color:#2
  @page{size:A4;margin:11mm}
 }
 </style>
-
-<!-- =====================================================
-     V6.1 — TEMA VISUAL + CENTRAL REQUER ATENÇÃO
-===================================================== -->
-<style id="parque-clube-v61">
-/* Central de atenção */
-.v61-attention{
-  display:none;
-  margin:16px 0;
-  padding:18px;
-  border:1px solid #ead9a8;
-  border-radius:20px;
-  background:linear-gradient(135deg,#fffdf5,#ffffff);
-  box-shadow:0 10px 28px rgba(101,78,20,.08);
-}
-.v61-attention-head{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  margin-bottom:14px;
-}
-.v61-attention-title{
-  font-size:17px;
-  font-weight:900;
-  color:#705400;
-}
-.v61-attention-sub{
-  font-size:12px;
-  color:#7b7160;
-  margin-top:3px;
-}
-.v61-attention-grid{
-  display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:12px;
-}
-.v61-attention-card{
-  min-height:112px;
-  padding:16px;
-  border-radius:16px;
-  border:1px solid #e6edf1;
-  background:#fff;
-  box-shadow:0 5px 14px rgba(18,59,93,.05);
-}
-.v61-attention-icon{font-size:22px}
-.v61-attention-number{
-  margin-top:8px;
-  font-size:30px;
-  font-weight:900;
-  color:#173c59;
-  line-height:1;
-}
-.v61-attention-label{
-  margin-top:8px;
-  font-size:11px;
-  font-weight:800;
-  color:#61717d;
-  text-transform:uppercase;
-  letter-spacing:.04em;
-  line-height:1.3;
-}
-.v61-urgent{border-top:4px solid #d63939}
-.v61-high{border-top:4px solid #d87916}
-.v61-open{border-top:4px solid #2475a9}
-.v61-old{border-top:4px solid #9a7b18}
-
-/* Escolha de tema */
-.v61-theme-box{
-  display:none;
-  margin:12px 0 16px;
-  padding:16px;
-  border:1px solid #dce7ee;
-  border-radius:18px;
-  background:#fff;
-}
-.v61-theme-title{
-  font-weight:900;
-  color:#173c59;
-  margin-bottom:4px;
-}
-.v61-theme-sub{
-  color:#687680;
-  font-size:12px;
-  margin-bottom:12px;
-}
-.v61-theme-options{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-}
-.v61-theme-btn{
-  appearance:none;
-  border:1px solid #cfdde5;
-  background:#fff;
-  color:#24323d;
-  padding:10px 14px;
-  border-radius:12px;
-  font-weight:800;
-  cursor:pointer;
-  transition:.18s ease;
-}
-.v61-theme-btn:hover{transform:translateY(-1px)}
-.v61-theme-btn.active{
-  border-color:#17632d;
-  box-shadow:0 0 0 3px rgba(23,99,45,.12);
-}
-body.pc-theme-claro{
-  background:#f4f7f9 !important;
-}
-body.pc-theme-claro .container,
-body.pc-theme-claro .section,
-body.pc-theme-claro .card,
-body.pc-theme-claro .v61-theme-box,
-body.pc-theme-claro .v61-attention-card{
-  background:#fff !important;
-}
-body.pc-theme-escuro{
-  background:#111a22 !important;
-  color:#eaf1f5 !important;
-}
-body.pc-theme-escuro .container,
-body.pc-theme-escuro .section,
-body.pc-theme-escuro .card,
-body.pc-theme-escuro .admin-box,
-body.pc-theme-escuro .v61-theme-box,
-body.pc-theme-escuro .v61-attention,
-body.pc-theme-escuro .v61-attention-card,
-body.pc-theme-escuro .admin-v45-dashboard,
-body.pc-theme-escuro .admin-v45-kpi{
-  background:#18242d !important;
-  color:#eaf1f5 !important;
-  border-color:#30414d !important;
-}
-body.pc-theme-escuro h1,
-body.pc-theme-escuro h2,
-body.pc-theme-escuro h3,
-body.pc-theme-escuro label,
-body.pc-theme-escuro strong,
-body.pc-theme-escuro .section-title,
-body.pc-theme-escuro .admin-titulo,
-body.pc-theme-escuro .v61-theme-title{
-  color:#f1f6f8 !important;
-}
-body.pc-theme-escuro input,
-body.pc-theme-escuro select,
-body.pc-theme-escuro textarea{
-  background:#111a22 !important;
-  color:#edf5f7 !important;
-  border-color:#40535f !important;
-}
-body.pc-theme-escuro .v61-theme-btn{
-  background:#20303a;
-  color:#edf5f7;
-  border-color:#40535f;
-}
-body.pc-theme-escuro .v61-attention-title{color:#ffd86d !important}
-body.pc-theme-escuro .v61-attention-sub,
-body.pc-theme-escuro .v61-attention-label,
-body.pc-theme-escuro .v61-theme-sub{color:#b7c5cd !important}
-
-@media(max-width:800px){
-  .v61-attention-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-}
-@media(max-width:480px){
-  .v61-attention-grid{grid-template-columns:1fr}
-  .v61-attention-card{min-height:96px}
-}
-</style>
-
 </head>
 <body>
 <main class="pagina">
@@ -14799,115 +14582,19 @@ window.imprimirChamadosAbertosV428 = imprimirChamadosAbertosV428;
 })();
 </script>
 
-
-<script id="parque-clube-v61-js">
-(function(){
-  function getDataAberturaV61(chamado){
-    var candidatos = [
-      chamado && chamado.dataAbertura,
-      chamado && chamado.dataCriacao,
-      chamado && chamado.created_at,
-      chamado && chamado.createdAt,
-      chamado && chamado.data
-    ];
-    for(var i=0;i<candidatos.length;i++){
-      var valor = candidatos[i];
-      if(!valor) continue;
-      if(valor instanceof Date && !isNaN(valor)) return valor;
-      var s = String(valor).trim();
-      // DD/MM/AAAA [HH:MM]
-      var m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\s*(?:às)?\s*(\d{1,2}):(\d{2}))?/);
-      if(m){
-        return new Date(+m[3], +m[2]-1, +m[1], +(m[4]||0), +(m[5]||0), 0, 0);
-      }
-      var d = new Date(s);
-      if(!isNaN(d)) return d;
-    }
-    return null;
-  }
-
-  window.atualizarCentralAtencaoV61 = function(){
-    var box = document.getElementById("v61Attention");
-    if(!box) return;
-
-    var dados = Array.isArray(window.chamados) ? window.chamados : [];
-    var agora = new Date();
-    var limite = new Date(agora.getTime() - 2 * 24 * 60 * 60 * 1000);
-
-    var abertos = dados.filter(function(c){
-      return (c.status || "Aberto") === "Aberto";
-    });
-
-    var ativos = dados.filter(function(c){
-      var status = c.status || "Aberto";
-      return status === "Aberto" || status === "Em andamento";
-    });
-
-    var urgentes = ativos.filter(function(c){
-      return String(c.prioridade || "").trim().toLowerCase() === "urgente";
-    });
-
-    var altas = ativos.filter(function(c){
-      return String(c.prioridade || "").trim().toLowerCase() === "alta";
-    });
-
-    var antigos = abertos.filter(function(c){
-      var d = getDataAberturaV61(c);
-      return d && d <= limite;
-    });
-
-    var set = function(id, valor){
-      var el = document.getElementById(id);
-      if(el) el.textContent = valor;
-    };
-    set("v61TotalAbertos", abertos.length);
-    set("v61Urgentes", urgentes.length);
-    set("v61Alta", altas.length);
-    set("v61Mais2Dias", antigos.length);
-
-    var painel = document.getElementById("adminPainel");
-    var visivel = painel && getComputedStyle(painel).display !== "none";
-    box.style.display = visivel ? "block" : "none";
-  };
-
-  function aplicarTemaV61(tema){
-    var body = document.body;
-    body.classList.remove("pc-theme-parque","pc-theme-claro","pc-theme-escuro");
-    body.classList.add("pc-theme-" + tema);
-    try{ localStorage.setItem("parqueClubeTemaV61", tema); }catch(e){}
-    document.querySelectorAll("[data-pc-theme]").forEach(function(btn){
-      btn.classList.toggle("active", btn.getAttribute("data-pc-theme") === tema);
-    });
-  }
-
-  function atualizarVisibilidadeV61(){
-    var painel = document.getElementById("adminPainel");
-    var visivel = painel && getComputedStyle(painel).display !== "none";
-    var tema = document.getElementById("v61ThemeBox");
-    if(tema) tema.style.display = visivel ? "block" : "none";
-    if(typeof window.atualizarCentralAtencaoV61 === "function"){
-      window.atualizarCentralAtencaoV61();
-    }
-  }
-
-  document.addEventListener("DOMContentLoaded", function(){
-    var salvo = "parque";
-    try{ salvo = localStorage.getItem("parqueClubeTemaV61") || "parque"; }catch(e){}
-    aplicarTemaV61(salvo);
-
-    document.querySelectorAll("[data-pc-theme]").forEach(function(btn){
-      btn.addEventListener("click", function(){
-        aplicarTemaV61(btn.getAttribute("data-pc-theme"));
-      });
-    });
-
-    atualizarVisibilidadeV61();
-
-    // Acompanha carregamentos e mudanças da área administrativa sem mexer na lógica existente.
-    setInterval(atualizarVisibilidadeV61, 1000);
-  });
-})();
-</script>
+<footer id="rodapeVersao" style="
+  margin-top:28px;
+  padding:20px 16px;
+  text-align:center;
+  border-top:1px solid #dce7ee;
+  background:rgba(248,251,253,.92);
+  color:#687680;
+  font-size:12px;
+  line-height:1.7;">
+  <div style="font-weight:800;color:#173c59;">SISTEMA DE GESTÃO DO CONDOMÍNIO</div>
+  <div>Versão <strong>V6.0</strong></div>
+  <div>Desenvolvido por <strong>NEW CRISTIAN</strong></div>
+</footer>
 
 </body>
 </html>
