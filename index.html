@@ -11334,22 +11334,7 @@ td:nth-child(2),td:nth-child(3){
 
 
 
-<script id="parque-clube-v6-visual-js">
-(function(){
-  function atualizarCabecalhoV6(){
-    var painel = document.getElementById("adminPainel");
-    var cab = document.getElementById("v6DashboardHeader");
-    if(!painel || !cab) return;
-    var visivel = painel.style.display !== "none" &&
-      getComputedStyle(painel).display !== "none";
-    cab.style.display = visivel ? "flex" : "none";
-  }
-  document.addEventListener("click", function(){
-    setTimeout(atualizarCabecalhoV6, 250);
-  });
-  document.addEventListener("DOMContentLoaded", atualizarCabecalhoV6);
-})();
-</script>
+
 
 </body>
 </html>`;
@@ -14578,6 +14563,23 @@ window.imprimirChamadosAbertosV428 = imprimirChamadosAbertosV428;
     }
 })();
 
+</script>
+
+<script id="parque-clube-v6-visual-js">
+(function(){
+  function atualizarCabecalhoV6(){
+    var painel = document.getElementById("adminPainel");
+    var cab = document.getElementById("v6DashboardHeader");
+    if(!painel || !cab) return;
+    var visivel = painel.style.display !== "none" &&
+      getComputedStyle(painel).display !== "none";
+    cab.style.display = visivel ? "flex" : "none";
+  }
+  document.addEventListener("click", function(){
+    setTimeout(atualizarCabecalhoV6, 250);
+  });
+  document.addEventListener("DOMContentLoaded", atualizarCabecalhoV6);
+})();
 </script>
 </body>
 </html>
