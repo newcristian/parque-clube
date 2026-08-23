@@ -13116,7 +13116,7 @@ function mostrarPainelDetalhesChamadoV45() {
 
     /*
     ============================================================
-    V4.26.2 — CONTROLE DA NOTIFICAÇÃO AUTOMÁTICA
+    V4.27 — CONTROLE DA NOTIFICAÇÃO AUTOMÁTICA
     - ON: abre automaticamente "Novo chamado recebido!"
     - OFF: não abre o modal automaticamente
     - O contador 🔔 Notificações continua registrando novos chamados
@@ -13214,7 +13214,7 @@ function mostrarPainelDetalhesChamadoV45() {
 
     /*
     ============================================================
-    V4.26.2 — NOTIFICAÇÕES DE NOVOS CHAMADOS
+    V4.27 — NOTIFICAÇÕES DE NOVOS CHAMADOS
     - Botão 🔔 Notificações
     - Contador de novos chamados não visualizados
     - Modal "Novo chamado recebido!"
@@ -13870,7 +13870,7 @@ function mostrarPainelDetalhesChamadoV45() {
 })();
 
 /* =====================================================
-   V4.26.2.1 — IMPRESSÃO DE CHAMADOS ABERTOS
+   V4.27.1 — IMPRESSÃO DE CHAMADOS ABERTOS
    Correção: busca a variável real 'chamados' e, se necessário,
    consulta o banco antes de abrir a impressão.
 ===================================================== */
@@ -13920,12 +13920,70 @@ function pcObterListaChamadosV426() {
     return [];
 }
 
-async function imprimirChamadosAbertosV426() {
-    const botao = document.getElementById("btnImprimirChamadosAbertos");
-    const textoOriginal = botao ? botao.textContent : "";
+async /* =====================================================
+   V4.27 — RELATÓRIO COMPLETO DE CHAMADOS ABERTOS
+===================================================== */
 
-    // Abre a janela imediatamente dentro do clique para evitar bloqueio de pop-up.
-    const janela = window.open("", "parque_clube_chamados_abertos");
+function pcEscapeHtmlV427(valor) {
+    return String(valor == null ? "" : valor)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+function pcFormatarDataV427(valor) {
+    if (!valor) return "Não informado";
+    const texto = String(valor).trim();
+
+    if (/^\d{2}\/\d{2}\/\d{4}/.test(texto)) return texto;
+
+    const data = new Date(texto);
+    if (!isNaN(data.getTime())) {
+        return data.toLocaleString("pt-BR", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+        });
+    }
+    return texto;
+}
+
+function pcCampoV427(obj, nomes, padrao) {
+    for (const nome of nomes) {
+        if (obj && obj[nome] !== undefined && obj[nome] !== null && String(obj[nome]).trim() !== "") {
+            return obj[nome];
+        }
+    }
+    return padrao || "Não informado";
+}
+
+function pcObterListaChamadosV427() {
+    try {
+        if (typeof chamados !== "undefined" && Array.isArray(chamados)) return chamados;
+    } catch (e) {}
+
+    if (Array.isArray(window.chamados)) return window.chamados;
+    return [];
+}
+
+function pcPrioridadeClasseV427(prioridade) {
+    const p = String(prioridade || "").toLowerCase();
+    if (p.includes("urg")) return "urgente";
+    if (p.includes("alta")) return "alta";
+    if (p.includes("baixa")) return "baixa";
+    return "moderada";
+}
+
+async function imprimirChamadosAbertosV427() {
+    const botao = document.getElementById("btnImprimirChamadosAbertos");
+    const textoOriginal = botao ? botao.textContent : "🖨️ Imprimir Chamados Abertos";
+
+    // Abre imediatamente dentro do clique para evitar bloqueio do navegador.
+    const janela = window.open("", "parque_clube_relatorio_chamados_abertos");
 
     if (!janela) {
         alert("O navegador bloqueou a janela de impressão. Permita pop-ups para este site e tente novamente.");
@@ -13934,20 +13992,19 @@ async function imprimirChamadosAbertosV426() {
 
     if (botao) {
         botao.disabled = true;
-        botao.textContent = "⏳ Preparando impressão...";
+        botao.textContent = "⏳ Preparando relatório...";
     }
 
     try {
-        let listaBase = pcObterListaChamadosV426();
+        let listaBase = pcObterListaChamadosV427();
 
-        // Se a lista ainda não estiver carregada, busca os chamados reais no Worker.
         if (!Array.isArray(listaBase) || listaBase.length === 0) {
             if (typeof API === "undefined" || !API) {
-                throw new Error("A URL da API do sistema não está disponível.");
+                throw new Error("A API do sistema não está disponível.");
             }
 
             if (typeof senhaAdministrativa === "undefined" || !senhaAdministrativa) {
-                throw new Error("Entre novamente na área administrativa antes de imprimir.");
+                throw new Error("Acesse novamente a área administrativa antes de imprimir.");
             }
 
             const resposta = await fetch(API, {
@@ -13967,17 +14024,14 @@ async function imprimirChamadosAbertosV426() {
 
             listaBase = Array.isArray(dados.chamados) ? dados.chamados : [];
 
-            // Mantém a lista principal sincronizada quando possível.
             try {
                 if (typeof chamados !== "undefined") chamados = listaBase;
             } catch (e) {}
         }
 
         const chamadosAbertos = listaBase.filter(function(chamado) {
-            return chamado &&
-                String(chamado.status || "")
-                    .trim()
-                    .toLowerCase() === "aberto";
+            const status = String(pcCampoV427(chamado, ["status"], "Aberto")).trim().toLowerCase();
+            return chamado && status === "aberto" && chamado.arquivado !== true;
         });
 
         if (!chamadosAbertos.length) {
@@ -13987,58 +14041,95 @@ async function imprimirChamadosAbertosV426() {
         }
 
         chamadosAbertos.sort(function(a, b) {
-            return String(a.criadoEm || a.dataAbertura || "")
-                .localeCompare(String(b.criadoEm || b.dataAbertura || ""));
+            const da = String(pcCampoV427(a, ["criadoEm", "dataAbertura", "data", "created_at"], ""));
+            const db = String(pcCampoV427(b, ["criadoEm", "dataAbertura", "data", "created_at"], ""));
+            return da.localeCompare(db);
         });
 
-        const dataImpressao = new Date().toLocaleString("pt-BR", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit"
+        const agora = new Date();
+        const dataImpressao = agora.toLocaleString("pt-BR", {
+            day: "2-digit", month: "2-digit", year: "numeric",
+            hour: "2-digit", minute: "2-digit"
+        });
+
+        // Resumo por prioridade.
+        const resumo = { urgente: 0, alta: 0, moderada: 0, baixa: 0 };
+
+        chamadosAbertos.forEach(function(chamado) {
+            const prioridade = pcCampoV427(chamado, ["prioridade"], "Moderada");
+            const classe = pcPrioridadeClasseV427(prioridade);
+            resumo[classe]++;
         });
 
         const linhas = chamadosAbertos.map(function(chamado, indice) {
-            const protocolo = chamado.protocolo || "Não informado";
-            const bloco = chamado.bloco || chamado.local || "Não informado";
-            const unidade = chamado.unidade || chamado.apartamento || "";
-            const ocorrencia = chamado.ocorrencia || chamado.tipoOcorrencia || "Não informado";
-            const prioridade = chamado.prioridade || "Moderada";
-            const descricao =
-                chamado.detalhes ||
-                chamado.descricao ||
-                chamado.relato ||
-                chamado.mensagem ||
-                "Não informado";
-            const abertura =
-                chamado.criadoEm ||
-                chamado.dataAbertura ||
-                chamado.data ||
-                chamado.created_at ||
-                "";
+            const protocolo = pcCampoV427(chamado, ["protocolo", "numeroProtocolo"], "Não informado");
+            const solicitante = pcCampoV427(chamado, ["solicitante", "nome", "nomeSolicitante", "morador"], "Não informado");
+            const whatsapp = pcCampoV427(chamado, ["whatsapp", "telefone", "telefoneWhatsApp", "celular"], "");
+            const bloco = pcCampoV427(chamado, ["bloco", "areaBloco"], "Não informado");
+            const local = pcCampoV427(chamado, ["local", "area", "localizacao"], "");
+            const pavimento = pcCampoV427(chamado, ["pavimento", "andar"], "");
+            const unidade = pcCampoV427(chamado, ["unidade", "apartamento", "apto"], "");
+            const ocorrencia = pcCampoV427(chamado, ["ocorrencia", "tipoOcorrencia", "tipo"], "Não informado");
+            const prioridade = pcCampoV427(chamado, ["prioridade"], "Moderada");
+            const detalhes = pcCampoV427(chamado, ["detalhes", "descricao", "relato", "mensagem"], "Não informado");
+            const abertura = pcCampoV427(chamado, ["criadoEm", "dataAbertura", "data", "created_at"], "");
+            const atualizacao = pcCampoV427(chamado, ["atualizadoEm", "ultimaAtualizacao", "updated_at"], "");
+            const responsavel = pcCampoV427(chamado, ["responsavel", "atendente"], "");
+            const prioridadeClasse = pcPrioridadeClasseV427(prioridade);
 
             return `
                 <article class="chamado">
-                    <div class="numero">CHAMADO ${indice + 1}</div>
-                    <div class="cabecalho-chamado">
-                        <div>
-                            <div class="protocolo">PROTOCOLO: ${pcEscapeHtmlV426(protocolo)}</div>
-                            <div class="status">STATUS: ABERTO</div>
+                    <div class="linha-superior">
+                        <div class="numero">CHAMADO ${String(indice + 1).padStart(2, "0")}</div>
+                        <div class="badge-status">● ABERTO</div>
+                    </div>
+
+                    <div class="titulo-chamado">
+                        <span>PROTOCOLO:</span> ${pcEscapeHtmlV427(protocolo)}
+                    </div>
+
+                    <div class="info-principal">
+                        <div class="campo">
+                            <span>👤 SOLICITANTE</span>
+                            <strong>${pcEscapeHtmlV427(solicitante)}</strong>
                         </div>
-                        <div class="prioridade">${pcEscapeHtmlV426(prioridade)}</div>
+                        <div class="campo">
+                            <span>📱 WHATSAPP</span>
+                            <strong>${pcEscapeHtmlV427(whatsapp || "Não informado")}</strong>
+                        </div>
+                        <div class="campo">
+                            <span>📅 ABERTURA</span>
+                            <strong>${pcEscapeHtmlV427(pcFormatarDataV427(abertura))}</strong>
+                        </div>
+                        <div class="campo">
+                            <span>⚠ PRIORIDADE</span>
+                            <strong class="prioridade ${prioridadeClasse}">${pcEscapeHtmlV427(prioridade)}</strong>
+                        </div>
                     </div>
 
-                    <div class="grade">
-                        <div><strong>Data de abertura:</strong><br>${pcEscapeHtmlV426(pcFormatarDataV426(abertura))}</div>
-                        <div><strong>Bloco:</strong><br>${pcEscapeHtmlV426(bloco)}</div>
-                        ${unidade ? `<div><strong>Unidade:</strong><br>${pcEscapeHtmlV426(unidade)}</div>` : ""}
-                        <div><strong>Ocorrência:</strong><br>${pcEscapeHtmlV426(ocorrencia)}</div>
+                    <div class="secao">
+                        <div class="secao-titulo">📍 LOCALIZAÇÃO</div>
+                        <div class="grade">
+                            <div><strong>Bloco:</strong> ${pcEscapeHtmlV427(bloco)}</div>
+                            ${local ? `<div><strong>Local/Área:</strong> ${pcEscapeHtmlV427(local)}</div>` : ""}
+                            ${pavimento ? `<div><strong>Andar/Pavimento:</strong> ${pcEscapeHtmlV427(pavimento)}</div>` : ""}
+                            ${unidade ? `<div><strong>Unidade:</strong> ${pcEscapeHtmlV427(unidade)}</div>` : ""}
+                        </div>
                     </div>
 
-                    <div class="descricao">
-                        <strong>Descrição do chamado:</strong>
-                        <p>${pcEscapeHtmlV426(descricao).replace(/\n/g, "<br>")}</p>
+                    <div class="secao">
+                        <div class="secao-titulo">🛠 OCORRÊNCIA</div>
+                        <div class="texto-destaque">${pcEscapeHtmlV427(ocorrencia)}</div>
+                    </div>
+
+                    <div class="secao descricao">
+                        <div class="secao-titulo">📝 DETALHES INFORMADOS</div>
+                        <div class="texto-longo">${pcEscapeHtmlV427(detalhes).replace(/\n/g, "<br>")}</div>
+                    </div>
+
+                    <div class="rodape-chamado">
+                        ${responsavel ? `<span><strong>Responsável:</strong> ${pcEscapeHtmlV427(responsavel)}</span>` : ""}
+                        ${atualizacao ? `<span><strong>Última atualização:</strong> ${pcEscapeHtmlV427(pcFormatarDataV427(atualizacao))}</span>` : ""}
                     </div>
                 </article>
             `;
@@ -14050,71 +14141,140 @@ async function imprimirChamadosAbertosV426() {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Chamados Abertos - Parque Clube</title>
+<title>Relatório de Chamados Abertos - Parque Clube</title>
 <style>
 *{box-sizing:border-box}
-body{font-family:Arial,Helvetica,sans-serif;color:#222;margin:0;background:#f1f1f1}
-.pagina{max-width:900px;margin:20px auto;background:#fff;padding:32px}
-.topo{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;border-bottom:3px solid #123b5d;padding-bottom:16px;margin-bottom:20px}
-h1{margin:0;color:#123b5d;font-size:25px}
-.subtitulo{margin-top:5px;color:#555;font-size:14px}
-.resumo{background:#eef4f8;border:1px solid #d7e3ea;border-radius:8px;padding:12px;margin:15px 0 22px;font-weight:700}
-.chamado{position:relative;border:1px solid #cfd6dc;border-radius:8px;padding:18px;margin:0 0 18px;break-inside:avoid;page-break-inside:avoid}
-.numero{position:absolute;right:14px;top:12px;color:#888;font-size:12px;font-weight:700}
-.cabecalho-chamado{display:flex;justify-content:space-between;gap:12px;padding-right:75px;border-bottom:1px solid #e4e4e4;padding-bottom:12px}
-.protocolo{font-weight:800;font-size:17px;color:#123b5d}
-.status{display:inline-block;margin-top:7px;padding:4px 8px;background:#fff3cd;border:1px solid #ead28c;border-radius:5px;font-size:12px;font-weight:800}
-.prioridade{font-weight:800;text-transform:uppercase;font-size:12px;padding:8px 10px;border:1px solid #ddd;border-radius:6px;height:max-content}
-.grade{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:16px 0}
-.grade div{font-size:14px;line-height:1.45}
-.descricao{background:#fafafa;border-radius:6px;padding:12px;font-size:14px;line-height:1.5}
-.descricao p{margin:8px 0 0}
-.rodape{margin-top:28px;padding-top:12px;border-top:1px solid #ddd;text-align:center;color:#666;font-size:12px}
-@media(max-width:650px){.pagina{margin:0;padding:18px}.topo,.cabecalho-chamado{display:block}.prioridade{display:inline-block;margin-top:10px}.grade{grid-template-columns:1fr}}
-@media print{body{background:#fff}.pagina{max-width:none;margin:0;padding:0}.chamado{break-inside:avoid;page-break-inside:avoid}@page{size:A4;margin:12mm}}
+body{margin:0;background:#e9edf0;font-family:Arial,Helvetica,sans-serif;color:#1d2933}
+.pagina{width:210mm;min-height:297mm;margin:10mm auto;background:#fff;padding:13mm}
+.cabecalho{border-bottom:4px solid #235d38;padding-bottom:14px;margin-bottom:16px}
+.cabecalho-linha{display:flex;justify-content:space-between;align-items:flex-start;gap:20px}
+.marca{font-size:26px;font-weight:800;color:#235d38;letter-spacing:.5px}
+.titulo{font-size:21px;font-weight:800;color:#193d59;margin-top:5px}
+.subtitulo{font-size:12px;color:#667;margin-top:4px}
+.data-relatorio{text-align:right;font-size:11px;line-height:1.5;color:#444}
+.painel-resumo{display:grid;grid-template-columns:2fr repeat(4,1fr);gap:8px;margin:0 0 18px}
+.resumo-item{border:1px solid #cfd8dc;border-radius:7px;padding:10px;text-align:center;background:#f8fafb}
+.resumo-item .rotulo{font-size:10px;color:#5d6a72;font-weight:700;text-transform:uppercase}
+.resumo-item .numero-resumo{font-size:20px;font-weight:800;color:#193d59;margin-top:3px}
+.resumo-item.urgente{border-color:#d66}
+.resumo-item.alta{border-color:#e0a12c}
+.resumo-item.moderada{border-color:#6c9bc1}
+.resumo-item.baixa{border-color:#6da879}
+.chamado{border:1px solid #bfcbd2;border-left:5px solid #235d38;border-radius:8px;padding:15px;margin-bottom:14px;break-inside:avoid;page-break-inside:avoid;background:#fff}
+.linha-superior{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.numero{font-size:10px;font-weight:800;color:#7a858b;letter-spacing:.5px}
+.badge-status{font-size:11px;font-weight:800;color:#1f6b38;background:#e5f5e8;padding:5px 9px;border-radius:14px;border:1px solid #b7ddc0}
+.titulo-chamado{font-size:18px;font-weight:800;color:#193d59;border-bottom:1px solid #e1e6e8;padding-bottom:10px}
+.titulo-chamado span{font-size:11px;color:#68757b}
+.info-principal{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}
+.campo{background:#f5f7f8;border-radius:6px;padding:9px;min-height:56px}
+.campo span{display:block;font-size:9px;font-weight:800;color:#69767c;margin-bottom:4px}
+.campo strong{font-size:11px;display:block;word-break:break-word}
+.prioridade{padding:3px 6px;border-radius:4px;width:max-content}
+.prioridade.urgente{background:#ffe3e3;color:#9b1c1c}
+.prioridade.alta{background:#fff0c7;color:#805300}
+.prioridade.moderada{background:#e5f0fa;color:#275f8c}
+.prioridade.baixa{background:#e5f5e8;color:#276738}
+.secao{margin-top:10px}
+.secao-titulo{font-size:10px;font-weight:800;color:#235d38;border-bottom:1px solid #dfe5e8;padding-bottom:5px;margin-bottom:7px;letter-spacing:.2px}
+.grade{display:grid;grid-template-columns:repeat(2,1fr);gap:6px 15px;font-size:11px;line-height:1.45}
+.texto-destaque{font-size:12px;font-weight:700}
+.descricao{background:#fbfcfc;border:1px solid #edf0f1;border-radius:6px;padding:10px}
+.texto-longo{font-size:11px;line-height:1.5}
+.rodape-chamado{margin-top:11px;padding-top:8px;border-top:1px dashed #d7dde0;display:flex;justify-content:space-between;gap:12px;font-size:9px;color:#647178}
+.rodape-geral{margin-top:22px;padding-top:10px;border-top:1px solid #cfd8dc;display:flex;justify-content:space-between;font-size:9px;color:#69767c}
+@media screen and (max-width:800px){
+  .pagina{width:100%;min-height:auto;margin:0;padding:16px}
+  .painel-resumo{grid-template-columns:repeat(2,1fr)}
+  .info-principal{grid-template-columns:repeat(2,1fr)}
+  .cabecalho-linha{display:block}
+  .data-relatorio{text-align:left;margin-top:10px}
+}
+@media print{
+  body{background:#fff}
+  .pagina{width:auto;min-height:auto;margin:0;padding:0}
+  .chamado{break-inside:avoid;page-break-inside:avoid}
+  @page{size:A4;margin:11mm}
+}
 </style>
 </head>
 <body>
 <main class="pagina">
-<header class="topo">
-<div><h1>PARQUE CLUBE</h1><div class="subtitulo">RELATÓRIO DE CHAMADOS ABERTOS</div></div>
-<div class="subtitulo"><strong>Impresso em:</strong><br>${pcEscapeHtmlV426(dataImpressao)}</div>
-</header>
-<div class="resumo">Total de chamados abertos: ${chamadosAbertos.length}</div>
-${linhas}
-<footer class="rodape">Sistema de Gestão do Condomínio — Parque Clube</footer>
+  <header class="cabecalho">
+    <div class="cabecalho-linha">
+      <div>
+        <div class="marca">PARQUE CLUBE</div>
+        <div class="titulo">RELATÓRIO ADMINISTRATIVO DE CHAMADOS ABERTOS</div>
+        <div class="subtitulo">Sistema de Gestão do Condomínio • Ordem de Serviço / Chamados Pendentes</div>
+      </div>
+      <div class="data-relatorio">
+        <strong>Data de emissão:</strong><br>${pcEscapeHtmlV427(dataImpressao)}<br>
+        <strong>Relatório:</strong> Chamados em aberto
+      </div>
+    </div>
+  </header>
+
+  <section class="painel-resumo">
+    <div class="resumo-item">
+      <div class="rotulo">Total em aberto</div>
+      <div class="numero-resumo">${chamadosAbertos.length}</div>
+    </div>
+    <div class="resumo-item urgente">
+      <div class="rotulo">Urgentes</div>
+      <div class="numero-resumo">${resumo.urgente}</div>
+    </div>
+    <div class="resumo-item alta">
+      <div class="rotulo">Alta</div>
+      <div class="numero-resumo">${resumo.alta}</div>
+    </div>
+    <div class="resumo-item moderada">
+      <div class="rotulo">Moderada</div>
+      <div class="numero-resumo">${resumo.moderada}</div>
+    </div>
+    <div class="resumo-item baixa">
+      <div class="rotulo">Baixa</div>
+      <div class="numero-resumo">${resumo.baixa}</div>
+    </div>
+  </section>
+
+  ${linhas}
+
+  <footer class="rodape-geral">
+    <span>PARQUE CLUBE — Sistema de Gestão do Condomínio</span>
+    <span>Documento gerado automaticamente pelo sistema</span>
+  </footer>
 </main>
 <script>
-window.onload=function(){setTimeout(function(){window.focus();window.print();},350);};
+window.onload=function(){
+  setTimeout(function(){
+    window.focus();
+    window.print();
+  },400);
+};
 <\/script>
 </body>
 </html>`);
         janela.document.close();
 
     } catch (erro) {
-        console.error("Erro ao imprimir chamados abertos:", erro);
-        try {
-            janela.document.open();
-            janela.document.write("<!DOCTYPE html><html><body style='font-family:Arial;padding:30px'><h2>Não foi possível preparar a impressão.</h2><p>" +
-                pcEscapeHtmlV426(erro.message || "Erro desconhecido.") +
-                "</p></body></html>");
-            janela.document.close();
-        } catch (e) {}
-        alert(erro.message || "Não foi possível imprimir os chamados abertos.");
+        console.error("Erro ao gerar relatório:", erro);
+        try { janela.close(); } catch (e) {}
+        alert(erro.message || "Não foi possível gerar o relatório.");
     } finally {
         if (botao) {
             botao.disabled = false;
-            botao.textContent = textoOriginal || "🖨️ Imprimir Chamados Abertos";
+            botao.textContent = textoOriginal;
         }
     }
 }
 
-// Ligação direta: não depende do DOMContentLoaded.
+// Remove possível ligação anterior do botão e cria uma ligação única.
 (function() {
     const botao = document.getElementById("btnImprimirChamadosAbertos");
-    if (botao && !botao.dataset.impressaoV426) {
-        botao.dataset.impressaoV426 = "1";
-        botao.addEventListener("click", imprimirChamadosAbertosV426);
+    if (botao) {
+        botao.onclick = function() {
+            imprimirChamadosAbertosV427();
+        };
     }
 })();
 
