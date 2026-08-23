@@ -13117,7 +13117,7 @@ function mostrarPainelDetalhesChamadoV45() {
 
     /*
     ============================================================
-    V4.27.1 — CONTROLE DA NOTIFICAÇÃO AUTOMÁTICA
+    V4.27.2 — CONTROLE DA NOTIFICAÇÃO AUTOMÁTICA
     - ON: abre automaticamente "Novo chamado recebido!"
     - OFF: não abre o modal automaticamente
     - O contador 🔔 Notificações continua registrando novos chamados
@@ -13215,7 +13215,7 @@ function mostrarPainelDetalhesChamadoV45() {
 
     /*
     ============================================================
-    V4.27.1 — NOTIFICAÇÕES DE NOVOS CHAMADOS
+    V4.27.2 — NOTIFICAÇÕES DE NOVOS CHAMADOS
     - Botão 🔔 Notificações
     - Contador de novos chamados não visualizados
     - Modal "Novo chamado recebido!"
@@ -13871,7 +13871,7 @@ function mostrarPainelDetalhesChamadoV45() {
 })();
 
 /* =====================================================
-   V4.27.1.1 — IMPRESSÃO DE CHAMADOS ABERTOS
+   V4.27.2.1 — IMPRESSÃO DE CHAMADOS ABERTOS
    Correção: busca a variável real 'chamados' e, se necessário,
    consulta o banco antes de abrir a impressão.
 ===================================================== */
@@ -13922,7 +13922,7 @@ function pcObterListaChamadosV426() {
 }
 
 async /* =====================================================
-   V4.27.1 — RELATÓRIO COMPLETO DE CHAMADOS ABERTOS
+   V4.27.2 — RELATÓRIO COMPLETO DE CHAMADOS ABERTOS
 ===================================================== */
 
 function pcEscapeHtmlV427(valor) {
@@ -14070,13 +14070,60 @@ async function imprimirChamadosAbertosV427() {
             const local = pcCampoV427(chamado, ["local", "area", "localizacao"], "");
             const pavimento = pcCampoV427(chamado, ["pavimento", "andar"], "");
             const unidade = pcCampoV427(chamado, ["unidade", "apartamento", "apto"], "");
-            const ocorrencia = pcCampoV427(chamado, ["ocorrencia", "tipoOcorrencia", "tipo"], "Não informado");
+            // V4.27.2 — inclui todos os nomes usados pelo sistema e pelo Worker.
+            const ocorrencia = pcCampoV427(
+                chamado,
+                ["ocorrencia", "tipoOcorrencia", "tipo_ocorrencia", "tipo", "servico", "tipoServico"],
+                "Não informado"
+            );
+
+            const dataOcorrencia = pcCampoV427(
+                chamado,
+                ["dataOcorrencia", "data_ocorrencia", "dataDoOcorrido"],
+                ""
+            );
+
+            const horaInicial = pcCampoV427(
+                chamado,
+                ["horaInicial", "hora_inicial", "inicio", "horaInicio"],
+                ""
+            );
+
+            const horaFinal = pcCampoV427(
+                chamado,
+                ["horaFinal", "hora_final", "fim", "horaFim"],
+                ""
+            );
+
+            const areaExecucao = pcCampoV427(
+                chamado,
+                ["areaExecucao", "area_execucao", "localExecucao"],
+                ""
+            );
+
             const prioridade = pcCampoV427(chamado, ["prioridade"], "Moderada");
             const detalhes = pcCampoV427(chamado, ["detalhes", "descricao", "relato", "mensagem"], "Não informado");
             const abertura = pcCampoV427(chamado, ["criadoEm", "dataAbertura", "data", "created_at"], "");
             const atualizacao = pcCampoV427(chamado, ["atualizadoEm", "ultimaAtualizacao", "updated_at"], "");
             const responsavel = pcCampoV427(chamado, ["responsavel", "atendente"], "");
             const prioridadeClasse = pcPrioridadeClasseV427(prioridade);
+
+            const ehCamera = String(ocorrencia).toLowerCase().includes("câmera") ||
+                             String(ocorrencia).toLowerCase().includes("camera") ||
+                             String(ocorrencia).toLowerCase().includes("imagem");
+
+            const dadosEspeciais = (ehCamera || dataOcorrencia || horaInicial || horaFinal || areaExecucao) ? `
+                <div class="secao dados-especiais">
+                    <div class="secao-titulo">📷 INFORMAÇÕES COMPLEMENTARES</div>
+                    <div class="grade">
+                        ${dataOcorrencia ? `<div><strong>📅 Data do ocorrido:</strong> ${pcEscapeHtmlV427(dataOcorrencia)}</div>` : ""}
+                        ${horaInicial ? `<div><strong>🕐 Hora inicial:</strong> ${pcEscapeHtmlV427(horaInicial)}</div>` : ""}
+                        ${horaFinal ? `<div><strong>🕑 Hora final:</strong> ${pcEscapeHtmlV427(horaFinal)}</div>` : ""}
+                        ${horaInicial && horaFinal ? `<div><strong>⏱ Período solicitado:</strong> ${pcEscapeHtmlV427(horaInicial)} às ${pcEscapeHtmlV427(horaFinal)}</div>` : ""}
+                        ${areaExecucao ? `<div><strong>📍 Área/Local da execução:</strong> ${pcEscapeHtmlV427(areaExecucao)}</div>` : ""}
+                    </div>
+                </div>
+            ` : "";
 
             return `
                 <article class="chamado">
@@ -14122,6 +14169,8 @@ async function imprimirChamadosAbertosV427() {
                         <div class="secao-titulo">🛠 OCORRÊNCIA</div>
                         <div class="texto-destaque">${pcEscapeHtmlV427(ocorrencia)}</div>
                     </div>
+
+                    ${dadosEspeciais}
 
                     <div class="secao descricao">
                         <div class="secao-titulo">📝 DETALHES INFORMADOS</div>
@@ -14180,7 +14229,7 @@ body{margin:0;background:#e9edf0;font-family:Arial,Helvetica,sans-serif;color:#1
 .secao-titulo{font-size:10px;font-weight:800;color:#235d38;border-bottom:1px solid #dfe5e8;padding-bottom:5px;margin-bottom:7px;letter-spacing:.2px}
 .grade{display:grid;grid-template-columns:repeat(2,1fr);gap:6px 15px;font-size:11px;line-height:1.45}
 .texto-destaque{font-size:12px;font-weight:700}
-.descricao{background:#fbfcfc;border:1px solid #edf0f1;border-radius:6px;padding:10px}
+.dados-especiais{background:#f5f9fc;border:1px solid #d9e7f2;border-radius:6px;padding:10px}.descricao{background:#fbfcfc;border:1px solid #edf0f1;border-radius:6px;padding:10px}
 .texto-longo{font-size:11px;line-height:1.5}
 .rodape-chamado{margin-top:11px;padding-top:8px;border-top:1px dashed #d7dde0;display:flex;justify-content:space-between;gap:12px;font-size:9px;color:#647178}
 .rodape-geral{margin-top:22px;padding-top:10px;border-top:1px solid #cfd8dc;display:flex;justify-content:space-between;font-size:9px;color:#69767c}
@@ -14269,7 +14318,7 @@ window.onload=function(){
     }
 }
 
-// V4.27.1.1 — ligação garantida do botão de impressão.
+// V4.27.2.1 — ligação garantida do botão de impressão.
 window.imprimirChamadosAbertosV427 = imprimirChamadosAbertosV427;
 
 (function() {
