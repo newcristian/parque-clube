@@ -15,7 +15,7 @@
     content="#17632d"
 >
 
-<title>Chamados - Parque Clube</title>
+<title>Sistema Parque Clube — V6.0</title>
 
 <style>
 
@@ -2134,6 +2134,180 @@ button:active{
 @media(max-width:700px){.admin-v45-dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-v45-kpi strong{font-size:20px}}
 </style>
 
+
+<!-- =====================================================
+     V6.0 — CAMADA VISUAL MODERNA
+     Mantém IDs, funções JavaScript e integração existentes.
+===================================================== -->
+<style id="parque-clube-v6-visual">
+:root{
+  --v6-azul:#123b5d;
+  --v6-azul-2:#1f5d8f;
+  --v6-verde:#17632d;
+  --v6-fundo:#eef4f7;
+  --v6-card:#ffffff;
+  --v6-texto:#24323d;
+  --v6-suave:#687680;
+  --v6-borda:#dce7ee;
+}
+body{
+  background:linear-gradient(180deg,#edf4f7 0,#f7fafb 42%,#eef4f7 100%);
+  color:var(--v6-texto);
+}
+.container{
+  max-width:1120px !important;
+  margin:22px auto !important;
+  border-radius:24px !important;
+  overflow:hidden;
+  box-shadow:0 18px 55px rgba(18,59,93,.12);
+}
+.logo{
+  margin-top:4px;
+}
+h1{
+  color:var(--v6-azul) !important;
+  letter-spacing:.2px;
+}
+.subtitle{
+  color:var(--v6-suave) !important;
+}
+.menu{
+  gap:12px !important;
+  padding:12px !important;
+  background:#f6fafc;
+  border:1px solid var(--v6-borda);
+  border-radius:18px;
+  margin:18px 0 !important;
+}
+.menu button{
+  min-height:74px;
+  border-radius:16px !important;
+  box-shadow:0 5px 14px rgba(18,59,93,.08);
+  transition:transform .18s ease,box-shadow .18s ease;
+}
+.menu button:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(18,59,93,.13)}
+.section{
+  border:1px solid var(--v6-borda);
+  border-radius:20px;
+  padding:20px !important;
+  background:rgba(255,255,255,.96);
+  box-shadow:0 8px 28px rgba(18,59,93,.05);
+}
+.section-title{
+  color:var(--v6-azul) !important;
+  font-weight:800 !important;
+  letter-spacing:.2px;
+}
+.admin-menu-v11{
+  gap:16px !important;
+}
+.admin-menu-card{
+  border-radius:20px !important;
+  border:1px solid var(--v6-borda) !important;
+  background:linear-gradient(180deg,#fff,#f8fbfd) !important;
+  min-height:148px !important;
+}
+.admin-menu-card .icon{
+  font-size:36px !important;
+}
+.admin-menu-card .title{
+  color:var(--v6-azul) !important;
+}
+.admin-menu-card:hover{
+  transform:translateY(-4px) !important;
+}
+.stats{
+  gap:12px !important;
+}
+.stat{
+  border-radius:16px !important;
+  border:1px solid rgba(18,59,93,.06);
+  box-shadow:0 6px 18px rgba(18,59,93,.06);
+}
+.stat span{
+  color:var(--v6-azul);
+  font-size:28px !important;
+}
+.card{
+  border-radius:18px !important;
+  border:1px solid var(--v6-borda) !important;
+  box-shadow:0 8px 20px rgba(18,59,93,.06) !important;
+  transition:transform .18s ease,box-shadow .18s ease;
+}
+.card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 12px 26px rgba(18,59,93,.10) !important;
+}
+.card-protocolo{
+  color:var(--v6-azul) !important;
+}
+.status{
+  border-radius:999px !important;
+  padding:7px 12px !important;
+  letter-spacing:.2px;
+}
+input,select,textarea{
+  border-radius:11px !important;
+  border-color:#cfdde5 !important;
+}
+input:focus,select:focus,textarea:focus{
+  outline:0;
+  border-color:var(--v6-azul-2) !important;
+  box-shadow:0 0 0 3px rgba(31,93,143,.12) !important;
+}
+.admin-submenu-v11{
+  border-radius:15px !important;
+  background:#f4f8fb !important;
+}
+.btn-azul,.btn-verde,.btn-cinza,.btn-whatsapp,.btn-email{
+  border-radius:12px !important;
+}
+#listaChamados{
+  gap:14px;
+}
+.v6-dashboard-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  margin:4px 0 16px;
+  padding:18px 20px;
+  border-radius:20px;
+  background:linear-gradient(135deg,#123b5d,#1f5d8f);
+  color:#fff;
+}
+.v6-dashboard-header h2{margin:0;font-size:21px}
+.v6-dashboard-header p{margin:5px 0 0;opacity:.84;font-size:13px}
+.v6-live{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:7px 10px;
+  border-radius:999px;
+  background:rgba(255,255,255,.16);
+  font-size:12px;
+  white-space:nowrap;
+}
+.v6-live-dot{
+  width:8px;height:8px;border-radius:50%;background:#8ff0a4;
+  box-shadow:0 0 0 4px rgba(143,240,164,.12);
+}
+.v6-section-label{
+  margin:18px 0 8px;
+  font-size:12px;
+  font-weight:800;
+  color:#65737d;
+  letter-spacing:.08em;
+}
+@media(max-width:599px){
+  .container{margin:8px auto !important;border-radius:18px !important}
+  .section{padding:16px !important;border-radius:16px}
+  .menu{border-radius:15px}
+  .v6-dashboard-header{align-items:flex-start;flex-direction:column}
+  .menu button{min-height:68px}
+}
+</style>
+
 </head>
 </head>
 
@@ -3099,6 +3273,15 @@ button:active{
 <div
     id="adminPainel"
 >
+
+<div class="v6-dashboard-header" id="v6DashboardHeader" style="display:none;">
+  <div>
+    <h2>🏢 Painel Administrativo</h2>
+    <p>Visão rápida dos chamados e serviços do condomínio.</p>
+  </div>
+  <div class="v6-live"><span class="v6-live-dot"></span> Atualização automática ativa</div>
+</div>
+
 
 
 <div class="admin-v45-dashboard" id="adminDashboardV45">
@@ -11149,6 +11332,24 @@ td:nth-child(2),td:nth-child(3){
 </div>
 
 
+
+
+<script id="parque-clube-v6-visual-js">
+(function(){
+  function atualizarCabecalhoV6(){
+    var painel = document.getElementById("adminPainel");
+    var cab = document.getElementById("v6DashboardHeader");
+    if(!painel || !cab) return;
+    var visivel = painel.style.display !== "none" &&
+      getComputedStyle(painel).display !== "none";
+    cab.style.display = visivel ? "flex" : "none";
+  }
+  document.addEventListener("click", function(){
+    setTimeout(atualizarCabecalhoV6, 250);
+  });
+  document.addEventListener("DOMContentLoaded", atualizarCabecalhoV6);
+})();
+</script>
 
 </body>
 </html>`;
