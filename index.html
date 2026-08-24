@@ -15,7 +15,7 @@
     content="#17632d"
 >
 
-<title>Chamados - Parque Clube</title>
+<title>Sistema Parque Clube — V6.0</title>
 
 <style>
 
@@ -714,6 +714,10 @@ input[readonly] {
 
 <style id="arquivamento-v11-style">
 .btn-atualizar-v11{background:#59636d !important;color:#fff !important;}
+.btn-imprimir-abertos-v426{background:#7b4f12 !important;color:#fff !important;margin-left:8px;}
+.btn-imprimir-abertos-v426:hover{filter:brightness(.94);}
+@media(max-width:700px){.btn-imprimir-abertos-v426{margin:8px 0 0 0;width:100%;}}
+
 .btn-ativos-v11{background:#17632d !important;color:#fff !important;}
 .btn-arquivar-todos-v11{background:#8a5a00 !important;color:#fff !important;}
 .btn-atualizar-v11:hover,.btn-ativos-v11:hover,.btn-arquivar-todos-v11:hover{filter:brightness(.94);}
@@ -1277,7 +1281,7 @@ input[readonly] {
 
 
 <style id="data-servicos-v12">
-/* Data obrigatória para serviços de Dedetização e Limpeza caixa d'água */
+/* Data obrigatória para serviços de Dedetização e Limpeza de caixa-d'água */
 #dataOcorrenciaContainer[data-servico-especial="true"] {
     border-left: 4px solid #17632d;
     padding-left: 10px;
@@ -1819,6 +1823,13 @@ button:active{
 .btn-status-rapido{width:100%;max-width:320px;min-height:44px;border:0;border-radius:10px;background:#17632d;color:#fff;font-weight:800;cursor:pointer}
 .home-rodape{margin:22px 0 4px;padding:14px 8px 4px;border-top:1px solid #dfe8e2;text-align:center;color:#64748b;font-size:11px;line-height:1.5}
 .home-rodape strong{display:block;color:#17632d;font-size:12px}
+.home-rodape-desenvolvedor{
+    display:block;
+    text-align:center;
+    font-size:11px;
+    color:#64748b;
+    font-weight:400;
+}
 @media(max-width:700px){.home-bloco-titulo{margin-top:10px}.home-status-rapido{padding:15px}}
 
 /* =====================================================
@@ -2130,6 +2141,180 @@ button:active{
 @media(max-width:700px){.admin-v45-dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-v45-kpi strong{font-size:20px}}
 </style>
 
+
+<!-- =====================================================
+     V6.0 — CAMADA VISUAL MODERNA
+     Mantém IDs, funções JavaScript e integração existentes.
+===================================================== -->
+<style id="parque-clube-v6-visual">
+:root{
+  --v6-azul:#123b5d;
+  --v6-azul-2:#1f5d8f;
+  --v6-verde:#17632d;
+  --v6-fundo:#eef4f7;
+  --v6-card:#ffffff;
+  --v6-texto:#24323d;
+  --v6-suave:#687680;
+  --v6-borda:#dce7ee;
+}
+body{
+  background:linear-gradient(180deg,#edf4f7 0,#f7fafb 42%,#eef4f7 100%);
+  color:var(--v6-texto);
+}
+.container{
+  max-width:1120px !important;
+  margin:22px auto !important;
+  border-radius:24px !important;
+  overflow:hidden;
+  box-shadow:0 18px 55px rgba(18,59,93,.12);
+}
+.logo{
+  margin-top:4px;
+}
+h1{
+  color:var(--v6-azul) !important;
+  letter-spacing:.2px;
+}
+.subtitle{
+  color:var(--v6-suave) !important;
+}
+.menu{
+  gap:12px !important;
+  padding:12px !important;
+  background:#f6fafc;
+  border:1px solid var(--v6-borda);
+  border-radius:18px;
+  margin:18px 0 !important;
+}
+.menu button{
+  min-height:74px;
+  border-radius:16px !important;
+  box-shadow:0 5px 14px rgba(18,59,93,.08);
+  transition:transform .18s ease,box-shadow .18s ease;
+}
+.menu button:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(18,59,93,.13)}
+.section{
+  border:1px solid var(--v6-borda);
+  border-radius:20px;
+  padding:20px !important;
+  background:rgba(255,255,255,.96);
+  box-shadow:0 8px 28px rgba(18,59,93,.05);
+}
+.section-title{
+  color:var(--v6-azul) !important;
+  font-weight:800 !important;
+  letter-spacing:.2px;
+}
+.admin-menu-v11{
+  gap:16px !important;
+}
+.admin-menu-card{
+  border-radius:20px !important;
+  border:1px solid var(--v6-borda) !important;
+  background:linear-gradient(180deg,#fff,#f8fbfd) !important;
+  min-height:148px !important;
+}
+.admin-menu-card .icon{
+  font-size:36px !important;
+}
+.admin-menu-card .title{
+  color:var(--v6-azul) !important;
+}
+.admin-menu-card:hover{
+  transform:translateY(-4px) !important;
+}
+.stats{
+  gap:12px !important;
+}
+.stat{
+  border-radius:16px !important;
+  border:1px solid rgba(18,59,93,.06);
+  box-shadow:0 6px 18px rgba(18,59,93,.06);
+}
+.stat span{
+  color:var(--v6-azul);
+  font-size:28px !important;
+}
+.card{
+  border-radius:18px !important;
+  border:1px solid var(--v6-borda) !important;
+  box-shadow:0 8px 20px rgba(18,59,93,.06) !important;
+  transition:transform .18s ease,box-shadow .18s ease;
+}
+.card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 12px 26px rgba(18,59,93,.10) !important;
+}
+.card-protocolo{
+  color:var(--v6-azul) !important;
+}
+.status{
+  border-radius:999px !important;
+  padding:7px 12px !important;
+  letter-spacing:.2px;
+}
+input,select,textarea{
+  border-radius:11px !important;
+  border-color:#cfdde5 !important;
+}
+input:focus,select:focus,textarea:focus{
+  outline:0;
+  border-color:var(--v6-azul-2) !important;
+  box-shadow:0 0 0 3px rgba(31,93,143,.12) !important;
+}
+.admin-submenu-v11{
+  border-radius:15px !important;
+  background:#f4f8fb !important;
+}
+.btn-azul,.btn-verde,.btn-cinza,.btn-whatsapp,.btn-email{
+  border-radius:12px !important;
+}
+#listaChamados{
+  gap:14px;
+}
+.v6-dashboard-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  margin:4px 0 16px;
+  padding:18px 20px;
+  border-radius:20px;
+  background:linear-gradient(135deg,#123b5d,#1f5d8f);
+  color:#fff;
+}
+.v6-dashboard-header h2{margin:0;font-size:21px}
+.v6-dashboard-header p{margin:5px 0 0;opacity:.84;font-size:13px}
+.v6-live{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:7px 10px;
+  border-radius:999px;
+  background:rgba(255,255,255,.16);
+  font-size:12px;
+  white-space:nowrap;
+}
+.v6-live-dot{
+  width:8px;height:8px;border-radius:50%;background:#8ff0a4;
+  box-shadow:0 0 0 4px rgba(143,240,164,.12);
+}
+.v6-section-label{
+  margin:18px 0 8px;
+  font-size:12px;
+  font-weight:800;
+  color:#65737d;
+  letter-spacing:.08em;
+}
+@media(max-width:599px){
+  .container{margin:8px auto !important;border-radius:18px !important}
+  .section{padding:16px !important;border-radius:16px}
+  .menu{border-radius:15px}
+  .v6-dashboard-header{align-items:flex-start;flex-direction:column}
+  .menu button{min-height:68px}
+}
+</style>
+
 </head>
 </head>
 
@@ -2318,37 +2503,17 @@ button:active{
     id="cargo"
     required
 >
+<option value="">Selecione o cargo/função</option>
 
-<option value="">
-
-    Selecione o cargo/função
-
-</option>
-
-<option>
-    ASG (Auxiliar de Serviços Gerais)
-</option>
-
-<option>
-    Conselheiro(a)
-</option>
-
-<option>
-    Porteiro(a)
-</option>
-
-<option>
-    Síndica
-</option>
-
-<option>
-    Subsíndico(a)
-</option>
-
-<option>
-    Zelador(a)
-</option>
-
+<option>Administrativo</option>
+<option>Administrativo Correio</option>
+<option>ASG (Auxiliar de Serviços Gerais)</option>
+<option>Conselheiro(a)</option>
+<option>Encarregado (Empresa Ágil)</option>
+<option>Porteiro(a)</option>
+<option>Síndica</option>
+<option>Subsíndico(a)</option>
+<option>Zelador(a)</option>
 </select>
 
 </div>
@@ -2510,77 +2675,117 @@ button:active{
     id="ocorrencia"
     required
 >
+<option value="">Selecione o tipo de ocorrência</option>
 
-<option value="">
+<optgroup label="⚠️ Ocorrência Administrativa / Infração">
+    <option>Advertência</option>
+    <option>Notificação</option>
+</optgroup>
 
-    Selecione o serviço
+<optgroup label="📹 Câmeras/CFTV/Interfone">
+    <option>Câmeras/CFTV</option>
+    <option>Facial</option>
+    <option>Interfone</option>
+</optgroup>
 
-</option>
+<optgroup label="🐜 Controle de pragas">
+    <option>Dedetização</option>
+</optgroup>
 
-<option>
-    Lâmpada/Sensor
-</option>
+<optgroup label="💡 Elétrica/Iluminação">
+    <option>Falta de energia</option>
+    <option>Iluminação com defeito</option>
+    <option>Iluminação de emergência</option>
+    <option>Lâmpada queimada</option>
+    <option>Poste ou iluminação externa</option>
+    <option>Quadro elétrico</option>
+    <option>Sensor de presença</option>
+</optgroup>
 
-<option>
-    Limpeza
-</option>
+<optgroup label="🛗 Elevadores">
+    <option>Botão com defeito</option>
+    <option>Elevador parado</option>
+    <option>Iluminação</option>
+    <option>Limpeza</option>
+    <option>Outros problemas técnicos</option>
+    <option>Problema na porta</option>
+    <option>Ruído</option>
+</optgroup>
 
-<option>
-    Elétrica
-</option>
+<optgroup label="🏢 Estrutura e manutenção predial">
+    <option>Cobertura</option>
+    <option>Janela</option>
+    <option>Junta de dilatação</option>
+    <option>Manutenção de cancela</option>
+    <option>Parede danificada</option>
+    <option>Pintura</option>
+    <option>Piso danificado</option>
+    <option>Portão</option>
+    <option>Porta</option>
+    <option>Telhado</option>
+    <option>Teto</option>
+    <option>Trincas e fissuras</option>
+</optgroup>
 
-<option>
-    Hidráulica
-</option>
+<optgroup label="🚗 Garagem e estacionamento">
+    <option>Iluminação da garagem</option>
+    <option>Sinalização</option>
+    <option>Vaga</option>
+    <option>Vazamento na garagem</option>
+</optgroup>
 
-<option>
-    Vazamento de água
-</option>
+<optgroup label="🚰 Hidráulica">
+    <option>Bomba d'água</option>
+    <option>Caixa de água</option>
+    <option>Caixa de inspeção</option>
+    <option>Cano quebrado</option>
+    <option>Esgoto</option>
+    <option>Falta de água</option>
+    <option>Infiltração</option>
+    <option>Macro Sub1</option>
+    <option>Macro Sub2</option>
+    <option>Pressão da água</option>
+    <option>Ralo entupido</option>
+    <option>Registro com defeito</option>
+    <option>Torneira quebrada</option>
+    <option>Vazamento</option>
+</optgroup>
 
-<option>
-    Elevador
-</option>
+<optgroup label="🌳 Jardins e áreas externas">
+    <option>Árvore com risco</option>
+    <option>Corte de grama</option>
+    <option>Irrigação</option>
+    <option>Jardinagem</option>
+    <option>Limpeza de área verde</option>
+    <option>Poda</option>
+</optgroup>
 
-<option>
-    Portão
-</option>
+<optgroup label="🧹 Limpeza e conservação">
+    <option>Coleta de resíduos</option>
+    <option>Conservação de áreas comuns</option>
+    <option>Lavagem de piso</option>
+    <option>Limpeza de área comum</option>
+    <option>Limpeza de área externa</option>
+    <option>Limpeza de corredor</option>
+    <option>Limpeza de elevador</option>
+    <option>Limpeza de escadas</option>
+    <option>Limpeza de garagem</option>
+    <option>Limpeza de lixeira</option>
+    <option>Limpeza de ralos</option>
+</optgroup>
 
-<option>
-    Área comum
-</option>
+<optgroup label="🔥 Segurança e emergência">
+    <option>Extintores</option>
+    <option>Iluminação de emergência</option>
+    <option>Porta corta-fogo</option>
+    <option>Sinalização de emergência</option>
+    <option>Sistema de alarme</option>
+</optgroup>
 
-<option>
-    Shaft Aberto
-</option>
-
-<option>
-    Gás
-</option>
-
-<option>
-    Falta de Água no Bloco
-</option>
-
-<option>
-    Falta de Energia no Bloco
-</option>
-
-<option>
-    Câmera/Imagens
-</option>
-
-<option>
-    Dedetização
-</option>
-
-<option>
-    Limpeza caixa d'água
-</option>
-
-<option>
-    Outros
-</option>
-
+<optgroup label="💧 Serviços preventivos">
+    <option>Limpeza de caixa de gordura</option>
+    <option>Limpeza de caixa-d'água</option>
+</optgroup>
 </select>
 
 </div>
@@ -3096,6 +3301,15 @@ button:active{
     id="adminPainel"
 >
 
+<div class="v6-dashboard-header" id="v6DashboardHeader" style="display:none;">
+  <div>
+    <h2>🏢 Painel Administrativo</h2>
+    <p>Visão rápida dos chamados e serviços do condomínio.</p>
+  </div>
+  <div class="v6-live"><span class="v6-live-dot"></span> Atualização automática ativa</div>
+</div>
+
+
 
 <div class="admin-v45-dashboard" id="adminDashboardV45">
   <div class="admin-v45-dashboard-head">
@@ -3164,6 +3378,17 @@ button:active{
     🔄 Atualizar Lista de Chamados
 
 </button>
+
+<button
+    type="button"
+    id="btnImprimirChamadosAbertos"
+    onclick="if(window.imprimirChamadosAbertosV427){ window.imprimirChamadosAbertosV427(); } else { alert('A função de impressão ainda está carregando. Aguarde alguns segundos e tente novamente.'); } return false;"
+    class="btn-azul btn-imprimir-abertos-v426"
+    title="Imprimir somente os chamados com status Aberto"
+>
+    🖨️ Imprimir Chamados Abertos
+</button>
+
 <div id="pcAlertaSonoroWrap" style="display:inline-flex;align-items:center;gap:10px;margin:8px 0 8px 10px;padding:8px 12px;border:1px solid #d8d8d8;border-radius:10px;background:#fff;vertical-align:middle;">
   <span id="pcAlertaSonoroIcone" aria-hidden="true">🔔</span>
   <span style="font-weight:700;font-size:14px;">Som de novos chamados</span>
@@ -3718,6 +3943,49 @@ button:active{
 
 </div>
 
+<!-- ENCAMINHAMENTO ADMINISTRATIVO VIA WHATSAPP -->
+<div
+    id="encaminharWhatsAppAdmin"
+    style="
+        margin:8px 0 16px;
+        padding:14px;
+        border:1px solid #bfdbfe;
+        background:#eff6ff;
+        border-radius:10px;
+    "
+>
+    <div style="font-weight:800;color:#1e3a5f;margin-bottom:10px;">
+        📤 Encaminhar Chamado pelo WhatsApp
+    </div>
+
+    <label for="whatsappDestinoAdmin" style="font-weight:700;display:block;margin-bottom:6px;">
+        📱 WhatsApp de destino:
+    </label>
+
+    <input
+        id="whatsappDestinoAdmin"
+        type="tel"
+        inputmode="numeric"
+        autocomplete="tel"
+        maxlength="20"
+        placeholder="Ex.: (61) 99999-9999"
+        style="width:100%;box-sizing:border-box;"
+    >
+
+    <small style="display:block;margin:7px 0 10px;color:#475569;">
+        Informe o número que receberá uma cópia completa do chamado.
+    </small>
+
+    <button
+        type="button"
+        id="btnEncaminharWhatsAppAdmin"
+        class="btn-verde"
+        style="width:100%;background:#2563eb;"
+    >
+        📤 Encaminhar Chamado pelo WhatsApp
+    </button>
+</div>
+
 
 <div class="form-group">
 
@@ -3973,7 +4241,7 @@ const FORM_ENDPOINT =
 
 
 const WHATSAPP =
-    "5561986038106";
+    "556130548464";
 
 
 let senhaAdministrativa = "";
@@ -4102,7 +4370,7 @@ function atualizarAreaExecucao() {
 
     const exigeArea =
         ocorrencia === "Dedetização" ||
-        ocorrencia === "Limpeza caixa d'água";
+        (ocorrencia === "Limpeza de caixa-d'água" || ocorrencia === "Limpeza caixa d'água");
 
     if (areaExecucaoContainer) {
         areaExecucaoContainer.style.display =
@@ -4122,11 +4390,11 @@ function atualizarIntervaloCamera() {
             : "";
 
     const ehCamera =
-        ocorrencia === "Câmera/Imagens";
+        (ocorrencia === "Câmeras/CFTV" || ocorrencia === "Câmera/Imagens");
 
     const ehServicoComData =
         ocorrencia === "Dedetização" ||
-        ocorrencia === "Limpeza caixa d'água";
+        (ocorrencia === "Limpeza de caixa-d'água" || ocorrencia === "Limpeza caixa d'água");
 
     const mostrarData =
         ehCamera ||
@@ -4516,6 +4784,57 @@ document
                             )
                             .value,
 
+                    // Compatibilidade com versões diferentes do Worker.
+                    // Os mesmos dados são enviados também com nomes alternativos.
+                    data_ocorrencia:
+                        document
+                            .getElementById(
+                                "dataOcorrencia"
+                            )
+                            .value,
+
+                    dataOcorrido:
+                        document
+                            .getElementById(
+                                "dataOcorrencia"
+                            )
+                            .value,
+
+                    data_ocorrido:
+                        document
+                            .getElementById(
+                                "dataOcorrencia"
+                            )
+                            .value,
+
+                    hora_inicial:
+                        document
+                            .getElementById(
+                                "horaInicial"
+                            )
+                            .value,
+
+                    inicio:
+                        document
+                            .getElementById(
+                                "horaInicial"
+                            )
+                            .value,
+
+                    hora_final:
+                        document
+                            .getElementById(
+                                "horaFinal"
+                            )
+                            .value,
+
+                    fim:
+                        document
+                            .getElementById(
+                                "horaFinal"
+                            )
+                            .value,
+
                     detalhes:
                         document
                             .getElementById(
@@ -4866,7 +5185,7 @@ function prepararBotoesEnvio(
             function () {
 
                 const telefone =
-                    "5561986038106"; // 61 98603-8106
+                    "556130548464"; // 61 3054-8464
 
                 const url =
                     "https://wa.me/" +
@@ -6742,6 +7061,12 @@ document
                     protocolo;
 
 
+                // CORREÇÃO V6.0: o registro retornado pela busca direta também
+                // passa pela normalização dos campos de data e horário.
+                pcNormalizarCamposCameraV429(
+                    dados.chamado
+                );
+
                 mostrarEdicao(
                     dados.chamado
                 );
@@ -6778,6 +7103,9 @@ document
 function mostrarEdicao(
     chamado
 ) {
+
+    // CORREÇÃO V6.0: normaliza data e horários antes de montar a tela administrativa.
+    chamado = pcNormalizarCamposCameraV429(chamado);
 
     /*
      * Atualiza o destaque do histórico do protocolo.
@@ -6918,6 +7246,82 @@ function mostrarEdicao(
                 )}
 
             </div>
+
+
+            ${
+                ["Câmeras/CFTV","Câmera/Imagens"].includes(String(chamado.ocorrencia || "").trim())
+                ? `
+            <div class="resultado-item">
+
+                <strong>
+                    📅 Data do ocorrido
+                </strong>
+
+                ${escapar(
+                    pcValorV428(
+                        chamado,
+                        [
+                            "dataOcorrencia",
+                            "data_ocorrencia",
+                            "dataOcorrido",
+                            "data_ocorrido",
+                            "dataFato",
+                            "data_fato"
+                        ],
+                        "Não informado"
+                    )
+                )}
+
+            </div>
+
+
+            <div class="resultado-item">
+
+                <strong>
+                    🕒 Hora inicial
+                </strong>
+
+                ${escapar(
+                    pcValorV428(
+                        chamado,
+                        [
+                            "horaInicial",
+                            "hora_inicial",
+                            "inicio",
+                            "horaInicio",
+                            "hora_inicio"
+                        ],
+                        "Não informado"
+                    )
+                )}
+
+            </div>
+
+
+            <div class="resultado-item">
+
+                <strong>
+                    🕒 Hora final
+                </strong>
+
+                ${escapar(
+                    pcValorV428(
+                        chamado,
+                        [
+                            "horaFinal",
+                            "hora_final",
+                            "fim",
+                            "horaFim",
+                            "hora_fim"
+                        ],
+                        "Não informado"
+                    )
+                )}
+
+            </div>
+                    `
+                : ""
+            }
 
 
             <div class="resultado-item">
@@ -11084,6 +11488,9 @@ td:nth-child(2),td:nth-child(3){
 
 
 
+
+
+
 </body>
 </html>`;
 
@@ -11235,8 +11642,15 @@ function inicializarDashboardV11(){
 
     const localizarChamado=document.getElementById('localizarChamadoAdmin');
     const editarChamado=document.getElementById('editarChamado');
-    if(localizarChamado) localizarChamado.style.display='block';
-    if(editarChamado) editarChamado.style.display='block';
+
+    /*
+     * Ao entrar em "Pesquisar Chamados", o administrador vê somente
+     * a lista/pesquisa de chamados. O localizador manual por protocolo
+     * e o formulário de edição ficam ocultos até um chamado real ser
+     * selecionado.
+     */
+    if(localizarChamado) localizarChamado.style.display='none';
+    if(editarChamado) editarChamado.style.display='none';
 
     if(voltar) voltar.style.display='flex';
     if(titulo) titulo.textContent='🔎 Pesquisar chamados';
@@ -11374,7 +11788,7 @@ function mostrarRelatorioAdminV11(){
 
         const exigeArea =
             valor === "Dedetização" ||
-            valor === "Limpeza caixa d'água";
+            (valor === "Limpeza de caixa-d'água" || valor === "Limpeza caixa d'água");
 
         if (areaExecucaoContainer) {
 
@@ -13079,10 +13493,16 @@ function ocultarPainelDetalhesChamadoV45() {
 }
 
 function mostrarPainelDetalhesChamadoV45() {
-    ["localizarChamadoAdmin","editarChamado"].forEach(function(id){
-        const el=document.getElementById(id);
-        if(el) el.style.display="block";
-    });
+    /*
+     * O campo "Localizar Chamado" não faz parte da visualização da lista.
+     * Ele permanece oculto. Quando o usuário seleciona um protocolo real,
+     * somente o painel de edição/detalhes é exibido.
+     */
+    const localizar = document.getElementById("localizarChamadoAdmin");
+    if(localizar) localizar.style.display = "none";
+
+    const editar = document.getElementById("editarChamado");
+    if(editar) editar.style.display = "block";
 }
 
 </script>
@@ -13090,7 +13510,8 @@ function mostrarPainelDetalhesChamadoV45() {
 <div class="home-rodape">
     <strong>PARQUE CLUBE</strong>
     Sistema de Gestão de Chamados<br>
-    Versão 4.5
+    Versão 6.0<br>
+    <span class="home-rodape-desenvolvedor">Desenvolvido por NEW CRISTIAN</span>
 </div>
 
 
@@ -13102,7 +13523,7 @@ function mostrarPainelDetalhesChamadoV45() {
 
     /*
     ============================================================
-    V4.24 — CONTROLE DA NOTIFICAÇÃO AUTOMÁTICA
+    V4.29 — CONTROLE DA NOTIFICAÇÃO AUTOMÁTICA
     - ON: abre automaticamente "Novo chamado recebido!"
     - OFF: não abre o modal automaticamente
     - O contador 🔔 Notificações continua registrando novos chamados
@@ -13200,7 +13621,7 @@ function mostrarPainelDetalhesChamadoV45() {
 
     /*
     ============================================================
-    V4.24 — NOTIFICAÇÕES DE NOVOS CHAMADOS
+    V4.29 — NOTIFICAÇÕES DE NOVOS CHAMADOS
     - Botão 🔔 Notificações
     - Contador de novos chamados não visualizados
     - Modal "Novo chamado recebido!"
@@ -13854,8 +14275,689 @@ function mostrarPainelDetalhesChamadoV45() {
         pcInicializarV413Final();
     }
 })();
+
+/* =====================================================
+   V4.29 — RELATÓRIO FIEL AOS DADOS DO BANCO
+   - Busca os dados novamente no Worker no momento da impressão.
+   - Não confunde data do ocorrido com data de abertura.
+   - Exibe todos os campos preenchidos pelo solicitante.
+===================================================== */
+
+function pcEscapeHtmlV428(valor) {
+    return String(valor == null ? "" : valor)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+function pcValorV428(obj, nomes, padrao) {
+    for (const nome of nomes) {
+        if (obj && obj[nome] !== undefined && obj[nome] !== null) {
+            const valor = String(obj[nome]).trim();
+            if (valor !== "") return obj[nome];
+        }
+    }
+    return padrao === undefined ? "" : padrao;
+}
+
+/* Evita erro de fuso horário com datas YYYY-MM-DD. */
+function pcFormatarDataV428(valor, comHora) {
+    if (valor === undefined || valor === null || String(valor).trim() === "") return "Não informado";
+    const texto = String(valor).trim();
+
+    // Já está no formato brasileiro: preserva exatamente como veio do banco.
+    if (/^\d{2}\/\d{2}\/\d{4}(?:[ T]\d{2}:\d{2}(?::\d{2})?)?$/.test(texto)) {
+        return texto;
+    }
+
+    // Data sem hora YYYY-MM-DD: não usar new Date para não mudar o dia pelo fuso.
+    const somenteData = texto.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (somenteData) return `${somenteData[3]}/${somenteData[2]}/${somenteData[1]}`;
+
+    // ISO com data e hora: usa os componentes informados, sem deslocamento indevido.
+    const iso = texto.match(/^(\d{4})-(\d{2})-(\d{2})[T\s](\d{2}):(\d{2})(?::(\d{2}))?/);
+    if (iso) {
+        return `${iso[3]}/${iso[2]}/${iso[1]} ${iso[4]}:${iso[5]}`;
+    }
+
+    return texto;
+}
+
+function pcLabelCampoV428(chave) {
+    const mapa = {
+        protocolo: "Protocolo",
+        numeroProtocolo: "Protocolo",
+        solicitante: "Solicitante",
+        nome: "Solicitante",
+        whatsappRetorno: "WhatsApp para retorno",
+        whatsapp: "WhatsApp para retorno",
+        telefone: "Telefone",
+        celular: "Celular",
+        cargo: "Cargo/Função",
+        funcao: "Cargo/Função",
+        bloco: "Bloco",
+        areaBloco: "Área/Bloco",
+        local: "Local/Área",
+        area: "Local/Área",
+        pavimentos: "Andar/Pavimento",
+        pavimento: "Andar/Pavimento",
+        unidade: "Unidade",
+        apartamento: "Apartamento",
+        ocorrencia: "Tipo de ocorrência",
+        tipoOcorrencia: "Tipo de ocorrência",
+        tipo_ocorrencia: "Tipo de ocorrência",
+        prioridade: "Prioridade",
+        dataOcorrencia: "Data do ocorrido/execução",
+        data_ocorrencia: "Data do ocorrido/execução",
+        dataOcorrido: "Data do ocorrido/execução",
+        data_ocorrido: "Data do ocorrido/execução",
+        dataFato: "Data do ocorrido/execução",
+        data_fato: "Data do ocorrido/execução",
+        horaInicial: "Hora inicial",
+        hora_inicial: "Hora inicial",
+        inicio: "Hora inicial",
+        horaFinal: "Hora final",
+        hora_final: "Hora final",
+        fim: "Hora final",
+        areaExecucao: "Área/Local da execução",
+        area_execucao: "Área/Local da execução",
+        detalhes: "Detalhes informados",
+        descricao: "Detalhes informados",
+        relato: "Detalhes informados"
+    };
+    return mapa[chave] || String(chave)
+        .replace(/([A-Z])/g, " $1")
+        .replace(/_/g, " ")
+        .replace(/^./, c => c.toUpperCase());
+}
+
+function pcPrioridadeClasseV428(prioridade) {
+    const p = String(prioridade || "").toLowerCase();
+    if (p.includes("urg")) return "urgente";
+    if (p.includes("alta")) return "alta";
+    if (p.includes("baixa")) return "baixa";
+    return "moderada";
+}
+
+function pcValorExibivelV428(chave, valor) {
+    if (["dataOcorrencia", "data_ocorrencia", "dataOcorrido", "data_ocorrido", "dataFato", "data_fato"].includes(chave)) {
+        return pcFormatarDataV428(valor, false);
+    }
+    if (["criadoEm", "criado_em", "dataAbertura", "dataCriacao", "created_at", "createdAt", "timestamp"].includes(chave)) {
+        return pcFormatarDataV428(valor, true);
+    }
+    return String(valor);
+}
+
+function pcCamposUsuarioV428(chamado) {
+    const internos = new Set([
+        "id", "protocolo", "numeroProtocolo", "status",
+        "arquivado", "responsavel", "atendente",
+        "observacaoSolucao", "respostaAdministracao",
+        "ultimaAtualizacao", "atualizadoEm", "updated_at",
+        "criadoEm", "criado_em", "dataAbertura", "dataCriacao",
+        "created_at", "createdAt", "timestamp",
+        "adminPassword", "senhaAdministrativa", "action"
+    ]);
+
+    const ordem = [
+        "solicitante", "nome",
+        "whatsappRetorno", "whatsapp", "telefone", "celular",
+        "cargo", "funcao",
+        "bloco", "areaBloco", "local", "area",
+        "pavimentos", "pavimento",
+        "unidade", "apartamento",
+        "ocorrencia", "tipoOcorrencia", "tipo_ocorrencia",
+        "prioridade",
+        "dataOcorrencia", "data_ocorrencia", "dataOcorrido", "data_ocorrido", "dataFato", "data_fato",
+        "horaInicial", "hora_inicial", "inicio",
+        "horaFinal", "hora_final", "fim",
+        "areaExecucao", "area_execucao",
+        "detalhes", "descricao", "relato"
+    ];
+
+    const usados = new Set();
+    const resultado = [];
+
+    function adicionar(chave) {
+        if (internos.has(chave) || usados.has(chave)) return;
+        if (!Object.prototype.hasOwnProperty.call(chamado, chave)) return;
+        const valor = chamado[chave];
+        if (valor === undefined || valor === null || String(valor).trim() === "") return;
+
+        const label = pcLabelCampoV428(chave);
+
+        // Evita duplicar o mesmo campo quando o Worker envia nomes equivalentes.
+        if (resultado.some(x => x.label === label && String(x.valor) === String(valor))) {
+            usados.add(chave);
+            return;
+        }
+
+        resultado.push({
+            chave,
+            label,
+            valor: pcValorExibivelV428(chave, valor)
+        });
+        usados.add(chave);
+    }
+
+    ordem.forEach(adicionar);
+
+    // Qualquer outro campo preenchido pelo usuário também entra no relatório.
+    Object.keys(chamado || {}).forEach(chave => {
+        if (!internos.has(chave)) adicionar(chave);
+    });
+
+    return resultado;
+}
+
+function pcNormalizarCamposCameraV429(chamado) {
+    if (!chamado || typeof chamado !== "object") return chamado;
+
+    // Procura o mesmo dado com todos os nomes já usados pelas versões do sistema.
+    // Isso evita perder a informação quando o Worker devolve nomes diferentes.
+    const data = pcValorV428(chamado, [
+        "dataOcorrencia", "data_ocorrencia",
+        "dataOcorrido", "data_ocorrido",
+        "dataFato", "data_fato",
+        "dataDoOcorrido", "data_do_ocorrido",
+        "dataDaOcorrencia", "data_da_ocorrencia",
+        "Data da ocorrência", "Data do ocorrido"
+    ], "");
+
+    const inicio = pcValorV428(chamado, [
+        "horaInicial", "hora_inicial",
+        "inicio", "horaInicio", "hora_inicio",
+        "Hora inicial"
+    ], "");
+
+    const fim = pcValorV428(chamado, [
+        "horaFinal", "hora_final",
+        "fim", "horaFim", "hora_fim",
+        "Hora final"
+    ], "");
+
+    if (data) {
+        chamado.dataOcorrencia = data;
+        chamado.data_ocorrencia = data;
+        chamado.dataOcorrido = data;
+    }
+    if (inicio) {
+        chamado.horaInicial = inicio;
+        chamado.hora_inicial = inicio;
+        chamado.inicio = inicio;
+    }
+    if (fim) {
+        chamado.horaFinal = fim;
+        chamado.hora_final = fim;
+        chamado.fim = fim;
+    }
+
+    return chamado;
+}
+
+function pcObterAberturaV428(chamado) {
+    // NÃO usa "data", porque em algumas versões ela representa a data do ocorrido.
+    return pcValorV428(chamado, [
+        "criadoEm",
+        "criado_em",
+        "dataAbertura",
+        "dataCriacao",
+        "created_at",
+        "createdAt",
+        "timestamp",
+        "dataHoraAbertura"
+    ], "");
+}
+
+async function pcBuscarChamadosFrescosV428() {
+    if (typeof API === "undefined" || !API) {
+        throw new Error("A API do sistema não está disponível.");
+    }
+
+    if (typeof senhaAdministrativa === "undefined" || !senhaAdministrativa) {
+        throw new Error("Acesse novamente a área administrativa antes de imprimir.");
+    }
+
+    const resposta = await fetch(API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        cache: "no-store",
+        body: JSON.stringify({
+            action: "list",
+            adminPassword: senhaAdministrativa,
+            senhaAdministrativa: senhaAdministrativa
+        })
+    });
+
+    const texto = await resposta.text();
+    let dados = {};
+    try {
+        dados = texto ? JSON.parse(texto) : {};
+    } catch (e) {
+        throw new Error("O Worker retornou uma resposta inválida ao buscar os chamados.");
+    }
+
+    if (!resposta.ok || dados.sucesso === false) {
+        throw new Error(dados.erro || "Não foi possível carregar os chamados atualizados.");
+    }
+
+    const lista =
+        Array.isArray(dados.chamados) ? dados.chamados :
+        Array.isArray(dados.items) ? dados.items :
+        Array.isArray(dados.data) ? dados.data :
+        [];
+
+    lista.forEach(pcNormalizarCamposCameraV429);
+
+    // Atualiza a memória da tela, mas o relatório usa esta lista recém-vinda do banco.
+    try {
+        if (typeof chamados !== "undefined") chamados = lista;
+        window.chamados = lista;
+    } catch (e) {}
+
+    return lista;
+}
+
+async function imprimirChamadosAbertosV428() {
+    const botao = document.getElementById("btnImprimirChamadosAbertos");
+    const textoOriginal = botao ? botao.textContent : "🖨️ Imprimir Chamados Abertos";
+    const janela = window.open("", "parque_clube_relatorio_chamados_abertos");
+
+    if (!janela) {
+        alert("O navegador bloqueou a janela de impressão. Permita pop-ups para este site e tente novamente.");
+        return;
+    }
+
+    if (botao) {
+        botao.disabled = true;
+        botao.textContent = "⏳ Buscando dados atualizados...";
+    }
+
+    try {
+        // Sempre consulta o Worker no momento da impressão.
+        const listaBase = await pcBuscarChamadosFrescosV428();
+
+        const chamadosAbertos = listaBase.filter(chamado => {
+            const status = String(pcValorV428(chamado, ["status"], "Aberto")).trim().toLowerCase();
+            return status === "aberto" && chamado.arquivado !== true;
+        });
+
+        if (!chamadosAbertos.length) {
+            janela.close();
+            alert("Não há chamados com status ABERTO para imprimir.");
+            return;
+        }
+
+        chamadosAbertos.sort((a, b) => {
+            const da = String(pcObterAberturaV428(a) || "");
+            const db = String(pcObterAberturaV428(b) || "");
+            return da.localeCompare(db);
+        });
+
+        const resumo = { urgente: 0, alta: 0, moderada: 0, baixa: 0 };
+        chamadosAbertos.forEach(chamado => {
+            const prioridade = pcValorV428(chamado, ["prioridade"], "Moderada");
+            resumo[pcPrioridadeClasseV428(prioridade)]++;
+        });
+
+        const agora = new Date();
+        const emissao = agora.toLocaleString("pt-BR", {
+            day: "2-digit", month: "2-digit", year: "numeric",
+            hour: "2-digit", minute: "2-digit"
+        });
+
+        const linhas = chamadosAbertos.map((chamado, indice) => {
+            const protocolo = pcValorV428(chamado, ["protocolo", "numeroProtocolo"], "Não informado");
+            const status = pcValorV428(chamado, ["status"], "Aberto");
+            const abertura = pcObterAberturaV428(chamado);
+            const prioridade = pcValorV428(chamado, ["prioridade"], "Moderada");
+            const campos = pcCamposUsuarioV428(chamado);
+
+            const camposHtml = campos.map(campo => `
+                <div class="campo-dado">
+                    <div class="campo-label">${pcEscapeHtmlV428(campo.label)}</div>
+                    <div class="campo-valor">${pcEscapeHtmlV428(campo.valor).replace(/\n/g, "<br>")}</div>
+                </div>
+            `).join("");
+
+            return `
+                <article class="chamado">
+                    <div class="topo-chamado">
+                        <div>
+                            <div class="sequencia">CHAMADO ${String(indice + 1).padStart(2, "0")}</div>
+                            <div class="protocolo">PROTOCOLO: ${pcEscapeHtmlV428(protocolo)}</div>
+                        </div>
+                        <div class="status">${pcEscapeHtmlV428(String(status).toUpperCase())}</div>
+                    </div>
+
+                    <div class="metadados">
+                        <div><strong>Data/hora de abertura:</strong> ${pcEscapeHtmlV428(abertura ? pcFormatarDataV428(abertura, true) : "Não informado")}</div>
+                        <div><strong>Prioridade:</strong> ${pcEscapeHtmlV428(prioridade)}</div>
+                    </div>
+
+                    <div class="secao-titulo">DADOS INFORMADOS NO MOMENTO DA ABERTURA DO CHAMADO</div>
+                    <div class="grade-campos">${camposHtml || '<div class="campo-dado"><div class="campo-valor">Nenhum campo adicional informado.</div></div>'}</div>
+                </article>
+            `;
+        }).join("");
+
+        janela.document.open();
+        janela.document.write(`<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Relatório de Chamados Abertos - Parque Clube</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#edf1f3;font-family:Arial,Helvetica,sans-serif;color:#26333b}
+.pagina{width:210mm;min-height:297mm;margin:10mm auto;background:#fff;padding:12mm}
+.cabecalho{border-bottom:4px solid #1f5a38;padding-bottom:12px;margin-bottom:14px}
+.marca{font-size:24px;font-weight:800;color:#1f5a38;letter-spacing:1px}
+.titulo{font-size:19px;font-weight:800;color:#1c3d56;margin-top:4px}
+.sub{font-size:11px;color:#66747d;margin-top:4px}
+.emissao{font-size:10px;color:#56636b;margin-top:8px}
+.resumo{display:grid;grid-template-columns:2fr repeat(4,1fr);gap:7px;margin-bottom:14px}
+.resumo-item{border:1px solid #d4dde1;border-radius:6px;padding:8px;text-align:center;background:#fafcfc}
+.resumo-item b{display:block;font-size:18px;color:#1c3d56}
+.resumo-item span{font-size:9px;text-transform:uppercase;font-weight:700;color:#68767e}
+.chamado{border:1px solid #c5d0d5;border-left:5px solid #1f5a38;border-radius:8px;padding:13px;margin-bottom:13px;break-inside:avoid;page-break-inside:avoid}
+.topo-chamado{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;border-bottom:1px solid #d8e0e3;padding-bottom:9px}
+.sequencia{font-size:9px;font-weight:800;letter-spacing:1px;color:#6a777e}
+.protocolo{font-size:17px;font-weight:800;color:#1c3d56;margin-top:3px}
+.status{font-size:10px;font-weight:800;color:#176338;background:#e7f5e9;border:1px solid #bddfc4;border-radius:14px;padding:5px 10px}
+.metadados{display:grid;grid-template-columns:1fr 1fr;gap:8px;background:#f4f7f8;padding:9px;margin:10px 0;border-radius:6px;font-size:10px}
+.secao-titulo{font-size:10px;font-weight:800;color:#1f5a38;border-bottom:1px solid #dce4e7;padding:7px 0;margin-bottom:8px;letter-spacing:.4px}
+.grade-campos{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.campo-dado{border:1px solid #e0e6e8;border-radius:5px;padding:8px;min-height:52px;background:#fff}
+.campo-label{font-size:9px;font-weight:800;text-transform:uppercase;color:#617078;margin-bottom:4px}
+.campo-valor{font-size:11px;line-height:1.45;color:#26333b;word-break:break-word}
+.rodape{margin-top:16px;padding-top:8px;border-top:1px solid #d5dde0;font-size:9px;color:#6d797f;display:flex;justify-content:space-between}
+@media screen and (max-width:800px){
+ .pagina{width:100%;margin:0;padding:14px}
+ .resumo,.grade-campos,.metadados{grid-template-columns:1fr 1fr}
+}
+@media print{
+ body{background:#fff}
+ .pagina{width:auto;min-height:auto;margin:0;padding:0}
+ @page{size:A4;margin:11mm}
+}
+</style>
+</head>
+<body>
+<main class="pagina">
+<header class="cabecalho">
+  <div class="marca">PARQUE CLUBE</div>
+  <div class="titulo">RELATÓRIO ADMINISTRATIVO — CHAMADOS ABERTOS</div>
+  <div class="sub">Sistema de Gestão do Condomínio • Relatório com dados informados pelos solicitantes</div>
+  <div class="emissao"><strong>Emitido em:</strong> ${pcEscapeHtmlV428(emissao)} • <strong>Total de chamados abertos:</strong> ${chamadosAbertos.length}</div>
+</header>
+
+<section class="resumo">
+  <div class="resumo-item"><b>${chamadosAbertos.length}</b><span>Total aberto</span></div>
+  <div class="resumo-item"><b>${resumo.urgente}</b><span>Urgentes</span></div>
+  <div class="resumo-item"><b>${resumo.alta}</b><span>Alta</span></div>
+  <div class="resumo-item"><b>${resumo.moderada}</b><span>Moderada</span></div>
+  <div class="resumo-item"><b>${resumo.baixa}</b><span>Baixa</span></div>
+</section>
+
+${linhas}
+
+<footer class="rodape">
+  <span>PARQUE CLUBE — Sistema de Gestão do Condomínio</span>
+  <span>Relatório gerado com dados atuais do banco</span>
+</footer>
+</main>
+<script>
+window.onload=function(){setTimeout(function(){window.focus();window.print();},350);};
+<\/script>
+</body>
+</html>`);
+        janela.document.close();
+
+    } catch (erro) {
+        console.error("Erro ao gerar relatório:", erro);
+        try { janela.close(); } catch (e) {}
+        alert(erro.message || "Não foi possível gerar o relatório.");
+    } finally {
+        if (botao) {
+            botao.disabled = false;
+            botao.textContent = textoOriginal;
+        }
+    }
+}
+
+window.imprimirChamadosAbertosV427 = imprimirChamadosAbertosV428;
+window.imprimirChamadosAbertosV428 = imprimirChamadosAbertosV428;
+
+(function() {
+    const botao = document.getElementById("btnImprimirChamadosAbertos");
+    if (botao) {
+        botao.onclick = function(evento) {
+            if (evento) evento.preventDefault();
+            imprimirChamadosAbertosV428();
+            return false;
+        };
+    }
+})();
+
+</script>
+
+<script id="parque-clube-v6-visual-js">
+(function(){
+  function atualizarCabecalhoV6(){
+    var painel = document.getElementById("adminPainel");
+    var cab = document.getElementById("v6DashboardHeader");
+    if(!painel || !cab) return;
+    var visivel = painel.style.display !== "none" &&
+      getComputedStyle(painel).display !== "none";
+    cab.style.display = visivel ? "flex" : "none";
+  }
+  document.addEventListener("click", function(){
+    setTimeout(atualizarCabecalhoV6, 250);
+  });
+  document.addEventListener("DOMContentLoaded", atualizarCabecalhoV6);
+})();
+</script>
+
+
+<!-- CORREÇÃO V6.0 — ENCAMINHAMENTO ADMINISTRATIVO POR WHATSAPP -->
+<script id="encaminhamentoWhatsAppAdminV60">
+(function () {
+    function valorCampoEncaminhamento(chamado, nomes, padrao) {
+        if (!chamado) return padrao || "";
+        for (var i = 0; i < nomes.length; i++) {
+            var valor = chamado[nomes[i]];
+            if (valor !== undefined && valor !== null && String(valor).trim() !== "") {
+                return String(valor).trim();
+            }
+        }
+        return padrao || "";
+    }
+
+    function obterChamadoSelecionadoEncaminhamento() {
+        var listaAtivos = typeof chamados !== "undefined" && Array.isArray(chamados) ? chamados : [];
+        var listaArquivados = typeof chamadosArquivadosV11 !== "undefined" && Array.isArray(chamadosArquivadosV11) ? chamadosArquivadosV11 : [];
+        return listaAtivos.find(function (x) {
+            return x.protocolo === protocoloSelecionado;
+        }) || listaArquivados.find(function (x) {
+            return x.protocolo === protocoloSelecionado;
+        }) || null;
+    }
+
+    function montarMensagemEncaminhamento(chamado) {
+        var protocolo = valorCampoEncaminhamento(chamado, ["protocolo"], protocoloSelecionado || "");
+        var local = valorCampoEncaminhamento(chamado, ["bloco", "local", "area", "areaBloco"], "Não informado");
+        var pavimento = valorCampoEncaminhamento(chamado, ["pavimento", "andar", "andarPavimento"], "Não informado");
+        var ocorrencia = valorCampoEncaminhamento(chamado, ["ocorrencia", "tipoOcorrencia"], "Não informado");
+        var prioridade = document.getElementById("prioridadeAdmin")?.value ||
+            valorCampoEncaminhamento(chamado, ["prioridade"], "Não informado");
+        var status = document.getElementById("statusAdmin")?.value ||
+            valorCampoEncaminhamento(chamado, ["status"], "Aberto");
+        var responsavel = document.getElementById("responsavelAdmin")?.value?.trim() ||
+            valorCampoEncaminhamento(chamado, ["responsavel"], "Não informado");
+        var solicitante = valorCampoEncaminhamento(chamado, ["solicitante", "nome"], "Não informado");
+        var cargo = valorCampoEncaminhamento(chamado, ["cargo", "funcao"], "Não informado");
+        var detalhes = valorCampoEncaminhamento(chamado, ["detalhes", "descricao", "observacao", "detalhesOcorrido"], "Não informado");
+        var recebido = valorCampoEncaminhamento(chamado, ["dataAbertura", "dataCriacao", "created_at", "createdAt", "data"], "Não informado");
+
+        var dataOcorrido = valorCampoEncaminhamento(chamado, [
+            "dataOcorrencia", "data_ocorrencia",
+            "dataOcorrido", "data_ocorrido",
+            "dataFato", "data_fato"
+        ], "");
+
+        var horaInicial = valorCampoEncaminhamento(chamado, [
+            "horaInicial", "hora_inicial",
+            "inicio", "horaInicio", "hora_inicio"
+        ], "");
+
+        var horaFinal = valorCampoEncaminhamento(chamado, [
+            "horaFinal", "hora_final",
+            "fim", "horaFim", "hora_fim"
+        ], "");
+
+        var observacaoSolucao = document.getElementById("observacaoAdmin")?.value?.trim() ||
+            valorCampoEncaminhamento(chamado, ["observacaoSolucao", "respostaAdministracao"], "");
+
+        var linhas = [
+            "📤 *PARQUE CLUBE — ENCAMINHAMENTO DE CHAMADO*",
+            "",
+            "📋 *Protocolo:* " + protocolo,
+            "📌 *Status:* " + status,
+            "👤 *Solicitante:* " + solicitante,
+            "💼 *Cargo/Função:* " + cargo,
+            "📍 *Local:* " + local,
+            "🏢 *Andar/Pavimento:* " + pavimento,
+            "🛠️ *Ocorrência:* " + ocorrencia,
+            "⚠️ *Prioridade:* " + prioridade
+        ];
+
+        if (["Câmeras/CFTV","Câmera/Imagens"].includes(String(ocorrencia).trim())) {
+            linhas.push(
+                "📅 *Data do ocorrido:* " + (dataOcorrido || "Não informado"),
+                "🕒 *Hora inicial:* " + (horaInicial || "Não informado"),
+                "🕒 *Hora final:* " + (horaFinal || "Não informado")
+            );
+        }
+
+        linhas.push(
+            "",
+            "📝 *Detalhes do chamado:*",
+            detalhes,
+            "",
+            "👤 *Responsável:* " + responsavel,
+            "📥 *Recebido em:* " + recebido
+        );
+
+        if (observacaoSolucao) {
+            linhas.push(
+                "",
+                "📝 *Observação da solução:*",
+                observacaoSolucao
+            );
+        }
+
+        var origem = (window.location && window.location.origin) ?
+            window.location.origin :
+            "https://parque-clube.newcristian.workers.dev";
+
+        linhas.push(
+            "",
+            "🔎 *Acompanhar chamado:*",
+            origem + "/?protocolo=" + encodeURIComponent(protocolo)
+        );
+
+        return linhas.join("\n");
+    }
+
+    function abrirEncaminhamentoWhatsApp() {
+        if (!senhaAdministrativa) {
+            alert("Faça o login administrativo.");
+            return;
+        }
+
+        if (!protocoloSelecionado) {
+            alert("Nenhum protocolo selecionado.");
+            return;
+        }
+
+        var input = document.getElementById("whatsappDestinoAdmin");
+        var bruto = input ? input.value.trim() : "";
+
+        if (!bruto) {
+            alert("Informe o número do WhatsApp de destino.");
+            input?.focus();
+            return;
+        }
+
+        var numero = typeof normalizarNumeroWhatsApp === "function" ?
+            normalizarNumeroWhatsApp(bruto) :
+            bruto.replace(/\D/g, "");
+
+        if (!numero || numero.length < 10) {
+            alert("Informe um número de WhatsApp válido, com DDD.");
+            input?.focus();
+            return;
+        }
+
+        var chamado = obterChamadoSelecionadoEncaminhamento();
+        if (!chamado) {
+            alert("Não foi possível localizar os dados do chamado selecionado.");
+            return;
+        }
+
+        try {
+            localStorage.setItem("parqueClubeWhatsappDestinoAdmin", bruto);
+        } catch (e) {}
+
+        var mensagem = montarMensagemEncaminhamento(chamado);
+        var url = "https://wa.me/" + numero + "?text=" + encodeURIComponent(mensagem);
+        window.open(url, "_blank", "noopener");
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        var input = document.getElementById("whatsappDestinoAdmin");
+        var botao = document.getElementById("btnEncaminharWhatsAppAdmin");
+
+        if (input) {
+            try {
+                var salvo = localStorage.getItem("parqueClubeWhatsappDestinoAdmin");
+                if (salvo) input.value = salvo;
+            } catch (e) {}
+        }
+
+        botao?.addEventListener("click", abrirEncaminhamentoWhatsApp);
+    });
+})();
+</script>
+
+
+
+<script id="pc-correcao-pesquisa-sem-chamado-vazio">
+(function () {
+    "use strict";
+
+    function limparVisualizacaoInicialPesquisa() {
+        var localizar = document.getElementById("localizarChamadoAdmin");
+        var editar = document.getElementById("editarChamado");
+
+        if (localizar) localizar.style.display = "none";
+        if (editar) editar.style.display = "none";
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        var botao = document.getElementById("menuPesquisarChamados");
+        if (botao) {
+            botao.addEventListener("click", function () {
+                setTimeout(limparVisualizacaoInicialPesquisa, 0);
+            });
+        }
+    });
+})();
 </script>
 
 </body>
-
 </html>
