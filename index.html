@@ -2315,6 +2315,51 @@ input:focus,select:focus,textarea:focus{
 }
 </style>
 
+
+<!-- V6.6 — FORMULÁRIO DE CHAMADO INTEGRADO -->
+<style id="pc-formulario-integrado-v66">
+/* Mantém todos os campos da abertura dentro do mesmo painel visual */
+#abrirChamado .form-container,
+#abrirChamado form,
+.form-container form {
+    overflow: visible !important;
+}
+
+/* Prioridade e detalhes integrados ao bloco principal */
+#prioridade,
+#detalhes,
+label[for="prioridade"],
+label[for="detalhes"] {
+    box-sizing: border-box;
+}
+
+#prioridade,
+#detalhes {
+    width: 100% !important;
+}
+
+/* Evita que campos finais fiquem visualmente fora do painel */
+.chamado-integrado-v66 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+}
+
+.chamado-integrado-v66 .campo-largo {
+    grid-column: 1 / -1;
+}
+
+@media (max-width: 700px) {
+    .chamado-integrado-v66 {
+        grid-template-columns: 1fr;
+    }
+    .chamado-integrado-v66 .campo-largo {
+        grid-column: auto;
+    }
+}
+</style>
+
 </head>
 </head>
 
