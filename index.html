@@ -1281,7 +1281,7 @@ input[readonly] {
 
 
 <style id="data-servicos-v12">
-/* Data obrigatória para serviços de Dedetização e Limpeza caixa d'água */
+/* Data obrigatória para serviços de Dedetização e Limpeza de caixa-d'água */
 #dataOcorrenciaContainer[data-servico-especial="true"] {
     border-left: 4px solid #17632d;
     padding-left: 10px;
@@ -2503,37 +2503,17 @@ input:focus,select:focus,textarea:focus{
     id="cargo"
     required
 >
+<option value="">Selecione o cargo/função</option>
 
-<option value="">
-
-    Selecione o cargo/função
-
-</option>
-
-<option>
-    ASG (Auxiliar de Serviços Gerais)
-</option>
-
-<option>
-    Conselheiro(a)
-</option>
-
-<option>
-    Porteiro(a)
-</option>
-
-<option>
-    Síndica
-</option>
-
-<option>
-    Subsíndico(a)
-</option>
-
-<option>
-    Zelador(a)
-</option>
-
+<option>Administrativo</option>
+<option>Administrativo Correio</option>
+<option>ASG (Auxiliar de Serviços Gerais)</option>
+<option>Conselheiro(a)</option>
+<option>Encarregado (Empresa Ágil)</option>
+<option>Porteiro(a)</option>
+<option>Síndica</option>
+<option>Subsíndico(a)</option>
+<option>Zelador(a)</option>
 </select>
 
 </div>
@@ -2695,77 +2675,117 @@ input:focus,select:focus,textarea:focus{
     id="ocorrencia"
     required
 >
+<option value="">Selecione o tipo de ocorrência</option>
 
-<option value="">
+<optgroup label="⚠️ Ocorrência Administrativa / Infração">
+    <option>Advertência</option>
+    <option>Notificação</option>
+</optgroup>
 
-    Selecione o serviço
+<optgroup label="📹 Câmeras/CFTV/Interfone">
+    <option>Câmeras/CFTV</option>
+    <option>Facial</option>
+    <option>Interfone</option>
+</optgroup>
 
-</option>
+<optgroup label="🐜 Controle de pragas">
+    <option>Dedetização</option>
+</optgroup>
 
-<option>
-    Lâmpada/Sensor
-</option>
+<optgroup label="💡 Elétrica/Iluminação">
+    <option>Falta de energia</option>
+    <option>Iluminação com defeito</option>
+    <option>Iluminação de emergência</option>
+    <option>Lâmpada queimada</option>
+    <option>Poste ou iluminação externa</option>
+    <option>Quadro elétrico</option>
+    <option>Sensor de presença</option>
+</optgroup>
 
-<option>
-    Limpeza
-</option>
+<optgroup label="🛗 Elevadores">
+    <option>Botão com defeito</option>
+    <option>Elevador parado</option>
+    <option>Iluminação</option>
+    <option>Limpeza</option>
+    <option>Outros problemas técnicos</option>
+    <option>Problema na porta</option>
+    <option>Ruído</option>
+</optgroup>
 
-<option>
-    Elétrica
-</option>
+<optgroup label="🏢 Estrutura e manutenção predial">
+    <option>Cobertura</option>
+    <option>Janela</option>
+    <option>Junta de dilatação</option>
+    <option>Manutenção de cancela</option>
+    <option>Parede danificada</option>
+    <option>Pintura</option>
+    <option>Piso danificado</option>
+    <option>Portão</option>
+    <option>Porta</option>
+    <option>Telhado</option>
+    <option>Teto</option>
+    <option>Trincas e fissuras</option>
+</optgroup>
 
-<option>
-    Hidráulica
-</option>
+<optgroup label="🚗 Garagem e estacionamento">
+    <option>Iluminação da garagem</option>
+    <option>Sinalização</option>
+    <option>Vaga</option>
+    <option>Vazamento na garagem</option>
+</optgroup>
 
-<option>
-    Vazamento de água
-</option>
+<optgroup label="🚰 Hidráulica">
+    <option>Bomba d'água</option>
+    <option>Caixa de água</option>
+    <option>Caixa de inspeção</option>
+    <option>Cano quebrado</option>
+    <option>Esgoto</option>
+    <option>Falta de água</option>
+    <option>Infiltração</option>
+    <option>Macro Sub1</option>
+    <option>Macro Sub2</option>
+    <option>Pressão da água</option>
+    <option>Ralo entupido</option>
+    <option>Registro com defeito</option>
+    <option>Torneira quebrada</option>
+    <option>Vazamento</option>
+</optgroup>
 
-<option>
-    Elevador
-</option>
+<optgroup label="🌳 Jardins e áreas externas">
+    <option>Árvore com risco</option>
+    <option>Corte de grama</option>
+    <option>Irrigação</option>
+    <option>Jardinagem</option>
+    <option>Limpeza de área verde</option>
+    <option>Poda</option>
+</optgroup>
 
-<option>
-    Portão
-</option>
+<optgroup label="🧹 Limpeza e conservação">
+    <option>Coleta de resíduos</option>
+    <option>Conservação de áreas comuns</option>
+    <option>Lavagem de piso</option>
+    <option>Limpeza de área comum</option>
+    <option>Limpeza de área externa</option>
+    <option>Limpeza de corredor</option>
+    <option>Limpeza de elevador</option>
+    <option>Limpeza de escadas</option>
+    <option>Limpeza de garagem</option>
+    <option>Limpeza de lixeira</option>
+    <option>Limpeza de ralos</option>
+</optgroup>
 
-<option>
-    Área comum
-</option>
+<optgroup label="🔥 Segurança e emergência">
+    <option>Extintores</option>
+    <option>Iluminação de emergência</option>
+    <option>Porta corta-fogo</option>
+    <option>Sinalização de emergência</option>
+    <option>Sistema de alarme</option>
+</optgroup>
 
-<option>
-    Shaft Aberto
-</option>
-
-<option>
-    Gás
-</option>
-
-<option>
-    Falta de Água no Bloco
-</option>
-
-<option>
-    Falta de Energia no Bloco
-</option>
-
-<option>
-    Câmera/Imagens
-</option>
-
-<option>
-    Dedetização
-</option>
-
-<option>
-    Limpeza caixa d'água
-</option>
-
-<option>
-    Outros
-</option>
-
+<optgroup label="💧 Serviços preventivos">
+    <option>Limpeza de caixa de gordura</option>
+    <option>Limpeza de caixa-d'água</option>
+</optgroup>
 </select>
 
 </div>
@@ -4350,7 +4370,7 @@ function atualizarAreaExecucao() {
 
     const exigeArea =
         ocorrencia === "Dedetização" ||
-        ocorrencia === "Limpeza caixa d'água";
+        (ocorrencia === "Limpeza de caixa-d'água" || ocorrencia === "Limpeza caixa d'água");
 
     if (areaExecucaoContainer) {
         areaExecucaoContainer.style.display =
@@ -4370,11 +4390,11 @@ function atualizarIntervaloCamera() {
             : "";
 
     const ehCamera =
-        ocorrencia === "Câmera/Imagens";
+        (ocorrencia === "Câmeras/CFTV" || ocorrencia === "Câmera/Imagens");
 
     const ehServicoComData =
         ocorrencia === "Dedetização" ||
-        ocorrencia === "Limpeza caixa d'água";
+        (ocorrencia === "Limpeza de caixa-d'água" || ocorrencia === "Limpeza caixa d'água");
 
     const mostrarData =
         ehCamera ||
@@ -7229,7 +7249,7 @@ function mostrarEdicao(
 
 
             ${
-                String(chamado.ocorrencia || "").trim() === "Câmera/Imagens"
+                ["Câmeras/CFTV","Câmera/Imagens"].includes(String(chamado.ocorrencia || "").trim())
                 ? `
             <div class="resultado-item">
 
@@ -11768,7 +11788,7 @@ function mostrarRelatorioAdminV11(){
 
         const exigeArea =
             valor === "Dedetização" ||
-            valor === "Limpeza caixa d'água";
+            (valor === "Limpeza de caixa-d'água" || valor === "Limpeza caixa d'água");
 
         if (areaExecucaoContainer) {
 
@@ -14815,7 +14835,7 @@ window.imprimirChamadosAbertosV428 = imprimirChamadosAbertosV428;
             "⚠️ *Prioridade:* " + prioridade
         ];
 
-        if (String(ocorrencia).trim() === "Câmera/Imagens") {
+        if (["Câmeras/CFTV","Câmera/Imagens"].includes(String(ocorrencia).trim())) {
             linhas.push(
                 "📅 *Data do ocorrido:* " + (dataOcorrido || "Não informado"),
                 "🕒 *Hora inicial:* " + (horaInicial || "Não informado"),
