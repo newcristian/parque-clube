@@ -11945,6 +11945,11 @@ function mostrarRelatorioAdminV11(){
 </div>
 
 <div>
+<label class="admin-v13-label">Destinatário da unidade *</label>
+<input class="admin-v13-input" id="v13Destinatario" placeholder="Nome do destinatário / responsável pela unidade" required type="text"/>
+</div>
+
+<div>
 <label class="admin-v13-label">Categoria da infração *</label>
 <select class="admin-v13-select" id="v13Categoria" required>
 <option value="">Selecione...</option>
@@ -11976,7 +11981,7 @@ function mostrarRelatorioAdminV11(){
 
 <div>
 <label class="admin-v13-label">Responsável pelo registro</label>
-<input class="admin-v13-input" id="v13Responsavel" placeholder="Nome do subsíndico/administrador" type="text"/>
+<input class="admin-v13-input" id="v13Responsavel" value="ADMINISTRAÇÃO PARQUE CLUBE" readonly type="text"/>
 </div>
 
 <div class="full">
@@ -12703,7 +12708,8 @@ function controlarVisaoGeralAoAbrirAdvertencias(ocultar) {
     const dataInfracao=formatarData(x.dataOcorrencia||x.dataInfracao||x.dataFato||'');
     const unidade=String(x.unidade||'Não informada');
     const bloco=String(x.bloco||'Não informado');
-    const responsavel=String(x.responsavel||'Administração');
+    const destinatario=String(x.destinatario||x.responsavelUnidade||'Não informado');
+    const responsavel='ADMINISTRAÇÃO PARQUE CLUBE';
     const cotas=Number(x.multaCotas||0);
     const valorCota=Number(x.valorCota||0);
     const valorMulta=Number(x.valorMulta||0);
@@ -12747,7 +12753,7 @@ p{margin:0 7% 13px;text-align:justify}
 <div class="header-phone">Telefone: 3054 – 8464</div>
 </div></header>
 <div class="date-place">Valparaíso de Goiás, ${esc(dataExtenso(x.dataRegistro||''))}.</div>
-<div class="recipient"><strong>Ilmo. (A) Sr (A). ${esc(responsavel)}</strong><br>Da Unid. ${esc(unidade)} - ${esc(bloco)} do Conjunto Residencial Parque Clube.</div>
+<div class="recipient"><strong>Ilmo. (A) Sr (A). ${esc(destinatario)}</strong><br>Da Unid. ${esc(unidade)} - ${esc(bloco)} do Conjunto Residencial Parque Clube.</div>
 <div class="reference">REF.: ${esc(titulo)}</div>
 <p>Prezado (a) Senhor (a),</p>
 <p>Na qualidade de Administração do Condomínio Parque Clube, atendendo às obrigações estabelecidas, temos a missão de comunicar formalmente o descumprimento das normas deste residencial, conforme registro administrativo.</p>
@@ -12757,11 +12763,11 @@ p{margin:0 7% 13px;text-align:justify}
 <div class="info-row"><span class="label">Data da infração:</span> ${esc(dataInfracao||'Não informada')}</div>
 <div class="info-row"><span class="label">Infração / ocorrência:</span> ${esc(x.infracao||'Não informada')}</div>
 </div>
-<p><strong>Descrição da ocorrência:</strong><br>${esc(x.descricao||'Não informado.')}</p>
+<p><strong>Descrição da ocorrência:</strong><br><strong>${esc(x.descricao||'Não informado.')}</strong></p>
 ${x.observacoes?`<p><strong>Observações:</strong><br>${esc(x.observacoes)}</p>`:''}
 <div class="regimento"><div class="regimento-title">Previsto em:</div><div><strong>${esc(x.baseRegimento||'Não informada')}</strong></div></div>
 ${notificacao?`<div class="penalty"><strong>PENALIDADE ADMINISTRATIVA</strong><br>${cotas?`Multa prevista: ${esc(cotas)} cota(s) condominial(is).<br>`:''}${valorCota?`Valor da cota: R$ ${valorCota.toFixed(2).replace('.',',')}<br>`:''}${valorMulta?`<strong>Valor da multa: R$ ${valorMulta.toFixed(2).replace('.',',')}</strong><br>`:''}Prazo para recurso administrativo: <strong>7 dias úteis</strong>.</div>`:''}
-<p>${notificacao?'Solicitamos sua atenção para o cumprimento das normas internas. Caso entenda necessário, poderá apresentar recurso administrativo dentro do prazo previsto.':'Solicitamos sua atenção para evitar reincidências e novos descumprimentos das normas, preservando os interesses de todos e as melhores condições de habitabilidade para toda a comunidade do condomínio.'}</p>
+<p>Informo ainda que a reincidência acarretará em multa para cada infração cometida. Sendo assim, solicito sua atenção para evitar aborrecimentos com os demais condôminos. Destaco que meu intuito é tão somente preservar os interesses de todos e as melhores condições de habitabilidade para toda a comunidade do condomínio.</p>
 <p>Atenciosamente,</p>
 <div class="signature"><div class="signature-line">${esc(responsavel)}<br>Administração do Condomínio</div><div class="signature-line">Ciente / assinatura do responsável pela unidade</div></div>
 
@@ -12836,6 +12842,7 @@ async function carregarMedidas(){
             dataOcorrencia:document.getElementById('v13DataOcorrencia').value,
             bloco:document.getElementById('v13Bloco').value,
             unidade:document.getElementById('v13Unidade').value.trim(),
+            destinatario:document.getElementById('v13Destinatario').value.trim(),
             infracao:document.getElementById('v13Infracao').value,
             descricao:document.getElementById('v13Descricao').value.trim(),
             baseRegimento:document.getElementById('v13BaseRegimento').value.trim(),
