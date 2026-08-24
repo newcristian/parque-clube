@@ -12708,7 +12708,14 @@ function controlarVisaoGeralAoAbrirAdvertencias(ocultar) {
     const dataInfracao=formatarData(x.dataOcorrencia||x.dataInfracao||x.dataFato||'');
     const unidade=String(x.unidade||'Não informada');
     const bloco=String(x.bloco||'Não informado');
-    const destinatario=String(x.destinatario||x.responsavelUnidade||'Não informado');
+    const destinatariosLocais=v13LerDestinatarios();
+    const destinatario=String(
+        x.destinatario||
+        x.responsavelUnidade||
+        x.nomeDestinatario||
+        destinatariosLocais[x.protocolo]||
+        'Não informado'
+    );
     const responsavel='ADMINISTRAÇÃO PARQUE CLUBE';
     const cotas=Number(x.multaCotas||0);
     const valorCota=Number(x.valorCota||0);
@@ -12782,6 +12789,34 @@ ${notificacao?`<div class="penalty"><strong>PENALIDADE ADMINISTRATIVA</strong><b
     w.document.close();
 }
 
+
+function v13ChaveDestinatarios(){
+    return 'parqueClube_v13_destinatarios_unidade';
+}
+function v13LerDestinatarios(){
+    try{
+        const dados=JSON.parse(localStorage.getItem(v13ChaveDestinatarios())||'{}');
+        return dados && typeof dados==='object' ? dados : {};
+    }catch(e){ return {}; }
+}
+function v13SalvarDestinatario(protocolo, nome){
+    const p=String(protocolo||'').trim();
+    const n=String(nome||'').trim();
+    if(!p || !n) return;
+    const dados=v13LerDestinatarios();
+    dados[p]=n;
+    try{ localStorage.setItem(v13ChaveDestinatarios(),JSON.stringify(dados)); }catch(e){}
+}
+function v13AplicarDestinatariosSalvos(lista){
+    const dados=v13LerDestinatarios();
+    return (Array.isArray(lista)?lista:[]).map(function(item){
+        const x=Object.assign({},item);
+        const atual=String(x.destinatario||x.responsavelUnidade||x.nomeDestinatario||'').trim();
+        const salvo=String(dados[x.protocolo]||'').trim();
+        if(!atual && salvo) x.destinatario=salvo;
+        return x;
+    });
+}
 async function carregarMedidas(){
         if(!senhaAdministrativa){alert('Faça o login administrativo primeiro.');return;}
         if(btnAtualizar){btnAtualizar.disabled=true;btnAtualizar.textContent='⏳ Atualizando...';}
@@ -12792,7 +12827,7 @@ async function carregarMedidas(){
                 const detalhe = d.detalhe ? `\n\nDetalhe técnico: ${d.detalhe}` : '';
                 throw new Error((d.erro||'Não foi possível carregar os registros.') + detalhe);
             }
-            medidas=Array.isArray(d.medidas)?d.medidas:[];
+            medidas=v13AplicarDestinatariosSalvos(Array.isArray(d.medidas)?d.medidas:[]);
             registrosDaPesquisaAtual=[];
             filtroKpiAtual='todos';
             const kpis=document.getElementById('v13Kpis');
@@ -12843,6 +12878,8 @@ async function carregarMedidas(){
             bloco:document.getElementById('v13Bloco').value,
             unidade:document.getElementById('v13Unidade').value.trim(),
             destinatario:document.getElementById('v13Destinatario').value.trim(),
+            responsavelUnidade:document.getElementById('v13Destinatario').value.trim(),
+            nomeDestinatario:document.getElementById('v13Destinatario').value.trim(),
             infracao:document.getElementById('v13Infracao').value,
             descricao:document.getElementById('v13Descricao').value.trim(),
             baseRegimento:document.getElementById('v13BaseRegimento').value.trim(),
@@ -12867,12 +12904,13 @@ async function carregarMedidas(){
             responsaveisDecisao:document.getElementById('v13ResponsaveisDecisao').value.trim(),
             justificativaDecisao:document.getElementById('v13JustificativaDecisao').value.trim()
         };
-        if(!payload.tipo||!payload.bloco||!payload.unidade||!payload.categoria||!payload.infracao||!payload.descricao){alert('Preencha os campos obrigatórios.');return;}
+        if(!payload.tipo||!payload.bloco||!payload.unidade||!payload.destinatario||!payload.categoria||!payload.infracao||!payload.descricao){alert('Preencha os campos obrigatórios.');return;}
         if(payload.tipo==='Notificação' && !payload.multaCotas){alert('Informe a quantidade de cotas da multa prevista para a Notificação.');return;}
         bot.disabled=true;bot.textContent='⏳ Registrando...';
         try{
             const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
             const d=await r.json(); if(!r.ok||!d.sucesso) throw new Error(d.erro||'Não foi possível registrar.');
+            v13SalvarDestinatario((d.medida&&d.medida.protocolo)||'', payload.destinatario);
             alert(`✅ ${d.medida.tipo} registrada com sucesso.\n\nProtocolo: ${d.medida.protocolo}`);
             limparForm(); await carregarMedidas(); consultarHistorico(payload.bloco,payload.unidade);
         }catch(e){alert(e.message||'Erro ao registrar medida administrativa.');}
