@@ -3916,6 +3916,49 @@ input:focus,select:focus,textarea:focus{
 
 </div>
 
+<!-- ENCAMINHAMENTO ADMINISTRATIVO VIA WHATSAPP -->
+<div
+    id="encaminharWhatsAppAdmin"
+    style="
+        margin:8px 0 16px;
+        padding:14px;
+        border:1px solid #bfdbfe;
+        background:#eff6ff;
+        border-radius:10px;
+    "
+>
+    <div style="font-weight:800;color:#1e3a5f;margin-bottom:10px;">
+        📤 Encaminhar Chamado pelo WhatsApp
+    </div>
+
+    <label for="whatsappDestinoAdmin" style="font-weight:700;display:block;margin-bottom:6px;">
+        📱 WhatsApp de destino:
+    </label>
+
+    <input
+        id="whatsappDestinoAdmin"
+        type="tel"
+        inputmode="numeric"
+        autocomplete="tel"
+        maxlength="20"
+        placeholder="Ex.: (61) 99999-9999"
+        style="width:100%;box-sizing:border-box;"
+    >
+
+    <small style="display:block;margin:7px 0 10px;color:#475569;">
+        Informe o número que receberá uma cópia completa do chamado.
+    </small>
+
+    <button
+        type="button"
+        id="btnEncaminharWhatsAppAdmin"
+        class="btn-verde"
+        style="width:100%;background:#2563eb;"
+    >
+        📤 Encaminhar Chamado pelo WhatsApp
+    </button>
+</div>
+
 
 <div class="form-group">
 
@@ -14678,5 +14721,178 @@ window.imprimirChamadosAbertosV428 = imprimirChamadosAbertosV428;
   document.addEventListener("DOMContentLoaded", atualizarCabecalhoV6);
 })();
 </script>
+
+
+<!-- CORREÇÃO V6.0 — ENCAMINHAMENTO ADMINISTRATIVO POR WHATSAPP -->
+<script id="encaminhamentoWhatsAppAdminV60">
+(function () {
+    function valorCampoEncaminhamento(chamado, nomes, padrao) {
+        if (!chamado) return padrao || "";
+        for (var i = 0; i < nomes.length; i++) {
+            var valor = chamado[nomes[i]];
+            if (valor !== undefined && valor !== null && String(valor).trim() !== "") {
+                return String(valor).trim();
+            }
+        }
+        return padrao || "";
+    }
+
+    function obterChamadoSelecionadoEncaminhamento() {
+        var listaAtivos = typeof chamados !== "undefined" && Array.isArray(chamados) ? chamados : [];
+        var listaArquivados = typeof chamadosArquivadosV11 !== "undefined" && Array.isArray(chamadosArquivadosV11) ? chamadosArquivadosV11 : [];
+        return listaAtivos.find(function (x) {
+            return x.protocolo === protocoloSelecionado;
+        }) || listaArquivados.find(function (x) {
+            return x.protocolo === protocoloSelecionado;
+        }) || null;
+    }
+
+    function montarMensagemEncaminhamento(chamado) {
+        var protocolo = valorCampoEncaminhamento(chamado, ["protocolo"], protocoloSelecionado || "");
+        var local = valorCampoEncaminhamento(chamado, ["bloco", "local", "area", "areaBloco"], "Não informado");
+        var pavimento = valorCampoEncaminhamento(chamado, ["pavimento", "andar", "andarPavimento"], "Não informado");
+        var ocorrencia = valorCampoEncaminhamento(chamado, ["ocorrencia", "tipoOcorrencia"], "Não informado");
+        var prioridade = document.getElementById("prioridadeAdmin")?.value ||
+            valorCampoEncaminhamento(chamado, ["prioridade"], "Não informado");
+        var status = document.getElementById("statusAdmin")?.value ||
+            valorCampoEncaminhamento(chamado, ["status"], "Aberto");
+        var responsavel = document.getElementById("responsavelAdmin")?.value?.trim() ||
+            valorCampoEncaminhamento(chamado, ["responsavel"], "Não informado");
+        var solicitante = valorCampoEncaminhamento(chamado, ["solicitante", "nome"], "Não informado");
+        var cargo = valorCampoEncaminhamento(chamado, ["cargo", "funcao"], "Não informado");
+        var detalhes = valorCampoEncaminhamento(chamado, ["detalhes", "descricao", "observacao", "detalhesOcorrido"], "Não informado");
+        var recebido = valorCampoEncaminhamento(chamado, ["dataAbertura", "dataCriacao", "created_at", "createdAt", "data"], "Não informado");
+
+        var dataOcorrido = valorCampoEncaminhamento(chamado, [
+            "dataOcorrencia", "data_ocorrencia",
+            "dataOcorrido", "data_ocorrido",
+            "dataFato", "data_fato"
+        ], "");
+
+        var horaInicial = valorCampoEncaminhamento(chamado, [
+            "horaInicial", "hora_inicial",
+            "inicio", "horaInicio", "hora_inicio"
+        ], "");
+
+        var horaFinal = valorCampoEncaminhamento(chamado, [
+            "horaFinal", "hora_final",
+            "fim", "horaFim", "hora_fim"
+        ], "");
+
+        var observacaoSolucao = document.getElementById("observacaoAdmin")?.value?.trim() ||
+            valorCampoEncaminhamento(chamado, ["observacaoSolucao", "respostaAdministracao"], "");
+
+        var linhas = [
+            "📤 *PARQUE CLUBE — ENCAMINHAMENTO DE CHAMADO*",
+            "",
+            "📋 *Protocolo:* " + protocolo,
+            "📌 *Status:* " + status,
+            "👤 *Solicitante:* " + solicitante,
+            "💼 *Cargo/Função:* " + cargo,
+            "📍 *Local:* " + local,
+            "🏢 *Andar/Pavimento:* " + pavimento,
+            "🛠️ *Ocorrência:* " + ocorrencia,
+            "⚠️ *Prioridade:* " + prioridade
+        ];
+
+        if (String(ocorrencia).trim() === "Câmera/Imagens") {
+            linhas.push(
+                "📅 *Data do ocorrido:* " + (dataOcorrido || "Não informado"),
+                "🕒 *Hora inicial:* " + (horaInicial || "Não informado"),
+                "🕒 *Hora final:* " + (horaFinal || "Não informado")
+            );
+        }
+
+        linhas.push(
+            "",
+            "📝 *Detalhes do chamado:*",
+            detalhes,
+            "",
+            "👤 *Responsável:* " + responsavel,
+            "📥 *Recebido em:* " + recebido
+        );
+
+        if (observacaoSolucao) {
+            linhas.push(
+                "",
+                "📝 *Observação da solução:*",
+                observacaoSolucao
+            );
+        }
+
+        var origem = (window.location && window.location.origin) ?
+            window.location.origin :
+            "https://parque-clube.newcristian.workers.dev";
+
+        linhas.push(
+            "",
+            "🔎 *Acompanhar chamado:*",
+            origem + "/?protocolo=" + encodeURIComponent(protocolo)
+        );
+
+        return linhas.join("\n");
+    }
+
+    function abrirEncaminhamentoWhatsApp() {
+        if (!senhaAdministrativa) {
+            alert("Faça o login administrativo.");
+            return;
+        }
+
+        if (!protocoloSelecionado) {
+            alert("Nenhum protocolo selecionado.");
+            return;
+        }
+
+        var input = document.getElementById("whatsappDestinoAdmin");
+        var bruto = input ? input.value.trim() : "";
+
+        if (!bruto) {
+            alert("Informe o número do WhatsApp de destino.");
+            input?.focus();
+            return;
+        }
+
+        var numero = typeof normalizarNumeroWhatsApp === "function" ?
+            normalizarNumeroWhatsApp(bruto) :
+            bruto.replace(/\D/g, "");
+
+        if (!numero || numero.length < 10) {
+            alert("Informe um número de WhatsApp válido, com DDD.");
+            input?.focus();
+            return;
+        }
+
+        var chamado = obterChamadoSelecionadoEncaminhamento();
+        if (!chamado) {
+            alert("Não foi possível localizar os dados do chamado selecionado.");
+            return;
+        }
+
+        try {
+            localStorage.setItem("parqueClubeWhatsappDestinoAdmin", bruto);
+        } catch (e) {}
+
+        var mensagem = montarMensagemEncaminhamento(chamado);
+        var url = "https://wa.me/" + numero + "?text=" + encodeURIComponent(mensagem);
+        window.open(url, "_blank", "noopener");
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        var input = document.getElementById("whatsappDestinoAdmin");
+        var botao = document.getElementById("btnEncaminharWhatsAppAdmin");
+
+        if (input) {
+            try {
+                var salvo = localStorage.getItem("parqueClubeWhatsappDestinoAdmin");
+                if (salvo) input.value = salvo;
+            } catch (e) {}
+        }
+
+        botao?.addEventListener("click", abrirEncaminhamentoWhatsApp);
+    });
+})();
+</script>
+
 </body>
 </html>
