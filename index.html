@@ -2315,87 +2315,6 @@ input:focus,select:focus,textarea:focus{
 }
 </style>
 
-
-<!-- V6.6 — FORMULÁRIO DE CHAMADO INTEGRADO -->
-<style id="pc-formulario-integrado-v66">
-/* Mantém todos os campos da abertura dentro do mesmo painel visual */
-#abrirChamado .form-container,
-#abrirChamado form,
-.form-container form {
-    overflow: visible !important;
-}
-
-/* Prioridade e detalhes integrados ao bloco principal */
-#prioridade,
-#detalhes,
-label[for="prioridade"],
-label[for="detalhes"] {
-    box-sizing: border-box;
-}
-
-#prioridade,
-#detalhes {
-    width: 100% !important;
-}
-
-/* Evita que campos finais fiquem visualmente fora do painel */
-.chamado-integrado-v66 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    width: 100%;
-}
-
-.chamado-integrado-v66 .campo-largo {
-    grid-column: 1 / -1;
-}
-
-@media (max-width: 700px) {
-    .chamado-integrado-v66 {
-        grid-template-columns: 1fr;
-    }
-    .chamado-integrado-v66 .campo-largo {
-        grid-column: auto;
-    }
-}
-</style>
-
-
-<!-- V6.7 — CORREÇÃO DEFINITIVA DA ESTRUTURA DO FORMULÁRIO -->
-<style id="pc-formulario-unificado-v67">
-/* O formulário é um único bloco de preenchimento */
-#secaoAbrir #formChamado{
-    width:100%;
-    box-sizing:border-box;
-}
-
-/* Campos finais fazem parte do mesmo grid do formulário */
-#secaoAbrir #formChamado .form-group:has(#prioridade),
-#secaoAbrir #formChamado .form-group:has(#detalhes),
-#secaoAbrir #formChamado .form-group:has(#btnEnviar),
-#secaoAbrir #formChamado > #areaExecucaoContainer,
-#secaoAbrir #formChamado > #dataOcorrenciaContainer,
-#secaoAbrir #formChamado > #intervaloCamera{
-    grid-column:1 / -1 !important;
-    width:100% !important;
-    box-sizing:border-box;
-}
-
-/* O botão também permanece alinhado dentro do formulário */
-#secaoAbrir #formChamado > #btnEnviar{
-    grid-column:1 / -1 !important;
-    width:100% !important;
-    box-sizing:border-box;
-}
-
-/* Garante que o painel de abertura acompanhe toda a altura do formulário */
-#secaoAbrir{
-    height:auto !important;
-    min-height:0 !important;
-    overflow:visible !important;
-}
-</style>
-
 </head>
 </head>
 
@@ -2776,7 +2695,66 @@ label[for="detalhes"] {
 </div>
 </div>
 
+<script id="pc-dois-niveis-v64">
+(function(){
+    "use strict";
 
+    var categorias = {"⚠️ Ocorrência Administrativa / Infração": [{"value": "Advertência", "text": "Advertência"}, {"value": "Notificação", "text": "Notificação"}], "📹 Câmeras/CFTV/Interfone": [{"value": "Câmeras/CFTV", "text": "Câmeras/CFTV"}, {"value": "Facial", "text": "Facial"}, {"value": "Interfone", "text": "Interfone"}], "🐜 Controle de pragas": [{"value": "Dedetização", "text": "Dedetização"}], "💡 Elétrica/Iluminação": [{"value": "Falta de energia", "text": "Falta de energia"}, {"value": "Iluminação com defeito", "text": "Iluminação com defeito"}, {"value": "Iluminação de emergência", "text": "Iluminação de emergência"}, {"value": "Lâmpada queimada", "text": "Lâmpada queimada"}, {"value": "Poste ou iluminação externa", "text": "Poste ou iluminação externa"}, {"value": "Quadro elétrico", "text": "Quadro elétrico"}, {"value": "Sensor de presença", "text": "Sensor de presença"}], "🛗 Elevadores": [{"value": "Botão com defeito", "text": "Botão com defeito"}, {"value": "Elevador parado", "text": "Elevador parado"}, {"value": "Iluminação", "text": "Iluminação"}, {"value": "Limpeza", "text": "Limpeza"}, {"value": "Outros problemas técnicos", "text": "Outros problemas técnicos"}, {"value": "Problema na porta", "text": "Problema na porta"}, {"value": "Ruído", "text": "Ruído"}], "🏢 Estrutura e manutenção predial": [{"value": "Cobertura", "text": "Cobertura"}, {"value": "Janela", "text": "Janela"}, {"value": "Junta de dilatação", "text": "Junta de dilatação"}, {"value": "Manutenção de cancela", "text": "Manutenção de cancela"}, {"value": "Parede danificada", "text": "Parede danificada"}, {"value": "Pintura", "text": "Pintura"}, {"value": "Piso danificado", "text": "Piso danificado"}, {"value": "Portão", "text": "Portão"}, {"value": "Porta", "text": "Porta"}, {"value": "Telhado", "text": "Telhado"}, {"value": "Teto", "text": "Teto"}, {"value": "Trincas e fissuras", "text": "Trincas e fissuras"}], "🚗 Garagem e estacionamento": [{"value": "Iluminação da garagem", "text": "Iluminação da garagem"}, {"value": "Sinalização", "text": "Sinalização"}, {"value": "Vaga", "text": "Vaga"}, {"value": "Vazamento na garagem", "text": "Vazamento na garagem"}], "🚰 Hidráulica": [{"value": "Bomba d'água", "text": "Bomba d'água"}, {"value": "Caixa de água", "text": "Caixa de água"}, {"value": "Caixa de inspeção", "text": "Caixa de inspeção"}, {"value": "Cano quebrado", "text": "Cano quebrado"}, {"value": "Esgoto", "text": "Esgoto"}, {"value": "Falta de água", "text": "Falta de água"}, {"value": "Infiltração", "text": "Infiltração"}, {"value": "Macro Sub1", "text": "Macro Sub1"}, {"value": "Macro Sub2", "text": "Macro Sub2"}, {"value": "Pressão da água", "text": "Pressão da água"}, {"value": "Ralo entupido", "text": "Ralo entupido"}, {"value": "Registro com defeito", "text": "Registro com defeito"}, {"value": "Torneira quebrada", "text": "Torneira quebrada"}, {"value": "Vazamento", "text": "Vazamento"}], "🌳 Jardins e áreas externas": [{"value": "Árvore com risco", "text": "Árvore com risco"}, {"value": "Corte de grama", "text": "Corte de grama"}, {"value": "Irrigação", "text": "Irrigação"}, {"value": "Jardinagem", "text": "Jardinagem"}, {"value": "Limpeza de área verde", "text": "Limpeza de área verde"}, {"value": "Poda", "text": "Poda"}], "🧹 Limpeza e conservação": [{"value": "Coleta de resíduos", "text": "Coleta de resíduos"}, {"value": "Conservação de áreas comuns", "text": "Conservação de áreas comuns"}, {"value": "Lavagem de piso", "text": "Lavagem de piso"}, {"value": "Limpeza de área comum", "text": "Limpeza de área comum"}, {"value": "Limpeza de área externa", "text": "Limpeza de área externa"}, {"value": "Limpeza de corredor", "text": "Limpeza de corredor"}, {"value": "Limpeza de elevador", "text": "Limpeza de elevador"}, {"value": "Limpeza de escadas", "text": "Limpeza de escadas"}, {"value": "Limpeza de garagem", "text": "Limpeza de garagem"}, {"value": "Limpeza de lixeira", "text": "Limpeza de lixeira"}, {"value": "Limpeza de ralos", "text": "Limpeza de ralos"}], "🔥 Segurança e emergência": [{"value": "Extintores", "text": "Extintores"}, {"value": "Iluminação de emergência", "text": "Iluminação de emergência"}, {"value": "Porta corta-fogo", "text": "Porta corta-fogo"}, {"value": "Sinalização de emergência", "text": "Sinalização de emergência"}, {"value": "Sistema de alarme", "text": "Sistema de alarme"}], "💧 Serviços preventivos": [{"value": "Limpeza de caixa de gordura", "text": "Limpeza de caixa de gordura"}, {"value": "Limpeza de caixa-d'água", "text": "Limpeza de caixa-d'água"}]};
+    var geral = document.getElementById("categoriaOcorrencia");
+    var especifica = document.getElementById("ocorrencia");
+    var boxOutros = document.getElementById("outrosOcorrenciaBox");
+    var campoOutros = document.getElementById("outrosOcorrencia");
+
+    geral.addEventListener("change", function(){
+        var lista = categorias[geral.value] || [];
+        especifica.innerHTML = '<option value="">Selecione a ocorrência específica</option>';
+
+        if(geral.value === "Outros"){
+            // "Outros" escolhido diretamente no campo geral.
+            especifica.disabled = true;
+            especifica.innerHTML = '<option value="">Não se aplica - descreva abaixo</option>';
+            boxOutros.style.display = "block";
+            campoOutros.required = true;
+            campoOutros.value = "";
+        } else if(lista.length === 0){
+            especifica.disabled = true;
+            especifica.innerHTML = '<option value="">Primeiro selecione o tipo geral</option>';
+            boxOutros.style.display = "none";
+            campoOutros.value = "";
+            campoOutros.required = false;
+        } else {
+            lista.forEach(function(item){
+                var op = document.createElement("option");
+                op.value = item.value;
+                op.textContent = item.text;
+                especifica.appendChild(op);
+            });
+
+            // "Outros" também permanece disponível no segundo nível.
+            var opOutros = document.createElement("option");
+            opOutros.value = "Outros";
+            opOutros.textContent = "Outros";
+            especifica.appendChild(opOutros);
+            especifica.disabled = false;
+
+            boxOutros.style.display = "none";
+            campoOutros.value = "";
+            campoOutros.required = false;
+        }
+    });
+
+    especifica.addEventListener("change", function(){
+        if(especifica.value === "Outros"){
+            boxOutros.style.display = "block";
+            campoOutros.required = true;
+        } else {
+            boxOutros.style.display = "none";
+            campoOutros.required = false;
+            campoOutros.value = "";
+        }
+    });
+})();
+</script>
 
 </div>
 
@@ -11481,67 +11459,6 @@ td:nth-child(2),td:nth-child(3){
 
 
 
-
-<script id="pc-dois-niveis-v64">
-(function(){
-    "use strict";
-
-    var categorias = {"⚠️ Ocorrência Administrativa / Infração": [{"value": "Advertência", "text": "Advertência"}, {"value": "Notificação", "text": "Notificação"}], "📹 Câmeras/CFTV/Interfone": [{"value": "Câmeras/CFTV", "text": "Câmeras/CFTV"}, {"value": "Facial", "text": "Facial"}, {"value": "Interfone", "text": "Interfone"}], "🐜 Controle de pragas": [{"value": "Dedetização", "text": "Dedetização"}], "💡 Elétrica/Iluminação": [{"value": "Falta de energia", "text": "Falta de energia"}, {"value": "Iluminação com defeito", "text": "Iluminação com defeito"}, {"value": "Iluminação de emergência", "text": "Iluminação de emergência"}, {"value": "Lâmpada queimada", "text": "Lâmpada queimada"}, {"value": "Poste ou iluminação externa", "text": "Poste ou iluminação externa"}, {"value": "Quadro elétrico", "text": "Quadro elétrico"}, {"value": "Sensor de presença", "text": "Sensor de presença"}], "🛗 Elevadores": [{"value": "Botão com defeito", "text": "Botão com defeito"}, {"value": "Elevador parado", "text": "Elevador parado"}, {"value": "Iluminação", "text": "Iluminação"}, {"value": "Limpeza", "text": "Limpeza"}, {"value": "Outros problemas técnicos", "text": "Outros problemas técnicos"}, {"value": "Problema na porta", "text": "Problema na porta"}, {"value": "Ruído", "text": "Ruído"}], "🏢 Estrutura e manutenção predial": [{"value": "Cobertura", "text": "Cobertura"}, {"value": "Janela", "text": "Janela"}, {"value": "Junta de dilatação", "text": "Junta de dilatação"}, {"value": "Manutenção de cancela", "text": "Manutenção de cancela"}, {"value": "Parede danificada", "text": "Parede danificada"}, {"value": "Pintura", "text": "Pintura"}, {"value": "Piso danificado", "text": "Piso danificado"}, {"value": "Portão", "text": "Portão"}, {"value": "Porta", "text": "Porta"}, {"value": "Telhado", "text": "Telhado"}, {"value": "Teto", "text": "Teto"}, {"value": "Trincas e fissuras", "text": "Trincas e fissuras"}], "🚗 Garagem e estacionamento": [{"value": "Iluminação da garagem", "text": "Iluminação da garagem"}, {"value": "Sinalização", "text": "Sinalização"}, {"value": "Vaga", "text": "Vaga"}, {"value": "Vazamento na garagem", "text": "Vazamento na garagem"}], "🚰 Hidráulica": [{"value": "Bomba d'água", "text": "Bomba d'água"}, {"value": "Caixa de água", "text": "Caixa de água"}, {"value": "Caixa de inspeção", "text": "Caixa de inspeção"}, {"value": "Cano quebrado", "text": "Cano quebrado"}, {"value": "Esgoto", "text": "Esgoto"}, {"value": "Falta de água", "text": "Falta de água"}, {"value": "Infiltração", "text": "Infiltração"}, {"value": "Macro Sub1", "text": "Macro Sub1"}, {"value": "Macro Sub2", "text": "Macro Sub2"}, {"value": "Pressão da água", "text": "Pressão da água"}, {"value": "Ralo entupido", "text": "Ralo entupido"}, {"value": "Registro com defeito", "text": "Registro com defeito"}, {"value": "Torneira quebrada", "text": "Torneira quebrada"}, {"value": "Vazamento", "text": "Vazamento"}], "🌳 Jardins e áreas externas": [{"value": "Árvore com risco", "text": "Árvore com risco"}, {"value": "Corte de grama", "text": "Corte de grama"}, {"value": "Irrigação", "text": "Irrigação"}, {"value": "Jardinagem", "text": "Jardinagem"}, {"value": "Limpeza de área verde", "text": "Limpeza de área verde"}, {"value": "Poda", "text": "Poda"}], "🧹 Limpeza e conservação": [{"value": "Coleta de resíduos", "text": "Coleta de resíduos"}, {"value": "Conservação de áreas comuns", "text": "Conservação de áreas comuns"}, {"value": "Lavagem de piso", "text": "Lavagem de piso"}, {"value": "Limpeza de área comum", "text": "Limpeza de área comum"}, {"value": "Limpeza de área externa", "text": "Limpeza de área externa"}, {"value": "Limpeza de corredor", "text": "Limpeza de corredor"}, {"value": "Limpeza de elevador", "text": "Limpeza de elevador"}, {"value": "Limpeza de escadas", "text": "Limpeza de escadas"}, {"value": "Limpeza de garagem", "text": "Limpeza de garagem"}, {"value": "Limpeza de lixeira", "text": "Limpeza de lixeira"}, {"value": "Limpeza de ralos", "text": "Limpeza de ralos"}], "🔥 Segurança e emergência": [{"value": "Extintores", "text": "Extintores"}, {"value": "Iluminação de emergência", "text": "Iluminação de emergência"}, {"value": "Porta corta-fogo", "text": "Porta corta-fogo"}, {"value": "Sinalização de emergência", "text": "Sinalização de emergência"}, {"value": "Sistema de alarme", "text": "Sistema de alarme"}], "💧 Serviços preventivos": [{"value": "Limpeza de caixa de gordura", "text": "Limpeza de caixa de gordura"}, {"value": "Limpeza de caixa-d'água", "text": "Limpeza de caixa-d'água"}]};
-    var geral = document.getElementById("categoriaOcorrencia");
-    var especifica = document.getElementById("ocorrencia");
-    var boxOutros = document.getElementById("outrosOcorrenciaBox");
-    var campoOutros = document.getElementById("outrosOcorrencia");
-
-    geral.addEventListener("change", function(){
-        var lista = categorias[geral.value] || [];
-        especifica.innerHTML = '<option value="">Selecione a ocorrência específica</option>';
-
-        if(geral.value === "Outros"){
-            // "Outros" escolhido diretamente no campo geral.
-            especifica.disabled = true;
-            especifica.innerHTML = '<option value="">Não se aplica - descreva abaixo</option>';
-            boxOutros.style.display = "block";
-            campoOutros.required = true;
-            campoOutros.value = "";
-        } else if(lista.length === 0){
-            especifica.disabled = true;
-            especifica.innerHTML = '<option value="">Primeiro selecione o tipo geral</option>';
-            boxOutros.style.display = "none";
-            campoOutros.value = "";
-            campoOutros.required = false;
-        } else {
-            lista.forEach(function(item){
-                var op = document.createElement("option");
-                op.value = item.value;
-                op.textContent = item.text;
-                especifica.appendChild(op);
-            });
-
-            // "Outros" também permanece disponível no segundo nível.
-            var opOutros = document.createElement("option");
-            opOutros.value = "Outros";
-            opOutros.textContent = "Outros";
-            especifica.appendChild(opOutros);
-            especifica.disabled = false;
-
-            boxOutros.style.display = "none";
-            campoOutros.value = "";
-            campoOutros.required = false;
-        }
-    });
-
-    especifica.addEventListener("change", function(){
-        if(especifica.value === "Outros"){
-            boxOutros.style.display = "block";
-            campoOutros.required = true;
-        } else {
-            boxOutros.style.display = "none";
-            campoOutros.required = false;
-            campoOutros.value = "";
-        }
-    });
-})();
-</script>
 </body>
 </html>`;
 
@@ -15018,6 +14935,102 @@ window.imprimirChamadosAbertosV428 = imprimirChamadosAbertosV428;
 
 
 
+
+
+<!-- V6.8 — CORREÇÃO SEGURA: REINTEGRAR CAMPOS NO FORMULÁRIO -->
+<script id="pc-reintegrar-formulario-v68">
+(function () {
+    "use strict";
+
+    function grupoDoCampo(campo) {
+        if (!campo) return null;
+        return campo.closest ? campo.closest(".form-group") : campo.parentElement;
+    }
+
+    function reintegrarFormulario() {
+        var form = document.getElementById("formChamado");
+        if (!form) return;
+
+        var categoria = document.getElementById("categoriaOcorrencia");
+        var ancora = grupoDoCampo(categoria);
+
+        var prioridade = document.getElementById("prioridade");
+        var detalhes = document.getElementById("detalhes");
+        var areaExecucao = document.getElementById("areaExecucaoContainer");
+        var dataOcorrencia = document.getElementById("dataOcorrenciaContainer");
+        var intervaloCamera = document.getElementById("intervaloCamera");
+        var botaoEnviar = document.getElementById("btnEnviar");
+
+        var prioridadeGrupo = grupoDoCampo(prioridade);
+        var detalhesGrupo = grupoDoCampo(detalhes);
+
+        // Move os campos para dentro do formulário, sempre na ordem correta.
+        if (areaExecucao && areaExecucao.parentElement !== form) {
+            form.appendChild(areaExecucao);
+        }
+
+        if (prioridadeGrupo && prioridadeGrupo.parentElement !== form) {
+            form.appendChild(prioridadeGrupo);
+        }
+
+        if (dataOcorrencia && dataOcorrencia.parentElement !== form) {
+            form.appendChild(dataOcorrencia);
+        }
+
+        if (intervaloCamera && intervaloCamera.parentElement !== form) {
+            form.appendChild(intervaloCamera);
+        }
+
+        if (detalhesGrupo && detalhesGrupo.parentElement !== form) {
+            form.appendChild(detalhesGrupo);
+        }
+
+        if (botaoEnviar && botaoEnviar.parentElement !== form) {
+            form.appendChild(botaoEnviar);
+        }
+
+        // Reorganiza a sequência visual dentro do próprio formulário.
+        var referencia = ancora;
+
+        function inserirDepois(elemento) {
+            if (!elemento || elemento === referencia) return;
+            if (referencia && referencia.parentElement === form) {
+                referencia.insertAdjacentElement("afterend", elemento);
+                referencia = elemento;
+            } else {
+                form.appendChild(elemento);
+                referencia = elemento;
+            }
+        }
+
+        inserirDepois(areaExecucao);
+        inserirDepois(prioridadeGrupo);
+        inserirDepois(dataOcorrencia);
+        inserirDepois(intervaloCamera);
+        inserirDepois(detalhesGrupo);
+        inserirDepois(botaoEnviar);
+
+        // Garante largura total dos campos que devem ficar em linha própria.
+        [areaExecucao, prioridadeGrupo, dataOcorrencia, intervaloCamera, detalhesGrupo, botaoEnviar]
+            .forEach(function (elemento) {
+                if (!elemento) return;
+                elemento.style.gridColumn = "1 / -1";
+                elemento.style.width = "100%";
+                elemento.style.boxSizing = "border-box";
+            });
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        reintegrarFormulario();
+        setTimeout(reintegrarFormulario, 50);
+        setTimeout(reintegrarFormulario, 250);
+    });
+
+    window.addEventListener("load", function () {
+        reintegrarFormulario();
+    });
+})();
+</script>
 
 </body>
 </html>
