@@ -15089,5 +15089,94 @@ window.imprimirChamadosAbertosV428 = imprimirChamadosAbertosV428;
 })();
 </script>
 
+
+
+<!-- V6.3 — OPÇÃO OUTROS EM TODOS OS SUBTÓPICOS -->
+<style id="pc-outros-v63-css">
+#outrosOcorrenciaBox{
+    margin-top:12px;
+    display:none;
+}
+#outrosOcorrenciaBox .pc-ocorrencia-nivel-label{
+    margin-bottom:6px;
+}
+#outrosOcorrencia{
+    width:100%;
+    min-height:92px;
+    resize:vertical;
+}
+</style>
+
+<script id="pc-outros-v63-js">
+(function(){
+    "use strict";
+
+    function initOutros(){
+        var ocorrencia = document.getElementById("ocorrencia");
+        if(!ocorrencia || document.getElementById("outrosOcorrenciaBox")) return;
+
+        // Cria o campo complementar, inicialmente oculto.
+        var box = document.createElement("div");
+        box.id = "outrosOcorrenciaBox";
+        box.innerHTML =
+            '<label class="pc-ocorrencia-nivel-label" for="outrosOcorrencia">Especifique a ocorrência:</label>' +
+            '<textarea id="outrosOcorrencia" name="outrosOcorrencia" placeholder="Descreva a ocorrência que não está na lista..."></textarea>';
+
+        ocorrencia.parentNode.insertBefore(box, ocorrencia.nextSibling);
+
+        var textoOutros = document.getElementById("outrosOcorrencia");
+
+        function atualizarCampoOutros(){
+            var selecionado = String(ocorrencia.value || "").trim();
+
+            if(selecionado === "Outros"){
+                box.style.display = "block";
+                textoOutros.required = true;
+            } else {
+                box.style.display = "none";
+                textoOutros.required = false;
+                textoOutros.value = "";
+            }
+        }
+
+        // Observa alterações feitas pelo seletor de dois níveis.
+        ocorrencia.addEventListener("change", atualizarCampoOutros);
+
+        /*
+         * Sempre que o tipo geral for trocado, aguarda o segundo seletor
+         * ser preenchido e acrescenta "Outros" ao final da lista.
+         */
+        var observer = new MutationObserver(function(){
+            var temOutros = Array.from(ocorrencia.options).some(function(op){
+                return String(op.value).trim() === "Outros";
+            });
+
+            var possuiOpcoesReais = ocorrencia.options.length > 1;
+
+            if(possuiOpcoesReais && !temOutros){
+                var op = document.createElement("option");
+                op.value = "Outros";
+                op.textContent = "Outros";
+                ocorrencia.appendChild(op);
+            }
+
+            atualizarCampoOutros();
+        });
+
+        observer.observe(ocorrencia, {childList:true, subtree:true});
+
+        // Caso já exista uma lista preenchida.
+        atualizarCampoOutros();
+    }
+
+    if(document.readyState === "loading"){
+        document.addEventListener("DOMContentLoaded", initOutros);
+    } else {
+        initOutros();
+    }
+})();
+</script>
+<!-- /V6.3 — OPÇÃO OUTROS EM TODOS OS SUBTÓPICOS -->
+
 </body>
 </html>
