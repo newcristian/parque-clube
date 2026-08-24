@@ -14959,5 +14959,135 @@ window.imprimirChamadosAbertosV428 = imprimirChamadosAbertosV428;
 })();
 </script>
 
+
+
+<!-- V6.2 — TIPO DE OCORRÊNCIA EM DOIS NÍVEIS -->
+<style id="pc-ocorrencia-dois-niveis-css">
+.pc-ocorrencia-nivel-box{
+    margin-bottom:12px;
+}
+.pc-ocorrencia-nivel-label{
+    display:block;
+    margin-bottom:6px;
+    font-weight:700;
+    color:#334155;
+    font-size:12px;
+}
+#categoriaOcorrencia{
+    width:100%;
+}
+#ocorrencia:disabled{
+    opacity:.75;
+    cursor:not-allowed;
+}
+</style>
+
+<script id="pc-ocorrencia-dois-niveis-js">
+(function(){
+    "use strict";
+
+    function montarDoisNiveis(){
+        var ocorrencia = document.getElementById("ocorrencia");
+        if(!ocorrencia || document.getElementById("categoriaOcorrencia")) return;
+
+        /*
+         * Guarda os optgroups atuais como fonte de dados.
+         * Assim, o valor enviado pelo formulário continua sendo o subtópico,
+         * preservando a compatibilidade com o restante do sistema.
+         */
+        var grupos = [];
+        Array.from(ocorrencia.querySelectorAll("optgroup")).forEach(function(grupo){
+            var nome = grupo.label || "";
+            var opcoes = Array.from(grupo.querySelectorAll("option")).map(function(op){
+                return {
+                    texto: op.textContent.trim(),
+                    valor: op.value || op.textContent.trim()
+                };
+            });
+
+            if(nome && opcoes.length){
+                grupos.push({nome:nome, opcoes:opcoes});
+            }
+        });
+
+        if(!grupos.length) return;
+
+        // Cria o novo campo "Geral" antes do campo existente.
+        var container = document.createElement("div");
+        container.className = "pc-ocorrencia-nivel-box";
+
+        var label = document.createElement("label");
+        label.className = "pc-ocorrencia-nivel-label";
+        label.setAttribute("for","categoriaOcorrencia");
+        label.textContent = "Tipo geral:";
+
+        var select = document.createElement("select");
+        select.id = "categoriaOcorrencia";
+        select.name = "categoriaOcorrencia";
+        select.innerHTML = '<option value="">Selecione a categoria geral</option>' +
+            grupos.map(function(g){
+                return '<option value="' + String(g.nome).replace(/"/g,'&quot;') + '">' +
+                    g.nome.replace(/</g,'&lt;').replace(/>/g,'&gt;') +
+                '</option>';
+            }).join("");
+
+        container.appendChild(label);
+        container.appendChild(select);
+
+        var pai = ocorrencia.parentNode;
+        pai.insertBefore(container, ocorrencia);
+
+        // Atualiza o rótulo do campo já existente para ficar como segundo nível.
+        var labelOcorrencia = document.querySelector('label[for="ocorrencia"]');
+        if(labelOcorrencia) labelOcorrencia.textContent = "Ocorrência específica:";
+
+        // O segundo nível começa bloqueado.
+        ocorrencia.innerHTML = '<option value="">Primeiro selecione o tipo geral</option>';
+        ocorrencia.disabled = true;
+
+        select.addEventListener("change", function(){
+            var escolhido = grupos.find(function(g){ return g.nome === select.value; });
+
+            if(!escolhido){
+                ocorrencia.innerHTML = '<option value="">Primeiro selecione o tipo geral</option>';
+                ocorrencia.disabled = true;
+                ocorrencia.value = "";
+                return;
+            }
+
+            ocorrencia.disabled = false;
+            ocorrencia.innerHTML =
+                '<option value="">Selecione a ocorrência específica</option>' +
+                escolhido.opcoes.map(function(op){
+                    var t = String(op.texto);
+                    var v = String(op.valor);
+                    return '<option value="' + v.replace(/"/g,'&quot;') + '">' +
+                        t.replace(/</g,'&lt;').replace(/>/g,'&gt;') +
+                    '</option>';
+                }).join("");
+
+            ocorrencia.value = "";
+            ocorrencia.dispatchEvent(new Event("change", {bubbles:true}));
+        });
+
+        /*
+         * Mantém o comportamento visual das regras especiais já existentes
+         * quando o subtópico é escolhido, por exemplo Câmeras/CFTV.
+         */
+        ocorrencia.addEventListener("change", function(){
+            var ev = new Event("change", {bubbles:true});
+            // Os outros listeners do próprio sistema continuam recebendo
+            // o valor do subtópico normalmente.
+        });
+    }
+
+    if(document.readyState === "loading"){
+        document.addEventListener("DOMContentLoaded", montarDoisNiveis);
+    } else {
+        montarDoisNiveis();
+    }
+})();
+</script>
+
 </body>
 </html>
