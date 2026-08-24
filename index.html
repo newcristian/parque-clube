@@ -1823,6 +1823,13 @@ button:active{
 .btn-status-rapido{width:100%;max-width:320px;min-height:44px;border:0;border-radius:10px;background:#17632d;color:#fff;font-weight:800;cursor:pointer}
 .home-rodape{margin:22px 0 4px;padding:14px 8px 4px;border-top:1px solid #dfe8e2;text-align:center;color:#64748b;font-size:11px;line-height:1.5}
 .home-rodape strong{display:block;color:#17632d;font-size:12px}
+.home-rodape-desenvolvedor{
+    display:block;
+    text-align:center;
+    font-size:11px;
+    color:#64748b;
+    font-weight:400;
+}
 @media(max-width:700px){.home-bloco-titulo{margin-top:10px}.home-status-rapido{padding:15px}}
 
 /* =====================================================
@@ -11615,8 +11622,15 @@ function inicializarDashboardV11(){
 
     const localizarChamado=document.getElementById('localizarChamadoAdmin');
     const editarChamado=document.getElementById('editarChamado');
-    if(localizarChamado) localizarChamado.style.display='block';
-    if(editarChamado) editarChamado.style.display='block';
+
+    /*
+     * Ao entrar em "Pesquisar Chamados", o administrador vê somente
+     * a lista/pesquisa de chamados. O localizador manual por protocolo
+     * e o formulário de edição ficam ocultos até um chamado real ser
+     * selecionado.
+     */
+    if(localizarChamado) localizarChamado.style.display='none';
+    if(editarChamado) editarChamado.style.display='none';
 
     if(voltar) voltar.style.display='flex';
     if(titulo) titulo.textContent='🔎 Pesquisar chamados';
@@ -13459,10 +13473,16 @@ function ocultarPainelDetalhesChamadoV45() {
 }
 
 function mostrarPainelDetalhesChamadoV45() {
-    ["localizarChamadoAdmin","editarChamado"].forEach(function(id){
-        const el=document.getElementById(id);
-        if(el) el.style.display="block";
-    });
+    /*
+     * O campo "Localizar Chamado" não faz parte da visualização da lista.
+     * Ele permanece oculto. Quando o usuário seleciona um protocolo real,
+     * somente o painel de edição/detalhes é exibido.
+     */
+    const localizar = document.getElementById("localizarChamadoAdmin");
+    if(localizar) localizar.style.display = "none";
+
+    const editar = document.getElementById("editarChamado");
+    if(editar) editar.style.display = "block";
 }
 
 </script>
@@ -13470,9 +13490,9 @@ function mostrarPainelDetalhesChamadoV45() {
 <div class="home-rodape">
     <strong>PARQUE CLUBE</strong>
     Sistema de Gestão de Chamados<br>
-    Versão 6.0
+    Versão 6.0<br>
+    <span class="home-rodape-desenvolvedor">Desenvolvido por NEW CRISTIAN</span>
 </div>
-<div>Desenvolvido por NEW CRISTIAN</div>
 
 
 
@@ -14890,6 +14910,31 @@ window.imprimirChamadosAbertosV428 = imprimirChamadosAbertosV428;
         }
 
         botao?.addEventListener("click", abrirEncaminhamentoWhatsApp);
+    });
+})();
+</script>
+
+
+
+<script id="pc-correcao-pesquisa-sem-chamado-vazio">
+(function () {
+    "use strict";
+
+    function limparVisualizacaoInicialPesquisa() {
+        var localizar = document.getElementById("localizarChamadoAdmin");
+        var editar = document.getElementById("editarChamado");
+
+        if (localizar) localizar.style.display = "none";
+        if (editar) editar.style.display = "none";
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        var botao = document.getElementById("menuPesquisarChamados");
+        if (botao) {
+            botao.addEventListener("click", function () {
+                setTimeout(limparVisualizacaoInicialPesquisa, 0);
+            });
+        }
     });
 })();
 </script>
