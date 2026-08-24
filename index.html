@@ -2664,129 +2664,86 @@ input:focus,select:focus,textarea:focus{
 
 
 <div class="form-group">
-
-<label>
-
-    Tipo de Ocorrência:
-
-</label>
-
-<select
-    id="ocorrencia"
-    required
->
-<option value="">Selecione o tipo de ocorrência</option>
-
-<optgroup label="⚠️ Ocorrência Administrativa / Infração">
-    <option>Advertência</option>
-    <option>Notificação</option>
-</optgroup>
-
-<optgroup label="📹 Câmeras/CFTV/Interfone">
-    <option>Câmeras/CFTV</option>
-    <option>Facial</option>
-    <option>Interfone</option>
-</optgroup>
-
-<optgroup label="🐜 Controle de pragas">
-    <option>Dedetização</option>
-</optgroup>
-
-<optgroup label="💡 Elétrica/Iluminação">
-    <option>Falta de energia</option>
-    <option>Iluminação com defeito</option>
-    <option>Iluminação de emergência</option>
-    <option>Lâmpada queimada</option>
-    <option>Poste ou iluminação externa</option>
-    <option>Quadro elétrico</option>
-    <option>Sensor de presença</option>
-</optgroup>
-
-<optgroup label="🛗 Elevadores">
-    <option>Botão com defeito</option>
-    <option>Elevador parado</option>
-    <option>Iluminação</option>
-    <option>Limpeza</option>
-    <option>Outros problemas técnicos</option>
-    <option>Problema na porta</option>
-    <option>Ruído</option>
-</optgroup>
-
-<optgroup label="🏢 Estrutura e manutenção predial">
-    <option>Cobertura</option>
-    <option>Janela</option>
-    <option>Junta de dilatação</option>
-    <option>Manutenção de cancela</option>
-    <option>Parede danificada</option>
-    <option>Pintura</option>
-    <option>Piso danificado</option>
-    <option>Portão</option>
-    <option>Porta</option>
-    <option>Telhado</option>
-    <option>Teto</option>
-    <option>Trincas e fissuras</option>
-</optgroup>
-
-<optgroup label="🚗 Garagem e estacionamento">
-    <option>Iluminação da garagem</option>
-    <option>Sinalização</option>
-    <option>Vaga</option>
-    <option>Vazamento na garagem</option>
-</optgroup>
-
-<optgroup label="🚰 Hidráulica">
-    <option>Bomba d'água</option>
-    <option>Caixa de água</option>
-    <option>Caixa de inspeção</option>
-    <option>Cano quebrado</option>
-    <option>Esgoto</option>
-    <option>Falta de água</option>
-    <option>Infiltração</option>
-    <option>Macro Sub1</option>
-    <option>Macro Sub2</option>
-    <option>Pressão da água</option>
-    <option>Ralo entupido</option>
-    <option>Registro com defeito</option>
-    <option>Torneira quebrada</option>
-    <option>Vazamento</option>
-</optgroup>
-
-<optgroup label="🌳 Jardins e áreas externas">
-    <option>Árvore com risco</option>
-    <option>Corte de grama</option>
-    <option>Irrigação</option>
-    <option>Jardinagem</option>
-    <option>Limpeza de área verde</option>
-    <option>Poda</option>
-</optgroup>
-
-<optgroup label="🧹 Limpeza e conservação">
-    <option>Coleta de resíduos</option>
-    <option>Conservação de áreas comuns</option>
-    <option>Lavagem de piso</option>
-    <option>Limpeza de área comum</option>
-    <option>Limpeza de área externa</option>
-    <option>Limpeza de corredor</option>
-    <option>Limpeza de elevador</option>
-    <option>Limpeza de escadas</option>
-    <option>Limpeza de garagem</option>
-    <option>Limpeza de lixeira</option>
-    <option>Limpeza de ralos</option>
-</optgroup>
-
-<optgroup label="🔥 Segurança e emergência">
-    <option>Extintores</option>
-    <option>Iluminação de emergência</option>
-    <option>Porta corta-fogo</option>
-    <option>Sinalização de emergência</option>
-    <option>Sistema de alarme</option>
-</optgroup>
-
-<optgroup label="💧 Serviços preventivos">
-    <option>Limpeza de caixa de gordura</option>
-    <option>Limpeza de caixa-d'água</option>
-</optgroup>
+<label>Tipo de Ocorrência Geral:</label>
+<select id="categoriaOcorrencia" required>
+    <option value="">Selecione a categoria geral</option>
+        <option value="⚠️ Ocorrência Administrativa / Infração">⚠️ Ocorrência Administrativa / Infração</option>
+        <option value="📹 Câmeras/CFTV/Interfone">📹 Câmeras/CFTV/Interfone</option>
+        <option value="🐜 Controle de pragas">🐜 Controle de pragas</option>
+        <option value="💡 Elétrica/Iluminação">💡 Elétrica/Iluminação</option>
+        <option value="🛗 Elevadores">🛗 Elevadores</option>
+        <option value="🏢 Estrutura e manutenção predial">🏢 Estrutura e manutenção predial</option>
+        <option value="🚗 Garagem e estacionamento">🚗 Garagem e estacionamento</option>
+        <option value="🚰 Hidráulica">🚰 Hidráulica</option>
+        <option value="🌳 Jardins e áreas externas">🌳 Jardins e áreas externas</option>
+        <option value="🧹 Limpeza e conservação">🧹 Limpeza e conservação</option>
+        <option value="🔥 Segurança e emergência">🔥 Segurança e emergência</option>
+        <option value="💧 Serviços preventivos">💧 Serviços preventivos</option>
 </select>
+
+<label style="display:block;margin-top:10px;">Ocorrência Específica:</label>
+<select id="ocorrencia" required disabled>
+    <option value="">Primeiro selecione o tipo geral</option>
+</select>
+
+<div id="outrosOcorrenciaBox" style="display:none;margin-top:10px;">
+    <label>Especifique a ocorrência:</label>
+    <textarea id="outrosOcorrencia"
+              placeholder="Descreva a ocorrência que não está na lista..."
+              style="width:100%;min-height:85px;resize:vertical;"></textarea>
+</div>
+</div>
+
+<script id="pc-dois-niveis-v64">
+(function(){
+    "use strict";
+
+    var categorias = {"⚠️ Ocorrência Administrativa / Infração": [{"value": "Advertência", "text": "Advertência"}, {"value": "Notificação", "text": "Notificação"}], "📹 Câmeras/CFTV/Interfone": [{"value": "Câmeras/CFTV", "text": "Câmeras/CFTV"}, {"value": "Facial", "text": "Facial"}, {"value": "Interfone", "text": "Interfone"}], "🐜 Controle de pragas": [{"value": "Dedetização", "text": "Dedetização"}], "💡 Elétrica/Iluminação": [{"value": "Falta de energia", "text": "Falta de energia"}, {"value": "Iluminação com defeito", "text": "Iluminação com defeito"}, {"value": "Iluminação de emergência", "text": "Iluminação de emergência"}, {"value": "Lâmpada queimada", "text": "Lâmpada queimada"}, {"value": "Poste ou iluminação externa", "text": "Poste ou iluminação externa"}, {"value": "Quadro elétrico", "text": "Quadro elétrico"}, {"value": "Sensor de presença", "text": "Sensor de presença"}], "🛗 Elevadores": [{"value": "Botão com defeito", "text": "Botão com defeito"}, {"value": "Elevador parado", "text": "Elevador parado"}, {"value": "Iluminação", "text": "Iluminação"}, {"value": "Limpeza", "text": "Limpeza"}, {"value": "Outros problemas técnicos", "text": "Outros problemas técnicos"}, {"value": "Problema na porta", "text": "Problema na porta"}, {"value": "Ruído", "text": "Ruído"}], "🏢 Estrutura e manutenção predial": [{"value": "Cobertura", "text": "Cobertura"}, {"value": "Janela", "text": "Janela"}, {"value": "Junta de dilatação", "text": "Junta de dilatação"}, {"value": "Manutenção de cancela", "text": "Manutenção de cancela"}, {"value": "Parede danificada", "text": "Parede danificada"}, {"value": "Pintura", "text": "Pintura"}, {"value": "Piso danificado", "text": "Piso danificado"}, {"value": "Portão", "text": "Portão"}, {"value": "Porta", "text": "Porta"}, {"value": "Telhado", "text": "Telhado"}, {"value": "Teto", "text": "Teto"}, {"value": "Trincas e fissuras", "text": "Trincas e fissuras"}], "🚗 Garagem e estacionamento": [{"value": "Iluminação da garagem", "text": "Iluminação da garagem"}, {"value": "Sinalização", "text": "Sinalização"}, {"value": "Vaga", "text": "Vaga"}, {"value": "Vazamento na garagem", "text": "Vazamento na garagem"}], "🚰 Hidráulica": [{"value": "Bomba d'água", "text": "Bomba d'água"}, {"value": "Caixa de água", "text": "Caixa de água"}, {"value": "Caixa de inspeção", "text": "Caixa de inspeção"}, {"value": "Cano quebrado", "text": "Cano quebrado"}, {"value": "Esgoto", "text": "Esgoto"}, {"value": "Falta de água", "text": "Falta de água"}, {"value": "Infiltração", "text": "Infiltração"}, {"value": "Macro Sub1", "text": "Macro Sub1"}, {"value": "Macro Sub2", "text": "Macro Sub2"}, {"value": "Pressão da água", "text": "Pressão da água"}, {"value": "Ralo entupido", "text": "Ralo entupido"}, {"value": "Registro com defeito", "text": "Registro com defeito"}, {"value": "Torneira quebrada", "text": "Torneira quebrada"}, {"value": "Vazamento", "text": "Vazamento"}], "🌳 Jardins e áreas externas": [{"value": "Árvore com risco", "text": "Árvore com risco"}, {"value": "Corte de grama", "text": "Corte de grama"}, {"value": "Irrigação", "text": "Irrigação"}, {"value": "Jardinagem", "text": "Jardinagem"}, {"value": "Limpeza de área verde", "text": "Limpeza de área verde"}, {"value": "Poda", "text": "Poda"}], "🧹 Limpeza e conservação": [{"value": "Coleta de resíduos", "text": "Coleta de resíduos"}, {"value": "Conservação de áreas comuns", "text": "Conservação de áreas comuns"}, {"value": "Lavagem de piso", "text": "Lavagem de piso"}, {"value": "Limpeza de área comum", "text": "Limpeza de área comum"}, {"value": "Limpeza de área externa", "text": "Limpeza de área externa"}, {"value": "Limpeza de corredor", "text": "Limpeza de corredor"}, {"value": "Limpeza de elevador", "text": "Limpeza de elevador"}, {"value": "Limpeza de escadas", "text": "Limpeza de escadas"}, {"value": "Limpeza de garagem", "text": "Limpeza de garagem"}, {"value": "Limpeza de lixeira", "text": "Limpeza de lixeira"}, {"value": "Limpeza de ralos", "text": "Limpeza de ralos"}], "🔥 Segurança e emergência": [{"value": "Extintores", "text": "Extintores"}, {"value": "Iluminação de emergência", "text": "Iluminação de emergência"}, {"value": "Porta corta-fogo", "text": "Porta corta-fogo"}, {"value": "Sinalização de emergência", "text": "Sinalização de emergência"}, {"value": "Sistema de alarme", "text": "Sistema de alarme"}], "💧 Serviços preventivos": [{"value": "Limpeza de caixa de gordura", "text": "Limpeza de caixa de gordura"}, {"value": "Limpeza de caixa-d'água", "text": "Limpeza de caixa-d'água"}]};
+    var geral = document.getElementById("categoriaOcorrencia");
+    var especifica = document.getElementById("ocorrencia");
+    var boxOutros = document.getElementById("outrosOcorrenciaBox");
+    var campoOutros = document.getElementById("outrosOcorrencia");
+
+    geral.addEventListener("change", function(){
+        var lista = categorias[geral.value] || [];
+        especifica.innerHTML = '<option value="">Selecione a ocorrência específica</option>';
+
+        if(lista.length === 0){
+            especifica.disabled = true;
+            especifica.innerHTML = '<option value="">Primeiro selecione o tipo geral</option>';
+        } else {
+            lista.forEach(function(item){
+                var op = document.createElement("option");
+                op.value = item.value;
+                op.textContent = item.text;
+                especifica.appendChild(op);
+            });
+
+            // A opção Outros é adicionada somente aqui, no segundo nível.
+            var opOutros = document.createElement("option");
+            opOutros.value = "Outros";
+            opOutros.textContent = "Outros";
+            especifica.appendChild(opOutros);
+            especifica.disabled = false;
+        }
+
+        boxOutros.style.display = "none";
+        campoOutros.value = "";
+        campoOutros.required = false;
+    });
+
+    especifica.addEventListener("change", function(){
+        if(especifica.value === "Outros"){
+            boxOutros.style.display = "block";
+            campoOutros.required = true;
+        } else {
+            boxOutros.style.display = "none";
+            campoOutros.required = false;
+            campoOutros.value = "";
+        }
+    });
+})();
+</script>
 
 </div>
 
@@ -14962,221 +14919,11 @@ window.imprimirChamadosAbertosV428 = imprimirChamadosAbertosV428;
 
 
 <!-- V6.2 — TIPO DE OCORRÊNCIA EM DOIS NÍVEIS -->
-<style id="pc-ocorrencia-dois-niveis-css">
-.pc-ocorrencia-nivel-box{
-    margin-bottom:12px;
-}
-.pc-ocorrencia-nivel-label{
-    display:block;
-    margin-bottom:6px;
-    font-weight:700;
-    color:#334155;
-    font-size:12px;
-}
-#categoriaOcorrencia{
-    width:100%;
-}
-#ocorrencia:disabled{
-    opacity:.75;
-    cursor:not-allowed;
-}
-</style>
-
-<script id="pc-ocorrencia-dois-niveis-js">
-(function(){
-    "use strict";
-
-    function montarDoisNiveis(){
-        var ocorrencia = document.getElementById("ocorrencia");
-        if(!ocorrencia || document.getElementById("categoriaOcorrencia")) return;
-
-        /*
-         * Guarda os optgroups atuais como fonte de dados.
-         * Assim, o valor enviado pelo formulário continua sendo o subtópico,
-         * preservando a compatibilidade com o restante do sistema.
-         */
-        var grupos = [];
-        Array.from(ocorrencia.querySelectorAll("optgroup")).forEach(function(grupo){
-            var nome = grupo.label || "";
-            var opcoes = Array.from(grupo.querySelectorAll("option")).map(function(op){
-                return {
-                    texto: op.textContent.trim(),
-                    valor: op.value || op.textContent.trim()
-                };
-            });
-
-            if(nome && opcoes.length){
-                grupos.push({nome:nome, opcoes:opcoes});
-            }
-        });
-
-        if(!grupos.length) return;
-
-        // Cria o novo campo "Geral" antes do campo existente.
-        var container = document.createElement("div");
-        container.className = "pc-ocorrencia-nivel-box";
-
-        var label = document.createElement("label");
-        label.className = "pc-ocorrencia-nivel-label";
-        label.setAttribute("for","categoriaOcorrencia");
-        label.textContent = "Tipo geral:";
-
-        var select = document.createElement("select");
-        select.id = "categoriaOcorrencia";
-        select.name = "categoriaOcorrencia";
-        select.innerHTML = '<option value="">Selecione a categoria geral</option>' +
-            grupos.map(function(g){
-                return '<option value="' + String(g.nome).replace(/"/g,'&quot;') + '">' +
-                    g.nome.replace(/</g,'&lt;').replace(/>/g,'&gt;') +
-                '</option>';
-            }).join("");
-
-        container.appendChild(label);
-        container.appendChild(select);
-
-        var pai = ocorrencia.parentNode;
-        pai.insertBefore(container, ocorrencia);
-
-        // Atualiza o rótulo do campo já existente para ficar como segundo nível.
-        var labelOcorrencia = document.querySelector('label[for="ocorrencia"]');
-        if(labelOcorrencia) labelOcorrencia.textContent = "Ocorrência específica:";
-
-        // O segundo nível começa bloqueado.
-        ocorrencia.innerHTML = '<option value="">Primeiro selecione o tipo geral</option>';
-        ocorrencia.disabled = true;
-
-        select.addEventListener("change", function(){
-            var escolhido = grupos.find(function(g){ return g.nome === select.value; });
-
-            if(!escolhido){
-                ocorrencia.innerHTML = '<option value="">Primeiro selecione o tipo geral</option>';
-                ocorrencia.disabled = true;
-                ocorrencia.value = "";
-                return;
-            }
-
-            ocorrencia.disabled = false;
-            ocorrencia.innerHTML =
-                '<option value="">Selecione a ocorrência específica</option>' +
-                escolhido.opcoes.map(function(op){
-                    var t = String(op.texto);
-                    var v = String(op.valor);
-                    return '<option value="' + v.replace(/"/g,'&quot;') + '">' +
-                        t.replace(/</g,'&lt;').replace(/>/g,'&gt;') +
-                    '</option>';
-                }).join("");
-
-            ocorrencia.value = "";
-            ocorrencia.dispatchEvent(new Event("change", {bubbles:true}));
-        });
-
-        /*
-         * Mantém o comportamento visual das regras especiais já existentes
-         * quando o subtópico é escolhido, por exemplo Câmeras/CFTV.
-         */
-        ocorrencia.addEventListener("change", function(){
-            var ev = new Event("change", {bubbles:true});
-            // Os outros listeners do próprio sistema continuam recebendo
-            // o valor do subtópico normalmente.
-        });
-    }
-
-    if(document.readyState === "loading"){
-        document.addEventListener("DOMContentLoaded", montarDoisNiveis);
-    } else {
-        montarDoisNiveis();
-    }
-})();
-</script>
 
 
 
-<!-- V6.3 — OPÇÃO OUTROS EM TODOS OS SUBTÓPICOS -->
-<style id="pc-outros-v63-css">
-#outrosOcorrenciaBox{
-    margin-top:12px;
-    display:none;
-}
-#outrosOcorrenciaBox .pc-ocorrencia-nivel-label{
-    margin-bottom:6px;
-}
-#outrosOcorrencia{
-    width:100%;
-    min-height:92px;
-    resize:vertical;
-}
-</style>
 
-<script id="pc-outros-v63-js">
-(function(){
-    "use strict";
 
-    function initOutros(){
-        var ocorrencia = document.getElementById("ocorrencia");
-        if(!ocorrencia || document.getElementById("outrosOcorrenciaBox")) return;
-
-        // Cria o campo complementar, inicialmente oculto.
-        var box = document.createElement("div");
-        box.id = "outrosOcorrenciaBox";
-        box.innerHTML =
-            '<label class="pc-ocorrencia-nivel-label" for="outrosOcorrencia">Especifique a ocorrência:</label>' +
-            '<textarea id="outrosOcorrencia" name="outrosOcorrencia" placeholder="Descreva a ocorrência que não está na lista..."></textarea>';
-
-        ocorrencia.parentNode.insertBefore(box, ocorrencia.nextSibling);
-
-        var textoOutros = document.getElementById("outrosOcorrencia");
-
-        function atualizarCampoOutros(){
-            var selecionado = String(ocorrencia.value || "").trim();
-
-            if(selecionado === "Outros"){
-                box.style.display = "block";
-                textoOutros.required = true;
-            } else {
-                box.style.display = "none";
-                textoOutros.required = false;
-                textoOutros.value = "";
-            }
-        }
-
-        // Observa alterações feitas pelo seletor de dois níveis.
-        ocorrencia.addEventListener("change", atualizarCampoOutros);
-
-        /*
-         * Sempre que o tipo geral for trocado, aguarda o segundo seletor
-         * ser preenchido e acrescenta "Outros" ao final da lista.
-         */
-        var observer = new MutationObserver(function(){
-            var temOutros = Array.from(ocorrencia.options).some(function(op){
-                return String(op.value).trim() === "Outros";
-            });
-
-            var possuiOpcoesReais = ocorrencia.options.length > 1;
-
-            if(possuiOpcoesReais && !temOutros){
-                var op = document.createElement("option");
-                op.value = "Outros";
-                op.textContent = "Outros";
-                ocorrencia.appendChild(op);
-            }
-
-            atualizarCampoOutros();
-        });
-
-        observer.observe(ocorrencia, {childList:true, subtree:true});
-
-        // Caso já exista uma lista preenchida.
-        atualizarCampoOutros();
-    }
-
-    if(document.readyState === "loading"){
-        document.addEventListener("DOMContentLoaded", initOutros);
-    } else {
-        initOutros();
-    }
-})();
-</script>
-<!-- /V6.3 — OPÇÃO OUTROS EM TODOS OS SUBTÓPICOS -->
 
 </body>
 </html>
