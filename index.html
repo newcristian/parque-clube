@@ -6991,6 +6991,12 @@ document
                     protocolo;
 
 
+                // CORREÇÃO V6.0: o registro retornado pela busca direta também
+                // passa pela normalização dos campos de data e horário.
+                pcNormalizarCamposCameraV429(
+                    dados.chamado
+                );
+
                 mostrarEdicao(
                     dados.chamado
                 );
@@ -7027,6 +7033,9 @@ document
 function mostrarEdicao(
     chamado
 ) {
+
+    // CORREÇÃO V6.0: normaliza data e horários antes de montar a tela administrativa.
+    chamado = pcNormalizarCamposCameraV429(chamado);
 
     /*
      * Atualiza o destaque do histórico do protocolo.
@@ -7167,6 +7176,82 @@ function mostrarEdicao(
                 )}
 
             </div>
+
+
+            ${
+                String(chamado.ocorrencia || "").trim() === "Câmera/Imagens"
+                ? `
+            <div class="resultado-item">
+
+                <strong>
+                    📅 Data do ocorrido
+                </strong>
+
+                ${escapar(
+                    pcValorV428(
+                        chamado,
+                        [
+                            "dataOcorrencia",
+                            "data_ocorrencia",
+                            "dataOcorrido",
+                            "data_ocorrido",
+                            "dataFato",
+                            "data_fato"
+                        ],
+                        "Não informado"
+                    )
+                )}
+
+            </div>
+
+
+            <div class="resultado-item">
+
+                <strong>
+                    🕒 Hora inicial
+                </strong>
+
+                ${escapar(
+                    pcValorV428(
+                        chamado,
+                        [
+                            "horaInicial",
+                            "hora_inicial",
+                            "inicio",
+                            "horaInicio",
+                            "hora_inicio"
+                        ],
+                        "Não informado"
+                    )
+                )}
+
+            </div>
+
+
+            <div class="resultado-item">
+
+                <strong>
+                    🕒 Hora final
+                </strong>
+
+                ${escapar(
+                    pcValorV428(
+                        chamado,
+                        [
+                            "horaFinal",
+                            "hora_final",
+                            "fim",
+                            "horaFim",
+                            "hora_fim"
+                        ],
+                        "Não informado"
+                    )
+                )}
+
+            </div>
+                    `
+                : ""
+            }
 
 
             <div class="resultado-item">
@@ -14288,32 +14373,43 @@ function pcCamposUsuarioV428(chamado) {
 function pcNormalizarCamposCameraV429(chamado) {
     if (!chamado || typeof chamado !== "object") return chamado;
 
+    // Procura o mesmo dado com todos os nomes já usados pelas versões do sistema.
+    // Isso evita perder a informação quando o Worker devolve nomes diferentes.
     const data = pcValorV428(chamado, [
         "dataOcorrencia", "data_ocorrencia",
         "dataOcorrido", "data_ocorrido",
-        "dataFato", "data_fato"
+        "dataFato", "data_fato",
+        "dataDoOcorrido", "data_do_ocorrido",
+        "dataDaOcorrencia", "data_da_ocorrencia",
+        "Data da ocorrência", "Data do ocorrido"
     ], "");
 
     const inicio = pcValorV428(chamado, [
-        "horaInicial", "hora_inicial", "inicio", "horaInicio", "hora_inicio"
+        "horaInicial", "hora_inicial",
+        "inicio", "horaInicio", "hora_inicio",
+        "Hora inicial"
     ], "");
 
     const fim = pcValorV428(chamado, [
-        "horaFinal", "hora_final", "fim", "horaFim", "hora_fim"
+        "horaFinal", "hora_final",
+        "fim", "horaFim", "hora_fim",
+        "Hora final"
     ], "");
 
-    // Mantém os campos oficiais disponíveis para qualquer parte da tela administrativa.
     if (data) {
         chamado.dataOcorrencia = data;
         chamado.data_ocorrencia = data;
+        chamado.dataOcorrido = data;
     }
     if (inicio) {
         chamado.horaInicial = inicio;
         chamado.hora_inicial = inicio;
+        chamado.inicio = inicio;
     }
     if (fim) {
         chamado.horaFinal = fim;
         chamado.hora_final = fim;
+        chamado.fim = fim;
     }
 
     return chamado;
