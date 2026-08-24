@@ -2667,6 +2667,7 @@ input:focus,select:focus,textarea:focus{
 <label>Tipo de Ocorrência Geral:</label>
 <select id="categoriaOcorrencia" required>
     <option value="">Selecione a categoria geral</option>
+        <option value="Outros">Outros</option>
         <option value="⚠️ Ocorrência Administrativa / Infração">⚠️ Ocorrência Administrativa / Infração</option>
         <option value="📹 Câmeras/CFTV/Interfone">📹 Câmeras/CFTV/Interfone</option>
         <option value="🐜 Controle de pragas">🐜 Controle de pragas</option>
@@ -2708,9 +2709,19 @@ input:focus,select:focus,textarea:focus{
         var lista = categorias[geral.value] || [];
         especifica.innerHTML = '<option value="">Selecione a ocorrência específica</option>';
 
-        if(lista.length === 0){
+        if(geral.value === "Outros"){
+            // "Outros" escolhido diretamente no campo geral.
+            especifica.disabled = true;
+            especifica.innerHTML = '<option value="">Não se aplica - descreva abaixo</option>';
+            boxOutros.style.display = "block";
+            campoOutros.required = true;
+            campoOutros.value = "";
+        } else if(lista.length === 0){
             especifica.disabled = true;
             especifica.innerHTML = '<option value="">Primeiro selecione o tipo geral</option>';
+            boxOutros.style.display = "none";
+            campoOutros.value = "";
+            campoOutros.required = false;
         } else {
             lista.forEach(function(item){
                 var op = document.createElement("option");
@@ -2719,17 +2730,17 @@ input:focus,select:focus,textarea:focus{
                 especifica.appendChild(op);
             });
 
-            // A opção Outros é adicionada somente aqui, no segundo nível.
+            // "Outros" também permanece disponível no segundo nível.
             var opOutros = document.createElement("option");
             opOutros.value = "Outros";
             opOutros.textContent = "Outros";
             especifica.appendChild(opOutros);
             especifica.disabled = false;
-        }
 
-        boxOutros.style.display = "none";
-        campoOutros.value = "";
-        campoOutros.required = false;
+            boxOutros.style.display = "none";
+            campoOutros.value = "";
+            campoOutros.required = false;
+        }
     });
 
     especifica.addEventListener("change", function(){
