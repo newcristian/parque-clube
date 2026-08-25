@@ -1,835 +1,390 @@
-<!-- =====================================================
-     CORREÇÃO — ENCAMINHAMENTO COMPLETO PELO WHATSAPP
-     Inclui corretamente Bloco + Andar/Pavimento
-===================================================== -->
-
-<script id="encaminhamentoWhatsAppAdminV60">
+<script id="encaminhamentoWhatsAppAdminV61">
 (function () {
     "use strict";
 
+    function valor(chamado, campos, padrao) {
+        if (!chamado) return padrao || "";
 
-    /* =====================================================
-       BUSCAR VALOR DO CHAMADO
-    ===================================================== */
-
-    function valorCampoEncaminhamento(
-        chamado,
-        nomes,
-        padrao
-    ) {
-
-        if (!chamado) {
-            return padrao || "";
-        }
-
-
-        for (
-            var i = 0;
-            i < nomes.length;
-            i++
-        ) {
-
-            var nome =
-                nomes[i];
-
-
-            var valor =
-                chamado[nome];
-
+        for (var i = 0; i < campos.length; i++) {
+            var v = chamado[campos[i]];
 
             if (
-                valor !== undefined &&
-                valor !== null &&
-                String(valor).trim() !== ""
+                v !== undefined &&
+                v !== null &&
+                String(v).trim() !== ""
             ) {
-
-                return String(
-                    valor
-                ).trim();
-
+                return String(v).trim();
             }
-
         }
-
 
         return padrao || "";
-
     }
 
+    function obterChamadoAtual() {
+        var protocolo = String(
+            window.protocoloSelecionado || ""
+        ).trim();
 
+        if (!protocolo) return null;
 
-    /* =====================================================
-       LOCALIZAR O CHAMADO ATUALMENTE ABERTO
-    ===================================================== */
+        var ativos = Array.isArray(window.chamados)
+            ? window.chamados
+            : [];
 
-    function obterChamadoSelecionadoEncaminhamento() {
+        var arquivados = Array.isArray(
+            window.chamadosArquivadosV11
+        )
+            ? window.chamadosArquivadosV11
+            : [];
 
-        var listaAtivos =
-            (
-                typeof chamados !== "undefined" &&
-                Array.isArray(chamados)
-            )
-                ? chamados
-                : [];
+        var todos = ativos.concat(arquivados);
 
-
-        var listaArquivados =
-            (
-                typeof chamadosArquivadosV11 !==
-                "undefined" &&
-                Array.isArray(
-                    chamadosArquivadosV11
-                )
-            )
-                ? chamadosArquivadosV11
-                : [];
-
-
-        var protocoloAtual =
-            (
-                typeof protocoloSelecionado !==
-                "undefined"
-            )
-                ? protocoloSelecionado
-                : "";
-
-
-        var chamadoAtivo =
-            listaAtivos.find(
-                function (item) {
-
-                    return (
-                        String(
-                            item.protocolo || ""
-                        ).trim()
-                        ===
-                        String(
-                            protocoloAtual || ""
-                        ).trim()
-                    );
-
-                }
-            );
-
-
-        if (chamadoAtivo) {
-
-            return chamadoAtivo;
-
-        }
-
-
-        var chamadoArquivado =
-            listaArquivados.find(
-                function (item) {
-
-                    return (
-                        String(
-                            item.protocolo || ""
-                        ).trim()
-                        ===
-                        String(
-                            protocoloAtual || ""
-                        ).trim()
-                    );
-
-                }
-            );
-
-
-        if (chamadoArquivado) {
-
-            return chamadoArquivado;
-
-        }
-
-
-        return null;
-
+        return todos.find(function (item) {
+            return String(
+                item.protocolo || ""
+            ).trim() === protocolo;
+        }) || null;
     }
 
+    function montarMensagemEncaminhamento(chamado) {
 
+        var protocolo = valor(
+            chamado,
+            ["protocolo"],
+            String(window.protocoloSelecionado || "")
+        );
 
-    /* =====================================================
-       MONTAR MENSAGEM COMPLETA
-    ===================================================== */
+        var status = valor(
+            chamado,
+            ["status"],
+            "Não informado"
+        );
 
-    function montarMensagemEncaminhamento(
-        chamado
-    ) {
+        var solicitante = valor(
+            chamado,
+            ["solicitante", "nome"],
+            "Não informado"
+        );
 
-        var protocolo =
-            valorCampoEncaminhamento(
-                chamado,
-                [
-                    "protocolo",
-                    "numeroProtocolo"
-                ],
-                (
-                    typeof protocoloSelecionado !==
-                    "undefined"
-                )
-                    ? protocoloSelecionado
-                    : "Não informado"
-            );
+        var cargo = valor(
+            chamado,
+            ["cargo", "funcao"],
+            "Não informado"
+        );
 
+        var bloco = valor(
+            chamado,
+            ["bloco", "local", "areaBloco"],
+            "Não informado"
+        );
 
-        var status =
-            valorCampoEncaminhamento(
-                chamado,
-                [
-                    "status"
-                ],
-                "Não informado"
-            );
+        /* CORREÇÃO DO PAVIMENTO */
+        var pavimentos = valor(
+            chamado,
+            [
+                "pavimentos",
+                "pavimento",
+                "andar",
+                "andares",
+                "andarPavimento"
+            ],
+            "Não informado"
+        );
 
+        var ocorrencia = valor(
+            chamado,
+            [
+                "ocorrencia",
+                "tipoOcorrencia",
+                "tipo_ocorrencia"
+            ],
+            "Não informado"
+        );
 
-        var solicitante =
-            valorCampoEncaminhamento(
-                chamado,
-                [
-                    "solicitante",
-                    "nome",
-                    "nomeSolicitante"
-                ],
-                "Não informado"
-            );
+        var prioridade = valor(
+            chamado,
+            ["prioridade"],
+            "Moderada"
+        );
 
+        var detalhes = valor(
+            chamado,
+            ["detalhes", "descricao", "relato"],
+            "Não informado"
+        );
 
-        var cargo =
-            valorCampoEncaminhamento(
-                chamado,
-                [
-                    "cargo",
-                    "funcao",
-                    "cargoFuncao"
-                ],
-                "Não informado"
-            );
+        var dataOcorrencia = valor(
+            chamado,
+            ["dataOcorrencia", "data_ocorrencia"],
+            ""
+        );
 
+        var horaInicial = valor(
+            chamado,
+            ["horaInicial", "hora_inicial"],
+            ""
+        );
 
-        var local =
-            valorCampoEncaminhamento(
-                chamado,
-                [
-                    "bloco",
-                    "local",
-                    "area",
-                    "areaBloco",
-                    "area_bloco"
-                ],
-                "Não informado"
-            );
+        var horaFinal = valor(
+            chamado,
+            ["horaFinal", "hora_final"],
+            ""
+        );
 
+        var dataAbertura = valor(
+            chamado,
+            ["dataAbertura", "data_abertura"],
+            ""
+        );
 
-        /* =================================================
-           CORREÇÃO PRINCIPAL
+        var horaAbertura = valor(
+            chamado,
+            ["horaAbertura", "hora_abertura"],
+            ""
+        );
 
-           O sistema salva o campo como:
-
-           pavimentos
-
-           Por isso ele aparece PRIMEIRO na lista.
-        ================================================= */
-
-        var pavimento =
-            valorCampoEncaminhamento(
-                chamado,
-                [
-                    "pavimentos",
-                    "pavimento",
-                    "andar",
-                    "andares",
-                    "andarPavimento",
-                    "andar_pavimento"
-                ],
-                "Não informado"
-            );
-
-
-        var ocorrencia =
-            valorCampoEncaminhamento(
-                chamado,
-                [
-                    "ocorrencia",
-                    "tipoOcorrencia",
-                    "tipo_ocorrencia",
-                    "categoriaEspecifica",
-                    "ocorrenciaEspecifica"
-                ],
-                "Não informado"
-            );
-
-
-        var tipoGeral =
-            valorCampoEncaminhamento(
-                chamado,
-                [
-                    "tipoOcorrenciaGeral",
-                    "categoriaGeral",
-                    "tipoGeral"
-                ],
-                ""
-            );
-
-
-        var prioridadeCampo =
-            document.getElementById(
-                "prioridadeAdmin"
-            );
-
-
-        var prioridade =
-            prioridadeCampo &&
-            String(
-                prioridadeCampo.value || ""
-            ).trim()
-                ? prioridadeCampo.value
-                : valorCampoEncaminhamento(
-                    chamado,
-                    [
-                        "prioridade"
-                    ],
-                    "Moderada"
-                );
-
-
-        var responsavelCampo =
-            document.getElementById(
-                "responsavelAdmin"
-            );
-
+        var responsavelInput =
+            document.getElementById("responsavelAdmin");
 
         var responsavel =
-            responsavelCampo &&
-            String(
-                responsavelCampo.value || ""
-            ).trim()
-                ? responsavelCampo.value.trim()
-                : valorCampoEncaminhamento(
+            responsavelInput &&
+            responsavelInput.value.trim()
+                ? responsavelInput.value.trim()
+                : valor(
                     chamado,
-                    [
-                        "responsavel"
-                    ],
+                    ["responsavel"],
                     "Não informado"
                 );
 
-
-        var detalhes =
-            valorCampoEncaminhamento(
-                chamado,
-                [
-                    "detalhes",
-                    "descricao",
-                    "relato",
-                    "descricaoOcorrencia"
-                ],
-                "Não informado"
-            );
-
-
-        var dataOcorrencia =
-            valorCampoEncaminhamento(
-                chamado,
-                [
-                    "dataOcorrencia",
-                    "data_ocorrencia",
-                    "dataOcorrido",
-                    "data_ocorrido",
-                    "dataFato"
-                ],
-                ""
-            );
-
-
-        var horaInicial =
-            valorCampoEncaminhamento(
-                chamado,
-                [
-                    "horaInicial",
-                    "hora_inicial",
-                    "horaInicio",
-                    "hora_inicio"
-                ],
-                ""
-            );
-
-
-        var horaFinal =
-            valorCampoEncaminhamento(
-                chamado,
-                [
-                    "horaFinal",
-                    "hora_final",
-                    "horaFim",
-                    "hora_fim"
-                ],
-                ""
-            );
-
-
-        var dataAbertura =
-            valorCampoEncaminhamento(
-                chamado,
-                [
-                    "dataAbertura",
-                    "data_abertura"
-                ],
-                ""
-            );
-
-
-        var horaAbertura =
-            valorCampoEncaminhamento(
-                chamado,
-                [
-                    "horaAbertura",
-                    "hora_abertura"
-                ],
-                ""
-            );
-
-
-        var ultimaAtualizacao =
-            valorCampoEncaminhamento(
-                chamado,
-                [
-                    "ultimaAtualizacao",
-                    "ultima_atualizacao"
-                ],
-                ""
-            );
-
-
-        var observacaoCampo =
-            document.getElementById(
-                "observacaoAdmin"
-            );
-
+        var observacaoInput =
+            document.getElementById("observacaoAdmin");
 
         var observacao =
-            observacaoCampo &&
-            String(
-                observacaoCampo.value || ""
-            ).trim()
-                ? observacaoCampo.value.trim()
-                : valorCampoEncaminhamento(
+            observacaoInput &&
+            observacaoInput.value.trim()
+                ? observacaoInput.value.trim()
+                : valor(
                     chamado,
                     [
                         "observacaoSolucao",
                         "observacao_solucao",
-                        "respostaAdministracao",
-                        "resposta_administracao"
+                        "respostaAdministracao"
                     ],
                     ""
                 );
 
+        var mensagem = [];
 
-        /* =================================================
-           MONTAGEM DA MENSAGEM
-        ================================================= */
-
-        var linhas = [];
-
-
-        linhas.push(
+        mensagem.push(
             "🏢 *PARQUE CLUBE*"
         );
 
-
-        linhas.push(
+        mensagem.push(
             "📋 *ENCAMINHAMENTO DE CHAMADO*"
         );
 
+        mensagem.push("");
 
-        linhas.push(
-            ""
+        mensagem.push(
+            "📄 *Protocolo:* " + protocolo
         );
 
-
-        linhas.push(
-            "📄 *Protocolo:* " +
-            protocolo
+        mensagem.push(
+            "📌 *Status:* " + status
         );
 
-
-        linhas.push(
-            "📌 *Status:* " +
-            status
+        mensagem.push(
+            "👤 *Solicitante:* " + solicitante
         );
 
-
-        linhas.push(
-            "👤 *Solicitante:* " +
-            solicitante
+        mensagem.push(
+            "💼 *Cargo/Função:* " + cargo
         );
 
-
-        linhas.push(
-            "💼 *Cargo/Função:* " +
-            cargo
+        mensagem.push(
+            "📍 *Bloco / Local:* " + bloco
         );
 
-
-        linhas.push(
-            "📍 *Bloco / Local:* " +
-            local
+        mensagem.push(
+            "🏢 *Andar / Pavimento:* " + pavimentos
         );
 
-
-        /* =================================================
-           PAVIMENTO — SEMPRE ENVIADO
-        ================================================= */
-
-        linhas.push(
-            "🏢 *Andar / Pavimento:* " +
-            pavimento
+        mensagem.push(
+            "🔧 *Ocorrência:* " + ocorrencia
         );
 
-
-        if (
-            tipoGeral &&
-            String(tipoGeral).trim() !== ""
-        ) {
-
-            linhas.push(
-                "📂 *Tipo geral:* " +
-                tipoGeral
-            );
-
-        }
-
-
-        linhas.push(
-            "🔧 *Ocorrência:* " +
-            ocorrencia
+        mensagem.push(
+            "⭐ *Prioridade:* " + prioridade
         );
 
-
-        linhas.push(
-            "⭐ *Prioridade:* " +
-            prioridade
-        );
-
-
-        if (
-            dataOcorrencia
-        ) {
-
-            linhas.push(
-                "📅 *Data do ocorrido:* " +
+        if (dataOcorrencia) {
+            mensagem.push(
+                "📅 *Data da ocorrência:* " +
                 dataOcorrencia
             );
-
         }
 
-
-        if (
-            horaInicial
-        ) {
-
-            linhas.push(
+        if (horaInicial) {
+            mensagem.push(
                 "🕒 *Hora inicial:* " +
                 horaInicial
             );
-
         }
 
-
-        if (
-            horaFinal
-        ) {
-
-            linhas.push(
+        if (horaFinal) {
+            mensagem.push(
                 "🕒 *Hora final:* " +
                 horaFinal
             );
-
         }
 
+        if (dataAbertura) {
 
-        if (
-            dataAbertura
-        ) {
-
-            var recebidoEm =
+            var recebido =
                 dataAbertura;
 
-
-            if (
-                horaAbertura
-            ) {
-
-                recebidoEm +=
+            if (horaAbertura) {
+                recebido +=
                     " às " +
                     horaAbertura;
-
             }
 
-
-            linhas.push(
+            mensagem.push(
                 "📥 *Recebido em:* " +
-                recebidoEm
+                recebido
             );
-
         }
 
+        mensagem.push("");
 
-        if (
-            ultimaAtualizacao
-        ) {
-
-            linhas.push(
-                "🔄 *Última atualização:* " +
-                ultimaAtualizacao
-            );
-
-        }
-
-
-        linhas.push(
-            ""
-        );
-
-
-        linhas.push(
+        mensagem.push(
             "📝 *Detalhes do chamado:*"
         );
 
-
-        linhas.push(
+        mensagem.push(
             detalhes
         );
 
+        mensagem.push("");
 
-        linhas.push(
-            ""
-        );
-
-
-        linhas.push(
+        mensagem.push(
             "👤 *Responsável:* " +
             responsavel
         );
 
+        if (observacao) {
 
-        if (
-            observacao &&
-            String(
-                observacao
-            ).trim() !== ""
-        ) {
+            mensagem.push("");
 
-            linhas.push(
-                ""
-            );
-
-
-            linhas.push(
+            mensagem.push(
                 "✅ *Observação da Administração:*"
             );
 
-
-            linhas.push(
+            mensagem.push(
                 observacao
             );
-
         }
 
+        mensagem.push("");
 
-        linhas.push(
-            ""
-        );
-
-
-        linhas.push(
+        mensagem.push(
             "━━━━━━━━━━━━━━━━━━"
         );
 
+        mensagem.push(
+            "🏢 PARQUE CLUBE"
+        );
 
-        linhas.push(
+        mensagem.push(
             "Sistema de Gestão do Condomínio"
         );
 
-
-        linhas.push(
-            "PARQUE CLUBE"
-        );
-
-
-        return linhas.join(
-            "\n"
-        );
-
+        return mensagem.join("\n");
     }
 
+    function encaminharWhatsApp() {
 
-
-    /* =====================================================
-       ABRIR WHATSAPP
-    ===================================================== */
-
-    function abrirEncaminhamentoWhatsApp() {
-
-        var input =
-            document.getElementById(
-                "whatsappDestinoAdmin"
-            );
-
+        var input = document.getElementById(
+            "whatsappDestinoAdmin"
+        );
 
         if (!input) {
-
             alert(
-                "Campo de WhatsApp de destino não encontrado."
+                "Campo do WhatsApp de destino não encontrado."
             );
-
             return;
-
         }
 
+        var numero = String(
+            input.value || ""
+        ).replace(/\D/g, "");
 
-        var bruto =
-            String(
-                input.value || ""
-            ).trim();
-
-
-        var numero =
-            bruto.replace(
-                /\D/g,
-                ""
-            );
-
-
-        if (
-            !numero
-        ) {
-
+        if (!numero) {
             alert(
                 "Informe o número do WhatsApp de destino."
             );
-
             input.focus();
-
             return;
-
         }
 
-
-        /*
-         * Se tiver número brasileiro sem o código do país,
-         * acrescenta 55.
-         */
-
+        /* Número brasileiro sem DDI */
         if (
             numero.length === 10 ||
             numero.length === 11
         ) {
-
-            numero =
-                "55" +
-                numero;
-
+            numero = "55" + numero;
         }
-
-
-        if (
-            numero.length < 12
-        ) {
-
-            alert(
-                "Informe um número de WhatsApp válido."
-            );
-
-            input.focus();
-
-            return;
-
-        }
-
 
         var chamado =
-            obterChamadoSelecionadoEncaminhamento();
+            obterChamadoAtual();
 
-
-        if (
-            !chamado
-        ) {
-
+        if (!chamado) {
             alert(
-                "Nenhum chamado foi selecionado. Abra um chamado antes de encaminhá-lo."
+                "Nenhum chamado está aberto para encaminhamento."
             );
-
             return;
-
         }
-
 
         try {
-
             localStorage.setItem(
                 "parqueClubeWhatsappDestinoAdmin",
-                bruto
+                input.value
             );
-
-        } catch (
-            erro
-        ) {
-
-            console.warn(
-                "Não foi possível salvar o número informado.",
-                erro
-            );
-
+        } catch (erro) {
+            console.warn(erro);
         }
-
 
         var mensagem =
             montarMensagemEncaminhamento(
                 chamado
             );
 
-
         var url =
             "https://wa.me/" +
             numero +
             "?text=" +
-            encodeURIComponent(
-                mensagem
-            );
-
+            encodeURIComponent(mensagem);
 
         window.open(
             url,
             "_blank",
             "noopener"
         );
-
     }
 
-
-
-    /* =====================================================
-       INICIALIZAÇÃO
-    ===================================================== */
-
-    function inicializarEncaminhamentoWhatsApp() {
+    function iniciar() {
 
         var input =
             document.getElementById(
                 "whatsappDestinoAdmin"
             );
 
-
         var botao =
             document.getElementById(
                 "btnEncaminharWhatsAppAdmin"
             );
 
-
-        if (
-            input
-        ) {
+        if (input) {
 
             try {
 
@@ -838,94 +393,50 @@
                         "parqueClubeWhatsappDestinoAdmin"
                     );
 
-
-                if (
-                    salvo &&
-                    String(
-                        salvo
-                    ).trim()
-                ) {
-
-                    input.value =
-                        salvo;
-
+                if (salvo) {
+                    input.value = salvo;
                 }
 
-            } catch (
-                erro
-            ) {
-
-                console.warn(
-                    "Não foi possível recuperar o número salvo.",
-                    erro
-                );
-
+            } catch (erro) {
+                console.warn(erro);
             }
-
         }
 
+        if (botao) {
 
-        if (
-            botao
-        ) {
-
-            /*
-             * Remove possíveis eventos anteriores
-             * que possam estar deixando o botão travado.
-             */
+            /* Remove comportamento anterior */
+            botao.onclick = null;
 
             botao.onclick =
-                abrirEncaminhamentoWhatsApp;
-
-
-            botao.addEventListener(
-                "click",
-                function (
-                    evento
-                ) {
+                function (evento) {
 
                     evento.preventDefault();
 
-                },
-                false
-            );
+                    encaminharWhatsApp();
 
+                    return false;
+                };
         }
-
     }
-
-
-
-    /* =====================================================
-       DISPONIBILIZAR FUNÇÕES
-    ===================================================== */
 
     window.montarMensagemEncaminhamento =
         montarMensagemEncaminhamento;
 
-
-    window.abrirEncaminhamentoWhatsApp =
-        abrirEncaminhamentoWhatsApp;
-
-
-    /* =====================================================
-       CARREGAMENTO
-    ===================================================== */
+    window.encaminharWhatsAppAdmin =
+        encaminharWhatsApp;
 
     if (
-        document.readyState ===
-        "loading"
+        document.readyState === "loading"
     ) {
 
         document.addEventListener(
             "DOMContentLoaded",
-            inicializarEncaminhamentoWhatsApp
+            iniciar
         );
 
     } else {
 
-        inicializarEncaminhamentoWhatsApp();
-
+        iniciar();
     }
 
 })();
