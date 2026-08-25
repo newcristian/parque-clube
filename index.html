@@ -510,6 +510,9 @@ input[readonly] {
 
 
 
+</style>
+
+<script id="pc-compartilhar-multiplos-whatsapp-v696">
 /* =====================================================
    COMPARTILHAR VÁRIOS CHAMADOS PELO WHATSAPP
 ===================================================== */
@@ -636,28 +639,16 @@ function pcRenderizarListaCompartilhamentoWhatsApp(){
 }
 
 function pcAbrirModalCompartilhamentoWhatsApp(){
-    try{
-        const listaChamados = (typeof chamados !== "undefined" && Array.isArray(chamados)) ? chamados : [];
-        if(!listaChamados.length){
-            alert("Primeiro clique em 'Atualizar Lista de Chamados' para carregar os chamados.");
-            return;
-        }
-
-        const modal = document.getElementById("pcModalCompartilharChamadosWhatsApp");
-        if(!modal){
-            alert("Não foi possível abrir a caixa de seleção dos chamados.");
-            return;
-        }
-
-        pcRenderizarListaCompartilhamentoWhatsApp();
-        modal.style.display = "flex";
-        modal.style.position = "fixed";
-        modal.style.inset = "0";
-        modal.style.zIndex = "99999";
-    }catch(erro){
-        console.error("Erro ao abrir compartilhamento múltiplo:", erro);
-        alert("Ocorreu um erro ao abrir a seleção de chamados. Atualize a lista de chamados e tente novamente.");
+    if(!Array.isArray(chamados) || !chamados.length){
+        alert("Primeiro clique em 'Atualizar Lista de Chamados' para carregar os chamados.");
+        return;
     }
+
+    const modal = document.getElementById("pcModalCompartilharChamadosWhatsApp");
+    if(!modal) return;
+
+    pcRenderizarListaCompartilhamentoWhatsApp();
+    modal.style.display = "flex";
 }
 
 function pcFecharModalCompartilhamentoWhatsApp(){
@@ -768,6 +759,10 @@ document.addEventListener("DOMContentLoaded", function(){
 });
 
 
+
+</script>
+
+<style id="pc-estilos-continuacao-v696">
 /* =====================================================
    FILTROS
 ===================================================== */
@@ -3619,8 +3614,8 @@ input:focus,select:focus,textarea:focus{
 <button
     type="button"
     id="btnCompartilharMultiplosWhatsApp"
-    onclick="if(typeof pcAbrirModalCompartilhamentoWhatsApp==='function'){ pcAbrirModalCompartilhamentoWhatsApp(); } else { alert('A função de compartilhamento ainda está carregando. Aguarde alguns segundos e tente novamente.'); } return false;"
     class="btn-azul"
+    onclick="pcAbrirModalCompartilhamentoWhatsApp(); return false;"
     style="margin-top:8px;background:#176b3a;"
     title="Selecionar mais de um chamado para encaminhar pelo WhatsApp"
 >
@@ -11785,50 +11780,6 @@ td:nth-child(2),td:nth-child(3){
 
 
 
-
-
-<!-- CORREÇÃO V6.9.5: CORES ORIGINAIS + COMPARTILHAMENTO MÚLTIPLO -->
-<style id="pc-correcao-v695">
-/* Botões superiores do Painel de Chamados */
-#btnListarTodos { background:#2f6fa3 !important; color:#fff !important; }
-#btnImprimirChamadosAbertos { background:#7b4f12 !important; color:#fff !important; }
-#btnCompartilharMultiplosWhatsApp { background:#176b3a !important; color:#fff !important; }
-
-/* Menus principais */
-#btnChamadosAtivos { background:#17632d !important; color:#fff !important; }
-#btnChamadosArquivados { background:#666 !important; color:#fff !important; }
-#btnArquivarTodosResolvidos { background:#8a5a00 !important; color:#fff !important; }
-#btnDesarquivarTodos { background:#24425b !important; color:#fff !important; }
-
-/* Garantir que a caixa do WhatsApp apareça acima de todo o painel */
-#pcModalCompartilharChamadosWhatsApp {
-  z-index:99999 !important;
-}
-</style>
-
-<script>
-(function(){
-    function ligarBotaoCompartilhamento(){
-        var botao = document.getElementById("btnCompartilharMultiplosWhatsApp");
-        if(!botao) return;
-        botao.onclick = function(){
-            if(typeof pcAbrirModalCompartilhamentoWhatsApp === "function"){
-                pcAbrirModalCompartilhamentoWhatsApp();
-            }else{
-                alert("A função de compartilhamento ainda não está disponível. Atualize a página e tente novamente.");
-            }
-            return false;
-        };
-    }
-
-    if(document.readyState === "loading"){
-        document.addEventListener("DOMContentLoaded", ligarBotaoCompartilhamento);
-    }else{
-        ligarBotaoCompartilhamento();
-    }
-    window.addEventListener("load", ligarBotaoCompartilhamento);
-})();
-</script>
 
 </body>
 </html>`;
