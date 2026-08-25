@@ -15397,5 +15397,299 @@ window.imprimirChamadosAbertosV428 = imprimirChamadosAbertosV428;
 })();
 </script>
 
+<!-- =====================================================
+     V6.9.7 — SELEÇÃO DIRETA DE CHAMADOS PARA WHATSAPP
+     Caixa ao lado de cada chamado + painel integrado
+===================================================== -->
+<style id="pc-whatsapp-selecao-direta-v697">
+#btnCompartilharMultiplosWhatsApp{
+    display:none !important;
+}
+#pcModalCompartilharChamadosWhatsApp{
+    display:none !important;
+}
+.pc-card-selecao-whatsapp{
+    position:absolute;
+    top:13px;
+    right:14px;
+    z-index:5;
+    display:flex;
+    align-items:center;
+    gap:7px;
+    padding:7px 10px;
+    background:#f5fbf7;
+    border:1px solid #bcd9c5;
+    border-radius:9px;
+    color:#17632d;
+    font-size:12px;
+    font-weight:800;
+    cursor:pointer;
+}
+.pc-card-selecao-whatsapp input{
+    width:18px;
+    height:18px;
+    margin:0;
+    accent-color:#17632d;
+    cursor:pointer;
+}
+#listaChamados .card{
+    position:relative;
+    padding-right:190px;
+}
+#pcPainelCompartilharDiretoWhatsApp{
+    display:none;
+    position:sticky;
+    bottom:12px;
+    z-index:999;
+    margin:14px 0;
+    padding:14px;
+    background:#ffffff;
+    border:1px solid #b9d7c1;
+    border-radius:12px;
+    box-shadow:0 8px 24px rgba(0,0,0,.14);
+}
+#pcPainelCompartilharDiretoWhatsApp.ativo{
+    display:block;
+}
+.pc-wa-direto-topo{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    margin-bottom:10px;
+    flex-wrap:wrap;
+}
+.pc-wa-direto-topo strong{
+    color:#17632d;
+}
+.pc-wa-direto-campos{
+    display:flex;
+    gap:10px;
+    align-items:stretch;
+    flex-wrap:wrap;
+}
+.pc-wa-direto-campos input{
+    flex:1 1 240px;
+    min-width:0;
+    padding:11px 12px;
+    border:1px solid #b9c8d2;
+    border-radius:9px;
+    font-size:14px;
+}
+.pc-wa-direto-campos button{
+    flex:0 1 280px;
+    margin:0;
+    background:#176b3a !important;
+    color:#fff !important;
+}
+.pc-wa-direto-limpar{
+    width:auto !important;
+    margin:0 !important;
+    padding:8px 12px !important;
+    background:#666 !important;
+}
+@media(max-width:620px){
+    #listaChamados .card{
+        padding-right:13px;
+        padding-top:52px;
+    }
+    .pc-card-selecao-whatsapp{
+        top:10px;
+        right:10px;
+    }
+    .pc-wa-direto-campos button{
+        flex:1 1 100%;
+    }
+}
+</style>
+
+<script id="pc-whatsapp-selecao-direta-v697">
+(function(){
+    function escaparV697(valor){
+        if(typeof escapar === "function") return escapar(valor);
+        return String(valor == null ? "" : valor)
+            .replace(/&/g,"&amp;").replace(/</g,"&lt;")
+            .replace(/>/g,"&gt;").replace(/"/g,"&quot;")
+            .replace(/'/g,"&#039;");
+    }
+
+    function atualizarPainelDiretoV697(){
+        var painel = document.getElementById("pcPainelCompartilharDiretoWhatsApp");
+        var contador = document.getElementById("pcQuantidadeSelecionadaDiretaWhatsApp");
+        var quantidade = window.pcProtocolosSelecionadosWhatsApp instanceof Set
+            ? window.pcProtocolosSelecionadosWhatsApp.size
+            : 0;
+
+        if(contador) contador.textContent = quantidade + " chamado(s) selecionado(s)";
+        if(painel) painel.classList.toggle("ativo", quantidade > 0);
+    }
+
+    function limparSelecaoDiretaV697(){
+        if(window.pcProtocolosSelecionadosWhatsApp instanceof Set){
+            window.pcProtocolosSelecionadosWhatsApp.clear();
+        }
+        document.querySelectorAll(".pc-check-direto-whatsapp").forEach(function(caixa){
+            caixa.checked = false;
+        });
+        atualizarPainelDiretoV697();
+    }
+
+    function enviarSelecaoDiretaV697(){
+        var selecionados = window.pcProtocolosSelecionadosWhatsApp instanceof Set
+            ? Array.from(window.pcProtocolosSelecionadosWhatsApp)
+            : [];
+
+        if(!selecionados.length){
+            alert("Selecione pelo menos um chamado.");
+            return;
+        }
+
+        var campo = document.getElementById("pcNumeroDestinoInlineWhatsApp");
+        var numeroBruto = campo ? campo.value : "";
+        var numero = typeof pcNormalizarNumeroWhatsApp === "function"
+            ? pcNormalizarNumeroWhatsApp(numeroBruto)
+            : String(numeroBruto || "").replace(/\D/g,"");
+
+        if(numero.length === 10 || numero.length === 11){
+            numero = "55" + numero;
+        }
+
+        if(numero.length < 12 || numero.length > 13){
+            alert("Informe um número de WhatsApp válido com DDD.");
+            if(campo) campo.focus();
+            return;
+        }
+
+        var mensagem = typeof pcMontarMensagemChamadosWhatsApp === "function"
+            ? pcMontarMensagemChamadosWhatsApp()
+            : "";
+
+        if(!mensagem){
+            alert("Não foi possível montar a mensagem dos chamados selecionados.");
+            return;
+        }
+
+        window.open(
+            "https://wa.me/" + numero + "?text=" + encodeURIComponent(mensagem),
+            "_blank",
+            "noopener"
+        );
+    }
+
+    function instalarPainelDiretoV697(){
+        var lista = document.getElementById("listaChamados");
+        if(!lista) return;
+
+        var painel = document.getElementById("pcPainelCompartilharDiretoWhatsApp");
+        if(!painel){
+            painel = document.createElement("div");
+            painel.id = "pcPainelCompartilharDiretoWhatsApp";
+            painel.innerHTML = `
+                <div class="pc-wa-direto-topo">
+                    <strong>📱 Compartilhar chamados selecionados pelo WhatsApp</strong>
+                    <span id="pcQuantidadeSelecionadaDiretaWhatsApp">0 chamado(s) selecionado(s)</span>
+                    <button type="button" class="pc-wa-direto-limpar" id="pcLimparSelecaoDiretaWhatsApp">✖ Limpar seleção</button>
+                </div>
+                <div class="pc-wa-direto-campos">
+                    <input id="pcNumeroDestinoInlineWhatsApp" type="tel" placeholder="Número de destino — Ex.: 61 99999-9999">
+                    <button type="button" id="pcEnviarSelecaoDiretaWhatsApp">📤 Compartilhar chamados selecionados</button>
+                </div>
+            `;
+            lista.parentNode.insertBefore(painel, lista);
+
+            document.getElementById("pcLimparSelecaoDiretaWhatsApp")
+                .addEventListener("click", limparSelecaoDiretaV697);
+            document.getElementById("pcEnviarSelecaoDiretaWhatsApp")
+                .addEventListener("click", enviarSelecaoDiretaV697);
+        }
+        atualizarPainelDiretoV697();
+    }
+
+    function instalarCaixasDiretasV697(){
+        instalarPainelDiretoV697();
+
+        document.querySelectorAll(".pc-card-selecao-whatsapp").forEach(function(el){
+            el.remove();
+        });
+
+        var cards = document.querySelectorAll("#listaChamados .card");
+        cards.forEach(function(card){
+            var protocoloEl = card.querySelector(".card-protocolo");
+            if(!protocoloEl) return;
+
+            var protocoloTexto = protocoloEl.textContent || "";
+            var match = protocoloTexto.match(/(PC-[A-Za-z0-9-]+)/i);
+            var protocolo = match ? match[1] : protocoloTexto.replace("📋","").trim();
+            if(!protocolo) return;
+
+            var label = document.createElement("label");
+            label.className = "pc-card-selecao-whatsapp";
+            label.title = "Selecionar este chamado para compartilhar pelo WhatsApp";
+
+            var marcado = window.pcProtocolosSelecionadosWhatsApp instanceof Set &&
+                window.pcProtocolosSelecionadosWhatsApp.has(protocolo);
+
+            label.innerHTML = `
+                <input type="checkbox" class="pc-check-direto-whatsapp" value="${escaparV697(protocolo)}" ${marcado ? "checked" : ""}>
+                <span>Compartilhar</span>
+            `;
+
+            var caixa = label.querySelector("input");
+            caixa.addEventListener("change", function(){
+                if(!(window.pcProtocolosSelecionadosWhatsApp instanceof Set)){
+                    window.pcProtocolosSelecionadosWhatsApp = new Set();
+                }
+                if(this.checked){
+                    window.pcProtocolosSelecionadosWhatsApp.add(protocolo);
+                }else{
+                    window.pcProtocolosSelecionadosWhatsApp.delete(protocolo);
+                }
+                atualizarPainelDiretoV697();
+            });
+
+            card.appendChild(label);
+        });
+
+        atualizarPainelDiretoV697();
+    }
+
+    function observarListaV697(){
+        var lista = document.getElementById("listaChamados");
+        if(!lista || lista.dataset.pcWhatsappDiretoObservado === "1") return;
+
+        lista.dataset.pcWhatsappDiretoObservado = "1";
+
+        var timer = null;
+        var observer = new MutationObserver(function(){
+            clearTimeout(timer);
+            timer = setTimeout(instalarCaixasDiretasV697, 30);
+        });
+
+        observer.observe(lista, {childList:true, subtree:true});
+    }
+
+    function iniciarV697(){
+        instalarPainelDiretoV697();
+        observarListaV697();
+        instalarCaixasDiretasV697();
+    }
+
+    document.addEventListener("DOMContentLoaded", iniciarV697);
+    window.addEventListener("load", iniciarV697);
+
+    var iniciarAntigo = window.mostrarChamados;
+    if(typeof iniciarAntigo === "function" && !window.mostrarChamados.__pcV697){
+        var original = window.mostrarChamados;
+        window.mostrarChamados = function(){
+            var resultado = original.apply(this, arguments);
+            setTimeout(iniciarV697, 0);
+            return resultado;
+        };
+        window.mostrarChamados.__pcV697 = true;
+    }
+
+    window.pcEnviarSelecaoDiretaWhatsAppV697 = enviarSelecaoDiretaV697;
+})();
+</script>
 </body>
 </html>
