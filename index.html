@@ -15802,5 +15802,209 @@ window.imprimirChamadosAbertosV428 = imprimirChamadosAbertosV428;
 })();
 </script>
 
+
+<!-- V7.0.2 — REMOVER BOTÃO LATERAL E MOSTRAR QUANTIDADE SELECIONADA -->
+<style id="pc-whatsapp-v702-css">
+/* Remove o botão/caixa lateral antiga de cada chamado */
+.pc699-selecionar{
+    display:none !important;
+}
+#listaChamados .card{
+    padding-right:13px !important;
+}
+
+/* Painel principal de compartilhamento */
+#pc702ResumoCompartilhamento{
+    display:none;
+    margin:12px 0 14px;
+    padding:14px;
+    border:1px solid #b9d9c2;
+    border-radius:12px;
+    background:#f7fbf8;
+    box-shadow:0 5px 18px rgba(0,0,0,.08);
+}
+#pc702ResumoCompartilhamento.ativo{
+    display:block;
+}
+.pc702-linha{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-bottom:10px;
+}
+.pc702-qtd{
+    padding:7px 12px;
+    border-radius:20px;
+    background:#17632d;
+    color:#fff;
+    font-weight:800;
+}
+.pc702-acoes{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+#pc702Numero{
+    flex:1 1 250px;
+    min-width:220px;
+    padding:11px 12px;
+    border:1px solid #c7d5dd;
+    border-radius:9px;
+    font-size:14px;
+}
+#pc702Enviar{
+    flex:1 1 260px;
+    min-height:42px;
+    border:0;
+    border-radius:9px;
+    background:#17632d;
+    color:#fff;
+    font-weight:800;
+    cursor:pointer;
+}
+#pc702Limpar{
+    border:0;
+    border-radius:9px;
+    padding:10px 14px;
+    background:#666;
+    color:#fff;
+    font-weight:700;
+    cursor:pointer;
+}
+</style>
+
+<script id="pc-whatsapp-v702-js">
+(function(){
+    function caixasDiretas(){
+        return Array.from(document.querySelectorAll(".pc-check-direto-v701"));
+    }
+
+    function protocolo(caixa){
+        try{
+            return String(decodeURIComponent(caixa.dataset.protocolo || "")).trim();
+        }catch(e){
+            return String(caixa.dataset.protocolo || "").trim();
+        }
+    }
+
+    function totalSelecionado(){
+        return caixasDiretas().filter(function(c){ return c.checked; }).length;
+    }
+
+    function criarPainel(){
+        var lista = document.getElementById("listaChamados");
+        if(!lista) return null;
+
+        var painel = document.getElementById("pc702ResumoCompartilhamento");
+        if(!painel){
+            painel = document.createElement("div");
+            painel.id = "pc702ResumoCompartilhamento";
+            painel.innerHTML =
+                '<div class="pc702-linha">' +
+                    '<strong>📱 Compartilhar chamados selecionados pelo WhatsApp</strong>' +
+                    '<span id="pc702Qtd" class="pc702-qtd">0 selecionados</span>' +
+                    '<button type="button" id="pc702Limpar">✖ Limpar seleção</button>' +
+                '</div>' +
+                '<div class="pc702-acoes">' +
+                    '<input type="tel" id="pc702Numero" placeholder="Número de destino — Ex.: 61 99999-9999">' +
+                    '<button type="button" id="pc702Enviar">📤 Compartilhar chamados selecionados</button>' +
+                '</div>';
+
+            lista.parentNode.insertBefore(painel, lista);
+
+            document.getElementById("pc702Limpar").addEventListener("click", function(){
+                caixasDiretas().forEach(function(caixa){
+                    if(caixa.checked){
+                        caixa.checked = false;
+                        caixa.dispatchEvent(new Event("change", {bubbles:true}));
+                    }
+                });
+                atualizar();
+            });
+
+            document.getElementById("pc702Enviar").addEventListener("click", function(){
+                var selecionadas = caixasDiretas().filter(function(c){ return c.checked; });
+                if(!selecionadas.length){
+                    alert("Selecione pelo menos um chamado.");
+                    return;
+                }
+
+                var campo = document.getElementById("pc702Numero");
+                var numero = campo ? campo.value.trim() : "";
+                if(!numero){
+                    alert("Informe o número de destino do WhatsApp.");
+                    if(campo) campo.focus();
+                    return;
+                }
+
+                /* Sincroniza as caixas originais escondidas, para usar a função
+                   de compartilhamento já existente e testada no aplicativo. */
+                selecionadas.forEach(function(caixa){
+                    var p = protocolo(caixa);
+                    var antiga = Array.from(document.querySelectorAll(".pc699-check"))
+                        .find(function(x){ return String(x.value || "").trim() === p; });
+
+                    if(antiga && !antiga.checked){
+                        antiga.checked = true;
+                        antiga.dispatchEvent(new Event("change", {bubbles:true}));
+                    }
+                });
+
+                var destinoOriginal = document.getElementById("pcNumeroDestinoWhatsApp");
+                if(destinoOriginal) destinoOriginal.value = numero;
+
+                if(typeof pcEnviarChamadosSelecionadosWhatsApp === "function"){
+                    pcEnviarChamadosSelecionadosWhatsApp();
+                }else{
+                    alert("A função de compartilhamento pelo WhatsApp não foi encontrada.");
+                }
+            });
+        }
+        return painel;
+    }
+
+    function atualizar(){
+        var painel = criarPainel();
+        if(!painel) return;
+
+        var qtd = totalSelecionado();
+        var texto = qtd === 1 ? "1 chamado selecionado" : qtd + " chamados selecionados";
+        var badge = document.getElementById("pc702Qtd");
+        if(badge) badge.textContent = texto;
+
+        painel.classList.toggle("ativo", qtd > 0);
+    }
+
+    /* Executa depois dos scripts anteriores, apenas para atualizar o número */
+    document.addEventListener("change", function(e){
+        if(e.target && e.target.classList && e.target.classList.contains("pc-check-direto-v701")){
+            setTimeout(atualizar, 0);
+        }
+    });
+
+    var observador = null;
+    function iniciar(){
+        criarPainel();
+        atualizar();
+
+        var lista = document.getElementById("listaChamados");
+        if(lista && !observador){
+            observador = new MutationObserver(function(){
+                setTimeout(atualizar, 60);
+            });
+            observador.observe(lista, {childList:true, subtree:true});
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", iniciar);
+    window.addEventListener("load", function(){
+        iniciar();
+        setTimeout(iniciar, 400);
+    });
+})();
+</script>
+
 </body>
 </html>
