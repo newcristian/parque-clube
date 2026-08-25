@@ -509,6 +509,253 @@ input[readonly] {
 }
 
 
+
+/* =====================================================
+   COMPARTILHAR VÁRIOS CHAMADOS PELO WHATSAPP
+===================================================== */
+
+let pcProtocolosSelecionadosWhatsApp = new Set();
+
+function pcEscaparWhatsApp(valor){
+    return String(valor == null ? "" : valor)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+}
+
+function pcNormalizarNumeroWhatsApp(valor){
+    let numero = String(valor || "").replace(/\D/g,"");
+    if(numero.length === 10 || numero.length === 11){
+        numero = "55" + numero;
+    }
+    return numero;
+}
+
+function pcObterChamadosExibidosWhatsApp(){
+    const pesquisaEl = document.getElementById("pesquisaChamado");
+    const statusEl = document.getElementById("filtroStatus");
+    const prioridadeEl = document.getElementById("filtroPrioridade");
+
+    const pesquisa = (pesquisaEl ? pesquisaEl.value : "").toLowerCase().trim();
+    const filtro = statusEl ? statusEl.value : "";
+    const filtroPrioridade = prioridadeEl ? prioridadeEl.value : "";
+
+    return (Array.isArray(chamados) ? chamados : []).filter(function(chamado){
+        const texto = (
+            (chamado.protocolo || "") + " " +
+            (chamado.solicitante || "") + " " +
+            (chamado.bloco || "") + " " +
+            (chamado.ocorrencia || "")
+        ).toLowerCase();
+
+        const status = chamado.status || "Aberto";
+        const prioridade = chamado.prioridade || "Moderada";
+
+        return (!pesquisa || texto.includes(pesquisa)) &&
+               (!filtro || status === filtro) &&
+               (!filtroPrioridade || prioridade === filtroPrioridade);
+    });
+}
+
+function pcAtualizarResumoCompartilhamentoWhatsApp(){
+    const selecionados = Array.from(pcProtocolosSelecionadosWhatsApp);
+    const contador = document.getElementById("pcQuantidadeSelecionadaWhatsApp");
+    const resumo = document.getElementById("pcResumoCompartilhamentoWhatsApp");
+    const todos = document.getElementById("pcSelecionarTodosWhatsApp");
+    const caixas = Array.from(document.querySelectorAll(".pc-check-chamado-whatsapp"));
+
+    if(contador){
+        contador.textContent = selecionados.length + " selecionado(s)";
+    }
+
+    if(resumo){
+        resumo.textContent = selecionados.length
+            ? "Serão encaminhados " + selecionados.length + " chamado(s) em uma única mensagem."
+            : "Nenhum chamado selecionado.";
+    }
+
+    if(todos && caixas.length){
+        todos.checked = caixas.every(function(caixa){ return caixa.checked; });
+        todos.indeterminate = !todos.checked && caixas.some(function(caixa){ return caixa.checked; });
+    }else if(todos){
+        todos.checked = false;
+        todos.indeterminate = false;
+    }
+}
+
+function pcRenderizarListaCompartilhamentoWhatsApp(){
+    const lista = document.getElementById("pcListaSelecaoWhatsApp");
+    if(!lista) return;
+
+    const itens = pcObterChamadosExibidosWhatsApp();
+
+    if(!itens.length){
+        lista.innerHTML = '<div style="padding:20px;text-align:center;color:#777;">📭 Nenhum chamado disponível com os filtros atuais.</div>';
+        pcAtualizarResumoCompartilhamentoWhatsApp();
+        return;
+    }
+
+    const protocolosAtuais = new Set(itens.map(function(c){ return String(c.protocolo || ""); }));
+    pcProtocolosSelecionadosWhatsApp.forEach(function(p){
+        if(!protocolosAtuais.has(p)) pcProtocolosSelecionadosWhatsApp.delete(p);
+    });
+
+    lista.innerHTML = itens.map(function(chamado){
+        const protocolo = String(chamado.protocolo || "");
+        const marcado = pcProtocolosSelecionadosWhatsApp.has(protocolo) ? "checked" : "";
+        return `
+            <label style="display:block;padding:11px 12px;margin:7px 0;background:#fff;border:1px solid #d9e1e6;border-radius:9px;cursor:pointer;">
+              <div style="display:flex;gap:10px;align-items:flex-start;">
+                <input class="pc-check-chamado-whatsapp" type="checkbox" value="${pcEscaparWhatsApp(protocolo)}" ${marcado} style="margin-top:3px;">
+                <div style="flex:1;">
+                  <div style="font-weight:800;color:#24425b;">📋 ${pcEscaparWhatsApp(protocolo || "-")}</div>
+                  <div style="font-size:13px;line-height:1.45;color:#444;">
+                    👤 ${pcEscaparWhatsApp(chamado.solicitante || "Não informado")}<br>
+                    📍 ${pcEscaparWhatsApp(chamado.bloco || "Não informado")} ${chamado.pavimentos ? "• " + pcEscaparWhatsApp(chamado.pavimentos) : ""}<br>
+                    🔧 ${pcEscaparWhatsApp(chamado.ocorrencia || "Não informado")}<br>
+                    ⭐ Prioridade: ${pcEscaparWhatsApp(chamado.prioridade || "Moderada")}
+                  </div>
+                </div>
+              </div>
+            </label>
+        `;
+    }).join("");
+
+    Array.from(document.querySelectorAll(".pc-check-chamado-whatsapp")).forEach(function(caixa){
+        caixa.addEventListener("change", function(){
+            const protocolo = String(this.value || "");
+            if(this.checked) pcProtocolosSelecionadosWhatsApp.add(protocolo);
+            else pcProtocolosSelecionadosWhatsApp.delete(protocolo);
+            pcAtualizarResumoCompartilhamentoWhatsApp();
+        });
+    });
+
+    pcAtualizarResumoCompartilhamentoWhatsApp();
+}
+
+function pcAbrirModalCompartilhamentoWhatsApp(){
+    if(!Array.isArray(chamados) || !chamados.length){
+        alert("Primeiro clique em 'Atualizar Lista de Chamados' para carregar os chamados.");
+        return;
+    }
+
+    const modal = document.getElementById("pcModalCompartilharChamadosWhatsApp");
+    if(!modal) return;
+
+    pcRenderizarListaCompartilhamentoWhatsApp();
+    modal.style.display = "flex";
+}
+
+function pcFecharModalCompartilhamentoWhatsApp(){
+    const modal = document.getElementById("pcModalCompartilharChamadosWhatsApp");
+    if(modal) modal.style.display = "none";
+}
+
+function pcValorCampoChamado(chamado, nomes, padrao){
+    for(let i=0;i<nomes.length;i++){
+        const valor = chamado[nomes[i]];
+        if(valor !== undefined && valor !== null && String(valor).trim() !== ""){
+            return String(valor).trim();
+        }
+    }
+    return padrao || "Não informado";
+}
+
+function pcMontarMensagemChamadosWhatsApp(){
+    const selecionados = (Array.isArray(chamados) ? chamados : []).filter(function(chamado){
+        return pcProtocolosSelecionadosWhatsApp.has(String(chamado.protocolo || ""));
+    });
+
+    let mensagem = "📋 *CHAMADOS — CONDOMÍNIO PARQUE CLUBE*\n\n";
+    mensagem += "Foram encaminhados *" + selecionados.length + " chamado(s)* para providência.\n";
+
+    selecionados.forEach(function(chamado, indice){
+        const dataOcorrido = pcValorCampoChamado(chamado, ["dataOcorrido","dataFato","dataOcorrencia"], "");
+        const horaInicial = pcValorCampoChamado(chamado, ["horaInicial","horaInicio"], "");
+        const horaFinal = pcValorCampoChamado(chamado, ["horaFinal","horaFim"], "");
+        const categoria = pcValorCampoChamado(chamado, ["categoriaOcorrencia","tipoGeral","categoria"], "");
+        const especifica = pcValorCampoChamado(chamado, ["ocorrenciaEspecifica","subtipo","ocorrencia"], "Não informado");
+        const detalhes = pcValorCampoChamado(chamado, ["detalhes","descricao","detalhesOcorrido"], "Não informado");
+
+        mensagem += "\n*" + (indice + 1) + ". PROTOCOLO: " + pcValorCampoChamado(chamado, ["protocolo"], "-") + "*\n";
+        mensagem += "👤 Solicitante: " + pcValorCampoChamado(chamado, ["solicitante","nome"], "Não informado") + "\n";
+        mensagem += "📍 Local: " + pcValorCampoChamado(chamado, ["bloco","area","local"], "Não informado");
+        if(chamado.pavimentos) mensagem += " — " + chamado.pavimentos;
+        mensagem += "\n";
+        if(categoria) mensagem += "📂 Categoria: " + categoria + "\n";
+        mensagem += "🔧 Ocorrência: " + especifica + "\n";
+        mensagem += "⭐ Prioridade: " + pcValorCampoChamado(chamado, ["prioridade"], "Moderada") + "\n";
+        mensagem += "📥 Recebido em: " + pcValorCampoChamado(chamado, ["dataAbertura","recebidoEm"], "Não informado");
+        if(chamado.horaAbertura) mensagem += " às " + chamado.horaAbertura;
+        mensagem += "\n";
+        if(dataOcorrido) mensagem += "📅 Data do ocorrido: " + dataOcorrido + "\n";
+        if(horaInicial) mensagem += "🕐 Hora inicial: " + horaInicial + "\n";
+        if(horaFinal) mensagem += "🕐 Hora final: " + horaFinal + "\n";
+        mensagem += "📝 Detalhes: " + detalhes + "\n";
+        mensagem += "📌 Status: " + pcValorCampoChamado(chamado, ["status"], "Aberto") + "\n";
+    });
+
+    mensagem += "\n—\n*Sistema de Gestão do Condomínio Parque Clube*";
+    return mensagem;
+}
+
+function pcEnviarChamadosSelecionadosWhatsApp(){
+    const selecionados = Array.from(pcProtocolosSelecionadosWhatsApp);
+
+    if(!selecionados.length){
+        alert("Selecione pelo menos um chamado.");
+        return;
+    }
+
+    const campoNumero = document.getElementById("pcNumeroDestinoWhatsApp");
+    const numero = pcNormalizarNumeroWhatsApp(campoNumero ? campoNumero.value : "");
+
+    if(numero.length < 12 || numero.length > 13){
+        alert("Informe um número de WhatsApp válido com DDD.");
+        if(campoNumero) campoNumero.focus();
+        return;
+    }
+
+    const mensagem = pcMontarMensagemChamadosWhatsApp();
+    const url = "https://wa.me/" + numero + "?text=" + encodeURIComponent(mensagem);
+    window.open(url, "_blank", "noopener");
+}
+
+document.addEventListener("DOMContentLoaded", function(){
+    const abrir = document.getElementById("btnCompartilharMultiplosWhatsApp");
+    const fechar = document.getElementById("pcFecharModalCompartilharChamadosWhatsApp");
+    const cancelar = document.getElementById("pcCancelarCompartilhamentoWhatsApp");
+    const enviar = document.getElementById("pcEnviarSelecionadosWhatsApp");
+    const todos = document.getElementById("pcSelecionarTodosWhatsApp");
+
+    if(abrir) abrir.addEventListener("click", pcAbrirModalCompartilhamentoWhatsApp);
+    if(fechar) fechar.addEventListener("click", pcFecharModalCompartilhamentoWhatsApp);
+    if(cancelar) cancelar.addEventListener("click", pcFecharModalCompartilhamentoWhatsApp);
+    if(enviar) enviar.addEventListener("click", pcEnviarChamadosSelecionadosWhatsApp);
+
+    if(todos){
+        todos.addEventListener("change", function(){
+            Array.from(document.querySelectorAll(".pc-check-chamado-whatsapp")).forEach(function(caixa){
+                caixa.checked = todos.checked;
+                const protocolo = String(caixa.value || "");
+                if(todos.checked) pcProtocolosSelecionadosWhatsApp.add(protocolo);
+                else pcProtocolosSelecionadosWhatsApp.delete(protocolo);
+            });
+            pcAtualizarResumoCompartilhamentoWhatsApp();
+        });
+    }
+
+    const modal = document.getElementById("pcModalCompartilharChamadosWhatsApp");
+    if(modal){
+        modal.addEventListener("click", function(e){
+            if(e.target === modal) pcFecharModalCompartilhamentoWhatsApp();
+        });
+    }
+});
+
+
 /* =====================================================
    FILTROS
 ===================================================== */
@@ -3357,6 +3604,16 @@ input:focus,select:focus,textarea:focus{
     🖨️ Imprimir Chamados Abertos
 </button>
 
+<button
+    type="button"
+    id="btnCompartilharMultiplosWhatsApp"
+    class="btn-azul"
+    style="margin-top:8px;background:#176b3a;"
+    title="Selecionar mais de um chamado para encaminhar pelo WhatsApp"
+>
+    📱 Compartilhar Vários Chamados pelo WhatsApp
+</button>
+
 <div id="pcAlertaSonoroWrap" style="display:inline-flex;align-items:center;gap:10px;margin:8px 0 8px 10px;padding:8px 12px;border:1px solid #d8d8d8;border-radius:10px;background:#fff;vertical-align:middle;">
   <span id="pcAlertaSonoroIcone" aria-hidden="true">🔔</span>
   <span style="font-weight:700;font-size:14px;">Som de novos chamados</span>
@@ -3382,7 +3639,64 @@ input:focus,select:focus,textarea:focus{
 
 </div>
 
-<div id="pcModalNovoChamado" role="dialog" aria-modal="true" aria-labelledby="pcTituloNovoChamado"
+
+<div id="pcModalCompartilharChamadosWhatsApp" role="dialog" aria-modal="true"
+  aria-labelledby="pcTituloCompartilharChamadosWhatsApp"
+  style="display:none;position:fixed;inset:0;z-index:100000;background:rgba(0,0,0,.52);align-items:center;justify-content:center;padding:20px;">
+  <div style="width:min(780px,96vw);max-height:90vh;overflow:auto;background:#fff;border-radius:16px;box-shadow:0 15px 50px rgba(0,0,0,.28);padding:24px;position:relative;">
+    <button type="button" id="pcFecharModalCompartilharChamadosWhatsApp" aria-label="Fechar"
+      style="position:absolute;right:14px;top:12px;border:0;background:transparent;font-size:28px;cursor:pointer;">×</button>
+
+    <div style="font-size:34px;margin-bottom:6px;">📱</div>
+    <h2 id="pcTituloCompartilharChamadosWhatsApp" style="margin:0 35px 8px 0;color:#24425b;">
+      Compartilhar chamados pelo WhatsApp
+    </h2>
+    <p style="margin:0 0 16px;color:#555;">
+      Marque os chamados que deseja encaminhar e informe o número de destino.
+    </p>
+
+    <div style="display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:10px 0 14px;padding:10px 12px;background:#f4f7f8;border:1px solid #d8e0e5;border-radius:10px;">
+      <label style="font-weight:700;cursor:pointer;">
+        <input type="checkbox" id="pcSelecionarTodosWhatsApp"> Selecionar todos os chamados exibidos
+      </label>
+      <strong id="pcQuantidadeSelecionadaWhatsApp" style="color:#176b3a;">0 selecionado(s)</strong>
+    </div>
+
+    <div id="pcListaSelecaoWhatsApp"
+      style="max-height:390px;overflow:auto;border:1px solid #d8e0e5;border-radius:10px;padding:8px;background:#fafafa;">
+    </div>
+
+    <div style="margin-top:16px;">
+      <label for="pcNumeroDestinoWhatsApp" style="display:block;font-weight:800;margin-bottom:6px;">
+        📱 Número de destino no WhatsApp
+      </label>
+      <input id="pcNumeroDestinoWhatsApp" type="tel"
+        placeholder="Ex.: 61 99999-9999"
+        style="width:100%;box-sizing:border-box;padding:12px;border:1px solid #b9c8d2;border-radius:9px;font-size:15px;">
+      <div style="font-size:12px;color:#666;margin-top:5px;">
+        Informe DDD + número. O sistema abrirá o WhatsApp com todos os chamados selecionados em uma única mensagem.
+      </div>
+    </div>
+
+    <div id="pcResumoCompartilhamentoWhatsApp"
+      style="margin-top:14px;padding:10px 12px;background:#eef7f0;border:1px solid #c9e3cf;border-radius:10px;color:#31543b;font-size:13px;">
+      Nenhum chamado selecionado.
+    </div>
+
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:18px;flex-wrap:wrap;">
+      <button type="button" id="pcCancelarCompartilhamentoWhatsApp"
+        style="border:1px solid #c9c9c9;border-radius:9px;padding:11px 16px;font-weight:700;cursor:pointer;background:#fff;">
+        Cancelar
+      </button>
+      <button type="button" id="pcEnviarSelecionadosWhatsApp"
+        style="border:0;border-radius:9px;padding:11px 16px;font-weight:800;cursor:pointer;background:#176b3a;color:#fff;">
+        📤 Abrir WhatsApp e Compartilhar
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="pcModalNovoChamado\" role="dialog" aria-modal="true" aria-labelledby="pcTituloNovoChamado"
   style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.48);align-items:center;justify-content:center;padding:20px;">
   <div style="width:min(520px,96vw);max-height:90vh;overflow:auto;background:#fff;border-radius:16px;box-shadow:0 15px 50px rgba(0,0,0,.25);padding:24px;position:relative;">
     <button type="button" id="pcFecharModalNovoChamado" aria-label="Fechar"
