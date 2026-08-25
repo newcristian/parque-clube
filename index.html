@@ -15691,5 +15691,251 @@ window.imprimirChamadosAbertosV428 = imprimirChamadosAbertosV428;
     window.pcEnviarSelecaoDiretaWhatsAppV697 = enviarSelecaoDiretaV697;
 })();
 </script>
+
+<!-- =====================================================
+     V6.9.8 — CORREÇÃO DO BOTÃO DE COMPARTILHAMENTO
+     Usa a mesma seleção da função original e monta
+     a mensagem diretamente a partir dos chamados.
+===================================================== -->
+<script id="pc-whatsapp-botao-corrigido-v698">
+(function(){
+    function getSelecionadosV698(){
+        try{
+            if(typeof pcProtocolosSelecionadosWhatsApp !== "undefined" &&
+               pcProtocolosSelecionadosWhatsApp instanceof Set){
+                return pcProtocolosSelecionadosWhatsApp;
+            }
+        }catch(e){}
+
+        if(!(window.pcProtocolosSelecionadosWhatsApp instanceof Set)){
+            window.pcProtocolosSelecionadosWhatsApp = new Set();
+        }
+        return window.pcProtocolosSelecionadosWhatsApp;
+    }
+
+    function valorV698(chamado, campos, padrao){
+        for(var i=0;i<campos.length;i++){
+            var v = chamado && chamado[campos[i]];
+            if(v !== undefined && v !== null && String(v).trim() !== ""){
+                return String(v).trim();
+            }
+        }
+        return padrao || "";
+    }
+
+    function montarMensagemV698(){
+        var selecionadosSet = getSelecionadosV698();
+
+        var dados = (Array.isArray(window.chamados)
+            ? window.chamados
+            : (typeof chamados !== "undefined" && Array.isArray(chamados)
+                ? chamados
+                : [])
+        ).filter(function(chamado){
+            return selecionadosSet.has(String(chamado.protocolo || "").trim());
+        });
+
+        if(!dados.length) return "";
+
+        var mensagem = "🏢 *PARQUE CLUBE*\n";
+        mensagem += "📋 *CHAMADOS ENCAMINHADOS PARA PROVIDÊNCIA*\n\n";
+        mensagem += "Total: *" + dados.length + " chamado(s)*\n";
+
+        dados.forEach(function(chamado, i){
+            mensagem += "\n━━━━━━━━━━━━━━━━━━\n";
+            mensagem += "*" + (i + 1) + ". PROTOCOLO: " +
+                valorV698(chamado, ["protocolo"], "-") + "*\n";
+            mensagem += "👤 Solicitante: " +
+                valorV698(chamado, ["solicitante","nome"], "Não informado") + "\n";
+            mensagem += "📍 Local: " +
+                valorV698(chamado, ["bloco","area","local"], "Não informado");
+
+            var pav = valorV698(chamado, ["pavimentos","andar"], "");
+            if(pav) mensagem += " — " + pav;
+            mensagem += "\n";
+
+            var categoria = valorV698(chamado,
+                ["categoriaOcorrencia","tipoGeral","categoria"], "");
+            if(categoria) mensagem += "📂 Categoria: " + categoria + "\n";
+
+            mensagem += "🔧 Ocorrência: " +
+                valorV698(chamado,
+                    ["ocorrenciaEspecifica","subtipo","ocorrencia"],
+                    "Não informado") + "\n";
+
+            mensagem += "⭐ Prioridade: " +
+                valorV698(chamado, ["prioridade"], "Moderada") + "\n";
+
+            mensagem += "📌 Status: " +
+                valorV698(chamado, ["status"], "Aberto") + "\n";
+
+            var recebido = valorV698(chamado,
+                ["dataAbertura","recebidoEm"], "");
+            if(recebido){
+                mensagem += "📥 Recebido em: " + recebido;
+                var horaAbertura = valorV698(chamado,
+                    ["horaAbertura"], "");
+                if(horaAbertura) mensagem += " às " + horaAbertura;
+                mensagem += "\n";
+            }
+
+            var dataOcorrido = valorV698(chamado,
+                ["dataOcorrido","dataFato","dataOcorrencia"], "");
+            if(dataOcorrido) mensagem += "📅 Data do ocorrido: " + dataOcorrido + "\n";
+
+            var horaInicial = valorV698(chamado,
+                ["horaInicial","horaInicio"], "");
+            if(horaInicial) mensagem += "🕐 Hora inicial: " + horaInicial + "\n";
+
+            var horaFinal = valorV698(chamado,
+                ["horaFinal","horaFim"], "");
+            if(horaFinal) mensagem += "🕐 Hora final: " + horaFinal + "\n";
+
+            mensagem += "📝 Detalhes: " +
+                valorV698(chamado,
+                    ["detalhes","descricao","detalhesOcorrido"],
+                    "Não informado") + "\n";
+        });
+
+        mensagem += "\n━━━━━━━━━━━━━━━━━━\n";
+        mensagem += "Administração Parque Clube";
+        return mensagem;
+    }
+
+    function atualizarV698(){
+        var set = getSelecionadosV698();
+        var contador = document.getElementById(
+            "pcQuantidadeSelecionadaDiretaWhatsApp"
+        );
+        var painel = document.getElementById(
+            "pcPainelCompartilharDiretoWhatsApp"
+        );
+
+        if(contador){
+            contador.textContent =
+                set.size + " chamado(s) selecionado(s)";
+        }
+        if(painel){
+            painel.classList.toggle("ativo", set.size > 0);
+        }
+    }
+
+    function enviarV698(){
+        var set = getSelecionadosV698();
+
+        if(!set.size){
+            alert("Selecione pelo menos um chamado.");
+            return;
+        }
+
+        var campo = document.getElementById(
+            "pcNumeroDestinoInlineWhatsApp"
+        );
+        var numero = String(campo ? campo.value : "")
+            .replace(/\D/g, "");
+
+        if(numero.length === 10 || numero.length === 11){
+            numero = "55" + numero;
+        }
+
+        if(numero.length < 12 || numero.length > 13){
+            alert("Informe um número de WhatsApp válido com DDD.");
+            if(campo) campo.focus();
+            return;
+        }
+
+        var mensagem = montarMensagemV698();
+
+        if(!mensagem){
+            alert("Os chamados selecionados não foram encontrados na lista atual.");
+            return;
+        }
+
+        var url = "https://wa.me/" + numero +
+            "?text=" + encodeURIComponent(mensagem);
+
+        window.open(url, "_blank", "noopener,noreferrer");
+    }
+
+    function ligarBotaoV698(){
+        var btn = document.getElementById(
+            "pcEnviarSelecaoDiretaWhatsApp"
+        );
+        if(btn && btn.dataset.v698Ligado !== "1"){
+            btn.dataset.v698Ligado = "1";
+            btn.onclick = function(event){
+                event.preventDefault();
+                event.stopPropagation();
+                enviarV698();
+            };
+        }
+
+        var limpar = document.getElementById(
+            "pcLimparSelecaoDiretaWhatsApp"
+        );
+        if(limpar && limpar.dataset.v698Ligado !== "1"){
+            limpar.dataset.v698Ligado = "1";
+            limpar.onclick = function(event){
+                event.preventDefault();
+                var set = getSelecionadosV698();
+                set.clear();
+                document.querySelectorAll(
+                    ".pc-check-direto-whatsapp"
+                ).forEach(function(c){
+                    c.checked = false;
+                });
+                atualizarV698();
+            };
+        }
+    }
+
+    function sincronizarCaixasV698(){
+        var set = getSelecionadosV698();
+
+        document.querySelectorAll(
+            ".pc-check-direto-whatsapp"
+        ).forEach(function(caixa){
+            var protocolo = String(caixa.value || "").trim();
+
+            caixa.checked = set.has(protocolo);
+
+            if(caixa.dataset.v698Ligado !== "1"){
+                caixa.dataset.v698Ligado = "1";
+                caixa.addEventListener("change", function(){
+                    var p = String(this.value || "").trim();
+                    if(this.checked){
+                        set.add(p);
+                    }else{
+                        set.delete(p);
+                    }
+                    atualizarV698();
+                });
+            }
+        });
+
+        atualizarV698();
+        ligarBotaoV698();
+    }
+
+    function iniciarV698(){
+        ligarBotaoV698();
+        sincronizarCaixasV698();
+    }
+
+    document.addEventListener("DOMContentLoaded", iniciarV698);
+    window.addEventListener("load", function(){
+        iniciarV698();
+        setTimeout(iniciarV698, 300);
+        setTimeout(iniciarV698, 1000);
+    });
+
+    window.pcEnviarSelecaoDiretaWhatsAppV698 = enviarV698;
+    window.pcMontarMensagemDiretaWhatsAppV698 = montarMensagemV698;
+
+    // Mantém o painel sincronizado quando a lista é redesenhada.
+    setInterval(iniciarV698, 1200);
+})();
+</script>
+
 </body>
 </html>
