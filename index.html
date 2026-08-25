@@ -16006,5 +16006,363 @@ window.imprimirChamadosAbertosV428 = imprimirChamadosAbertosV428;
 })();
 </script>
 
+
+<!-- =========================================================
+     V7.0.3 — CORREÇÃO DEFINITIVA DO ENCAMINHAMENTO WHATSAPP
+     - Inclui pavimentos (campo correto do formulário)
+     - Recolhe os dados completos do chamado
+     - Inclui campos extras gravados no Worker
+     - Substitui o listener antigo do botão azul
+========================================================= -->
+<script id="pc-whatsapp-completo-v703">
+(function () {
+    "use strict";
+
+    function pcV703Valor(obj, nomes, padrao) {
+        if (!obj || typeof obj !== "object") return padrao || "";
+        for (var i = 0; i < nomes.length; i++) {
+            var chave = nomes[i];
+            if (Object.prototype.hasOwnProperty.call(obj, chave)) {
+                var valor = obj[chave];
+                if (valor !== undefined && valor !== null && String(valor).trim() !== "") {
+                    return String(valor).trim();
+                }
+            }
+        }
+        return padrao || "";
+    }
+
+    function pcV703Lista() {
+        var lista = [];
+        try {
+            if (typeof chamados !== "undefined" && Array.isArray(chamados)) lista = lista.concat(chamados);
+        } catch (e) {}
+        try {
+            if (typeof chamadosArquivadosV11 !== "undefined" && Array.isArray(chamadosArquivadosV11)) lista = lista.concat(chamadosArquivadosV11);
+        } catch (e) {}
+        try {
+            if (typeof chamadosHistoricoV11 !== "undefined" && Array.isArray(chamadosHistoricoV11)) lista = lista.concat(chamadosHistoricoV11);
+        } catch (e) {}
+
+        var vistos = {};
+        return lista.filter(function (item) {
+            var chave = String((item && (item.protocolo || item.numeroProtocolo || item.id)) || Math.random());
+            if (vistos[chave]) return false;
+            vistos[chave] = true;
+            return true;
+        });
+    }
+
+    function pcV703ProtocoloAtual() {
+        try {
+            if (typeof protocoloSelecionado !== "undefined" && protocoloSelecionado) {
+                return String(protocoloSelecionado);
+            }
+        } catch (e) {}
+
+        var candidatos = [
+            document.querySelector("[data-protocolo-selecionado]"),
+            document.querySelector("#protocoloAdmin"),
+            document.querySelector("#protocoloSelecionado"),
+            document.querySelector("#editarChamado [data-protocolo]")
+        ];
+
+        for (var i = 0; i < candidatos.length; i++) {
+            var el = candidatos[i];
+            if (!el) continue;
+            var v = el.value || el.dataset.protocolo || el.dataset.protocoloSelecionado || el.textContent;
+            if (v && String(v).trim()) return String(v).trim();
+        }
+        return "";
+    }
+
+    function pcV703Chamado() {
+        var protocolo = pcV703ProtocoloAtual();
+        var lista = pcV703Lista();
+
+        if (protocolo) {
+            var achado = lista.find(function (item) {
+                var p = String((item && (item.protocolo || item.numeroProtocolo || item.codigo)) || "");
+                return p === protocolo;
+            });
+            if (achado) return achado;
+        }
+
+        return window.pcChamadoSelecionado || window.chamadoSelecionado || null;
+    }
+
+    function pcV703FormatarData(valor) {
+        if (valor === undefined || valor === null || String(valor).trim() === "") return "";
+        var texto = String(valor).trim();
+
+        var ymd = texto.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        if (ymd) return ymd[3] + "/" + ymd[2] + "/" + ymd[1];
+
+        var iso = texto.match(/^(\d{4})-(\d{2})-(\d{2})[T\s](\d{2}):(\d{2})/);
+        if (iso) return iso[3] + "/" + iso[2] + "/" + iso[1] + " " + iso[4] + ":" + iso[5];
+
+        return texto;
+    }
+
+    function pcV703Adicionar(linhas, rotulo, valor) {
+        if (valor !== undefined && valor !== null && String(valor).trim() !== "") {
+            linhas.push("• *" + rotulo + ":* " + String(valor).trim());
+        }
+    }
+
+    function pcV703Rotulo(chave) {
+        var mapa = {
+            protocolo: "Protocolo",
+            numeroProtocolo: "Protocolo",
+            status: "Status",
+            solicitante: "Solicitante",
+            nome: "Solicitante",
+            whatsappRetorno: "WhatsApp para retorno",
+            whatsapp: "WhatsApp para retorno",
+            telefone: "Telefone",
+            celular: "Celular",
+            cargo: "Cargo/Função",
+            funcao: "Cargo/Função",
+            bloco: "Bloco",
+            local: "Local",
+            area: "Área/Local",
+            areaBloco: "Área/Bloco",
+            pavimentos: "Andar/Pavimento",
+            pavimento: "Andar/Pavimento",
+            andar: "Andar/Pavimento",
+            unidade: "Unidade",
+            apartamento: "Apartamento",
+            ocorrencia: "Ocorrência",
+            tipoOcorrencia: "Ocorrência",
+            categoriaGeral: "Tipo de ocorrência geral",
+            tipoOcorrenciaGeral: "Tipo de ocorrência geral",
+            ocorrenciaGeral: "Tipo de ocorrência geral",
+            ocorrenciaEspecifica: "Ocorrência específica",
+            areaExecucao: "Área/Local da execução",
+            localExecucao: "Área/Local da execução",
+            prioridade: "Prioridade",
+            dataOcorrencia: "Data da ocorrência",
+            data_ocorrencia: "Data da ocorrência",
+            horaInicial: "Hora inicial",
+            horaFinal: "Hora final",
+            detalhes: "Detalhes do chamado",
+            descricao: "Detalhes do chamado",
+            relato: "Detalhes do chamado",
+            observacao: "Observação",
+            responsavel: "Responsável",
+            observacaoSolucao: "Observação da solução",
+            respostaAdministracao: "Observação da solução"
+        };
+        if (mapa[chave]) return mapa[chave];
+        return String(chave)
+            .replace(/([A-Z])/g, " $1")
+            .replace(/_/g, " ")
+            .replace(/^./, function (c) { return c.toUpperCase(); });
+    }
+
+    function pcV703Mensagem(chamado) {
+        var protocolo = pcV703Valor(chamado, ["protocolo", "numeroProtocolo", "codigo"], pcV703ProtocoloAtual() || "Não informado");
+        var status = (document.getElementById("statusAdmin") || {}).value ||
+            pcV703Valor(chamado, ["status", "situacao"], "Aberto");
+        var prioridade = (document.getElementById("prioridadeAdmin") || {}).value ||
+            pcV703Valor(chamado, ["prioridade"], "Moderada");
+
+        var linhas = [
+            "🏢 *PARQUE CLUBE*",
+            "",
+            "📤 *ENCAMINHAMENTO DE CHAMADO*",
+            "",
+            "📋 *Protocolo:* " + protocolo,
+            "📌 *Status:* " + status,
+            ""
+        ];
+
+        // Campos principais, na ordem mais clara para leitura.
+        var principais = [
+            ["Solicitante", ["solicitante", "nome", "nomeSolicitante"]],
+            ["WhatsApp para retorno", ["whatsappRetorno", "whatsapp", "telefoneRetorno", "telefone", "celular"]],
+            ["Cargo/Função", ["cargo", "funcao", "cargoFuncao"]],
+            ["Bloco/Local", ["bloco", "local", "area", "areaBloco", "localizacao"]],
+            // CORREÇÃO PRINCIPAL: primeiro "pavimentos", que é o campo realmente gravado.
+            ["Andar/Pavimento", ["pavimentos", "pavimento", "andar", "andares", "andarPavimento", "andar_pavimento"]],
+            ["Unidade/Apartamento", ["unidade", "apartamento", "apto"]],
+            ["Tipo de ocorrência geral", ["categoriaGeral", "tipoOcorrenciaGeral", "ocorrenciaGeral", "tipoGeral"]],
+            ["Ocorrência específica", ["ocorrenciaEspecifica", "ocorrencia", "tipoOcorrencia", "tipoServico", "servico"]],
+            ["Área/Local da execução", ["areaExecucao", "areaLocalExecucao", "localExecucao", "areaDaExecucao"]],
+            ["Data da ocorrência", ["dataOcorrencia", "data_ocorrencia", "dataOcorrido", "data_ocorrido", "dataFato"]],
+            ["Hora inicial", ["horaInicial", "hora_inicial", "horaInicio", "hora_inicio", "inicio"]],
+            ["Hora final", ["horaFinal", "hora_final", "horaFim", "hora_fim", "fim"]]
+        ];
+
+        var chavesUsadas = {};
+        principais.forEach(function (grupo) {
+            var valor = pcV703Valor(chamado, grupo[1], "");
+            if (valor) {
+                var valorFormatado = /Data/.test(grupo[0]) ? pcV703FormatarData(valor) : valor;
+                pcV703Adicionar(linhas, grupo[0], valorFormatado);
+                grupo[1].forEach(function (k) { chavesUsadas[k] = true; });
+            }
+        });
+
+        pcV703Adicionar(linhas, "Prioridade", prioridade);
+        chavesUsadas.prioridade = true;
+        chavesUsadas.protocolo = true;
+        chavesUsadas.numeroProtocolo = true;
+        chavesUsadas.status = true;
+
+        var detalhes = pcV703Valor(chamado, [
+            "detalhes", "descricao", "descricaoOcorrencia",
+            "detalhesOcorrido", "observacao", "relato"
+        ], "");
+
+        chavesUsadas.detalhes = true;
+        chavesUsadas.descricao = true;
+        chavesUsadas.descricaoOcorrencia = true;
+        chavesUsadas.detalhesOcorrido = true;
+        chavesUsadas.observacao = true;
+        chavesUsadas.relato = true;
+
+        if (detalhes) {
+            linhas.push("", "📝 *DETALHES DO CHAMADO:*", detalhes);
+        }
+
+        // Inclui automaticamente qualquer outro dado preenchido e gravado no chamado.
+        var ignorar = {
+            id: true, action: true, adminPassword: true, senhaAdministrativa: true,
+            arquivado: true, historico: true, imagem: true, imagens: true,
+            responsavel: true, observacaoSolucao: true, respostaAdministracao: true,
+            atualizadoEm: true, ultimaAtualizacao: true, updated_at: true,
+            criadoEm: true, criado_em: true, dataAbertura: true, dataCriacao: true,
+            created_at: true, createdAt: true, timestamp: true
+        };
+
+        var extras = [];
+        Object.keys(chamado || {}).forEach(function (chave) {
+            if (chavesUsadas[chave] || ignorar[chave]) return;
+            var valor = chamado[chave];
+            if (valor === undefined || valor === null || String(valor).trim() === "") return;
+            if (typeof valor === "object") {
+                try { valor = JSON.stringify(valor); } catch (e) { return; }
+            }
+            extras.push([pcV703Rotulo(chave), String(valor)]);
+        });
+
+        if (extras.length) {
+            linhas.push("", "📌 *OUTRAS INFORMAÇÕES DO CHAMADO:*");
+            extras.forEach(function (item) {
+                pcV703Adicionar(linhas, item[0], item[1]);
+            });
+        }
+
+        var responsavelDigitado = ((document.getElementById("responsavelAdmin") || {}).value || "").trim();
+        var responsavel = responsavelDigitado ||
+            pcV703Valor(chamado, ["responsavel", "responsavelAdmin"], "");
+
+        var observacaoDigitada = ((document.getElementById("observacaoAdmin") || {}).value || "").trim();
+        var observacaoSolucao = observacaoDigitada ||
+            pcV703Valor(chamado, ["observacaoSolucao", "respostaAdministracao"], "");
+
+        var recebido = pcV703Valor(chamado, [
+            "criadoEm", "criado_em", "dataAbertura", "dataCriacao",
+            "created_at", "createdAt", "timestamp"
+        ], "");
+
+        if (responsavel || recebido || observacaoSolucao) {
+            linhas.push("");
+            if (responsavel) pcV703Adicionar(linhas, "Responsável", responsavel);
+            if (recebido) pcV703Adicionar(linhas, "Recebido em", pcV703FormatarData(recebido));
+            if (observacaoSolucao) {
+                linhas.push("", "✅ *OBSERVAÇÃO DA ADMINISTRAÇÃO:*", observacaoSolucao);
+            }
+        }
+
+        linhas.push(
+            "",
+            "🔎 *Acompanhar chamado:*",
+            (window.location && window.location.origin ? window.location.origin : "") +
+            "/?protocolo=" + encodeURIComponent(protocolo)
+        );
+
+        return linhas.join("\n");
+    }
+
+    function pcV703Numero(bruto) {
+        var numero = String(bruto || "").replace(/\D/g, "");
+        if (numero.length === 10 || numero.length === 11) numero = "55" + numero;
+        return numero;
+    }
+
+    function pcV703Enviar() {
+        var input = document.getElementById("whatsappDestinoAdmin");
+        var bruto = input ? String(input.value || "").trim() : "";
+        if (!bruto) {
+            alert("Informe o número do WhatsApp de destino.");
+            if (input) input.focus();
+            return false;
+        }
+
+        var numero = pcV703Numero(bruto);
+        if (numero.length < 12) {
+            alert("Informe um número válido com DDD.");
+            if (input) input.focus();
+            return false;
+        }
+
+        var chamado = pcV703Chamado();
+        if (!chamado) {
+            alert("Não foi possível localizar o chamado selecionado. Atualize a lista e abra novamente o chamado.");
+            return false;
+        }
+
+        try { localStorage.setItem("parqueClubeWhatsappDestinoAdmin", bruto); } catch (e) {}
+
+        var mensagem = pcV703Mensagem(chamado);
+        var url = "https://wa.me/" + numero + "?text=" + encodeURIComponent(mensagem);
+        window.open(url, "_blank");
+        return false;
+    }
+
+    function pcV703ConfigurarBotao() {
+        var antigo = document.getElementById("btnEncaminharWhatsAppAdmin");
+        if (!antigo) return;
+
+        // Clona o botão para remover listeners antigos que estavam usando a função incompleta.
+        var novo = antigo.cloneNode(true);
+        antigo.parentNode.replaceChild(novo, antigo);
+
+        novo.onclick = function (evento) {
+            if (evento) {
+                evento.preventDefault();
+                evento.stopPropagation();
+            }
+            return pcV703Enviar();
+        };
+
+        var input = document.getElementById("whatsappDestinoAdmin");
+        if (input && !input.value) {
+            try {
+                var salvo = localStorage.getItem("parqueClubeWhatsappDestinoAdmin");
+                if (salvo) input.value = salvo;
+            } catch (e) {}
+        }
+    }
+
+    window.pcV703EnviarWhatsApp = pcV703Enviar;
+    window.pcV703MontarMensagemWhatsApp = pcV703Mensagem;
+
+    document.addEventListener("DOMContentLoaded", function () {
+        pcV703ConfigurarBotao();
+        setTimeout(pcV703ConfigurarBotao, 300);
+        setTimeout(pcV703ConfigurarBotao, 1000);
+    });
+
+    document.addEventListener("click", function () {
+        setTimeout(pcV703ConfigurarBotao, 120);
+    });
+
+    pcV703ConfigurarBotao();
+})();
+</script>
+
 </body>
 </html>
