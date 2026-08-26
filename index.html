@@ -509,6 +509,260 @@ input[readonly] {
 }
 
 
+
+</style>
+
+<script id="pc-compartilhar-multiplos-whatsapp-v696">
+/* =====================================================
+   COMPARTILHAR VÁRIOS CHAMADOS PELO WHATSAPP
+===================================================== */
+
+let pcProtocolosSelecionadosWhatsApp = new Set();
+
+function pcEscaparWhatsApp(valor){
+    return String(valor == null ? "" : valor)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+}
+
+function pcNormalizarNumeroWhatsApp(valor){
+    let numero = String(valor || "").replace(/\D/g,"");
+    if(numero.length === 10 || numero.length === 11){
+        numero = "55" + numero;
+    }
+    return numero;
+}
+
+function pcObterChamadosExibidosWhatsApp(){
+    const pesquisaEl = document.getElementById("pesquisaChamado");
+    const statusEl = document.getElementById("filtroStatus");
+    const prioridadeEl = document.getElementById("filtroPrioridade");
+
+    const pesquisa = (pesquisaEl ? pesquisaEl.value : "").toLowerCase().trim();
+    const filtro = statusEl ? statusEl.value : "";
+    const filtroPrioridade = prioridadeEl ? prioridadeEl.value : "";
+
+    return (Array.isArray(chamados) ? chamados : []).filter(function(chamado){
+        const texto = (
+            (chamado.protocolo || "") + " " +
+            (chamado.solicitante || "") + " " +
+            (chamado.bloco || "") + " " +
+            (chamado.ocorrencia || "")
+        ).toLowerCase();
+
+        const status = chamado.status || "Aberto";
+        const prioridade = chamado.prioridade || "Moderada";
+
+        return (!pesquisa || texto.includes(pesquisa)) &&
+               (!filtro || status === filtro) &&
+               (!filtroPrioridade || prioridade === filtroPrioridade);
+    });
+}
+
+function pcAtualizarResumoCompartilhamentoWhatsApp(){
+    const selecionados = Array.from(pcProtocolosSelecionadosWhatsApp);
+    const contador = document.getElementById("pcQuantidadeSelecionadaWhatsApp");
+    const resumo = document.getElementById("pcResumoCompartilhamentoWhatsApp");
+    const todos = document.getElementById("pcSelecionarTodosWhatsApp");
+    const caixas = Array.from(document.querySelectorAll(".pc-check-chamado-whatsapp"));
+
+    if(contador){
+        contador.textContent = selecionados.length + " selecionado(s)";
+    }
+
+    if(resumo){
+        resumo.textContent = selecionados.length
+            ? "Serão encaminhados " + selecionados.length + " chamado(s) em uma única mensagem."
+            : "Nenhum chamado selecionado.";
+    }
+
+    if(todos && caixas.length){
+        todos.checked = caixas.every(function(caixa){ return caixa.checked; });
+        todos.indeterminate = !todos.checked && caixas.some(function(caixa){ return caixa.checked; });
+    }else if(todos){
+        todos.checked = false;
+        todos.indeterminate = false;
+    }
+}
+
+function pcRenderizarListaCompartilhamentoWhatsApp(){
+    const lista = document.getElementById("pcListaSelecaoWhatsApp");
+    if(!lista) return;
+
+    const itens = pcObterChamadosExibidosWhatsApp();
+
+    if(!itens.length){
+        lista.innerHTML = '<div style="padding:20px;text-align:center;color:#777;">📭 Nenhum chamado disponível com os filtros atuais.</div>';
+        pcAtualizarResumoCompartilhamentoWhatsApp();
+        return;
+    }
+
+    const protocolosAtuais = new Set(itens.map(function(c){ return String(c.protocolo || ""); }));
+    pcProtocolosSelecionadosWhatsApp.forEach(function(p){
+        if(!protocolosAtuais.has(p)) pcProtocolosSelecionadosWhatsApp.delete(p);
+    });
+
+    lista.innerHTML = itens.map(function(chamado){
+        const protocolo = String(chamado.protocolo || "");
+        const marcado = pcProtocolosSelecionadosWhatsApp.has(protocolo) ? "checked" : "";
+        return `
+            <label style="display:block;padding:11px 12px;margin:7px 0;background:#fff;border:1px solid #d9e1e6;border-radius:9px;cursor:pointer;">
+              <div style="display:flex;gap:10px;align-items:flex-start;">
+                <input class="pc-check-chamado-whatsapp" type="checkbox" value="${pcEscaparWhatsApp(protocolo)}" ${marcado} style="margin-top:3px;">
+                <div style="flex:1;">
+                  <div style="font-weight:800;color:#24425b;">📋 ${pcEscaparWhatsApp(protocolo || "-")}</div>
+                  <div style="font-size:13px;line-height:1.45;color:#444;">
+                    👤 ${pcEscaparWhatsApp(chamado.solicitante || "Não informado")}<br>
+                    📍 ${pcEscaparWhatsApp(chamado.bloco || "Não informado")} ${chamado.pavimentos ? "• " + pcEscaparWhatsApp(chamado.pavimentos) : ""}<br>
+                    🔧 ${pcEscaparWhatsApp(chamado.ocorrencia || "Não informado")}<br>
+                    ⭐ Prioridade: ${pcEscaparWhatsApp(chamado.prioridade || "Moderada")}
+                  </div>
+                </div>
+              </div>
+            </label>
+        `;
+    }).join("");
+
+    Array.from(document.querySelectorAll(".pc-check-chamado-whatsapp")).forEach(function(caixa){
+        caixa.addEventListener("change", function(){
+            const protocolo = String(this.value || "");
+            if(this.checked) pcProtocolosSelecionadosWhatsApp.add(protocolo);
+            else pcProtocolosSelecionadosWhatsApp.delete(protocolo);
+            pcAtualizarResumoCompartilhamentoWhatsApp();
+        });
+    });
+
+    pcAtualizarResumoCompartilhamentoWhatsApp();
+}
+
+function pcAbrirModalCompartilhamentoWhatsApp(){
+    if(!Array.isArray(chamados) || !chamados.length){
+        alert("Primeiro clique em 'Atualizar Lista de Chamados' para carregar os chamados.");
+        return;
+    }
+
+    const modal = document.getElementById("pcModalCompartilharChamadosWhatsApp");
+    if(!modal) return;
+
+    pcRenderizarListaCompartilhamentoWhatsApp();
+    modal.style.display = "flex";
+}
+
+function pcFecharModalCompartilhamentoWhatsApp(){
+    const modal = document.getElementById("pcModalCompartilharChamadosWhatsApp");
+    if(modal) modal.style.display = "none";
+}
+
+function pcValorCampoChamado(chamado, nomes, padrao){
+    for(let i=0;i<nomes.length;i++){
+        const valor = chamado[nomes[i]];
+        if(valor !== undefined && valor !== null && String(valor).trim() !== ""){
+            return String(valor).trim();
+        }
+    }
+    return padrao || "Não informado";
+}
+
+function pcMontarMensagemChamadosWhatsApp(){
+    const selecionados = (Array.isArray(chamados) ? chamados : []).filter(function(chamado){
+        return pcProtocolosSelecionadosWhatsApp.has(String(chamado.protocolo || ""));
+    });
+
+    let mensagem = "📋 *CHAMADOS — CONDOMÍNIO PARQUE CLUBE*\n\n";
+    mensagem += "Foram encaminhados *" + selecionados.length + " chamado(s)* para providência.\n";
+
+    selecionados.forEach(function(chamado, indice){
+        const dataOcorrido = pcValorCampoChamado(chamado, ["dataOcorrido","dataFato","dataOcorrencia"], "");
+        const horaInicial = pcValorCampoChamado(chamado, ["horaInicial","horaInicio"], "");
+        const horaFinal = pcValorCampoChamado(chamado, ["horaFinal","horaFim"], "");
+        const categoria = pcValorCampoChamado(chamado, ["categoriaOcorrencia","tipoGeral","categoria"], "");
+        const especifica = pcValorCampoChamado(chamado, ["ocorrenciaEspecifica","subtipo","ocorrencia"], "Não informado");
+        const detalhes = pcValorCampoChamado(chamado, ["detalhes","descricao","detalhesOcorrido"], "Não informado");
+
+        mensagem += "\n*" + (indice + 1) + ". PROTOCOLO: " + pcValorCampoChamado(chamado, ["protocolo"], "-") + "*\n";
+        mensagem += "👤 Solicitante: " + pcValorCampoChamado(chamado, ["solicitante","nome"], "Não informado") + "\n";
+        mensagem += "📍 Local: " + pcValorCampoChamado(chamado, ["bloco","area","local"], "Não informado");
+        if(chamado.pavimentos) mensagem += " — " + chamado.pavimentos;
+        mensagem += "\n";
+        if(categoria) mensagem += "📂 Categoria: " + categoria + "\n";
+        mensagem += "🔧 Ocorrência: " + especifica + "\n";
+        mensagem += "⭐ Prioridade: " + pcValorCampoChamado(chamado, ["prioridade"], "Moderada") + "\n";
+        mensagem += "📥 Recebido em: " + pcValorCampoChamado(chamado, ["dataAbertura","recebidoEm"], "Não informado");
+        if(chamado.horaAbertura) mensagem += " às " + chamado.horaAbertura;
+        mensagem += "\n";
+        if(dataOcorrido) mensagem += "📅 Data do ocorrido: " + dataOcorrido + "\n";
+        if(horaInicial) mensagem += "🕐 Hora inicial: " + horaInicial + "\n";
+        if(horaFinal) mensagem += "🕐 Hora final: " + horaFinal + "\n";
+        mensagem += "📝 Detalhes: " + detalhes + "\n";
+        mensagem += "📌 Status: " + pcValorCampoChamado(chamado, ["status"], "Aberto") + "\n";
+    });
+
+    mensagem += "\n—\n*Sistema de Gestão do Condomínio Parque Clube*";
+    return mensagem;
+}
+
+function pcEnviarChamadosSelecionadosWhatsApp(){
+    const selecionados = Array.from(pcProtocolosSelecionadosWhatsApp);
+
+    if(!selecionados.length){
+        alert("Selecione pelo menos um chamado.");
+        return;
+    }
+
+    const campoNumero = document.getElementById("pcNumeroDestinoWhatsApp");
+    const numero = pcNormalizarNumeroWhatsApp(campoNumero ? campoNumero.value : "");
+
+    if(numero.length < 12 || numero.length > 13){
+        alert("Informe um número de WhatsApp válido com DDD.");
+        if(campoNumero) campoNumero.focus();
+        return;
+    }
+
+    const mensagem = pcMontarMensagemChamadosWhatsApp();
+    const url = "https://wa.me/" + numero + "?text=" + encodeURIComponent(mensagem);
+    window.open(url, "_blank", "noopener");
+}
+
+document.addEventListener("DOMContentLoaded", function(){
+    const abrir = document.getElementById("btnCompartilharMultiplosWhatsApp");
+    const fechar = document.getElementById("pcFecharModalCompartilharChamadosWhatsApp");
+    const cancelar = document.getElementById("pcCancelarCompartilhamentoWhatsApp");
+    const enviar = document.getElementById("pcEnviarSelecionadosWhatsApp");
+    const todos = document.getElementById("pcSelecionarTodosWhatsApp");
+
+    if(abrir) abrir.addEventListener("click", pcAbrirModalCompartilhamentoWhatsApp);
+    if(fechar) fechar.addEventListener("click", pcFecharModalCompartilhamentoWhatsApp);
+    if(cancelar) cancelar.addEventListener("click", pcFecharModalCompartilhamentoWhatsApp);
+    if(enviar) enviar.addEventListener("click", pcEnviarChamadosSelecionadosWhatsApp);
+
+    if(todos){
+        todos.addEventListener("change", function(){
+            Array.from(document.querySelectorAll(".pc-check-chamado-whatsapp")).forEach(function(caixa){
+                caixa.checked = todos.checked;
+                const protocolo = String(caixa.value || "");
+                if(todos.checked) pcProtocolosSelecionadosWhatsApp.add(protocolo);
+                else pcProtocolosSelecionadosWhatsApp.delete(protocolo);
+            });
+            pcAtualizarResumoCompartilhamentoWhatsApp();
+        });
+    }
+
+    const modal = document.getElementById("pcModalCompartilharChamadosWhatsApp");
+    if(modal){
+        modal.addEventListener("click", function(e){
+            if(e.target === modal) pcFecharModalCompartilhamentoWhatsApp();
+        });
+    }
+});
+
+
+
+</script>
+
+<style id="pc-estilos-continuacao-v696">
 /* =====================================================
    FILTROS
 ===================================================== */
@@ -2664,129 +2918,97 @@ input:focus,select:focus,textarea:focus{
 
 
 <div class="form-group">
-
-<label>
-
-    Tipo de Ocorrência:
-
-</label>
-
-<select
-    id="ocorrencia"
-    required
->
-<option value="">Selecione o tipo de ocorrência</option>
-
-<optgroup label="⚠️ Ocorrência Administrativa / Infração">
-    <option>Advertência</option>
-    <option>Notificação</option>
-</optgroup>
-
-<optgroup label="📹 Câmeras/CFTV/Interfone">
-    <option>Câmeras/CFTV</option>
-    <option>Facial</option>
-    <option>Interfone</option>
-</optgroup>
-
-<optgroup label="🐜 Controle de pragas">
-    <option>Dedetização</option>
-</optgroup>
-
-<optgroup label="💡 Elétrica/Iluminação">
-    <option>Falta de energia</option>
-    <option>Iluminação com defeito</option>
-    <option>Iluminação de emergência</option>
-    <option>Lâmpada queimada</option>
-    <option>Poste ou iluminação externa</option>
-    <option>Quadro elétrico</option>
-    <option>Sensor de presença</option>
-</optgroup>
-
-<optgroup label="🛗 Elevadores">
-    <option>Botão com defeito</option>
-    <option>Elevador parado</option>
-    <option>Iluminação</option>
-    <option>Limpeza</option>
-    <option>Outros problemas técnicos</option>
-    <option>Problema na porta</option>
-    <option>Ruído</option>
-</optgroup>
-
-<optgroup label="🏢 Estrutura e manutenção predial">
-    <option>Cobertura</option>
-    <option>Janela</option>
-    <option>Junta de dilatação</option>
-    <option>Manutenção de cancela</option>
-    <option>Parede danificada</option>
-    <option>Pintura</option>
-    <option>Piso danificado</option>
-    <option>Portão</option>
-    <option>Porta</option>
-    <option>Telhado</option>
-    <option>Teto</option>
-    <option>Trincas e fissuras</option>
-</optgroup>
-
-<optgroup label="🚗 Garagem e estacionamento">
-    <option>Iluminação da garagem</option>
-    <option>Sinalização</option>
-    <option>Vaga</option>
-    <option>Vazamento na garagem</option>
-</optgroup>
-
-<optgroup label="🚰 Hidráulica">
-    <option>Bomba d'água</option>
-    <option>Caixa de água</option>
-    <option>Caixa de inspeção</option>
-    <option>Cano quebrado</option>
-    <option>Esgoto</option>
-    <option>Falta de água</option>
-    <option>Infiltração</option>
-    <option>Macro Sub1</option>
-    <option>Macro Sub2</option>
-    <option>Pressão da água</option>
-    <option>Ralo entupido</option>
-    <option>Registro com defeito</option>
-    <option>Torneira quebrada</option>
-    <option>Vazamento</option>
-</optgroup>
-
-<optgroup label="🌳 Jardins e áreas externas">
-    <option>Árvore com risco</option>
-    <option>Corte de grama</option>
-    <option>Irrigação</option>
-    <option>Jardinagem</option>
-    <option>Limpeza de área verde</option>
-    <option>Poda</option>
-</optgroup>
-
-<optgroup label="🧹 Limpeza e conservação">
-    <option>Coleta de resíduos</option>
-    <option>Conservação de áreas comuns</option>
-    <option>Lavagem de piso</option>
-    <option>Limpeza de área comum</option>
-    <option>Limpeza de área externa</option>
-    <option>Limpeza de corredor</option>
-    <option>Limpeza de elevador</option>
-    <option>Limpeza de escadas</option>
-    <option>Limpeza de garagem</option>
-    <option>Limpeza de lixeira</option>
-    <option>Limpeza de ralos</option>
-</optgroup>
-
-<optgroup label="🔥 Segurança e emergência">
-    <option>Extintores</option>
-    <option>Iluminação de emergência</option>
-    <option>Porta corta-fogo</option>
-    <option>Sinalização de emergência</option>
-    <option>Sistema de alarme</option>
-</optgroup>
-
-<optgroup label="💧 Serviços preventivos">
-    <option>Limpeza de caixa de gordura</option>
-    <option>Limpeza de caixa-d'água</option>
-</optgroup>
+<label>Tipo de Ocorrência Geral:</label>
+<select id="categoriaOcorrencia" required>
+    <option value="">Selecione a categoria geral</option>
+        <option value="Outros">Outros</option>
+        <option value="⚠️ Ocorrência Administrativa / Infração">⚠️ Ocorrência Administrativa / Infração</option>
+        <option value="📹 Câmeras/CFTV/Interfone">📹 Câmeras/CFTV/Interfone</option>
+        <option value="🐜 Controle de pragas">🐜 Controle de pragas</option>
+        <option value="💡 Elétrica/Iluminação">💡 Elétrica/Iluminação</option>
+        <option value="🛗 Elevadores">🛗 Elevadores</option>
+        <option value="🏢 Estrutura e manutenção predial">🏢 Estrutura e manutenção predial</option>
+        <option value="🚗 Garagem e estacionamento">🚗 Garagem e estacionamento</option>
+        <option value="🚰 Hidráulica">🚰 Hidráulica</option>
+        <option value="🌳 Jardins e áreas externas">🌳 Jardins e áreas externas</option>
+        <option value="🧹 Limpeza e conservação">🧹 Limpeza e conservação</option>
+        <option value="🔥 Segurança e emergência">🔥 Segurança e emergência</option>
+        <option value="💧 Serviços preventivos">💧 Serviços preventivos</option>
 </select>
+
+<label style="display:block;margin-top:10px;">Ocorrência Específica:</label>
+<select id="ocorrencia" required disabled>
+    <option value="">Primeiro selecione o tipo geral</option>
+</select>
+
+<div id="outrosOcorrenciaBox" style="display:none;margin-top:10px;">
+    <label>Especifique a ocorrência:</label>
+    <textarea id="outrosOcorrencia"
+              placeholder="Descreva a ocorrência que não está na lista..."
+              style="width:100%;min-height:85px;resize:vertical;"></textarea>
+</div>
+</div>
+
+<script id="pc-dois-niveis-v64">
+(function(){
+    "use strict";
+
+    var categorias = {"⚠️ Ocorrência Administrativa / Infração": [{"value": "Advertência", "text": "Advertência"}, {"value": "Notificação", "text": "Notificação"}], "📹 Câmeras/CFTV/Interfone": [{"value": "Câmeras/CFTV", "text": "Câmeras/CFTV"}, {"value": "Facial", "text": "Facial"}, {"value": "Interfone", "text": "Interfone"}], "🐜 Controle de pragas": [{"value": "Dedetização", "text": "Dedetização"}], "💡 Elétrica/Iluminação": [{"value": "Falta de energia", "text": "Falta de energia"}, {"value": "Iluminação com defeito", "text": "Iluminação com defeito"}, {"value": "Iluminação de emergência", "text": "Iluminação de emergência"}, {"value": "Lâmpada queimada", "text": "Lâmpada queimada"}, {"value": "Poste ou iluminação externa", "text": "Poste ou iluminação externa"}, {"value": "Quadro elétrico", "text": "Quadro elétrico"}, {"value": "Sensor de presença", "text": "Sensor de presença"}], "🛗 Elevadores": [{"value": "Botão com defeito", "text": "Botão com defeito"}, {"value": "Elevador parado", "text": "Elevador parado"}, {"value": "Iluminação", "text": "Iluminação"}, {"value": "Limpeza", "text": "Limpeza"}, {"value": "Outros problemas técnicos", "text": "Outros problemas técnicos"}, {"value": "Problema na porta", "text": "Problema na porta"}, {"value": "Ruído", "text": "Ruído"}], "🏢 Estrutura e manutenção predial": [{"value": "Cobertura", "text": "Cobertura"}, {"value": "Janela", "text": "Janela"}, {"value": "Junta de dilatação", "text": "Junta de dilatação"}, {"value": "Manutenção de cancela", "text": "Manutenção de cancela"}, {"value": "Parede danificada", "text": "Parede danificada"}, {"value": "Pintura", "text": "Pintura"}, {"value": "Piso danificado", "text": "Piso danificado"}, {"value": "Portão", "text": "Portão"}, {"value": "Porta", "text": "Porta"}, {"value": "Telhado", "text": "Telhado"}, {"value": "Teto", "text": "Teto"}, {"value": "Trincas e fissuras", "text": "Trincas e fissuras"}], "🚗 Garagem e estacionamento": [{"value": "Iluminação da garagem", "text": "Iluminação da garagem"}, {"value": "Sinalização", "text": "Sinalização"}, {"value": "Vaga", "text": "Vaga"}, {"value": "Vazamento na garagem", "text": "Vazamento na garagem"}], "🚰 Hidráulica": [{"value": "Bomba d'água", "text": "Bomba d'água"}, {"value": "Caixa de água", "text": "Caixa de água"}, {"value": "Caixa de inspeção", "text": "Caixa de inspeção"}, {"value": "Cano quebrado", "text": "Cano quebrado"}, {"value": "Esgoto", "text": "Esgoto"}, {"value": "Falta de água", "text": "Falta de água"}, {"value": "Infiltração", "text": "Infiltração"}, {"value": "Macro Sub1", "text": "Macro Sub1"}, {"value": "Macro Sub2", "text": "Macro Sub2"}, {"value": "Pressão da água", "text": "Pressão da água"}, {"value": "Ralo entupido", "text": "Ralo entupido"}, {"value": "Registro com defeito", "text": "Registro com defeito"}, {"value": "Torneira quebrada", "text": "Torneira quebrada"}, {"value": "Vazamento", "text": "Vazamento"}], "🌳 Jardins e áreas externas": [{"value": "Árvore com risco", "text": "Árvore com risco"}, {"value": "Corte de grama", "text": "Corte de grama"}, {"value": "Irrigação", "text": "Irrigação"}, {"value": "Jardinagem", "text": "Jardinagem"}, {"value": "Limpeza de área verde", "text": "Limpeza de área verde"}, {"value": "Poda", "text": "Poda"}], "🧹 Limpeza e conservação": [{"value": "Coleta de resíduos", "text": "Coleta de resíduos"}, {"value": "Conservação de áreas comuns", "text": "Conservação de áreas comuns"}, {"value": "Lavagem de piso", "text": "Lavagem de piso"}, {"value": "Limpeza de área comum", "text": "Limpeza de área comum"}, {"value": "Limpeza de área externa", "text": "Limpeza de área externa"}, {"value": "Limpeza de corredor", "text": "Limpeza de corredor"}, {"value": "Limpeza de elevador", "text": "Limpeza de elevador"}, {"value": "Limpeza de escadas", "text": "Limpeza de escadas"}, {"value": "Limpeza de garagem", "text": "Limpeza de garagem"}, {"value": "Limpeza de lixeira", "text": "Limpeza de lixeira"}, {"value": "Limpeza de ralos", "text": "Limpeza de ralos"}], "🔥 Segurança e emergência": [{"value": "Extintores", "text": "Extintores"}, {"value": "Iluminação de emergência", "text": "Iluminação de emergência"}, {"value": "Porta corta-fogo", "text": "Porta corta-fogo"}, {"value": "Sinalização de emergência", "text": "Sinalização de emergência"}, {"value": "Sistema de alarme", "text": "Sistema de alarme"}], "💧 Serviços preventivos": [{"value": "Limpeza de caixa de gordura", "text": "Limpeza de caixa de gordura"}, {"value": "Limpeza de caixa-d'água", "text": "Limpeza de caixa-d'água"}]};
+    var geral = document.getElementById("categoriaOcorrencia");
+    var especifica = document.getElementById("ocorrencia");
+    var boxOutros = document.getElementById("outrosOcorrenciaBox");
+    var campoOutros = document.getElementById("outrosOcorrencia");
+
+    geral.addEventListener("change", function(){
+        var lista = categorias[geral.value] || [];
+        especifica.innerHTML = '<option value="">Selecione a ocorrência específica</option>';
+
+        if(geral.value === "Outros"){
+            // "Outros" escolhido diretamente no campo geral.
+            especifica.disabled = true;
+            especifica.innerHTML = '<option value="">Não se aplica - descreva abaixo</option>';
+            boxOutros.style.display = "block";
+            campoOutros.required = true;
+            campoOutros.value = "";
+        } else if(lista.length === 0){
+            especifica.disabled = true;
+            especifica.innerHTML = '<option value="">Primeiro selecione o tipo geral</option>';
+            boxOutros.style.display = "none";
+            campoOutros.value = "";
+            campoOutros.required = false;
+        } else {
+            lista.forEach(function(item){
+                var op = document.createElement("option");
+                op.value = item.value;
+                op.textContent = item.text;
+                especifica.appendChild(op);
+            });
+
+            // "Outros" também permanece disponível no segundo nível.
+            var opOutros = document.createElement("option");
+            opOutros.value = "Outros";
+            opOutros.textContent = "Outros";
+            especifica.appendChild(opOutros);
+            especifica.disabled = false;
+
+            boxOutros.style.display = "none";
+            campoOutros.value = "";
+            campoOutros.required = false;
+        }
+    });
+
+    especifica.addEventListener("change", function(){
+        if(especifica.value === "Outros"){
+            boxOutros.style.display = "block";
+            campoOutros.required = true;
+        } else {
+            boxOutros.style.display = "none";
+            campoOutros.required = false;
+            campoOutros.value = "";
+        }
+    });
+})();
+</script>
 
 </div>
 
@@ -3389,6 +3611,17 @@ input:focus,select:focus,textarea:focus{
     🖨️ Imprimir Chamados Abertos
 </button>
 
+<button
+    type="button"
+    id="btnCompartilharMultiplosWhatsApp"
+    class="btn-azul"
+    onclick="pcAbrirModalCompartilhamentoWhatsApp(); return false;"
+    style="margin-top:8px;background:#176b3a;"
+    title="Selecionar mais de um chamado para encaminhar pelo WhatsApp"
+>
+    📱 Compartilhar Vários Chamados pelo WhatsApp
+</button>
+
 <div id="pcAlertaSonoroWrap" style="display:inline-flex;align-items:center;gap:10px;margin:8px 0 8px 10px;padding:8px 12px;border:1px solid #d8d8d8;border-radius:10px;background:#fff;vertical-align:middle;">
   <span id="pcAlertaSonoroIcone" aria-hidden="true">🔔</span>
   <span style="font-weight:700;font-size:14px;">Som de novos chamados</span>
@@ -3414,7 +3647,64 @@ input:focus,select:focus,textarea:focus{
 
 </div>
 
-<div id="pcModalNovoChamado" role="dialog" aria-modal="true" aria-labelledby="pcTituloNovoChamado"
+
+<div id="pcModalCompartilharChamadosWhatsApp" role="dialog" aria-modal="true"
+  aria-labelledby="pcTituloCompartilharChamadosWhatsApp"
+  style="display:none;position:fixed;inset:0;z-index:100000;background:rgba(0,0,0,.52);align-items:center;justify-content:center;padding:20px;">
+  <div style="width:min(780px,96vw);max-height:90vh;overflow:auto;background:#fff;border-radius:16px;box-shadow:0 15px 50px rgba(0,0,0,.28);padding:24px;position:relative;">
+    <button type="button" id="pcFecharModalCompartilharChamadosWhatsApp" aria-label="Fechar"
+      style="position:absolute;right:14px;top:12px;border:0;background:transparent;font-size:28px;cursor:pointer;">×</button>
+
+    <div style="font-size:34px;margin-bottom:6px;">📱</div>
+    <h2 id="pcTituloCompartilharChamadosWhatsApp" style="margin:0 35px 8px 0;color:#24425b;">
+      Compartilhar chamados pelo WhatsApp
+    </h2>
+    <p style="margin:0 0 16px;color:#555;">
+      Marque os chamados que deseja encaminhar e informe o número de destino.
+    </p>
+
+    <div style="display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:10px 0 14px;padding:10px 12px;background:#f4f7f8;border:1px solid #d8e0e5;border-radius:10px;">
+      <label style="font-weight:700;cursor:pointer;">
+        <input type="checkbox" id="pcSelecionarTodosWhatsApp"> Selecionar todos os chamados exibidos
+      </label>
+      <strong id="pcQuantidadeSelecionadaWhatsApp" style="color:#176b3a;">0 selecionado(s)</strong>
+    </div>
+
+    <div id="pcListaSelecaoWhatsApp"
+      style="max-height:390px;overflow:auto;border:1px solid #d8e0e5;border-radius:10px;padding:8px;background:#fafafa;">
+    </div>
+
+    <div style="margin-top:16px;">
+      <label for="pcNumeroDestinoWhatsApp" style="display:block;font-weight:800;margin-bottom:6px;">
+        📱 Número de destino no WhatsApp
+      </label>
+      <input id="pcNumeroDestinoWhatsApp" type="tel"
+        placeholder="Ex.: 61 99999-9999"
+        style="width:100%;box-sizing:border-box;padding:12px;border:1px solid #b9c8d2;border-radius:9px;font-size:15px;">
+      <div style="font-size:12px;color:#666;margin-top:5px;">
+        Informe DDD + número. O sistema abrirá o WhatsApp com todos os chamados selecionados em uma única mensagem.
+      </div>
+    </div>
+
+    <div id="pcResumoCompartilhamentoWhatsApp"
+      style="margin-top:14px;padding:10px 12px;background:#eef7f0;border:1px solid #c9e3cf;border-radius:10px;color:#31543b;font-size:13px;">
+      Nenhum chamado selecionado.
+    </div>
+
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:18px;flex-wrap:wrap;">
+      <button type="button" id="pcCancelarCompartilhamentoWhatsApp"
+        style="border:1px solid #c9c9c9;border-radius:9px;padding:11px 16px;font-weight:700;cursor:pointer;background:#fff;">
+        Cancelar
+      </button>
+      <button type="button" id="pcEnviarSelecionadosWhatsApp"
+        style="border:0;border-radius:9px;padding:11px 16px;font-weight:800;cursor:pointer;background:#176b3a;color:#fff;">
+        📤 Abrir WhatsApp e Compartilhar
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="pcModalNovoChamado\" role="dialog" aria-modal="true" aria-labelledby="pcTituloNovoChamado"
   style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.48);align-items:center;justify-content:center;padding:20px;">
   <div style="width:min(520px,96vw);max-height:90vh;overflow:auto;background:#fff;border-radius:16px;box-shadow:0 15px 50px rgba(0,0,0,.25);padding:24px;position:relative;">
     <button type="button" id="pcFecharModalNovoChamado" aria-label="Fechar"
@@ -6879,6 +7169,14 @@ function criarCard(
 
             </span>
 
+            <label class="pc-card-selecao-direta-v701" title="Marque este chamado para compartilhar pelo WhatsApp">
+                <input
+                    type="checkbox"
+                    class="pc-check-direto-v701"
+                    data-protocolo="${encodeURIComponent(chamado.protocolo || "")}"
+                >
+                <span>📱 Selecionar para compartilhar pelo WhatsApp</span>
+            </label>
 
             <button
                 type="button"
@@ -11977,6 +12275,11 @@ function mostrarRelatorioAdminV11(){
 </div>
 
 <div>
+<label class="admin-v13-label">Destinatário da unidade *</label>
+<input class="admin-v13-input" id="v13Destinatario" placeholder="Nome do destinatário / responsável pela unidade" required type="text"/>
+</div>
+
+<div>
 <label class="admin-v13-label">Categoria da infração *</label>
 <select class="admin-v13-select" id="v13Categoria" required>
 <option value="">Selecione...</option>
@@ -12008,7 +12311,7 @@ function mostrarRelatorioAdminV11(){
 
 <div>
 <label class="admin-v13-label">Responsável pelo registro</label>
-<input class="admin-v13-input" id="v13Responsavel" placeholder="Nome do subsíndico/administrador" type="text"/>
+<input class="admin-v13-input" id="v13Responsavel" value="ADMINISTRAÇÃO PARQUE CLUBE" readonly type="text"/>
 </div>
 
 <div class="full">
@@ -12735,7 +13038,15 @@ function controlarVisaoGeralAoAbrirAdvertencias(ocultar) {
     const dataInfracao=formatarData(x.dataOcorrencia||x.dataInfracao||x.dataFato||'');
     const unidade=String(x.unidade||'Não informada');
     const bloco=String(x.bloco||'Não informado');
-    const responsavel=String(x.responsavel||'Administração');
+    const destinatariosLocais=v13LerDestinatarios();
+    const destinatario=String(
+        x.destinatario||
+        x.responsavelUnidade||
+        x.nomeDestinatario||
+        destinatariosLocais[x.protocolo]||
+        'Não informado'
+    );
+    const responsavel='ADMINISTRAÇÃO PARQUE CLUBE';
     const cotas=Number(x.multaCotas||0);
     const valorCota=Number(x.valorCota||0);
     const valorMulta=Number(x.valorMulta||0);
@@ -12779,7 +13090,7 @@ p{margin:0 7% 13px;text-align:justify}
 <div class="header-phone">Telefone: 3054 – 8464</div>
 </div></header>
 <div class="date-place">Valparaíso de Goiás, ${esc(dataExtenso(x.dataRegistro||''))}.</div>
-<div class="recipient"><strong>Ilmo. (A) Sr (A). ${esc(responsavel)}</strong><br>Da Unid. ${esc(unidade)} - ${esc(bloco)} do Conjunto Residencial Parque Clube.</div>
+<div class="recipient"><strong>Ilmo. (A) Sr (A). ${esc(destinatario)}</strong><br>Da Unid. ${esc(unidade)} - ${esc(bloco)} do Conjunto Residencial Parque Clube.</div>
 <div class="reference">REF.: ${esc(titulo)}</div>
 <p>Prezado (a) Senhor (a),</p>
 <p>Na qualidade de Administração do Condomínio Parque Clube, atendendo às obrigações estabelecidas, temos a missão de comunicar formalmente o descumprimento das normas deste residencial, conforme registro administrativo.</p>
@@ -12789,25 +13100,51 @@ p{margin:0 7% 13px;text-align:justify}
 <div class="info-row"><span class="label">Data da infração:</span> ${esc(dataInfracao||'Não informada')}</div>
 <div class="info-row"><span class="label">Infração / ocorrência:</span> ${esc(x.infracao||'Não informada')}</div>
 </div>
-<p><strong>Descrição da ocorrência:</strong><br>${esc(x.descricao||'Não informado.')}</p>
+<p><strong>Descrição da ocorrência:</strong><br><strong>${esc(x.descricao||'Não informado.')}</strong></p>
 ${x.observacoes?`<p><strong>Observações:</strong><br>${esc(x.observacoes)}</p>`:''}
 <div class="regimento"><div class="regimento-title">Previsto em:</div><div><strong>${esc(x.baseRegimento||'Não informada')}</strong></div></div>
 ${notificacao?`<div class="penalty"><strong>PENALIDADE ADMINISTRATIVA</strong><br>${cotas?`Multa prevista: ${esc(cotas)} cota(s) condominial(is).<br>`:''}${valorCota?`Valor da cota: R$ ${valorCota.toFixed(2).replace('.',',')}<br>`:''}${valorMulta?`<strong>Valor da multa: R$ ${valorMulta.toFixed(2).replace('.',',')}</strong><br>`:''}Prazo para recurso administrativo: <strong>7 dias úteis</strong>.</div>`:''}
-<p>${notificacao?'Solicitamos sua atenção para o cumprimento das normas internas. Caso entenda necessário, poderá apresentar recurso administrativo dentro do prazo previsto.':'Solicitamos sua atenção para evitar reincidências e novos descumprimentos das normas, preservando os interesses de todos e as melhores condições de habitabilidade para toda a comunidade do condomínio.'}</p>
+<p>Informo ainda que a reincidência acarretará em multa para cada infração cometida. Sendo assim, solicito sua atenção para evitar aborrecimentos com os demais condôminos. Destaco que meu intuito é tão somente preservar os interesses de todos e as melhores condições de habitabilidade para toda a comunidade do condomínio.</p>
 <p>Atenciosamente,</p>
 <div class="signature"><div class="signature-line">${esc(responsavel)}<br>Administração do Condomínio</div><div class="signature-line">Ciente / assinatura do responsável pela unidade</div></div>
 
 <div class="qrbox">
 <img src="${qrData}" alt="QR Code">
-<div>Consulte pelo aplicativo</div>
-<div class="qrprotocol">${esc(x.protocolo)}</div>
 </div>
-<div class="footer">REGIMENTO INTERNO</div>
+<div class="footer">REGIMENTO INTERNO<br>PARQUE CLUBE</div>
 </div><script>window.onload=function(){setTimeout(function(){window.print();},300);};<\/script>
 </body></html>`);
     w.document.close();
 }
 
+
+function v13ChaveDestinatarios(){
+    return 'parqueClube_v13_destinatarios_unidade';
+}
+function v13LerDestinatarios(){
+    try{
+        const dados=JSON.parse(localStorage.getItem(v13ChaveDestinatarios())||'{}');
+        return dados && typeof dados==='object' ? dados : {};
+    }catch(e){ return {}; }
+}
+function v13SalvarDestinatario(protocolo, nome){
+    const p=String(protocolo||'').trim();
+    const n=String(nome||'').trim();
+    if(!p || !n) return;
+    const dados=v13LerDestinatarios();
+    dados[p]=n;
+    try{ localStorage.setItem(v13ChaveDestinatarios(),JSON.stringify(dados)); }catch(e){}
+}
+function v13AplicarDestinatariosSalvos(lista){
+    const dados=v13LerDestinatarios();
+    return (Array.isArray(lista)?lista:[]).map(function(item){
+        const x=Object.assign({},item);
+        const atual=String(x.destinatario||x.responsavelUnidade||x.nomeDestinatario||'').trim();
+        const salvo=String(dados[x.protocolo]||'').trim();
+        if(!atual && salvo) x.destinatario=salvo;
+        return x;
+    });
+}
 async function carregarMedidas(){
         if(!senhaAdministrativa){alert('Faça o login administrativo primeiro.');return;}
         if(btnAtualizar){btnAtualizar.disabled=true;btnAtualizar.textContent='⏳ Atualizando...';}
@@ -12818,7 +13155,7 @@ async function carregarMedidas(){
                 const detalhe = d.detalhe ? `\n\nDetalhe técnico: ${d.detalhe}` : '';
                 throw new Error((d.erro||'Não foi possível carregar os registros.') + detalhe);
             }
-            medidas=Array.isArray(d.medidas)?d.medidas:[];
+            medidas=v13AplicarDestinatariosSalvos(Array.isArray(d.medidas)?d.medidas:[]);
             registrosDaPesquisaAtual=[];
             filtroKpiAtual='todos';
             const kpis=document.getElementById('v13Kpis');
@@ -12868,6 +13205,9 @@ async function carregarMedidas(){
             dataOcorrencia:document.getElementById('v13DataOcorrencia').value,
             bloco:document.getElementById('v13Bloco').value,
             unidade:document.getElementById('v13Unidade').value.trim(),
+            destinatario:document.getElementById('v13Destinatario').value.trim(),
+            responsavelUnidade:document.getElementById('v13Destinatario').value.trim(),
+            nomeDestinatario:document.getElementById('v13Destinatario').value.trim(),
             infracao:document.getElementById('v13Infracao').value,
             descricao:document.getElementById('v13Descricao').value.trim(),
             baseRegimento:document.getElementById('v13BaseRegimento').value.trim(),
@@ -12892,12 +13232,13 @@ async function carregarMedidas(){
             responsaveisDecisao:document.getElementById('v13ResponsaveisDecisao').value.trim(),
             justificativaDecisao:document.getElementById('v13JustificativaDecisao').value.trim()
         };
-        if(!payload.tipo||!payload.bloco||!payload.unidade||!payload.categoria||!payload.infracao||!payload.descricao){alert('Preencha os campos obrigatórios.');return;}
+        if(!payload.tipo||!payload.bloco||!payload.unidade||!payload.destinatario||!payload.categoria||!payload.infracao||!payload.descricao){alert('Preencha os campos obrigatórios.');return;}
         if(payload.tipo==='Notificação' && !payload.multaCotas){alert('Informe a quantidade de cotas da multa prevista para a Notificação.');return;}
         bot.disabled=true;bot.textContent='⏳ Registrando...';
         try{
             const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
             const d=await r.json(); if(!r.ok||!d.sucesso) throw new Error(d.erro||'Não foi possível registrar.');
+            v13SalvarDestinatario((d.medida&&d.medida.protocolo)||'', payload.destinatario);
             alert(`✅ ${d.medida.tipo} registrada com sucesso.\n\nProtocolo: ${d.medida.protocolo}`);
             limparForm(); await carregarMedidas(); consultarHistorico(payload.bloco,payload.unidade);
         }catch(e){alert(e.message||'Erro ao registrar medida administrativa.');}
@@ -14956,6 +15297,1070 @@ window.imprimirChamadosAbertosV428 = imprimirChamadosAbertosV428;
             });
         }
     });
+})();
+</script>
+
+
+
+<!-- V6.2 — TIPO DE OCORRÊNCIA EM DOIS NÍVEIS -->
+
+
+
+
+
+
+
+<!-- V6.8 — CORREÇÃO SEGURA: REINTEGRAR CAMPOS NO FORMULÁRIO -->
+<script id="pc-reintegrar-formulario-v68">
+(function () {
+    "use strict";
+
+    function grupoDoCampo(campo) {
+        if (!campo) return null;
+        return campo.closest ? campo.closest(".form-group") : campo.parentElement;
+    }
+
+    function reintegrarFormulario() {
+        var form = document.getElementById("formChamado");
+        if (!form) return;
+
+        var categoria = document.getElementById("categoriaOcorrencia");
+        var ancora = grupoDoCampo(categoria);
+
+        var prioridade = document.getElementById("prioridade");
+        var detalhes = document.getElementById("detalhes");
+        var areaExecucao = document.getElementById("areaExecucaoContainer");
+        var dataOcorrencia = document.getElementById("dataOcorrenciaContainer");
+        var intervaloCamera = document.getElementById("intervaloCamera");
+        var botaoEnviar = document.getElementById("btnEnviar");
+
+        var prioridadeGrupo = grupoDoCampo(prioridade);
+        var detalhesGrupo = grupoDoCampo(detalhes);
+
+        // Move os campos para dentro do formulário, sempre na ordem correta.
+        if (areaExecucao && areaExecucao.parentElement !== form) {
+            form.appendChild(areaExecucao);
+        }
+
+        if (prioridadeGrupo && prioridadeGrupo.parentElement !== form) {
+            form.appendChild(prioridadeGrupo);
+        }
+
+        if (dataOcorrencia && dataOcorrencia.parentElement !== form) {
+            form.appendChild(dataOcorrencia);
+        }
+
+        if (intervaloCamera && intervaloCamera.parentElement !== form) {
+            form.appendChild(intervaloCamera);
+        }
+
+        if (detalhesGrupo && detalhesGrupo.parentElement !== form) {
+            form.appendChild(detalhesGrupo);
+        }
+
+        if (botaoEnviar && botaoEnviar.parentElement !== form) {
+            form.appendChild(botaoEnviar);
+        }
+
+        // Reorganiza a sequência visual dentro do próprio formulário.
+        var referencia = ancora;
+
+        function inserirDepois(elemento) {
+            if (!elemento || elemento === referencia) return;
+            if (referencia && referencia.parentElement === form) {
+                referencia.insertAdjacentElement("afterend", elemento);
+                referencia = elemento;
+            } else {
+                form.appendChild(elemento);
+                referencia = elemento;
+            }
+        }
+
+        inserirDepois(areaExecucao);
+        inserirDepois(prioridadeGrupo);
+        inserirDepois(dataOcorrencia);
+        inserirDepois(intervaloCamera);
+        inserirDepois(detalhesGrupo);
+        inserirDepois(botaoEnviar);
+
+        // Garante largura total dos campos que devem ficar em linha própria.
+        [areaExecucao, prioridadeGrupo, dataOcorrencia, intervaloCamera, detalhesGrupo, botaoEnviar]
+            .forEach(function (elemento) {
+                if (!elemento) return;
+                elemento.style.gridColumn = "1 / -1";
+                elemento.style.width = "100%";
+                elemento.style.boxSizing = "border-box";
+            });
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        reintegrarFormulario();
+        setTimeout(reintegrarFormulario, 50);
+        setTimeout(reintegrarFormulario, 250);
+    });
+
+    window.addEventListener("load", function () {
+        reintegrarFormulario();
+    });
+})();
+</script>
+
+
+<!-- =====================================================
+     V6.9.9 — SELEÇÃO DIRETA DE CHAMADOS VIA WHATSAPP
+     Base limpa na V6.9.6.
+     Reutiliza a função original de envio, já existente
+     e funcional no aplicativo.
+===================================================== -->
+<style id="pc-whatsapp-direto-v699-css">
+#btnCompartilharMultiplosWhatsApp{
+    display:none !important;
+}
+#pcModalCompartilharChamadosWhatsApp{
+    display:none !important;
+}
+#listaChamados .card{
+    position:relative;
+    padding-right:175px !important;
+}
+.pc699-selecionar{
+    position:absolute;
+    top:12px;
+    right:12px;
+    display:flex;
+    align-items:center;
+    gap:7px;
+    margin:0;
+    padding:7px 10px;
+    background:#f4fbf6;
+    border:1px solid #b9d9c2;
+    border-radius:9px;
+    color:#17632d;
+    font-size:12px;
+    font-weight:700;
+    cursor:pointer;
+    z-index:10;
+}
+.pc699-selecionar input{
+    width:18px;
+    height:18px;
+    margin:0;
+    accent-color:#17632d;
+    cursor:pointer;
+}
+#pc699Painel{
+    display:none;
+    margin:12px 0 14px;
+    padding:14px;
+    border:1px solid #b9d9c2;
+    border-radius:12px;
+    background:#fff;
+    box-shadow:0 5px 18px rgba(0,0,0,.10);
+}
+#pc699Painel.ativo{
+    display:block;
+}
+.pc699-linha-superior{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom:10px;
+}
+.pc699-linha-superior strong{
+    color:#17632d;
+}
+.pc699-acoes{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    flex-wrap:wrap;
+}
+#pc699Numero{
+    flex:1 1 250px;
+    min-width:200px;
+    padding:11px 12px;
+    border:1px solid #c7d5dd;
+    border-radius:9px;
+    font-size:14px;
+}
+#pc699Enviar{
+    flex:1 1 280px;
+    width:auto !important;
+    margin:0 !important;
+    background:#17632d !important;
+    color:#fff !important;
+}
+#pc699Limpar{
+    width:auto !important;
+    margin:0 !important;
+    padding:8px 12px !important;
+    background:#666 !important;
+    color:#fff !important;
+}
+@media(max-width:650px){
+    #listaChamados .card{
+        padding-right:13px !important;
+        padding-top:54px !important;
+    }
+    .pc699-selecionar{
+        top:9px;
+        right:9px;
+    }
+    #pc699Enviar{
+        flex-basis:100%;
+    }
+}
+</style>
+
+<script id="pc-whatsapp-direto-v699-js">
+(function(){
+    var observerV699 = null;
+    var timerV699 = null;
+
+    function obterSetV699(){
+        try{
+            if(typeof pcProtocolosSelecionadosWhatsApp !== "undefined"){
+                return pcProtocolosSelecionadosWhatsApp;
+            }
+        }catch(e){}
+        return null;
+    }
+
+    function protocoloDoCardV699(card){
+        var el = card.querySelector(".card-protocolo");
+        if(!el) return "";
+        var texto = (el.textContent || "").replace(/\s+/g," ").trim();
+        var m = texto.match(/PC-[A-Za-z0-9-]+/i);
+        return m ? m[0].trim() : "";
+    }
+
+    function atualizarPainelV699(){
+        var set = obterSetV699();
+        var qtd = set && typeof set.size === "number" ? set.size : 0;
+        var painel = document.getElementById("pc699Painel");
+        var resumo = document.getElementById("pc699Resumo");
+
+        if(resumo){
+            resumo.textContent = qtd === 1
+                ? "1 chamado selecionado"
+                : qtd + " chamados selecionados";
+        }
+        if(painel){
+            painel.classList.toggle("ativo", qtd > 0);
+        }
+    }
+
+    function criarPainelV699(){
+        var lista = document.getElementById("listaChamados");
+        if(!lista) return;
+
+        var painel = document.getElementById("pc699Painel");
+        if(!painel){
+            painel = document.createElement("div");
+            painel.id = "pc699Painel";
+            painel.innerHTML =
+                '<div class="pc699-linha-superior">' +
+                    '<strong>📱 Compartilhar chamados selecionados pelo WhatsApp</strong>' +
+                    '<span id="pc699Resumo">0 chamados selecionados</span>' +
+                    '<button type="button" id="pc699Limpar">✖ Limpar seleção</button>' +
+                '</div>' +
+                '<div class="pc699-acoes">' +
+                    '<input type="tel" id="pc699Numero" placeholder="Número de destino — Ex.: 61 99999-9999">' +
+                    '<button type="button" id="pc699Enviar">📤 Compartilhar chamados selecionados</button>' +
+                '</div>';
+
+            lista.parentNode.insertBefore(painel, lista);
+
+            document.getElementById("pc699Limpar").addEventListener("click", function(){
+                var set = obterSetV699();
+                if(set && typeof set.clear === "function") set.clear();
+
+                document.querySelectorAll(".pc699-check").forEach(function(c){
+                    c.checked = false;
+                });
+
+                atualizarPainelV699();
+            });
+
+            document.getElementById("pc699Enviar").addEventListener("click", function(){
+                var set = obterSetV699();
+
+                if(!set || !set.size){
+                    alert("Selecione pelo menos um chamado.");
+                    return;
+                }
+
+                var campoInline = document.getElementById("pc699Numero");
+                var numeroDigitado = campoInline ? campoInline.value.trim() : "";
+
+                if(!numeroDigitado){
+                    alert("Informe o número de destino do WhatsApp.");
+                    if(campoInline) campoInline.focus();
+                    return;
+                }
+
+                // Reaproveita o campo e a FUNÇÃO ORIGINAL do aplicativo.
+                var campoOriginal = document.getElementById("pcNumeroDestinoWhatsApp");
+                if(campoOriginal){
+                    campoOriginal.value = numeroDigitado;
+                }
+
+                if(typeof pcEnviarChamadosSelecionadosWhatsApp === "function"){
+                    pcEnviarChamadosSelecionadosWhatsApp();
+                    return;
+                }
+
+                alert("A função original de compartilhamento pelo WhatsApp não foi encontrada.");
+            });
+        }
+
+        atualizarPainelV699();
+    }
+
+    function inserirCaixasV699(){
+        criarPainelV699();
+
+        var set = obterSetV699();
+        var cards = document.querySelectorAll("#listaChamados .card");
+
+        cards.forEach(function(card){
+            var protocolo = protocoloDoCardV699(card);
+            if(!protocolo) return;
+
+            var antiga = card.querySelector(".pc699-selecionar");
+            if(antiga) antiga.remove();
+
+            var label = document.createElement("label");
+            label.className = "pc699-selecionar";
+
+            var input = document.createElement("input");
+            input.type = "checkbox";
+            input.className = "pc699-check";
+            input.value = protocolo;
+            input.checked = !!(set && set.has && set.has(protocolo));
+
+            var texto = document.createElement("span");
+            texto.textContent = "Compartilhar";
+
+            label.appendChild(input);
+            label.appendChild(texto);
+            card.appendChild(label);
+        });
+
+        atualizarPainelV699();
+    }
+
+    function instalarDelegacaoV699(){
+        if(document.documentElement.dataset.pc699Delegacao === "1") return;
+        document.documentElement.dataset.pc699Delegacao = "1";
+
+        document.addEventListener("change", function(e){
+            var caixa = e.target;
+            if(!caixa || !caixa.classList || !caixa.classList.contains("pc699-check")) return;
+
+            var set = obterSetV699();
+            if(!set){
+                alert("Não foi possível inicializar a seleção de chamados.");
+                caixa.checked = false;
+                return;
+            }
+
+            var protocolo = String(caixa.value || "").trim();
+            if(caixa.checked) set.add(protocolo);
+            else set.delete(protocolo);
+
+            atualizarPainelV699();
+        });
+    }
+
+    function observarListaV699(){
+        var lista = document.getElementById("listaChamados");
+        if(!lista || observerV699) return;
+
+        observerV699 = new MutationObserver(function(){
+            clearTimeout(timerV699);
+            timerV699 = setTimeout(inserirCaixasV699, 50);
+        });
+
+        observerV699.observe(lista, {childList:true, subtree:true});
+    }
+
+    function iniciarV699(){
+        instalarDelegacaoV699();
+        criarPainelV699();
+        inserirCaixasV699();
+        observarListaV699();
+    }
+
+    document.addEventListener("DOMContentLoaded", iniciarV699);
+    window.addEventListener("load", function(){
+        iniciarV699();
+        setTimeout(iniciarV699, 300);
+    });
+})();
+</script>
+
+
+<style id="pc-whatsapp-selecao-direta-v701-style">
+.pc-card-selecao-direta-v701{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin:10px 0 6px;
+    padding:9px 11px;
+    border:1px solid #b9d3c2;
+    border-radius:8px;
+    background:#f7fbf8;
+    color:#17632d;
+    font-size:13px;
+    font-weight:700;
+    cursor:pointer;
+    user-select:none;
+}
+.pc-card-selecao-direta-v701:hover{ background:#eef8f1; }
+.pc-card-selecao-direta-v701 input{
+    width:18px;
+    height:18px;
+    margin:0;
+    flex:0 0 auto;
+    cursor:pointer;
+}
+</style>
+
+<script id="pc-whatsapp-selecao-direta-v701-js">
+(function(){
+    function obterSelecionados(){
+        if(!(window.pcProtocolosSelecionadosWhatsApp instanceof Set)){
+            window.pcProtocolosSelecionadosWhatsApp = new Set();
+        }
+        return window.pcProtocolosSelecionadosWhatsApp;
+    }
+
+    function protocoloDaCaixa(caixa){
+        try{
+            return String(decodeURIComponent(caixa.dataset.protocolo || "")).trim();
+        }catch(e){
+            return String(caixa.dataset.protocolo || "").trim();
+        }
+    }
+
+    function sincronizarSelecao(){
+        var selecionados = obterSelecionados();
+        document.querySelectorAll(".pc-check-direto-v701").forEach(function(caixa){
+            caixa.checked = selecionados.has(protocoloDaCaixa(caixa));
+        });
+    }
+
+    function atualizarTextoBotao(){
+        var botao = document.getElementById("btnCompartilharMultiplosWhatsApp");
+        if(!botao) return;
+        var total = obterSelecionados().size;
+        var texto = "📱 Compartilhar Vários Chamados pelo WhatsApp";
+        botao.textContent = total > 0 ? texto + " (" + total + ")" : texto;
+    }
+
+    document.addEventListener("change", function(e){
+        var caixa = e.target;
+        if(!caixa || !caixa.classList || !caixa.classList.contains("pc-check-direto-v701")) return;
+
+        var protocolo = protocoloDaCaixa(caixa);
+        if(!protocolo) return;
+
+        var selecionados = obterSelecionados();
+        if(caixa.checked){
+            selecionados.add(protocolo);
+        }else{
+            selecionados.delete(protocolo);
+        }
+
+        atualizarTextoBotao();
+
+        if(typeof window.pcAtualizarResumoCompartilhamentoWhatsApp === "function"){
+            try{ window.pcAtualizarResumoCompartilhamentoWhatsApp(); }catch(err){}
+        }
+    });
+
+    var originalMostrarChamados = window.mostrarChamados;
+    if(typeof originalMostrarChamados === "function" && !window.__pcPatchMostrarChamadosV701){
+        window.__pcPatchMostrarChamadosV701 = true;
+        window.mostrarChamados = function(){
+            var resultado = originalMostrarChamados.apply(this, arguments);
+            setTimeout(function(){
+                sincronizarSelecao();
+                atualizarTextoBotao();
+            }, 0);
+            return resultado;
+        };
+    }
+
+    document.addEventListener("DOMContentLoaded", function(){
+        sincronizarSelecao();
+        atualizarTextoBotao();
+    });
+})();
+</script>
+
+
+<!-- V7.0.2 — REMOVER BOTÃO LATERAL E MOSTRAR QUANTIDADE SELECIONADA -->
+<style id="pc-whatsapp-v702-css">
+/* Remove o botão/caixa lateral antiga de cada chamado */
+.pc699-selecionar{
+    display:none !important;
+}
+#listaChamados .card{
+    padding-right:13px !important;
+}
+
+/* Painel principal de compartilhamento */
+#pc702ResumoCompartilhamento{
+    display:none;
+    margin:12px 0 14px;
+    padding:14px;
+    border:1px solid #b9d9c2;
+    border-radius:12px;
+    background:#f7fbf8;
+    box-shadow:0 5px 18px rgba(0,0,0,.08);
+}
+#pc702ResumoCompartilhamento.ativo{
+    display:block;
+}
+.pc702-linha{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-bottom:10px;
+}
+.pc702-qtd{
+    padding:7px 12px;
+    border-radius:20px;
+    background:#17632d;
+    color:#fff;
+    font-weight:800;
+}
+.pc702-acoes{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+#pc702Numero{
+    flex:1 1 250px;
+    min-width:220px;
+    padding:11px 12px;
+    border:1px solid #c7d5dd;
+    border-radius:9px;
+    font-size:14px;
+}
+#pc702Enviar{
+    flex:1 1 260px;
+    min-height:42px;
+    border:0;
+    border-radius:9px;
+    background:#17632d;
+    color:#fff;
+    font-weight:800;
+    cursor:pointer;
+}
+#pc702Limpar{
+    border:0;
+    border-radius:9px;
+    padding:10px 14px;
+    background:#666;
+    color:#fff;
+    font-weight:700;
+    cursor:pointer;
+}
+</style>
+
+<script id="pc-whatsapp-v702-js">
+(function(){
+    function caixasDiretas(){
+        return Array.from(document.querySelectorAll(".pc-check-direto-v701"));
+    }
+
+    function protocolo(caixa){
+        try{
+            return String(decodeURIComponent(caixa.dataset.protocolo || "")).trim();
+        }catch(e){
+            return String(caixa.dataset.protocolo || "").trim();
+        }
+    }
+
+    function totalSelecionado(){
+        return caixasDiretas().filter(function(c){ return c.checked; }).length;
+    }
+
+    function criarPainel(){
+        var lista = document.getElementById("listaChamados");
+        if(!lista) return null;
+
+        var painel = document.getElementById("pc702ResumoCompartilhamento");
+        if(!painel){
+            painel = document.createElement("div");
+            painel.id = "pc702ResumoCompartilhamento";
+            painel.innerHTML =
+                '<div class="pc702-linha">' +
+                    '<strong>📱 Compartilhar chamados selecionados pelo WhatsApp</strong>' +
+                    '<span id="pc702Qtd" class="pc702-qtd">0 selecionados</span>' +
+                    '<button type="button" id="pc702Limpar">✖ Limpar seleção</button>' +
+                '</div>' +
+                '<div class="pc702-acoes">' +
+                    '<input type="tel" id="pc702Numero" placeholder="Número de destino — Ex.: 61 99999-9999">' +
+                    '<button type="button" id="pc702Enviar">📤 Compartilhar chamados selecionados</button>' +
+                '</div>';
+
+            lista.parentNode.insertBefore(painel, lista);
+
+            document.getElementById("pc702Limpar").addEventListener("click", function(){
+                caixasDiretas().forEach(function(caixa){
+                    if(caixa.checked){
+                        caixa.checked = false;
+                        caixa.dispatchEvent(new Event("change", {bubbles:true}));
+                    }
+                });
+                atualizar();
+            });
+
+            document.getElementById("pc702Enviar").addEventListener("click", function(){
+                var selecionadas = caixasDiretas().filter(function(c){ return c.checked; });
+                if(!selecionadas.length){
+                    alert("Selecione pelo menos um chamado.");
+                    return;
+                }
+
+                var campo = document.getElementById("pc702Numero");
+                var numero = campo ? campo.value.trim() : "";
+                if(!numero){
+                    alert("Informe o número de destino do WhatsApp.");
+                    if(campo) campo.focus();
+                    return;
+                }
+
+                /* Sincroniza as caixas originais escondidas, para usar a função
+                   de compartilhamento já existente e testada no aplicativo. */
+                selecionadas.forEach(function(caixa){
+                    var p = protocolo(caixa);
+                    var antiga = Array.from(document.querySelectorAll(".pc699-check"))
+                        .find(function(x){ return String(x.value || "").trim() === p; });
+
+                    if(antiga && !antiga.checked){
+                        antiga.checked = true;
+                        antiga.dispatchEvent(new Event("change", {bubbles:true}));
+                    }
+                });
+
+                var destinoOriginal = document.getElementById("pcNumeroDestinoWhatsApp");
+                if(destinoOriginal) destinoOriginal.value = numero;
+
+                if(typeof pcEnviarChamadosSelecionadosWhatsApp === "function"){
+                    pcEnviarChamadosSelecionadosWhatsApp();
+                }else{
+                    alert("A função de compartilhamento pelo WhatsApp não foi encontrada.");
+                }
+            });
+        }
+        return painel;
+    }
+
+    function atualizar(){
+        var painel = criarPainel();
+        if(!painel) return;
+
+        var qtd = totalSelecionado();
+        var texto = qtd === 1 ? "1 chamado selecionado" : qtd + " chamados selecionados";
+        var badge = document.getElementById("pc702Qtd");
+        if(badge) badge.textContent = texto;
+
+        painel.classList.toggle("ativo", qtd > 0);
+    }
+
+    /* Executa depois dos scripts anteriores, apenas para atualizar o número */
+    document.addEventListener("change", function(e){
+        if(e.target && e.target.classList && e.target.classList.contains("pc-check-direto-v701")){
+            setTimeout(atualizar, 0);
+        }
+    });
+
+    var observador = null;
+    function iniciar(){
+        criarPainel();
+        atualizar();
+
+        var lista = document.getElementById("listaChamados");
+        if(lista && !observador){
+            observador = new MutationObserver(function(){
+                setTimeout(atualizar, 60);
+            });
+            observador.observe(lista, {childList:true, subtree:true});
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", iniciar);
+    window.addEventListener("load", function(){
+        iniciar();
+        setTimeout(iniciar, 400);
+    });
+})();
+</script>
+
+
+<!-- =========================================================
+     V7.0.3 — CORREÇÃO DEFINITIVA DO ENCAMINHAMENTO WHATSAPP
+     - Inclui pavimentos (campo correto do formulário)
+     - Recolhe os dados completos do chamado
+     - Inclui campos extras gravados no Worker
+     - Substitui o listener antigo do botão azul
+========================================================= -->
+<script id="pc-whatsapp-completo-v703">
+(function () {
+    "use strict";
+
+    function pcV703Valor(obj, nomes, padrao) {
+        if (!obj || typeof obj !== "object") return padrao || "";
+        for (var i = 0; i < nomes.length; i++) {
+            var chave = nomes[i];
+            if (Object.prototype.hasOwnProperty.call(obj, chave)) {
+                var valor = obj[chave];
+                if (valor !== undefined && valor !== null && String(valor).trim() !== "") {
+                    return String(valor).trim();
+                }
+            }
+        }
+        return padrao || "";
+    }
+
+    function pcV703Lista() {
+        var lista = [];
+        try {
+            if (typeof chamados !== "undefined" && Array.isArray(chamados)) lista = lista.concat(chamados);
+        } catch (e) {}
+        try {
+            if (typeof chamadosArquivadosV11 !== "undefined" && Array.isArray(chamadosArquivadosV11)) lista = lista.concat(chamadosArquivadosV11);
+        } catch (e) {}
+        try {
+            if (typeof chamadosHistoricoV11 !== "undefined" && Array.isArray(chamadosHistoricoV11)) lista = lista.concat(chamadosHistoricoV11);
+        } catch (e) {}
+
+        var vistos = {};
+        return lista.filter(function (item) {
+            var chave = String((item && (item.protocolo || item.numeroProtocolo || item.id)) || Math.random());
+            if (vistos[chave]) return false;
+            vistos[chave] = true;
+            return true;
+        });
+    }
+
+    function pcV703ProtocoloAtual() {
+        try {
+            if (typeof protocoloSelecionado !== "undefined" && protocoloSelecionado) {
+                return String(protocoloSelecionado);
+            }
+        } catch (e) {}
+
+        var candidatos = [
+            document.querySelector("[data-protocolo-selecionado]"),
+            document.querySelector("#protocoloAdmin"),
+            document.querySelector("#protocoloSelecionado"),
+            document.querySelector("#editarChamado [data-protocolo]")
+        ];
+
+        for (var i = 0; i < candidatos.length; i++) {
+            var el = candidatos[i];
+            if (!el) continue;
+            var v = el.value || el.dataset.protocolo || el.dataset.protocoloSelecionado || el.textContent;
+            if (v && String(v).trim()) return String(v).trim();
+        }
+        return "";
+    }
+
+    function pcV703Chamado() {
+        var protocolo = pcV703ProtocoloAtual();
+        var lista = pcV703Lista();
+
+        if (protocolo) {
+            var achado = lista.find(function (item) {
+                var p = String((item && (item.protocolo || item.numeroProtocolo || item.codigo)) || "");
+                return p === protocolo;
+            });
+            if (achado) return achado;
+        }
+
+        return window.pcChamadoSelecionado || window.chamadoSelecionado || null;
+    }
+
+    function pcV703FormatarData(valor) {
+        if (valor === undefined || valor === null || String(valor).trim() === "") return "";
+        var texto = String(valor).trim();
+
+        var ymd = texto.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        if (ymd) return ymd[3] + "/" + ymd[2] + "/" + ymd[1];
+
+        var iso = texto.match(/^(\d{4})-(\d{2})-(\d{2})[T\s](\d{2}):(\d{2})/);
+        if (iso) return iso[3] + "/" + iso[2] + "/" + iso[1] + " " + iso[4] + ":" + iso[5];
+
+        return texto;
+    }
+
+    function pcV703Adicionar(linhas, rotulo, valor) {
+        if (valor !== undefined && valor !== null && String(valor).trim() !== "") {
+            linhas.push("• *" + rotulo + ":* " + String(valor).trim());
+        }
+    }
+
+    function pcV703Rotulo(chave) {
+        var mapa = {
+            protocolo: "Protocolo",
+            numeroProtocolo: "Protocolo",
+            status: "Status",
+            solicitante: "Solicitante",
+            nome: "Solicitante",
+            whatsappRetorno: "WhatsApp para retorno",
+            whatsapp: "WhatsApp para retorno",
+            telefone: "Telefone",
+            celular: "Celular",
+            cargo: "Cargo/Função",
+            funcao: "Cargo/Função",
+            bloco: "Bloco",
+            local: "Local",
+            area: "Área/Local",
+            areaBloco: "Área/Bloco",
+            pavimentos: "Andar/Pavimento",
+            pavimento: "Andar/Pavimento",
+            andar: "Andar/Pavimento",
+            unidade: "Unidade",
+            apartamento: "Apartamento",
+            ocorrencia: "Ocorrência",
+            tipoOcorrencia: "Ocorrência",
+            categoriaGeral: "Tipo de ocorrência geral",
+            tipoOcorrenciaGeral: "Tipo de ocorrência geral",
+            ocorrenciaGeral: "Tipo de ocorrência geral",
+            ocorrenciaEspecifica: "Ocorrência específica",
+            areaExecucao: "Área/Local da execução",
+            localExecucao: "Área/Local da execução",
+            prioridade: "Prioridade",
+            dataOcorrencia: "Data da ocorrência",
+            data_ocorrencia: "Data da ocorrência",
+            horaInicial: "Hora inicial",
+            horaFinal: "Hora final",
+            detalhes: "Detalhes do chamado",
+            descricao: "Detalhes do chamado",
+            relato: "Detalhes do chamado",
+            observacao: "Observação",
+            responsavel: "Responsável",
+            observacaoSolucao: "Observação da solução",
+            respostaAdministracao: "Observação da solução"
+        };
+        if (mapa[chave]) return mapa[chave];
+        return String(chave)
+            .replace(/([A-Z])/g, " $1")
+            .replace(/_/g, " ")
+            .replace(/^./, function (c) { return c.toUpperCase(); });
+    }
+
+    function pcV703Mensagem(chamado) {
+        var protocolo = pcV703Valor(chamado, ["protocolo", "numeroProtocolo", "codigo"], pcV703ProtocoloAtual() || "Não informado");
+        var status = (document.getElementById("statusAdmin") || {}).value ||
+            pcV703Valor(chamado, ["status", "situacao"], "Aberto");
+        var prioridade = (document.getElementById("prioridadeAdmin") || {}).value ||
+            pcV703Valor(chamado, ["prioridade"], "Moderada");
+
+        var linhas = [
+            "🏢 *PARQUE CLUBE*",
+            "",
+            "📤 *ENCAMINHAMENTO DE CHAMADO*",
+            "",
+            "📋 *Protocolo:* " + protocolo,
+            "📌 *Status:* " + status,
+            ""
+        ];
+
+        // Campos principais, na ordem mais clara para leitura.
+        var principais = [
+            ["Solicitante", ["solicitante", "nome", "nomeSolicitante"]],
+            ["WhatsApp para retorno", ["whatsappRetorno", "whatsapp", "telefoneRetorno", "telefone", "celular"]],
+            ["Cargo/Função", ["cargo", "funcao", "cargoFuncao"]],
+            ["Bloco/Local", ["bloco", "local", "area", "areaBloco", "localizacao"]],
+            // CORREÇÃO PRINCIPAL: primeiro "pavimentos", que é o campo realmente gravado.
+            ["Andar/Pavimento", ["pavimentos", "pavimento", "andar", "andares", "andarPavimento", "andar_pavimento"]],
+            ["Unidade/Apartamento", ["unidade", "apartamento", "apto"]],
+            ["Tipo de ocorrência geral", ["categoriaGeral", "tipoOcorrenciaGeral", "ocorrenciaGeral", "tipoGeral"]],
+            ["Ocorrência específica", ["ocorrenciaEspecifica", "ocorrencia", "tipoOcorrencia", "tipoServico", "servico"]],
+            ["Área/Local da execução", ["areaExecucao", "areaLocalExecucao", "localExecucao", "areaDaExecucao"]],
+            ["Data da ocorrência", ["dataOcorrencia", "data_ocorrencia", "dataOcorrido", "data_ocorrido", "dataFato"]],
+            ["Hora inicial", ["horaInicial", "hora_inicial", "horaInicio", "hora_inicio", "inicio"]],
+            ["Hora final", ["horaFinal", "hora_final", "horaFim", "hora_fim", "fim"]]
+        ];
+
+        var chavesUsadas = {};
+        principais.forEach(function (grupo) {
+            var valor = pcV703Valor(chamado, grupo[1], "");
+            if (valor) {
+                var valorFormatado = /Data/.test(grupo[0]) ? pcV703FormatarData(valor) : valor;
+                pcV703Adicionar(linhas, grupo[0], valorFormatado);
+                grupo[1].forEach(function (k) { chavesUsadas[k] = true; });
+            }
+        });
+
+        pcV703Adicionar(linhas, "Prioridade", prioridade);
+        chavesUsadas.prioridade = true;
+        chavesUsadas.protocolo = true;
+        chavesUsadas.numeroProtocolo = true;
+        chavesUsadas.status = true;
+
+        var detalhes = pcV703Valor(chamado, [
+            "detalhes", "descricao", "descricaoOcorrencia",
+            "detalhesOcorrido", "observacao", "relato"
+        ], "");
+
+        chavesUsadas.detalhes = true;
+        chavesUsadas.descricao = true;
+        chavesUsadas.descricaoOcorrencia = true;
+        chavesUsadas.detalhesOcorrido = true;
+        chavesUsadas.observacao = true;
+        chavesUsadas.relato = true;
+
+        if (detalhes) {
+            linhas.push("", "📝 *DETALHES DO CHAMADO:*", detalhes);
+        }
+
+        // Inclui automaticamente qualquer outro dado preenchido e gravado no chamado.
+        var ignorar = {
+            id: true, action: true, adminPassword: true, senhaAdministrativa: true,
+            arquivado: true, historico: true, imagem: true, imagens: true,
+            responsavel: true, observacaoSolucao: true, respostaAdministracao: true,
+            atualizadoEm: true, ultimaAtualizacao: true, updated_at: true,
+            criadoEm: true, criado_em: true, dataAbertura: true, dataCriacao: true,
+            created_at: true, createdAt: true, timestamp: true
+        };
+
+        var extras = [];
+        Object.keys(chamado || {}).forEach(function (chave) {
+            if (chavesUsadas[chave] || ignorar[chave]) return;
+            var valor = chamado[chave];
+            if (valor === undefined || valor === null || String(valor).trim() === "") return;
+            if (typeof valor === "object") {
+                try { valor = JSON.stringify(valor); } catch (e) { return; }
+            }
+            extras.push([pcV703Rotulo(chave), String(valor)]);
+        });
+
+        if (extras.length) {
+            linhas.push("", "📌 *OUTRAS INFORMAÇÕES DO CHAMADO:*");
+            extras.forEach(function (item) {
+                pcV703Adicionar(linhas, item[0], item[1]);
+            });
+        }
+
+        var responsavelDigitado = ((document.getElementById("responsavelAdmin") || {}).value || "").trim();
+        var responsavel = responsavelDigitado ||
+            pcV703Valor(chamado, ["responsavel", "responsavelAdmin"], "");
+
+        var observacaoDigitada = ((document.getElementById("observacaoAdmin") || {}).value || "").trim();
+        var observacaoSolucao = observacaoDigitada ||
+            pcV703Valor(chamado, ["observacaoSolucao", "respostaAdministracao"], "");
+
+        var recebido = pcV703Valor(chamado, [
+            "criadoEm", "criado_em", "dataAbertura", "dataCriacao",
+            "created_at", "createdAt", "timestamp"
+        ], "");
+
+        if (responsavel || recebido || observacaoSolucao) {
+            linhas.push("");
+            if (responsavel) pcV703Adicionar(linhas, "Responsável", responsavel);
+            if (recebido) pcV703Adicionar(linhas, "Recebido em", pcV703FormatarData(recebido));
+            if (observacaoSolucao) {
+                linhas.push("", "✅ *OBSERVAÇÃO DA ADMINISTRAÇÃO:*", observacaoSolucao);
+            }
+        }
+
+        linhas.push(
+            "",
+            "🔎 *Acompanhar chamado:*",
+            (window.location && window.location.origin ? window.location.origin : "") +
+            "/?protocolo=" + encodeURIComponent(protocolo)
+        );
+
+        return linhas.join("\n");
+    }
+
+    function pcV703Numero(bruto) {
+        var numero = String(bruto || "").replace(/\D/g, "");
+        if (numero.length === 10 || numero.length === 11) numero = "55" + numero;
+        return numero;
+    }
+
+    function pcV703Enviar() {
+        var input = document.getElementById("whatsappDestinoAdmin");
+        var bruto = input ? String(input.value || "").trim() : "";
+        if (!bruto) {
+            alert("Informe o número do WhatsApp de destino.");
+            if (input) input.focus();
+            return false;
+        }
+
+        var numero = pcV703Numero(bruto);
+        if (numero.length < 12) {
+            alert("Informe um número válido com DDD.");
+            if (input) input.focus();
+            return false;
+        }
+
+        var chamado = pcV703Chamado();
+        if (!chamado) {
+            alert("Não foi possível localizar o chamado selecionado. Atualize a lista e abra novamente o chamado.");
+            return false;
+        }
+
+        try { localStorage.setItem("parqueClubeWhatsappDestinoAdmin", bruto); } catch (e) {}
+
+        var mensagem = pcV703Mensagem(chamado);
+        var url = "https://wa.me/" + numero + "?text=" + encodeURIComponent(mensagem);
+        window.open(url, "_blank");
+        return false;
+    }
+
+    function pcV703ConfigurarBotao() {
+        var antigo = document.getElementById("btnEncaminharWhatsAppAdmin");
+        if (!antigo) return;
+
+        // Clona o botão para remover listeners antigos que estavam usando a função incompleta.
+        var novo = antigo.cloneNode(true);
+        antigo.parentNode.replaceChild(novo, antigo);
+
+        novo.onclick = function (evento) {
+            if (evento) {
+                evento.preventDefault();
+                evento.stopPropagation();
+            }
+            return pcV703Enviar();
+        };
+
+        var input = document.getElementById("whatsappDestinoAdmin");
+        if (input && !input.value) {
+            try {
+                var salvo = localStorage.getItem("parqueClubeWhatsappDestinoAdmin");
+                if (salvo) input.value = salvo;
+            } catch (e) {}
+        }
+    }
+
+    window.pcV703EnviarWhatsApp = pcV703Enviar;
+    window.pcV703MontarMensagemWhatsApp = pcV703Mensagem;
+
+    document.addEventListener("DOMContentLoaded", function () {
+        pcV703ConfigurarBotao();
+        setTimeout(pcV703ConfigurarBotao, 300);
+        setTimeout(pcV703ConfigurarBotao, 1000);
+    });
+
+    document.addEventListener("click", function () {
+        setTimeout(pcV703ConfigurarBotao, 120);
+    });
+
+    pcV703ConfigurarBotao();
 })();
 </script>
 
