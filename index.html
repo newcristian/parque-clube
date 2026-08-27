@@ -6010,6 +6010,27 @@ function montarMensagemCompartilharProtocolo(chamado) {
         chamado?.observacoes ||
         "";
 
+    /*
+     * Cria um link direto para este chamado específico.
+     *
+     * Exemplo:
+     * https://parque-clube.newcristian.workers.dev/?protocolo=PC-26-08-26-001
+     *
+     * Ao abrir o link, o aplicativo:
+     * 1. abre a aba Consultar Protocolo;
+     * 2. preenche o número automaticamente;
+     * 3. executa a consulta;
+     * 4. mostra diretamente os dados do chamado.
+     */
+    const protocoloCodificado =
+        encodeURIComponent(protocolo);
+
+    const linkDireto =
+        window.location.origin +
+        window.location.pathname +
+        "?protocolo=" +
+        protocoloCodificado;
+
     let mensagem =
         "🏢 *PARQUE CLUBE*\n\n" +
         "📋 *PROTOCOLO DE CHAMADO*\n\n" +
@@ -6025,8 +6046,8 @@ function montarMensagemCompartilharProtocolo(chamado) {
     }
 
     mensagem +=
-        "\n\n🔎 *Consulte e acompanhe pelo aplicativo:*\n" +
-        "https://parque-clube.newcristian.workers.dev/";
+        "\n\n🔎 *ACESSE DIRETAMENTE ESTE CHAMADO:*\n" +
+        linkDireto;
 
     return mensagem;
 }
