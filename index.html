@@ -722,7 +722,17 @@ function pcEnviarChamadosSelecionadosWhatsApp(){
     }
 
     const mensagem = pcMontarMensagemChamadosWhatsApp();
-    const url = "https://wa.me/" + numero + "?text=" + encodeURIComponent(mensagem);
+    const texto = encodeURIComponent(String(mensagem));
+
+    // No celular usa o link direto do WhatsApp.
+    // No computador abre o WhatsApp Web para preservar corretamente
+    // a mensagem UTF-8, incluindo emojis.
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+    const url = isMobile
+        ? "https://wa.me/" + numero + "?text=" + texto
+        : "https://web.whatsapp.com/send?phone=" + numero + "&text=" + texto;
+
     window.open(url, "_blank", "noopener");
 }
 
@@ -15264,7 +15274,13 @@ window.imprimirChamadosAbertosV428 = imprimirChamadosAbertosV428;
         } catch (e) {}
 
         var mensagem = montarMensagemEncaminhamento(chamado);
-        var url = "https://wa.me/" + numero + "?text=" + encodeURIComponent(mensagem);
+        var texto = encodeURIComponent(String(mensagem));
+        var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+        var url = isMobile
+            ? "https://wa.me/" + numero + "?text=" + texto
+            : "https://web.whatsapp.com/send?phone=" + numero + "&text=" + texto;
+
         window.open(url, "_blank", "noopener");
     }
 
