@@ -8321,7 +8321,8 @@ async function responderChamadoPeloWhatsApp() {
         "";
 
     const numero = normalizarNumeroWhatsApp(numeroBruto);
-    const resposta = document.getElementById("observacaoAdmin")?.value?.trim() || "";
+    const resposta =
+        document.getElementById("observacaoAdmin")?.value?.trim() || "";
 
     if (!numero) {
         alert("Este chamado não possui WhatsApp para retorno.");
@@ -8340,29 +8341,45 @@ async function responderChamadoPeloWhatsApp() {
     try {
         if (btn) {
             btn.disabled = true;
-            btn.textContent = "⏳ Salvando resposta...";
+            btn.textContent = "Salvando resposta...";
         }
 
         const respostaServidor = await fetch(API, {
             method: "POST",
-            headers: {"Content-Type":"application/json"},
+            headers: {
+                "Content-Type": "application/json"
+            },
             body: JSON.stringify({
                 action: "update",
                 protocolo: protocoloSelecionado,
                 adminPassword: senhaAdministrativa,
-                status: document.getElementById("statusAdmin")?.value || chamado.status || "",
-                responsavel: document.getElementById("responsavelAdmin")?.value?.trim() || chamado.responsavel || "",
+                status:
+                    document.getElementById("statusAdmin")?.value ||
+                    chamado.status ||
+                    "",
+                responsavel:
+                    document.getElementById("responsavelAdmin")?.value?.trim() ||
+                    chamado.responsavel ||
+                    "",
                 observacaoSolucao: resposta,
-                prioridade: document.getElementById("prioridadeAdmin")?.value || chamado.prioridade || ""
+                prioridade:
+                    document.getElementById("prioridadeAdmin")?.value ||
+                    chamado.prioridade ||
+                    ""
             })
         });
 
         const texto = await respostaServidor.text();
         let retorno = {};
-        try { retorno = texto ? JSON.parse(texto) : {}; } catch(e) {}
+
+        try {
+            retorno = texto ? JSON.parse(texto) : {};
+        } catch (e) {}
 
         if (!respostaServidor.ok || retorno.sucesso === false) {
-            throw new Error(retorno.erro || "Não foi possível salvar a resposta.");
+            throw new Error(
+                retorno.erro || "Não foi possível salvar a resposta."
+            );
         }
 
         const atualizado = retorno.chamado || {
@@ -8371,9 +8388,21 @@ async function responderChamadoPeloWhatsApp() {
             respostaAdministracao: resposta
         };
 
-        const lista = typeof chamados !== "undefined" ? chamados : [];
-        const i = lista.findIndex(x => x.protocolo === protocoloSelecionado);
-        if (i >= 0) lista[i] = {...lista[i], ...atualizado, observacaoSolucao: resposta, respostaAdministracao: resposta};
+        const lista =
+            typeof chamados !== "undefined" ? chamados : [];
+
+        const i = lista.findIndex(
+            x => x.protocolo === protocoloSelecionado
+        );
+
+        if (i >= 0) {
+            lista[i] = {
+                ...lista[i],
+                ...atualizado,
+                observacaoSolucao: resposta,
+                respostaAdministracao: resposta
+            };
+        }
 
         const mensagem = montarMensagemRespostaAdministracao({
             ...chamado,
@@ -8387,19 +8416,18 @@ async function responderChamadoPeloWhatsApp() {
                 ""
         });
 
-        if (btn) btn.textContent = "📲 Abrindo WhatsApp...";
+        if (btn) {
+            btn.textContent = "Abrindo WhatsApp...";
+        }
+
         /*
-         * Codificação UTF-8 manual para o WhatsApp.
-         * Os emojis são montados por códigos percentuais UTF-8, evitando
-         * qualquer conversão do navegador/editor para o caractere �.
+         * Primeiro codifica toda a mensagem.
+         * Os marcadores ASCII são substituídos depois pelos bytes UTF-8
+         * percentuais dos emojis. Assim o WhatsApp Web recebe os emojis
+         * corretamente no computador, sem depender da conversão do editor.
          */
-        /*
-         * A mensagem é codificada primeiro.
-         * Somente DEPOIS os marcadores ASCII são substituídos pelos bytes
-         * UTF-8 percentuais exatos dos emojis.
-         * Não existe uma segunda codificação.
-         */
-        let mensagemCodificada = encodeURIComponent(String(mensagem));
+        let mensagemCodificada =
+            encodeURIComponent(String(mensagem));
 
         const emojisUTF8 = {
             PREDIO: "%F0%9F%8F%A2",
@@ -8424,34 +8452,60 @@ async function responderChamadoPeloWhatsApp() {
             .replace(/%40%40PC_CARTA%40%40/g, emojisUTF8.CARTA)
             .replace(/%40%40PC_LUPA%40%40/g, emojisUTF8.LUPA);
 
-        const urlWhatsApp =
-            "https://wa.me/" +
-            numero +
-            "?text=" +
-            mensagemCodificada;
+        /*
+         * No celular abre o WhatsApp pelo link wa.me.
+         * No computador abre diretamente o WhatsApp Web.
+         */
+        const isMobile =
+            /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-        window.open(urlWhatsApp, "_blank");
+        const urlWhatsApp = isMobile
+            ? "https://wa.me/" +
+              numero +
+              "?text=" +
+              mensagemCodificada
+            : "https://web.whatsapp.com/send?phone=" +
+              numero +
+              "&text=" +
+              mensagemCodificada;
 
-        const resultado = document.getElementById("resultadoAtualizacao");
+        window.open(urlWhatsApp, "_blank", "noopener");
+
+        const resultado =
+            document.getElementById("resultadoAtualizacao");
+
         if (resultado) {
             resultado.className = "mensagem sucesso";
             resultado.style.display = "block";
             resultado.innerHTML =
-                "✅ Resposta salva no chamado.<br><br>" +
-                "📲 O WhatsApp foi aberto para o número informado pelo solicitante.";
+                "Resposta salva no chamado.<br><br>" +
+                "O WhatsApp foi aberto para o número informado pelo solicitante.";
         }
+
     } catch (erro) {
-        alert(erro.message || "Não foi possível responder pelo WhatsApp.");
+
+        alert(
+            erro.message ||
+            "Não foi possível responder pelo WhatsApp."
+        );
+
     } finally {
+
         if (btn) {
             btn.disabled = false;
-            btn.textContent = textoOriginal || "📲 Responder pelo WhatsApp";
+            btn.textContent =
+                textoOriginal || "Responder pelo WhatsApp";
         }
     }
 }
 
-document.getElementById("btnResponderWhatsAppAdmin")
-    ?.addEventListener("click", responderChamadoPeloWhatsApp);
+const btnResponderWhatsAppAdmin =
+    document.getElementById("btnResponderWhatsAppAdmin");
+
+if (btnResponderWhatsAppAdmin) {
+    btnResponderWhatsAppAdmin.onclick =
+        responderChamadoPeloWhatsApp;
+}
 
 const _editarChamadoObs = document.getElementById("editarChamado");
 if (_editarChamadoObs && typeof MutationObserver !== "undefined") {
