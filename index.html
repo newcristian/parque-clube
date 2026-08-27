@@ -2085,6 +2085,20 @@ button:active{
     font-weight:900;letter-spacing:.4px;
 }
 .btn-status-rapido{width:100%;max-width:320px;min-height:44px;border:0;border-radius:10px;background:#17632d;color:#fff;font-weight:800;cursor:pointer}
+.btn-status-compartilhar{
+    width:100%;
+    max-width:320px;
+    min-height:44px;
+    margin-top:8px;
+    border:0;
+    border-radius:10px;
+    background:#1769aa;
+    color:#fff;
+    font-weight:800;
+    cursor:pointer;
+}
+.btn-status-compartilhar:hover{filter:brightness(1.05)}
+.btn-status-compartilhar:active{transform:scale(.99)}
 .home-rodape{margin:22px 0 4px;padding:14px 8px 4px;border-top:1px solid #dfe8e2;text-align:center;color:#64748b;font-size:11px;line-height:1.5}
 .home-rodape strong{display:block;color:#17632d;font-size:12px}
 .home-rodape-desenvolvedor{
@@ -2675,6 +2689,10 @@ input:focus,select:focus,textarea:focus{
     <div id="homeStatusProtocolo" class="status-protocolo">-</div>
     <button type="button" class="btn-status-rapido" onclick="consultarProtocoloRapido()">
         🔎 Consultar chamado
+    </button>
+
+    <button type="button" class="btn-status-compartilhar" onclick="compartilharProtocoloRecemCriado()">
+        🔗 Compartilhar protocolo
     </button>
 </div>
 <section
@@ -9636,6 +9654,118 @@ function consultarProtocoloRapido() {
         localizarProtocolo();
     } else if (input) {
         input.focus();
+    }
+}
+
+
+async function compartilharProtocoloRecemCriado() {
+
+    const protocolo =
+        document
+            .getElementById("homeStatusProtocolo")
+            ?.textContent
+            ?.trim();
+
+    if (
+        !protocolo ||
+        protocolo === "-"
+    ) {
+        alert(
+            "Não há um protocolo disponível para compartilhar."
+        );
+        return;
+    }
+
+    /*
+     * Cria o link direto para este protocolo específico.
+     *
+     * Exemplo:
+     * https://parque-clube.newcristian.workers.dev/?protocolo=PC-26-08-26-002
+     */
+    const linkDireto =
+        window.location.origin +
+        window.location.pathname +
+        "?protocolo=" +
+        encodeURIComponent(protocolo);
+
+    const mensagem =
+        "🏢 *PARQUE CLUBE*\n\n" +
+        "📋 *PROTOCOLO DE CHAMADO*\n\n" +
+        "*Protocolo:* " + protocolo +
+        "\n\n" +
+        "🔎 *ACESSE DIRETAMENTE ESTE CHAMADO:*\n" +
+        linkDireto;
+
+    try {
+
+        /*
+         * Celular e navegadores compatíveis:
+         * abre a tela nativa de compartilhamento.
+         */
+        if (
+            navigator.share &&
+            typeof navigator.share === "function"
+        ) {
+
+            await navigator.share({
+                title:
+                    "Protocolo " +
+                    protocolo,
+                text:
+                    mensagem
+            });
+
+            return;
+        }
+
+        /*
+         * Computador / navegador sem compartilhamento nativo:
+         * copia a mensagem completa, incluindo o link.
+         */
+        if (
+            navigator.clipboard &&
+            navigator.clipboard.writeText
+        ) {
+
+            await navigator.clipboard.writeText(
+                mensagem
+            );
+
+            alert(
+                "📋 Protocolo e link direto copiados. Agora você pode colar e compartilhar."
+            );
+
+            return;
+        }
+
+        /*
+         * Última alternativa para navegadores antigos.
+         */
+        window.prompt(
+            "Copie a mensagem abaixo para compartilhar:",
+            mensagem
+        );
+
+    } catch (erro) {
+
+        /*
+         * O usuário apenas fechou/cancelou o compartilhamento.
+         */
+        if (
+            erro &&
+            erro.name === "AbortError"
+        ) {
+            return;
+        }
+
+        console.error(
+            "Erro ao compartilhar o protocolo recém-criado:",
+            erro
+        );
+
+        alert(
+            "Não foi possível compartilhar o protocolo."
+        );
     }
 }
 
