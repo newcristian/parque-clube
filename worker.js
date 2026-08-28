@@ -1,12 +1,20 @@
 /*
 ============================================================
- PARQUE CLUBE - CLOUDFLARE WORKER V4.9 CORRIGIDO
+ PARQUE CLUBE - CLOUDFLARE WORKER V4.9
  Sistema de Chamados / Ordem de Serviço
 
  D1 Binding: DB
  Secret: ADMIN_PASSWORD
- Assets Binding: ASSETS
  API: /api/protocolo
+
+ V4.7:
+ - WhatsApp para retorno salvo no chamado
+ - Observação da solução usada como resposta da Administração e no WhatsApp
+ - ultima_atualizacao usada como data/hora automática da resposta
+ - Consulta/listagem devolve os dois campos
+ - Preserva resposta anterior quando update não envia resposta
+ - Mantém chamados, prioridade, arquivamento e módulo
+   Advertências / Notificações
 ============================================================
 */
 
@@ -25,9 +33,7 @@ function resposta(dados, status = 200) {
 function obterDataBrasilia() {
   const partes = new Intl.DateTimeFormat("en-CA", {
     timeZone: "America/Sao_Paulo",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit"
+    year: "numeric", month: "2-digit", day: "2-digit"
   }).formatToParts(new Date());
 
   return {
@@ -40,9 +46,7 @@ function obterDataBrasilia() {
 function obterHoraBrasilia() {
   return new Intl.DateTimeFormat("pt-BR", {
     timeZone: "America/Sao_Paulo",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
+    hour: "2-digit", minute: "2-digit", second: "2-digit",
     hour12: false
   }).format(new Date());
 }
@@ -80,46 +84,8 @@ function verificarSenha(dados, env) {
 }
 
 /* =========================================================
-   ESTRUTURA DO BANCO
+   MIGRAÇÕES SEGURAS DO D1
 ========================================================= */
-
-async function garantirTabelaChamados(env) {
-  await env.DB.prepare(`
-    CREATE TABLE IF NOT EXISTS chamados (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      protocolo TEXT NOT NULL UNIQUE,
-      data_abertura TEXT DEFAULT '',
-      hora_abertura TEXT DEFAULT '',
-      status TEXT DEFAULT 'Aberto',
-      solicitante TEXT DEFAULT '',
-      cargo TEXT DEFAULT '',
-      bloco TEXT DEFAULT '',
-      pavimentos TEXT DEFAULT '',
-      ocorrencia TEXT DEFAULT '',
-      data_ocorrencia TEXT DEFAULT '',
-      hora_inicial TEXT DEFAULT '',
-      hora_final TEXT DEFAULT '',
-      area_execucao TEXT DEFAULT '',
-      detalhes TEXT DEFAULT '',
-      responsavel TEXT DEFAULT '',
-      observacao_solucao TEXT DEFAULT '',
-      prioridade TEXT DEFAULT 'Moderada',
-      whatsapp_retorno TEXT DEFAULT '',
-      resposta_administracao TEXT DEFAULT '',
-      data_conclusao TEXT DEFAULT '',
-      hora_conclusao TEXT DEFAULT '',
-      ultima_atualizacao TEXT DEFAULT '',
-      criado_em TEXT DEFAULT ''
-    )
-  `).run();
-
-  await env.DB.prepare(`
-    CREATE TABLE IF NOT EXISTS contadores (
-      data TEXT PRIMARY KEY,
-      numero INTEGER NOT NULL DEFAULT 0
-    )
-  `).run();
-}
 
 async function colunaExiste(env, tabela, coluna) {
   const info = await env.DB.prepare(`PRAGMA table_info(${tabela})`).all();
@@ -135,25 +101,17 @@ async function garantirColuna(env, tabela, coluna, definicao) {
 }
 
 async function garantirEstruturaChamados(env) {
-  await garantirTabelaChamados(env);
+  /* Estas duas colunas são a correção da V4.7 */
+  await garantirColuna(env, "chamados", "whatsapp_retorno", "TEXT DEFAULT ''");
+  await garantirColuna(env, "chamados", "resposta_administracao", "TEXT DEFAULT ''");
 
-  const colunas = [
-    ["data_ocorrencia", "TEXT DEFAULT ''"],
-    ["hora_inicial", "TEXT DEFAULT ''"],
-    ["hora_final", "TEXT DEFAULT ''"],
-    ["area_execucao", "TEXT DEFAULT ''"],
-    ["prioridade", "TEXT DEFAULT 'Moderada'"],
-    ["whatsapp_retorno", "TEXT DEFAULT ''"],
-    ["resposta_administracao", "TEXT DEFAULT ''"],
-    ["data_conclusao", "TEXT DEFAULT ''"],
-    ["hora_conclusao", "TEXT DEFAULT ''"],
-    ["ultima_atualizacao", "TEXT DEFAULT ''"],
-    ["criado_em", "TEXT DEFAULT ''"]
-  ];
+  /* Mantém compatibilidade com a versão que já usa prioridade */
+  await garantirColuna(env, "chamados", "prioridade", "TEXT DEFAULT 'Moderada'");
 
-  for (const [coluna, definicao] of colunas) {
-    await garantirColuna(env, "chamados", coluna, definicao);
-  }
+  /* Campos usados pelas versões anteriores */
+  await garantirColuna(env, "chamados", "data_conclusao", "TEXT DEFAULT ''");
+  await garantirColuna(env, "chamados", "hora_conclusao", "TEXT DEFAULT ''");
+  await garantirColuna(env, "chamados", "ultima_atualizacao", "TEXT DEFAULT ''");
 }
 
 /* =========================================================
@@ -183,19 +141,19 @@ async function buscarArquivamento(env, protocolo) {
   `).bind(protocolo).first();
 }
 
+/* =========================================================
+   CONVERTER CHAMADO
+========================================================= */
+
 function converterChamado(row, arquivo = null) {
   if (!row) return null;
 
   let historicoArquivamento = [];
   try {
-    historicoArquivamento = arquivo?.historico_json
+    historicoArquivamento = arquivo && arquivo.historico_json
       ? JSON.parse(arquivo.historico_json)
       : [];
   } catch {
-    historicoArquivamento = [];
-  }
-
-  if (!Array.isArray(historicoArquivamento)) {
     historicoArquivamento = [];
   }
 
@@ -213,28 +171,34 @@ function converterChamado(row, arquivo = null) {
     dataOcorrencia: row.data_ocorrencia || "",
     horaInicial: row.hora_inicial || "",
     horaFinal: row.hora_final || "",
-    areaExecucao: row.area_execucao || "",
     detalhes: row.detalhes || "",
     responsavel: row.responsavel || "",
     observacaoSolucao: row.observacao_solucao || "",
-    respostaAdministracao: row.resposta_administracao || row.observacao_solucao || "",
-    whatsappRetorno: row.whatsapp_retorno || "",
     dataConclusao: row.data_conclusao || "",
     horaConclusao: row.hora_conclusao || "",
     ultimaAtualizacao: row.ultima_atualizacao || "",
     criadoEm: row.criado_em || "",
     prioridade: row.prioridade || "Moderada",
-    arquivado: Number(arquivo?.arquivado || 0) === 1,
-    dataUltimoArquivamento: arquivo?.data_ultimo_arquivamento || "",
-    dataUltimaReabertura: arquivo?.data_ultima_reabertura || "",
+
+    /* V4.7 */
+    whatsappRetorno: row.whatsapp_retorno || "",
+    respostaAdministracao: row.resposta_administracao || "",
+
+    arquivado: arquivo ? Number(arquivo.arquivado || 0) === 1 : false,
+    dataHoraArquivamento: arquivo?.data_ultimo_arquivamento || "",
+    dataHoraReabertura: arquivo?.data_ultima_reabertura || "",
     historicoArquivamento
   };
 }
 
+/* =========================================================
+   BUSCAR / LISTAR CHAMADOS
+========================================================= */
+
 async function buscarChamado(env, protocolo) {
   await garantirEstruturaChamados(env);
 
-  const registro = await env.DB.prepare(`
+  const row = await env.DB.prepare(`
     SELECT *
     FROM chamados
     WHERE protocolo = ?
@@ -242,7 +206,7 @@ async function buscarChamado(env, protocolo) {
   `).bind(protocolo).first();
 
   const arquivo = await buscarArquivamento(env, protocolo);
-  return converterChamado(registro, arquivo);
+  return converterChamado(row, arquivo);
 }
 
 async function listarChamados(env) {
@@ -264,27 +228,26 @@ async function listarChamados(env) {
     (arquivos.results || []).map(item => [item.protocolo, item])
   );
 
-  const todos = (resultado.results || [])
-    .map(row => converterChamado(row, mapaArquivos.get(row.protocolo) || null))
-    .filter(Boolean);
+  const todos = (resultado.results || []).map(row =>
+    converterChamado(row, mapaArquivos.get(row.protocolo) || null)
+  );
 
-  const chamadosArquivados = todos.filter(c => c.arquivado);
   const chamados = todos.filter(c => !c.arquivado);
+  const chamadosArquivados = todos.filter(c => c.arquivado);
 
   const estatisticas = {
     total: chamados.length,
     abertos: chamados.filter(c => c.status === "Aberto").length,
     andamento: chamados.filter(c => c.status === "Em andamento").length,
     resolvidos: chamados.filter(c => c.status === "Resolvido").length,
-    cancelados: chamados.filter(c => c.status === "Cancelado").length,
-    arquivados: chamadosArquivados.length
+    cancelados: chamados.filter(c => c.status === "Cancelado").length
   };
 
   return { chamados, chamadosArquivados, estatisticas };
 }
 
 /* =========================================================
-   CHAMADOS
+   CRIAR CHAMADO
 ========================================================= */
 
 async function criarChamado(env, dados) {
@@ -310,8 +273,7 @@ async function criarChamado(env, dados) {
   }
 
   const sequencial = String(Number(contador.numero)).padStart(3, "0");
-  const protocolo =
-    `PC-${data.dia}-${data.mes}-${String(data.ano).slice(-2)}-${sequencial}`;
+  const protocolo = `PC-${data.dia}-${data.mes}-${String(data.ano).slice(-2)}-${sequencial}`;
 
   const prioridadesPermitidas = ["Urgente", "Alta", "Moderada", "Baixa"];
   const prioridadeInformada = String(dados.prioridade || "Moderada").trim();
@@ -324,36 +286,50 @@ async function criarChamado(env, dados) {
     dataAbertura: `${data.dia}/${data.mes}/${data.ano}`,
     horaAbertura: hora,
     status: "Aberto",
-    solicitante: String(dados.solicitante || "").trim(),
-    cargo: String(dados.cargo || "").trim(),
-    bloco: String(dados.bloco || "").trim(),
-    pavimentos: String(dados.pavimentos || "").trim(),
-    ocorrencia: String(dados.ocorrencia || dados.tipo_ocorrencia || "").trim(),
-    dataOcorrencia: String(dados.dataOcorrencia || "").trim(),
-    horaInicial: String(dados.horaInicial || "").trim(),
-    horaFinal: String(dados.horaFinal || "").trim(),
-    areaExecucao: String(dados.areaExecucao || dados.area_execucao || "").trim(),
-    detalhes: String(dados.detalhes || "").trim(),
+    solicitante: dados.solicitante || "",
+    cargo: dados.cargo || "",
+    bloco: dados.bloco || "",
+    pavimentos: dados.pavimentos || "",
+    ocorrencia: dados.ocorrencia || dados.tipo_ocorrencia || "",
+    dataOcorrencia: dados.dataOcorrencia || "",
+    horaInicial: dados.horaInicial || "",
+    horaFinal: dados.horaFinal || "",
+    detalhes: dados.detalhes || "",
     responsavel: "",
     observacaoSolucao: "",
-    respostaAdministracao: "",
-    whatsappRetorno: String(
-      dados.whatsappRetorno || dados.whatsapp || dados.telefoneRetorno || ""
-    ).trim(),
     prioridade,
+    whatsappRetorno: String(dados.whatsappRetorno || "").trim(),
+    respostaAdministracao: "",
     criadoEm: new Date().toISOString()
   };
 
   await env.DB.prepare(`
     INSERT INTO chamados (
-      protocolo, data_abertura, hora_abertura, status,
-      solicitante, cargo, bloco, pavimentos, ocorrencia,
-      data_ocorrencia, hora_inicial, hora_final, area_execucao,
-      detalhes, responsavel, observacao_solucao, prioridade,
-      whatsapp_retorno, resposta_administracao, criado_em
+      protocolo,
+      data_abertura,
+      hora_abertura,
+      status,
+      solicitante,
+      cargo,
+      bloco,
+      pavimentos,
+      ocorrencia,
+      data_ocorrencia,
+      hora_inicial,
+      hora_final,
+      detalhes,
+      responsavel,
+      observacao_solucao,
+      prioridade,
+      whatsapp_retorno,
+      resposta_administracao,
+      criado_em
     )
     VALUES (
-      ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+      ?, ?, ?, ?, ?,
+      ?, ?, ?, ?, ?,
+      ?, ?, ?, ?, ?,
+      ?, ?, ?, ?
     )
   `).bind(
     chamado.protocolo,
@@ -368,7 +344,6 @@ async function criarChamado(env, dados) {
     chamado.dataOcorrencia,
     chamado.horaInicial,
     chamado.horaFinal,
-    chamado.areaExecucao,
     chamado.detalhes,
     chamado.responsavel,
     chamado.observacaoSolucao,
@@ -380,69 +355,87 @@ async function criarChamado(env, dados) {
 
   return resposta({
     sucesso: true,
+    mensagem: "Chamado registrado com sucesso.",
     protocolo,
     chamado
   });
 }
 
-async function atualizarChamado(env, dados) {
-  const protocolo = String(dados.protocolo || "").trim().toUpperCase();
+/* =========================================================
+   ATUALIZAR CHAMADO
+========================================================= */
 
-  if (!protocolo) {
-    return resposta({ sucesso: false, erro: "Informe o protocolo." }, 400);
+async function atualizarChamado(env, dados) {
+  await garantirEstruturaChamados(env);
+
+  if (!dados.protocolo) {
+    return resposta({
+      sucesso: false,
+      erro: "Informe o protocolo."
+    }, 400);
   }
 
-  const atual = await buscarChamado(env, protocolo);
+  const protocolo = String(dados.protocolo).trim().toUpperCase();
+  const chamadoAtual = await buscarChamado(env, protocolo);
 
-  if (!atual) {
-    return resposta({ sucesso: false, erro: "Protocolo não encontrado." }, 404);
+  if (!chamadoAtual) {
+    return resposta({
+      sucesso: false,
+      erro: "Protocolo não encontrado."
+    }, 404);
   }
 
   const statusPermitidos = ["Aberto", "Em andamento", "Resolvido", "Cancelado"];
-  const statusInformado = String(dados.status || atual.status || "").trim();
-  const status = statusPermitidos.includes(statusInformado)
-    ? statusInformado
-    : atual.status;
+  const status = dados.status || chamadoAtual.status || "Aberto";
 
-  const prioridadesPermitidas = ["Urgente", "Alta", "Moderada", "Baixa"];
-  const prioridadeInformada = String(dados.prioridade || "").trim();
-  const prioridade = prioridadesPermitidas.includes(prioridadeInformada)
-    ? prioridadeInformada
-    : (atual.prioridade || "Moderada");
+  if (!statusPermitidos.includes(status)) {
+    return resposta({
+      sucesso: false,
+      erro: "Status inválido."
+    }, 400);
+  }
 
   const data = obterDataBrasilia();
   const hora = obterHoraBrasilia();
 
-  let dataConclusao = atual.dataConclusao || "";
-  let horaConclusao = atual.horaConclusao || "";
+  let dataConclusao = chamadoAtual.dataConclusao || "";
+  let horaConclusao = chamadoAtual.horaConclusao || "";
 
-  if (status === "Resolvido" && (!dataConclusao || dados.status !== atual.status)) {
+  if (status === "Resolvido") {
     dataConclusao = `${data.dia}/${data.mes}/${data.ano}`;
     horaConclusao = hora;
-  }
-
-  if (status !== "Resolvido") {
+  } else if (status !== "Resolvido") {
     dataConclusao = "";
     horaConclusao = "";
   }
 
-  const temResposta =
-    Object.prototype.hasOwnProperty.call(dados, "observacaoSolucao") ||
-    Object.prototype.hasOwnProperty.call(dados, "respostaAdministracao");
+  const prioridadesPermitidas = ["Urgente", "Alta", "Moderada", "Baixa"];
+  const prioridadeInformada =
+    dados.prioridade !== undefined
+      ? String(dados.prioridade || "").trim()
+      : chamadoAtual.prioridade;
 
-  const observacaoSolucao = temResposta
-    ? String(dados.observacaoSolucao ?? dados.respostaAdministracao ?? "").trim()
-    : (atual.observacaoSolucao || "");
+  const prioridade = prioridadesPermitidas.includes(prioridadeInformada)
+    ? prioridadeInformada
+    : (chamadoAtual.prioridade || "Moderada");
 
-  const respostaAdministracao = temResposta
-    ? observacaoSolucao
-    : (atual.respostaAdministracao || atual.observacaoSolucao || "");
+  /*
+   * V4.7:
+   * A Observação da solução passou a ser a única resposta administrativa.
+   * Para manter compatibilidade com registros antigos, o campo
+   * resposta_administracao continua existindo no banco, mas recebe
+   * exatamente o mesmo texto de observacao_solucao.
+   */
+  const possuiObservacaoSolucao =
+    Object.prototype.hasOwnProperty.call(dados, "observacaoSolucao");
 
-  const whatsappRetorno = Object.prototype.hasOwnProperty.call(dados, "whatsappRetorno")
-    ? String(dados.whatsappRetorno || "").trim()
-    : (atual.whatsappRetorno || "");
+  const observacaoSolucao = possuiObservacaoSolucao
+    ? String(dados.observacaoSolucao || "").trim()
+    : (chamadoAtual.observacaoSolucao || "");
 
-  const ultimaAtualizacao = dataHoraBrasilia();
+  const respostaAdministracao = observacaoSolucao;
+
+  const ultimaAtualizacao = `${data.dia}/${data.mes}/${data.ano} ${hora}`;
 
   await env.DB.prepare(`
     UPDATE chamados
@@ -450,69 +443,75 @@ async function atualizarChamado(env, dados) {
       status = ?,
       responsavel = ?,
       observacao_solucao = ?,
-      resposta_administracao = ?,
-      prioridade = ?,
-      whatsapp_retorno = ?,
       data_conclusao = ?,
       hora_conclusao = ?,
-      ultima_atualizacao = ?
+      ultima_atualizacao = ?,
+      prioridade = ?,
+      resposta_administracao = ?
     WHERE protocolo = ?
   `).bind(
     status,
-    String(dados.responsavel ?? atual.responsavel ?? "").trim(),
+    dados.responsavel !== undefined
+      ? String(dados.responsavel || "")
+      : chamadoAtual.responsavel,
     observacaoSolucao,
-    respostaAdministracao,
-    prioridade,
-    whatsappRetorno,
     dataConclusao,
     horaConclusao,
     ultimaAtualizacao,
+    prioridade,
+    respostaAdministracao,
     protocolo
   ).run();
 
-  const chamado = await buscarChamado(env, protocolo);
+  const atualizado = await buscarChamado(env, protocolo);
 
   return resposta({
     sucesso: true,
     mensagem: "Chamado atualizado com sucesso.",
-    chamado
+    chamado: atualizado
   });
 }
 
-async function arquivarChamado(env, dados) {
-  const protocolo = String(dados.protocolo || "").trim().toUpperCase();
+/* =========================================================
+   ARQUIVAR / REABRIR / EXCLUIR
+========================================================= */
 
-  if (!protocolo) {
+async function arquivarChamado(env, dados) {
+  if (!dados.protocolo) {
     return resposta({ sucesso: false, erro: "Informe o protocolo." }, 400);
   }
 
+  const protocolo = String(dados.protocolo).trim().toUpperCase();
   const chamado = await buscarChamado(env, protocolo);
+
   if (!chamado) {
     return resposta({ sucesso: false, erro: "Protocolo não encontrado." }, 404);
   }
 
+  if (chamado.status !== "Resolvido") {
+    return resposta({
+      sucesso: false,
+      erro: "Somente chamados resolvidos podem ser arquivados."
+    }, 400);
+  }
+
   await garantirTabelaArquivamento(env);
 
-  let historico = Array.isArray(chamado.historicoArquivamento)
-    ? chamado.historicoArquivamento
-    : [];
-
-  historico.push({ tipo: "ARQUIVADO", dataHora: dataHoraBrasilia() });
+  const agora = dataHoraBrasilia();
+  let historico = chamado.historicoArquivamento || [];
+  historico.push({ tipo: "ARQUIVADO", dataHora: agora });
 
   await env.DB.prepare(`
     INSERT INTO chamados_arquivamento (
       protocolo, arquivado, data_ultimo_arquivamento, historico_json
     )
     VALUES (?, 1, ?, ?)
-    ON CONFLICT(protocolo) DO UPDATE SET
+    ON CONFLICT(protocolo)
+    DO UPDATE SET
       arquivado = 1,
       data_ultimo_arquivamento = excluded.data_ultimo_arquivamento,
       historico_json = excluded.historico_json
-  `).bind(
-    protocolo,
-    dataHoraBrasilia(),
-    JSON.stringify(historico)
-  ).run();
+  `).bind(protocolo, agora, JSON.stringify(historico)).run();
 
   return resposta({
     sucesso: true,
@@ -522,39 +521,34 @@ async function arquivarChamado(env, dados) {
 }
 
 async function reabrirChamado(env, dados) {
-  const protocolo = String(dados.protocolo || "").trim().toUpperCase();
-
-  if (!protocolo) {
+  if (!dados.protocolo) {
     return resposta({ sucesso: false, erro: "Informe o protocolo." }, 400);
   }
 
+  const protocolo = String(dados.protocolo).trim().toUpperCase();
   const chamado = await buscarChamado(env, protocolo);
+
   if (!chamado) {
     return resposta({ sucesso: false, erro: "Protocolo não encontrado." }, 404);
   }
 
   await garantirTabelaArquivamento(env);
 
-  let historico = Array.isArray(chamado.historicoArquivamento)
-    ? chamado.historicoArquivamento
-    : [];
-
-  historico.push({ tipo: "REABERTO", dataHora: dataHoraBrasilia() });
+  const agora = dataHoraBrasilia();
+  let historico = chamado.historicoArquivamento || [];
+  historico.push({ tipo: "REABERTO", dataHora: agora });
 
   await env.DB.prepare(`
     INSERT INTO chamados_arquivamento (
       protocolo, arquivado, data_ultima_reabertura, historico_json
     )
     VALUES (?, 0, ?, ?)
-    ON CONFLICT(protocolo) DO UPDATE SET
+    ON CONFLICT(protocolo)
+    DO UPDATE SET
       arquivado = 0,
       data_ultima_reabertura = excluded.data_ultima_reabertura,
       historico_json = excluded.historico_json
-  `).bind(
-    protocolo,
-    dataHoraBrasilia(),
-    JSON.stringify(historico)
-  ).run();
+  `).bind(protocolo, agora, JSON.stringify(historico)).run();
 
   return resposta({
     sucesso: true,
@@ -564,16 +558,18 @@ async function reabrirChamado(env, dados) {
 }
 
 async function excluirChamado(env, dados) {
-  const protocolo = String(dados.protocolo || "").trim().toUpperCase();
-
-  if (!protocolo) {
+  if (!dados.protocolo) {
     return resposta({ sucesso: false, erro: "Informe o protocolo." }, 400);
   }
 
+  const protocolo = String(dados.protocolo).trim().toUpperCase();
   const chamado = await buscarChamado(env, protocolo);
+
   if (!chamado) {
     return resposta({ sucesso: false, erro: "Protocolo não encontrado." }, 404);
   }
+
+  await garantirTabelaArquivamento(env);
 
   await env.DB.prepare(`
     DELETE FROM chamados
@@ -592,6 +588,10 @@ async function excluirChamado(env, dados) {
   });
 }
 
+/* =========================================================
+   LOGIN / CONSULTA
+========================================================= */
+
 async function login(env, dados) {
   const autenticacao = verificarSenha(dados, env);
   if (!autenticacao.ok) return autenticacao.resposta;
@@ -603,15 +603,14 @@ async function login(env, dados) {
 }
 
 async function consultarProtocolo(env, protocolo) {
-  const protocoloNormalizado = String(protocolo || "").trim().toUpperCase();
-
-  if (!protocoloNormalizado) {
+  if (!protocolo) {
     return resposta({
       encontrado: false,
       erro: "Informe o número do protocolo."
     }, 400);
   }
 
+  const protocoloNormalizado = String(protocolo).trim().toUpperCase();
   const chamado = await buscarChamado(env, protocoloNormalizado);
 
   if (!chamado) {
@@ -633,7 +632,7 @@ async function consultarProtocolo(env, protocolo) {
 
 function obterDBAdministrativo(env) {
   if (!env || !env.DB || typeof env.DB.prepare !== "function") {
-    throw new Error("Binding D1 'DB' não encontrado neste Worker.");
+    throw new Error("Binding D1 'DB' não encontrado ou inválido.");
   }
   return env.DB;
 }
@@ -642,30 +641,30 @@ async function garantirTabelasAdministrativas(env) {
   const db = obterDBAdministrativo(env);
 
   await db.prepare(`
+    CREATE TABLE IF NOT EXISTS contadores_administrativos (
+      ano INTEGER PRIMARY KEY,
+      numero INTEGER NOT NULL DEFAULT 0
+    )
+  `).run();
+
+  await db.prepare(`
     CREATE TABLE IF NOT EXISTS advertencias_notificacoes (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       protocolo TEXT NOT NULL UNIQUE,
       tipo TEXT NOT NULL,
-      data_registro TEXT DEFAULT '',
+      data_registro TEXT NOT NULL,
       data_ocorrencia TEXT DEFAULT '',
-      bloco TEXT DEFAULT '',
-      unidade TEXT DEFAULT '',
-      infracao TEXT DEFAULT '',
+      bloco TEXT NOT NULL,
+      unidade TEXT NOT NULL,
+      infracao TEXT NOT NULL,
       descricao TEXT DEFAULT '',
       base_regimento TEXT DEFAULT '',
       responsavel TEXT DEFAULT '',
       observacoes TEXT DEFAULT '',
       protocolo_chamado TEXT DEFAULT '',
-      status TEXT DEFAULT 'Registrada',
-      criado_em TEXT DEFAULT '',
-      atualizado_em TEXT DEFAULT ''
-    )
-  `).run();
-
-  await db.prepare(`
-    CREATE TABLE IF NOT EXISTS contadores_administrativos (
-      ano INTEGER PRIMARY KEY,
-      numero INTEGER NOT NULL DEFAULT 0
+      status TEXT NOT NULL DEFAULT 'Registrada',
+      criado_em TEXT NOT NULL,
+      atualizado_em TEXT NOT NULL
     )
   `).run();
 }
@@ -718,7 +717,8 @@ async function gerarProtocoloAdministrativo(env) {
   await db.prepare(`
     INSERT INTO contadores_administrativos (ano, numero)
     VALUES (?, 1)
-    ON CONFLICT(ano) DO UPDATE SET numero = numero + 1
+    ON CONFLICT(ano)
+    DO UPDATE SET numero = numero + 1
   `).bind(ano).run();
 
   const contador = await db.prepare(`
@@ -729,6 +729,7 @@ async function gerarProtocoloAdministrativo(env) {
   `).bind(ano).first();
 
   const numero = Number(contador?.numero || 0);
+
   if (!numero) {
     throw new Error("Não foi possível gerar o protocolo administrativo.");
   }
@@ -761,23 +762,24 @@ async function criarMedidaAdministrativa(env, dados) {
     }, 400);
   }
 
+  const data = obterDataBrasilia();
+  const agora = `${data.dia}/${data.mes}/${data.ano} ${obterHoraBrasilia()}`;
   const protocolo = await gerarProtocoloAdministrativo(env);
-  const agora = dataHoraBrasilia();
 
   const medida = {
     protocolo,
     tipo,
-    dataRegistro: String(dados.dataRegistro || agora.split(" ")[0]).trim(),
-    dataOcorrencia: String(dados.dataOcorrencia || "").trim(),
+    dataRegistro: dados.dataRegistro || `${data.dia}/${data.mes}/${data.ano}`,
+    dataOcorrencia: dados.dataOcorrencia || "",
     bloco,
     unidade,
     infracao,
-    descricao: String(dados.descricao || "").trim(),
-    baseRegimento: String(dados.baseRegimento || "").trim(),
-    responsavel: String(dados.responsavel || "").trim(),
-    observacoes: String(dados.observacoes || "").trim(),
-    protocoloChamado: String(dados.protocoloChamado || "").trim().toUpperCase(),
-    status: String(dados.status || "Registrada").trim(),
+    descricao: dados.descricao || "",
+    baseRegimento: dados.baseRegimento || "",
+    responsavel: dados.responsavel || "",
+    observacoes: dados.observacoes || "",
+    protocoloChamado: dados.protocoloChamado || "",
+    status: dados.status || "Registrada",
     criadoEm: agora,
     atualizadoEm: agora
   };
@@ -785,11 +787,16 @@ async function criarMedidaAdministrativa(env, dados) {
   await db.prepare(`
     INSERT INTO advertencias_notificacoes (
       protocolo, tipo, data_registro, data_ocorrencia,
-      bloco, unidade, infracao, descricao, base_regimento,
-      responsavel, observacoes, protocolo_chamado, status,
-      criado_em, atualizado_em
+      bloco, unidade, infracao, descricao,
+      base_regimento, responsavel, observacoes,
+      protocolo_chamado, status, criado_em, atualizado_em
     )
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    VALUES (
+      ?, ?, ?, ?,
+      ?, ?, ?, ?,
+      ?, ?, ?,
+      ?, ?, ?, ?
+    )
   `).bind(
     medida.protocolo,
     medida.tipo,
@@ -828,14 +835,14 @@ async function excluirMedidaAdministrativa(env, dados) {
     }, 400);
   }
 
-  const existente = await db.prepare(`
+  const registro = await db.prepare(`
     SELECT id
     FROM advertencias_notificacoes
     WHERE protocolo = ?
     LIMIT 1
   `).bind(protocolo).first();
 
-  if (!existente) {
+  if (!registro) {
     return resposta({
       sucesso: false,
       erro: "Registro administrativo não encontrado."
@@ -855,17 +862,10 @@ async function excluirMedidaAdministrativa(env, dados) {
 }
 
 /* =========================================================
-   ASSETS
+   SERVIR INDEX
 ========================================================= */
 
 async function servirIndex(request, env) {
-  if (!env.ASSETS || typeof env.ASSETS.fetch !== "function") {
-    return resposta({
-      sucesso: false,
-      erro: "Assets do site não estão configurados neste Worker."
-    }, 500);
-  }
-
   return env.ASSETS.fetch(
     new Request(new URL("/index.html", request.url), request)
   );
@@ -912,12 +912,6 @@ export default {
       }
 
       if (request.method === "GET") {
-        if (!env.ASSETS || typeof env.ASSETS.fetch !== "function") {
-          return resposta({
-            sucesso: false,
-            erro: "Assets do site não estão configurados neste Worker."
-          }, 500);
-        }
         return env.ASSETS.fetch(request);
       }
 
@@ -1000,6 +994,7 @@ export default {
         return excluirChamado(env, dados);
       }
 
+      /* Sem action = criação normal do chamado */
       return criarChamado(env, dados);
 
     } catch (erro) {
