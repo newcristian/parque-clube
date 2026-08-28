@@ -15,6 +15,16 @@
     content="#17632d"
 >
 
+<link rel="manifest" href="/manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Parque Clube">
+<meta name="application-name" content="Parque Clube">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+
+
 <title>Sistema Parque Clube — V6.0</title>
 
 <style>
@@ -2599,6 +2609,20 @@ input:focus,select:focus,textarea:focus{
 
 <body>
 
+
+
+<!-- =====================================================
+     PWA — BANNER DE INSTALAÇÃO
+===================================================== -->
+<div id="pwaInstallBanner" class="pwa-install-banner" role="region" aria-label="Instalar Parque Clube">
+    <img class="pwa-install-icon" src="/icons/icon-192.png" alt="Parque Clube">
+    <div class="pwa-install-text">
+        <strong>📱 Instale o Parque Clube</strong>
+        <span>Tenha acesso rápido ao sistema pela tela inicial.</span>
+    </div>
+    <button id="pwaInstallButton" type="button" class="pwa-install-btn">Instalar</button>
+    <button id="pwaInstallClose" type="button" class="pwa-install-close" aria-label="Fechar">×</button>
+</div>
 
 <div class="container">
 
@@ -16103,6 +16127,69 @@ window.imprimirChamadosAbertosV428 = imprimirChamadosAbertosV428;
     font-weight:700;
     cursor:pointer;
 }
+
+/* =====================================================
+   PWA — INSTALAÇÃO COMO APLICATIVO
+===================================================== */
+.pwa-install-banner{
+    display:none;
+    align-items:center;
+    gap:12px;
+    margin:10px 0 18px;
+    padding:12px 14px;
+    border:1px solid #cfe4d5;
+    border-radius:14px;
+    background:linear-gradient(135deg,#f2fbf4,#ffffff);
+    box-shadow:0 4px 14px rgba(23,99,45,.08);
+}
+.pwa-install-banner.ativo{display:flex}
+.pwa-install-icon{
+    width:42px;
+    height:42px;
+    flex:0 0 42px;
+    border-radius:10px;
+    object-fit:cover;
+}
+.pwa-install-text{
+    flex:1;
+    min-width:0;
+}
+.pwa-install-text strong{
+    display:block;
+    color:#17632d;
+    font-size:14px;
+    margin-bottom:2px;
+}
+.pwa-install-text span{
+    display:block;
+    color:#64737c;
+    font-size:12px;
+    line-height:1.35;
+}
+.pwa-install-btn{
+    width:auto;
+    min-width:92px;
+    margin:0;
+    padding:10px 12px;
+    border-radius:10px;
+    background:#1769aa;
+    color:#fff;
+    font-size:12px;
+    font-weight:800;
+}
+.pwa-install-close{
+    width:auto;
+    margin:0;
+    padding:6px;
+    background:transparent;
+    color:#6d797f;
+    font-size:18px;
+}
+@media(max-width:520px){
+    .pwa-install-banner{align-items:flex-start}
+    .pwa-install-btn{min-width:82px;padding:9px 10px}
+}
+
 </style>
 
 <script id="pc-whatsapp-v702-js">
@@ -16233,6 +16320,93 @@ window.imprimirChamadosAbertosV428 = imprimirChamadosAbertosV428;
         iniciar();
         setTimeout(iniciar, 400);
     });
+})();
+</script>
+
+
+<script id="parque-clube-pwa-v70">
+(function(){
+    "use strict";
+
+    let deferredPrompt = null;
+
+    function obter(id){
+        return document.getElementById(id);
+    }
+
+    function mostrarBanner(){
+        const banner = obter("pwaInstallBanner");
+        if (banner) banner.classList.add("ativo");
+    }
+
+    function esconderBanner(){
+        const banner = obter("pwaInstallBanner");
+        if (banner) banner.classList.remove("ativo");
+    }
+
+    window.addEventListener("beforeinstallprompt", function(event){
+        event.preventDefault();
+        deferredPrompt = event;
+
+        // Não mostra novamente se o usuário já dispensou nesta sessão.
+        if (sessionStorage.getItem("pc_pwa_install_dismissed") !== "1"){
+            mostrarBanner();
+        }
+    });
+
+    window.addEventListener("appinstalled", function(){
+        deferredPrompt = null;
+        esconderBanner();
+    });
+
+    document.addEventListener("click", async function(event){
+        const instalar = event.target.closest("#pwaInstallButton");
+        const fechar = event.target.closest("#pwaInstallClose");
+
+        if (fechar){
+            sessionStorage.setItem("pc_pwa_install_dismissed", "1");
+            esconderBanner();
+            return;
+        }
+
+        if (!instalar) return;
+
+        if (!deferredPrompt){
+            alert(
+                "Para instalar no celular, use o menu do navegador e escolha " +
+                "\"Adicionar à tela inicial\" ou \"Instalar aplicativo\"."
+            );
+            return;
+        }
+
+        try{
+            await deferredPrompt.prompt();
+            await deferredPrompt.userChoice;
+        }catch(erro){
+            console.warn("Instalação PWA não concluída:", erro);
+        }finally{
+            deferredPrompt = null;
+            esconderBanner();
+        }
+    });
+
+    function registrarPWA(){
+        if (!("serviceWorker" in navigator)) return;
+
+        navigator.serviceWorker.register("/sw.js", {scope:"/"})
+            .then(function(registro){
+                console.log("Parque Clube PWA ativo:", registro.scope);
+            })
+            .catch(function(erro){
+                console.warn("PWA: não foi possível registrar o Service Worker.", erro);
+            });
+    }
+
+    if (document.readyState === "loading"){
+        document.addEventListener("DOMContentLoaded", registrarPWA);
+    }else{
+        registrarPWA();
+    }
 })();
 </script>
 
